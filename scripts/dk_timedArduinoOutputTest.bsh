@@ -1,0 +1,66 @@
+mmc.setProperty("ORCA","TRIGGER SOURCE","INTERNAL");
+gui.message("trigger source = " + mmc.getProperty("ORCA","TRIGGER SOURCE"));
+
+mmc.setProperty("Arduino-Switch","State",0);
+mmc.setProperty("Arduino-Switch","Delay (ms)",50);
+
+mmc.setProperty("Arduino-Switch","Set Pattern Index",0);
+
+gui.message("PatternIndex: " + mmc.getProperty("Arduino-Switch", "Set Pattern Index") + ", State: "+  mmc.getProperty("Arduino-Switch", "State"));
+gui.message("    for " + mmc.getProperty("Arduino-Switch", "Delay (ms)") + "ms");
+
+mmc.setProperty("Arduino-Switch","State",1);
+mmc.setProperty("Arduino-Switch","Delay (ms)",1000);
+
+mmc.setProperty("Arduino-Switch","Set Pattern Index",1);
+
+
+gui.message("PatternIndex: " + mmc.getProperty("Arduino-Switch", "Set Pattern Index") + ", State: "+  mmc.getProperty("Arduino-Switch", "State"));
+gui.message("    for " + mmc.getProperty("Arduino-Switch", "Delay (ms)") + "ms");
+
+mmc.setProperty("Arduino-Switch","Pattern Length",2);
+gui.message("PatternLength: " + mmc.getProperty("Arduino-Switch", "Pattern Length"));
+
+mmc.setProperty("Arduino-Switch","Repeat Timed Pattern",1);
+gui.message("# Frames: " + mmc.getProperty("Arduino-Switch", "Repeat Timed Pattern"));
+
+mmc.setProperty("Arduino-Switch","Timed Output Mode","Start");
+
+ mmc.snapImage();
+   img = mmc.getImage();
+   int width = mmc.getImageWidth();
+   int height = mmc.getImageHeight();
+
+   int nrPixels = width * height;
+
+   ImageProcessor ip;
+
+   if (img instanceof byte[]) {
+      ip = new ByteProcessor (width,height);
+      ip.setPixels((byte[])img);
+   }
+	else if (img instanceof short[]) {
+      ip = new ShortProcessor(width, height);
+      ip.setPixels((short[])img);
+ 	}
+ 	else
+       return false;
+
+	ImagePlus imp = new ImagePlus("tmp", ip);
+
+	ImageStatistics stats = imp.getStatistics(ij.measure.Measurements.MIN_MAX);
+
+   if (img instanceof byte[]) {
+      int[] hist = stats.histogram;
+      int j=255; 
+      int pixelsFound = 0;
+      while (pixelsFound < (nrPixels * cutoff_)) {
+         pixelsFound += hist[j];
+         j--;
+      }
+      maxValue = j;
+   } else {
+		maxValue = stats.max;
+   }
+
+   gui.message("Max value in image = " + maxValue);

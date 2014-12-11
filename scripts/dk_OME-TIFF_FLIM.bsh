@@ -1,0 +1,45 @@
+import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.services.OMEXMLServiceImpl;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.formats.ImageWriter;
+
+import loci.formats.CoreMetadata;
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.enums.PixelType;
+           
+           OMEXMLServiceImpl serv = new OMEXMLServiceImpl();
+           OMEXMLMetadata m = serv.createOMEXMLMetadata();
+           
+           m.createRoot();
+           m.setImageID("Image:0", 0);
+           m.setPixelsID("Pixels:0", 0);
+           m.setPixelsDimensionOrder(DimensionOrder.XYZCT, 0);
+           m.setChannelID("Channel:0", 0, 01);
+           m.setChannelSamplesPerPixel(null, 0, 0);
+           m.setPixelsBinDataBigEndian(Boolean.TRUE, 0, 0);
+           m.setPixelsType(PixelType.UINT16, 0);
+
+//			  height = mmc.getImageHeight();
+//			  width = mmc.getImageWidth();
+           
+           m.setPixelsSizeX(width, 0);
+           m.setPixelsSizeY(height, 0);
+           m.setPixelsSizeZ(1, 0);
+           m.setPixelsSizeC(1, 0);
+           m.setPixelsSizeT(n_gates, 0);
+           
+           m.setPixelsPhysicalSizeX(6.45, 0);
+           m.setPixelsPhysicalSizeY(6.45, 0);
+           m.setPixelsPhysicalSizeZ(1, 0);
+
+           CoreMetadata cm = new CoreMetadata();
+           cm.moduloT.labels = String[];
+           cm.moduloT.unit = "ns";
+           cm.moduloT.type = loci.formats.FormatTools.LIFETIME;
+           
+           
+           serv.addModuloAlong(m, cm, 0);
+           
+           ImageWriter writer = new ImageWriter();
+           writer.setMetadataRetrieve(m);

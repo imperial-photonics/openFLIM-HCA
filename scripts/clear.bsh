@@ -1,0 +1,2 @@
+gui.clearMessageWindow();
+gui.message("It was cleared for a second...");

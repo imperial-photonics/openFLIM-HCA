@@ -1,0 +1,96 @@
+//import org.json.JSONArray;
+//import org.json.JSONObject;
+//import org.micromanager.utils.MDUtils;
+//gui.installPlugin("edu.mbl.cdp.frameaverage.FrameAverager");
+//import edu.mbl.cdp.frameaverage.*
+
+String cameraName = mmc.getCameraDevice();
+String acq = "Test";
+String path = "C:/Users/dk1109/TEST";
+int gates = 10;
+
+
+gui.message("Cam = "+cameraName);
+//
+//mmc.setProperty("Arduino-Switch","State",0);
+//mmc.setProperty("Arduino-Switch","Delay (ms)",100);
+//
+//mmc.setProperty("Arduino-Switch","Set Pattern Index",0);
+//
+//gui.message("PatternIndex: " + mmc.getProperty("Arduino-Switch", "Set Pattern Index") + ", State: "+  mmc.getProperty("Arduino-Switch", "State"));
+//gui.message("    for " + mmc.getProperty("Arduino-Switch", "Delay (ms)") + "ms");
+//
+//mmc.setProperty("Arduino-Switch","State",1);
+//mmc.setProperty("Arduino-Switch","Delay (ms)",1000);
+//
+//mmc.setProperty("Arduino-Switch","Set Pattern Index",1);
+//
+//
+//gui.message("PatternIndex: " + mmc.getProperty("Arduino-Switch", "Set Pattern Index") + ", State: "+  mmc.getProperty("Arduino-Switch", "State"));
+//gui.message("    for " + mmc.getProperty("Arduino-Switch", "Delay (ms)") + "ms");
+//
+//mmc.setProperty("Arduino-Switch","Pattern Length",2);
+//gui.message("PatternLength: " + mmc.getProperty("Arduino-Switch", "Pattern Length"));
+//
+//mmc.setProperty("Arduino-Switch","Repeat Timed Pattern",gates);
+//gui.message("# Frames: " + mmc.getProperty("Arduino-Switch", "Repeat Timed Pattern"));
+
+
+
+
+
+gui.closeAllAcquisitions();
+gui.openAcquisition(acq, path, gates, 1, 1, true,true);
+
+int w = mmc.getImageWidth();
+int h = mmc.getImageHeight();
+int d = mmc.getBytesPerPixel();
+int bd = mmc.getImageBitDepth();
+gui.message("Image dims= " + w + "x" + h + "x" + d);
+gui.initializeAcquisition(acq, w, h, d, bd);
+
+mmc.setExposure(1000);
+Double exp = mmc.getExposure();
+gui.message("Exposure = "+exp);
+mmc.setProperty(cameraName,"TRIGGER SOURCE","SOFTWARE");
+gui.message("Trigger source " + mmc.getProperty(cameraName,"TRIGGER SOURCE"));
+mmc.setProperty(cameraName,"TRIGGER ACTIVE","EDGE");
+gui.message("Trigger mode " +mmc.getProperty(cameraName,"TRIGGER ACTIVE"));
+
+int counter = 0;
+int endcount = gates;
+
+gui.message("gates = "+gates);
+
+// delete previous content of circulat buffer
+mmc.initializeCircularBuffer();
+mmc.stopSequenceAcquisition();
+mmc.prepareSequenceAcquisition(cameraName);
+mmc.startSequenceAcquisition(cameraName, gates, 0, false);
+
+//Thread.sleep(100);
+
+gui.message("images remaining: " + mmc.getRemainingImageCount());
+
+
+//mmc.setProperty("Arduino-Switch","Timed Output Mode","Start");
+
+while ((mmc.getRemainingImageCount() > 0 || mmc.isSequenceRunning() ) && counter < gates) {
+//while ( counter < gates) {
+	
+	if (mmc.getRemainingImageCount() > 0) {
+//		now = System.currentTimeMillis();
+		img = mmc.popNextImage();
+		gui.addImage(acq,img,counter,0,0);
+		gui.message("Images remaining = " +mmc.getRemainingImageCount());
+		gui.message("Added image "+counter);
+//		gui.setImageProperty(acq,counter,0,0,"Exposure",exp.toString());
+//		gui.setContrastBasedOnFrame(acq,1,1);
+		counter++;	
+//		itTook = System.currentTimeMillis() - now;
+//		gui.message("Frame took " + itTook + " ms");
+		}
+	
+}
+
+gui.message("DONE!");

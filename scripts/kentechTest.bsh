@@ -1,0 +1,29 @@
+acqName = "test";
+acqPath = "C:/Users/dk1109";
+n_gates = 5;
+
+
+gui.closeAllAcquisitions();
+gui.openAcquisition(acqName, acqPath, n_gates, 1, 1, true, true);
+
+//no initialize?
+
+int counter = 0;
+
+mmc.prepareSequenceAcquisition(mmc.getCameraDevice());
+mmc.startSequenceAcquisition(n_gates, 0, false);
+
+while (mmc.isSequenceRunning() || mmc.getRemainingImageCount() > 0) {
+   if (mmc.getRemainingImageCount() > 0) {
+   	  mmc.setProperty("KentechHRISingleEdge", "Delay", 100*counter);
+   	  mmc.waitForSystem();
+   	  gui.message(mmc.getProperty("KentechHRISingleEdge", "Delay"));
+        img = mmc.popNextTaggedImage();
+        gui.message("Counter = " + counter);
+        //gui.message("Img = " + img);
+        gui.addImageToAcquisition(acqName,counter, 0, 0, 0,img);
+        counter++;
+   } 
+}
+
+

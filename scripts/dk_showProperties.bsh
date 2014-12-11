@@ -1,0 +1,26 @@
+devices = mmc.getLoadedDevices();
+
+for (int i=0; i<devices.size(); i++){
+	
+//	gui.message("Device " + i + ": " + devices.get(i));
+
+	deviceProperties = mmc.getDevicePropertyNames(devices.get(i));
+
+	for (int j=0; j<deviceProperties.size(); j++){
+		
+			gui.message("Device " + i + ": " + devices.get(i) + ", Property " + j + ": " + deviceProperties.get(j));
+
+			possiblePropertyValues = mmc.getAllowedPropertyValues(devices.get(i), deviceProperties.get(j));
+
+			for (int k=0; k<possiblePropertyValues.size(); k++){
+
+					gui.message("Device " + i + ": " + devices.get(i) + ", Property " + j + ": " + deviceProperties.get(j) + ", Possible value " + (k+1) + ": " + possiblePropertyValues.get(k));
+				
+				}
+			
+		}
+		
+	}
+
+
+	

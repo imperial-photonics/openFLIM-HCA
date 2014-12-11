@@ -1,0 +1,140 @@
+import org.json.JSONObject;
+//import org.micromanager.api.TaggedImageStorage;
+
+import loci.formats.ome.OMEXMLMetadata;
+import loci.formats.services.OMEXMLServiceImpl;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.formats.ImageWriter;
+import loci.common.DataTools;
+import java.util.Arrays;
+
+import loci.formats.CoreMetadata;
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.enums.PixelType;
+import ome.xml.model.primitives.PositiveInteger;
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.NonNegativeInteger;
+
+int[] delArrayInt = {0, 1000, 2000, 3000, 4000};
+int no_delays = delArrayInt.length;
+String[] delArrayStr = new String[no_delays];
+for (int a = 0; a < no_delays; a++){
+	delArrayStr[a] = String.valueOf(delArrayInt[a]);
+ }
+
+//width = height = 512;
+path = "C:/Users/dk1109/newtest.OME.tiff";
+
+////set up hri
+//mmc.setProperty("KentechHRISingleEdge", "Calibrated", "Yes");
+//mmc.setProperty("KentechHRISingleEdge", "Inhibited", "Running");
+////mmc.setProperty("KentechHRISingleEdge", "Gain", 750);
+//mmc.setProperty("KentechHRISingleEdge", "Width", 3000);
+
+//populate metadata
+//N.B. setting up all metadata beforehand precludes things like power monitoring being saved...
+
+OMEXMLServiceImpl serv = new OMEXMLServiceImpl();
+OMEXMLMetadata m = serv.createOMEXMLMetadata();
+
+m.createRoot();
+m.setImageID("Image:0", 0);
+m.setPixelsID("Pixels:0", 0);
+m.setPixelsDimensionOrder(DimensionOrder.XYZCT, 0);
+m.setChannelID("Channel:0:0", 0, 0);
+m.setChannelSamplesPerPixel(null, 0, 0);
+m.setPixelsBinDataBigEndian(Boolean.TRUE, 0, 0);
+m.setPixelsType(PixelType.UINT16, 0);
+//long w = core_.getImageWidth();
+//long h = core_.getImageHeight();
+
+w1 = new PositiveInteger(1344);
+h1 = new PositiveInteger(1024);
+g1 = new PositiveInteger(no_delays);
+
+m.setPixelsSizeX((w1), 0);
+m.setPixelsSizeY((h1), 0);
+m.setPixelsSizeZ(new PositiveInteger(1), 0);
+m.setPixelsSizeC(new PositiveInteger(1),0);
+m.setPixelsSizeT(g1, 0);
+
+pitch = new PositiveFloat(6.45);
+
+m.setPixelsPhysicalSizeX(pitch, 0);
+m.setPixelsPhysicalSizeY(pitch, 0);
+m.setPixelsPhysicalSizeZ(new PositiveFloat(1.0),0);
+
+for (int ii = 0; ii < no_delays; ii++) {
+
+   m.setUUIDFileName(delArrayStr[ii], 0, ii);
+   m.setUUIDValue(delArrayStr[ii], 0, ii);		//how to call DICOM UID in java?
+   m.setTiffDataPlaneCount(new NonNegativeInteger(0), 0, ii);
+   m.setTiffDataIFD(new NonNegativeInteger(0), 0, ii);
+   m.setTiffDataFirstZ(new NonNegativeInteger(0),0,ii);
+   m.setTiffDataFirstC(new NonNegativeInteger(0),0,ii);
+   m.setTiffDataFirstT(new NonNegativeInteger(0),0,ii);
+   gui.message("done loop ind " + ii);
+
+
+}
+
+
+CoreMetadata cm = new CoreMetadata();
+cm.moduloT.labels = delArrayStr;
+cm.moduloT.unit = "ns";
+cm.moduloT.type = loci.formats.FormatTools.LIFETIME;
+
+serv.addModuloAlong(m, cm, 0);
+
+new File(path).delete();
+writer = new ImageWriter().getWriter(path);
+writer.setWriteSequentially(true);
+writer.setMetadataRetrieve(m);
+writer.setCompression("LZW");
+//writer.setBigTiff(true);
+writer.setId(path);
+
+
+for (int i = 0; i < no_delays; ++i){
+
+		delay = 1000 * i;
+//		mmc.setProperty("KentechHRISingleEdge", "Delay", delay);
+		mmc.sleep(1000);
+		gui.message("Count = " + i);
+
+//		mmc.snapImage();
+//		img = mmc.getImage();
+
+       //No camera so simulate image
+       short[] pixels = new short[width * height];
+       Arrays.fill(pixels, (short)(i * 128));
+
+       byte[] img = DataTools.shortsToBytes(pixels, true);
+		
+		
+		if (img instanceof byte[])
+		{
+			gui.message("Img is in bytes");
+			writer.setId(path);
+			writer.saveBytes(i, img);
+		}
+		else if (img instanceof short[])
+		{
+			byte[] bytes = DataTools.shortToBytes(img, true);
+			gui.message("Img is short[], converting to bytes");
+			writer.saveBytes(i, bytes);
+		}
+		else
+		{
+			gui.message("I don't know what type img is!");
+		}
+			
+		
+
+}
+
+writer.close();
+		
+	
+	}

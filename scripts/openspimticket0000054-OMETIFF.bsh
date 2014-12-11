@@ -1,0 +1,59 @@
+import java.util.Arrays;
+import loci.common.DataTools;
+import loci.common.services.ServiceFactory;
+import loci.formats.FormatTools;
+import loci.formats.ImageWriter;
+import loci.formats.MetadataTools;
+import loci.formats.meta.IMetadata;
+import loci.formats.services.OMEXMLService;
+import ome.xml.model.enums.DimensionOrder;
+import ome.xml.model.enums.PixelType;
+import ome.xml.model.primitives.PositiveFloat;
+import ome.xml.model.primitives.PositiveInteger;
+
+path = "C:/Users/dk1109/test.ome.tif";
+width = height = 512;
+depth = 10;
+
+metadata = new ServiceFactory().getInstance(OMEXMLService.class).createOMEXMLMetadata(null);
+metadata.createRoot();
+
+metadata.setImageID(MetadataTools.createLSID("Image", new int[] { 0 }), 0);
+metadata.setPixelsID(MetadataTools.createLSID("Pixels", new int[] { 0 }), 0);
+metadata.setPixelsDimensionOrder(DimensionOrder.fromString("XYCZT"), 0);
+metadata.setChannelID(MetadataTools.createLSID("Channel", new int[] { 0, 0 }), 0, 0);
+metadata.setChannelSamplesPerPixel(new PositiveInteger(1), 0, 0);
+metadata.setPixelsBinDataBigEndian(Boolean.FALSE, 0, 0);
+metadata.setPixelsType(PixelType.fromString(FormatTools.getPixelTypeString(FormatTools.UINT16)), 0);
+
+metadata.setPixelsSizeX(new PositiveInteger(width), 0);
+metadata.setPixelsSizeY(new PositiveInteger(height), 0);
+metadata.setPixelsSizeZ(new PositiveInteger(depth), 0);
+metadata.setPixelsSizeC(new PositiveInteger(1), 0);
+metadata.setPixelsSizeT(new PositiveInteger(1), 0);
+
+metadata.setPixelsPhysicalSizeX(new PositiveFloat(1d), 0);
+metadata.setPixelsPhysicalSizeY(new PositiveFloat(1d), 0);
+metadata.setPixelsPhysicalSizeZ(new PositiveFloat(1d), 0);
+metadata.setPixelsTimeIncrement(new Double(1), 0);
+
+new File(path).delete();
+writer = new ImageWriter().getWriter(path);
+writer.setWriteSequentially(true);
+writer.setMetadataRetrieve(metadata);
+writer.setInterleaved(false);
+writer.setBigTiff(true);
+writer.setValidBitsPerPixel(12);
+writer.setCompression("Uncompressed");
+
+for (int i = 0; i < depth; i++) {
+    short[] pixels = new short[width * height];
+    Arrays.fill(pixels, (short)(i * 128));
+
+    byte[] bytes = DataTools.shortsToBytes(pixels, true);
+    writer.setId(path);
+    writer.saveBytes(i, bytes);
+}
+
+gui.message("Done");
+writer.close();

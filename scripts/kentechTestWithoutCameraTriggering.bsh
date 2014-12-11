@@ -1,0 +1,36 @@
+import org.json.JSONObject;
+import org.micromanager.api.TaggedImageStorage;
+
+int no_delays = 5;
+
+//metadata
+
+summary = new JSONObject();
+summary.put("Slices",1); 				//z slices
+summary.put("Positions",1);			//xy positions
+summary.put("Channels",1); 			//(spectral) channels
+summary.put("Frames", no_delays); 	//timepoints
+
+summary.put("SlicesFirst",true);
+summary.put("TimeFirst",false); 		//re: XYZTC ordering?
+
+summary.put("PixelType", "GRAY16");
+summary.put("Width", mmc.getImageWidth());
+summary.put("Height", mmc.getImageHeight());
+summary.put("Prefix", "FLIM_"); 		//put desired base filename here(?)
+
+//path, new_dataset?, summary_metadata, save_md_separately(as well)?, seperate_files_for_xy_pos?, faststorage?
+//TaggedImageStorageMultipageTiff storage = 
+//new TaggedImageStorageMultipageTiff("C:/Users/dk1109",true,summary,false,true); 
+
+
+
+for (int i = 0; i < no_delays; ++i){
+
+		mmc.sleep(1000);
+		gui.message("Count = " + i);
+		mmc.snapImage();
+		img = mmc.getTaggedImage();
+		
+	
+	}
