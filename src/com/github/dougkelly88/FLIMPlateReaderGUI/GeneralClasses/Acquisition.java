@@ -87,7 +87,7 @@ public class Acquisition {
             }
                 
         
-            OMEXMLMetadata m = setBasicMetadata(delays);
+            OMEXMLMetadata m = setBasicMetadata(delays, 1);
             IFormatWriter writer = generateWriter(path, m);
 
             for (Integer delay : delays) {
@@ -99,6 +99,7 @@ public class Acquisition {
                 saveLayersToOMETiff(writer, delays.indexOf(delay));
                 ////
 
+                
                 // OR
 //                gui_.snapAndAddImage(acq, delays.indexOf(delay), 0, 0, 0);
                 
@@ -115,7 +116,7 @@ public class Acquisition {
         }
 
     }
-
+    
     private void saveAcqToOMETiff(IFormatWriter writer, String acq, int length)
             throws Exception {
         ImageCache imgCache = gui_.getAcquisitionImageCache(acq);
@@ -192,7 +193,7 @@ public class Acquisition {
         return pitch;
     }
 
-    private OMEXMLMetadata setBasicMetadata(ArrayList<Integer> delays)
+    private OMEXMLMetadata setBasicMetadata(ArrayList<Integer> delays, int acc)
             throws ServiceException {
 
         OMEXMLServiceImpl serv = new OMEXMLServiceImpl();
@@ -222,6 +223,9 @@ public class Acquisition {
             }
             if (bpp == 2) {
                 m.setPixelsType(PixelType.UINT16, 0);
+            }
+            if (acc > 1){
+                m.setPixelsType(PixelType.UINT32, 0);
             }
 
             PositiveInteger w1 = new PositiveInteger((int) core_.getImageWidth());
