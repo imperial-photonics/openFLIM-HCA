@@ -707,9 +707,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_currentBasePathFieldActionPerformed
     
     private void startSequenceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startSequenceButtonActionPerformed
-            
-        
-        
+
             // TODO: break up into submethods!
         
             Acquisition acq = new Acquisition();
@@ -818,7 +816,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 SeqAcqSetup sas = sass.get(ind);
                 // if time point changed different from last time, wait until 
                 // next time point reached...
-                if (!sas.getTimePoint().getTimeCell().equals(lastTime)){
+                if ((!sas.getTimePoint().getTimeCell().equals(lastTime)) & (order.contains("Time course"))){
                     Double next_time = sas.getTimePoint().getTimeCell() * 1000;
                     while ((System.currentTimeMillis() - start_time) < next_time){
                         Double timeLeft = next_time - (System.currentTimeMillis() - start_time);
@@ -826,7 +824,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     }
                 }
                 // if FOV different, deal with it here...
-                if ( (!sas.getFOV().equals(lastFOV)) | (sas.getFOV().getZ() != lastZ) ){
+                if ( ( (!sas.getFOV().equals(lastFOV)) | (sas.getFOV().getZ() != lastZ) ) & (order.contains("XYZ")) ){
                     // TODO: this needs tweaking in order that autofocus works properly with Z stacks...
                     // Perhaps only do when XY change, and not Z?
                     xyzmi_.gotoFOV(sas.getFOV());
@@ -835,14 +833,23 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
                 
                 // set filter params - can these be handled by a single class?
-                if (!sas.getFilters().getLabel().equals(lastFiltLabel)){
+                if ( (!sas.getFilters().getLabel().equals(lastFiltLabel)) & order.contains("Filter change") ){
                     try {
-                        core_.setShutterOpen(false);
-//                        core_.setProperty("NDFW", "Label", "STOP"); // block light when chaning filters to assure no bleedthrough
-                        core_.setProperty("SpectralFW", "Label", sas.getFilters().getExFilt());
-                        core_.setProperty("CSUX-Dichroic Mirror", "Label", sas.getFilters().getDiFilt());
-                        core_.setProperty("CSUX-Filter Wheel", "Label", sas.getFilters().getEmFilt());
-                        core_.setProperty("NDFW", "Label", sas.getFilters().getNDFilt());
+                        String s = core_.getShutterDevice();
+                        if (!"".equals(s))
+                            core_.setShutterOpen(false);
+                        s = sas.getFilters().getExFilt();
+                        if (!"".equals(s))
+                            core_.setProperty("SpectralFW", "Label", s);
+                        s = sas.getFilters().getDiFilt();
+                        if (!"".equals(s))
+                            core_.setProperty("CSUX-Dichroic Mirror", "Label", s);
+                        s = sas.getFilters().getEmFilt();
+                        if (!"".equals(s))
+                            core_.setProperty("CSUX-Filter Wheel", "Label", s);
+                        s = sas.getFilters().getNDFilt();
+                        if (!"".equals(s))
+                            core_.setProperty("NDFW", "Label", s);
                         core_.setExposure(sas.getFilters().getIntTime());
                         
                     } catch (Exception e) {
@@ -885,7 +892,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 lastZ = sas.getFOV().getZ();
                 lastFiltLabel = sas.getFilters().getLabel();
             }
-                       
+            
+            // RESET DELAY TO BE CONSISTENT WITH UI
+            try{
+                core_.setProperty("Delay box", "Delay (ps)", fLIMPanel1.getCurrentDelay());
+            } catch (Exception  e){
+                System.out.println(e.getMessage());
+            }
     }//GEN-LAST:event_startSequenceButtonActionPerformed
 
     private void snapFLIMButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapFLIMButtonActionPerformed

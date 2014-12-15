@@ -665,6 +665,8 @@ public class FLIMPanel extends javax.swing.JPanel {
 // TODO add your handling code here:
     }//GEN-LAST:event_fastBoxCalibratedCheckPropertyChange
 
+    
+    
     private void updateDelayField(JTextField field){
         int num = 0;
         int min = 0;
@@ -908,6 +910,9 @@ public class FLIMPanel extends javax.swing.JPanel {
         return tableModel_.getData();
     }
 
+    public Double getCurrentDelay(){
+        return fastDelaySlider_.getValue();
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel FLIMToolsPanel;
