@@ -1,0 +1,14 @@
+Data Document
+
+
+General
+Base path: C:\Program Files (x86)\Micro-Manager-1.4-32 20 Oct 2014 build\mmplugins\OpenHCAFLIM
+
+LightPathControl:
+Dichroic: Item 3;
+Emission: null;
+Excitation: Item 3;
+Neutral Density Filter: null;
+Objective: null;
+Filter Cube: null;
+Light Path Prism: null;
