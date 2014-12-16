@@ -1,0 +1,13 @@
+<?xml version = "1.0" encoding="ISO-8859-1"?>
+<PlateList version = "1.0">
+<Plate version = "1.0" name = "Greiner" rows = "8" columns = "12" SampleHolderType = "Well Plate">
+<PlateHeight value = "14.0000" unit = "mm"/>
+<BottomThickness value = "165.0000" unit = "µm"/>
+<BottomInterface name = "Plastic"/>
+<BottomHeight value = "3.3900"/>
+<WellVolume value = "350.0000"/>
+<WellParameters shape = "Round" size = "6.500" unit = "mm"/>
+<TopLeftWellCenterOffset horizontal = "14.3800" vertical = "11.2400" unit = "mm"/>
+<WellSpacing horizontal = "9.0000" vertical = "9.0000" unit = "mm"/>
+</Plate>
+</PlateList>

@@ -1,0 +1,13 @@
+<?xml version = "1.0" encoding="ISO-8859-1"?>
+<PlateList version = "1.0">
+<Plate version = "1.0" name = "Nunc Lab-Tek 8 well chamber slide" rows = "2" columns = "4" SampleHolderType = "Well Plate">
+<PlateHeight value = "14.0000" unit = "mm"/>
+<BottomThickness value = "170.0000" unit = "µm"/>
+<BottomInterface name = "Plastic"/>
+<BottomHeight value = "3.3900"/>
+<WellVolume value = "350.0000"/>
+<WellParameters shape = "Square" size = "7.410" unit = "mm"/>
+<TopLeftWellCenterOffset horizontal = "68.2400" vertical = "36.2200" unit = "mm"/>
+<WellSpacing horizontal = "11.6600" vertical = "11.6600" unit = "mm"/>
+</Plate>
+</PlateList>
