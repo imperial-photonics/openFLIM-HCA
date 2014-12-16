@@ -397,7 +397,7 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
-        FOVPatternCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Spiral", "Ring" }));
+        FOVPatternCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Spiral", "Ring", "ZFish" }));
         FOVPatternCombo.setEnabled(false);
         FOVPatternCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -741,13 +741,26 @@ public class XYSequencing extends javax.swing.JPanel {
     }//GEN-LAST:event_zModeComboActionPerformed
 
     private void storeXYZButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_storeXYZButtonActionPerformed
-        // TODO: replace dummy xyz with (translated) values from hardware. 
-        double x = 34000;
-        double y = 34000;
-        double z = 1000;
+        
         FOV newfov = xyzmi_.getCurrentFOV();
         tableModel_.addRow(newfov);
-        doZStackGeneration(getZStackParams());
+//        doZStackGeneration(getZStackParams());
+        // deal with ZFish case (tile FOVS)
+        if (( (String) FOVPatternCombo.getSelectedItem()).equals("ZFish") & autoGenerateFOVsCheck.isSelected()){
+            // currently hardcode fov size for 10 x objective...
+            // boilerplate - tidy up!
+            double fovx = 1256;
+            double fovy = 920;
+            FOV q1 = new FOV(newfov.getX() - fovx/2, newfov.getY() - fovy/2, newfov.getZ(), pp_);
+            FOV q2 = new FOV(newfov.getX() + fovx/2, newfov.getY() - fovy/2, newfov.getZ(), pp_);
+            FOV q3 = new FOV(newfov.getX() + fovx/2, newfov.getY() + fovy/2, newfov.getZ(), pp_);
+            FOV q4 = new FOV(newfov.getX() - fovx/2, newfov.getY() + fovy/2, newfov.getZ(), pp_);
+            tableModel_.addRow(q1);
+            tableModel_.addRow(q2);
+            tableModel_.addRow(q3);
+            tableModel_.addRow(q4);
+            
+        }
         pmdp_.addSelectedWell(newfov.getWell());
     }//GEN-LAST:event_storeXYZButtonActionPerformed
 

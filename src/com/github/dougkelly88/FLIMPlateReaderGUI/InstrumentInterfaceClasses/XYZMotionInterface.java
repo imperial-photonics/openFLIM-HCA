@@ -10,6 +10,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import mmcorej.CMMCore;
+import mmcorej.DeviceType;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.LUDecomposition;
@@ -37,6 +38,7 @@ public final class XYZMotionInterface {
         core_ = core;
         xystage_ = core.getXYStageDevice();
         zstage_ = core.getFocusDevice();
+                
         stageWellCentres_[0] = new Point2D.Double(106100, 6700); //TL
         stageWellCentres_[1] = new Point2D.Double(7100, 69700);  //BR
         stageWellCentres_[2] = new Point2D.Double(7100, 6700); //TR
@@ -50,6 +52,16 @@ public final class XYZMotionInterface {
                 pp_.getTopLeftWellOffsetH() + (pp_.getPlateColumns() - 1) * pp_.getWellSpacingH(),
                 pp_.getTopLeftWellOffsetV());
         transform_ = deriveAffineTransform(xpltWellCentres_, stageWellCentres_);
+        
+        try{
+            core_.setPosition(zstage_, Double.parseDouble(core_.getProperty("Objective", "Safe Position")));
+            core_.home(xystage_);
+            core_.waitForDeviceType(DeviceType.XYStageDevice);
+            gotoFOV(new FOV("C4", pp_, 1000));
+        } catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        } 
     }
 
     public int gotoFOV(FOV fov) {
