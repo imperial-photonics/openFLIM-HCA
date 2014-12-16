@@ -8,15 +8,20 @@ const char SET_EXP_HEADER = 't';
 const char SET_READOUT_HEADER = 'r';
 const char SET_FRAMES_HEADER = 'f';
 const char ACQ_FRAMES_HEADER = 'a';
+const char LAMP_ON_HEADER = 'i';
+const char LAMP_OFF_HEADER = 'o';
 
 int exposure = 100;
 int readout = 30;
 int frames = 1;
 bool run = false;
+bool change = false;
+bool lampOn = false;
 
 void setup() {
   Serial.begin(9600);
   pinMode(7, OUTPUT);          // set outPin pin as output
+  pinMode(2, OUTPUT);
 }
 
 void loop(){
@@ -25,7 +30,7 @@ void loop(){
   
   if (run == true)
   {
-    Serial.println("Running....");
+    //Serial.println("Running....");
     for (int i=1; i<= frames; i++){
       //N.B. supposedly faster to put code here rather than in fcn
       //N.B.2 delay blocks everything else, but that's ok unless we 
@@ -35,7 +40,17 @@ void loop(){
       fastWrite(7, LOW);        // set pin low
       delay(readout);      //wait "off" microseconds
     }
-    Serial.println("Done!");
+    //Serial.println("Done!");
+  }
+  
+  if (change == true){
+      if (lampOn == true){
+          fastWrite(2, HIGH);
+      }
+      else {
+          fastWrite(2, LOW);
+      }
+      change = false;
   }
 }
 
@@ -88,6 +103,16 @@ bool processSerial()
      Serial.println("GO!");
      val = 0;
      ret = true;
+    }
+    else if (ch == LAMP_ON_HEADER)
+    {
+      lampOn = true;
+      change = true;
+    }
+    else if (ch == LAMP_OFF_HEADER)
+    {
+      lampOn = false;
+      change = false;
     }
   }
   
