@@ -29,6 +29,12 @@ FLIMPlateReaderGUI/src/com/github/dougkelly88/FLIMPlateReaderGUI/GeneralGUICompo
 FLIMPlateReaderGUI/MANIFEST.MF
 FLIMPlateReaderGUI/build.xml
 
+<<<<<<< HEAD
 
 /dist/
 /build/
+=======
+/build.xml
+/dist/
+/build/
+>>>>>>> origin/master
