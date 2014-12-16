@@ -28,3 +28,7 @@ FLIMPlateReaderGUI/src/com/github/dougkelly88/FLIMPlateReaderGUI/GeneralGUICompo
 FLIMPlateReaderGUI/src/com/github/dougkelly88/FLIMPlateReaderGUI/GeneralGUIComponents/HCAFLIMPluginFrame.java.orig
 FLIMPlateReaderGUI/MANIFEST.MF
 FLIMPlateReaderGUI/build.xml
+
+
+/dist/
+/build/
