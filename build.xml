@@ -10,9 +10,9 @@
 <project name="FLIMPlateReaderGUI" default="default" basedir=".">
     <description>Builds, tests, and runs the project FLIMPlateReaderGUI.</description>
     <import file="nbproject/build-impl.xml"/>
-    <target name="-post-jar">
+    <!--<target name="-post-jar">
         <copy file="${dist.jar}/" tofile="C:/Program Files/Micro-Manager-1.4 20 October 32/mmplugins/FLIMPlateReaderGUI.jar"></copy>
-    </target>
+    </target>-->
     
     <!--
 
