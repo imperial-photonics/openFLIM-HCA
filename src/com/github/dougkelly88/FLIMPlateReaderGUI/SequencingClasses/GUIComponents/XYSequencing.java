@@ -7,6 +7,7 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponent
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZMotionInterface;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel;
@@ -45,7 +46,7 @@ public class XYSequencing extends javax.swing.JPanel {
     FOVTableModel tableModel_;
     JTable fovTable_;
     SeqAcqProps sap_;
-    Object parent_;
+    HCAFLIMPluginFrame parent_;
     final static String um = "(" + "\u00B5" + "m)";
     boolean zAsOffset_ = true;
     double[] zStackParams = {0.0, 0.0, 1.0};
@@ -557,7 +558,9 @@ public class XYSequencing extends javax.swing.JPanel {
         ArrayList<FOV> spiralFOVs = new ArrayList<FOV>();
         FOV fov = new FOV(wellString, pp_, 0);
         double[] centrexy = {fov.getX(), fov.getY()};
-        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
+//        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
+        double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
+        
         int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         double[] dxy = new double[2];
         int stepsInCurrentDir;
@@ -778,7 +781,7 @@ public class XYSequencing extends javax.swing.JPanel {
     }
 
     public void setParent(Object o) {
-        parent_ = o;
+        parent_ = (HCAFLIMPluginFrame) o;
     }
     
     public double[] getZStackParams() {

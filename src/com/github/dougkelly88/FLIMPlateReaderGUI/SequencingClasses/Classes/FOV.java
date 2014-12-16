@@ -20,6 +20,7 @@ public class FOV implements Comparable<FOV> {
     double z_;
     double width_ = 314;
     double height_ = 230;   //40x obj, 0.7 relay
+    double magnification_ = 40;
     String well_;
     String group_ = "Experiment";
     PlateProperties pp_;
@@ -168,6 +169,16 @@ public class FOV implements Comparable<FOV> {
 
     public void setHeight_(double height_) {
         this.height_ = height_;
+    }
+    
+    public void setMagnification(double mag){
+        this.height_ = this.height_ * mag / magnification_;
+        this.width_ = this.width_ * mag / magnification_;
+        this.magnification_ = mag;
+    }
+    
+    public double getMagnification(){
+        return this.magnification_;
     }
     
     public void setGroup(String group_) {

@@ -20,6 +20,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import mmcorej.CMMCore;
@@ -685,12 +687,15 @@ public class XYZPanel extends javax.swing.JPanel {
             core_.setProperty("ManualFocus", "NearLimit", 9300);
             core_.setProperty("ManualFocus", "FarLimit", 10);
             core_.setProperty("Objective", "Safe Position", 3000); //TODO: check that this is a good compromise between clearance and speed
-            StrVector temp = core_.getAllowedPropertyValues("AutoFocusZDC", "ObjectiveTypeSetting");
+            StrVector afObj = core_.getAllowedPropertyValues("AutoFocusZDC", "ObjectiveTypeSetting");
+            String[] installedObjStr = (core_.getAllowedPropertyValues("Objective", "Label")).toArray();
+            ArrayList<String> installedObj = new ArrayList(Arrays.asList(installedObjStr));
             afObjectiveCombo.removeAllItems();
-            for (String str : temp){
-                afObjectiveCombo.addItem(str);
+            for (String str : afObj){
+                if (installedObj.contains(str))
+                    afObjectiveCombo.addItem(str);
             }
-            core_.setProperty("ManualFocus", "", "");
+            xyzmi_.moveZAbsolute(3000);
             core_.setProperty("AutoFocusZDC", "SearchRange", Double.parseDouble(afSearchField.getText()));
         } catch (Exception e){
             System.out.println(e.getMessage());

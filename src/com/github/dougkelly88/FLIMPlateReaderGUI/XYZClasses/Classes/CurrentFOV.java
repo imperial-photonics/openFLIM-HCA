@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.Classes;
+package com.github.dougkelly88.FLIMPlateReaderGUI.XYZClasses.Classes;
+
+import com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.Classes.*;
 
 /**
  *
  * @author dk1109
  */
-public class CurrentLightPath {
+public class CurrentFOV {
     String exFilterLabel;
     String emFilterLabel;
     String ndFilterLabel;
@@ -18,7 +20,7 @@ public class CurrentLightPath {
     String portLabel;
     String filterCubeLabel;
 
-    public CurrentLightPath(){
+    public CurrentFOV(){
         exFilterLabel = "465/30";
         emFilterLabel = "525/35";
         ndFilterLabel = "0";
@@ -35,7 +37,7 @@ public class CurrentLightPath {
      * @param ndfilt ND filter
      * @param dichroic  (CSUX) Dichroic filter
      */
-    public CurrentLightPath(String exfilt, String emfilt, String ndfilt, String dichroic){
+    public CurrentFOV(String exfilt, String emfilt, String ndfilt, String dichroic){
         exFilterLabel = exfilt;
         emFilterLabel = emfilt;
         ndFilterLabel = ndfilt;

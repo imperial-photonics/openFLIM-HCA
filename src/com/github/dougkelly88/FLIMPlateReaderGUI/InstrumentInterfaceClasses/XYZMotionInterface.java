@@ -6,6 +6,7 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -28,16 +29,19 @@ public final class XYZMotionInterface {
     Point2D.Double[] stageWellCentres_ = new Point2D.Double[3];
     Point2D.Double[] xpltWellCentres_ = new Point2D.Double[3];
     AffineTransform transform_;
+    HCAFLIMPluginFrame parent_;
 
     //TODO: implement safety checks for objective fouling. 
     //TODO: deal with objective focal shifts
     //TODO: deal (limited) with camera coregistration with stage move?
     //TODO: set first/last well centres in calibration method
-    public XYZMotionInterface(PlateProperties pp, CMMCore core) {
-        pp_ = pp;
-        core_ = core;
-        xystage_ = core.getXYStageDevice();
-        zstage_ = core.getFocusDevice();
+    public XYZMotionInterface(HCAFLIMPluginFrame parent) {
+        parent_ = parent;
+        pp_ = parent.pp_;
+        core_ = parent.core_;
+        
+        xystage_ = core_.getXYStageDevice();
+        zstage_ = core_.getFocusDevice();
                 
         stageWellCentres_[0] = new Point2D.Double(106100, 6700); //TL
         stageWellCentres_[1] = new Point2D.Double(7100, 69700);  //BR
@@ -57,7 +61,8 @@ public final class XYZMotionInterface {
             core_.setPosition(zstage_, Double.parseDouble(core_.getProperty("Objective", "Safe Position")));
             core_.home(xystage_);
             core_.waitForDeviceType(DeviceType.XYStageDevice);
-            gotoFOV(new FOV("C4", pp_, 1000));
+//            gotoFOV(new FOV("C4", pp_, 1000));
+            gotoFOV(parent.currentFOV_);
         } catch (Exception e)
         {
             System.out.println(e.getMessage());
@@ -69,6 +74,7 @@ public final class XYZMotionInterface {
         try {
             Point2D.Double stage = fovXYtoStageXY(fov);
             core_.setXYPosition(xystage_, stage.getX(), stage.getY());
+            parent_.currentFOV_ = fov;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -158,6 +164,8 @@ public final class XYZMotionInterface {
     public boolean moveXYRelative(double x, double y) {
         try {
             core_.setRelativeXYPosition(xystage_, x, y);
+            parent_.currentFOV_.setX(x);
+            parent_.currentFOV_.setY(y);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -167,6 +175,7 @@ public final class XYZMotionInterface {
     public boolean moveZRelative(double z) {
         try {
             core_.setRelativePosition(zstage_, z);
+            parent_.currentFOV_.setZ(z);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -178,6 +187,7 @@ public final class XYZMotionInterface {
             // TODO: check within bounds?
             // TODO: calibrate to make up for lack of parfocality...
             core_.setPosition(zstage_, z);
+            parent_.currentFOV_.setZ(z);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -200,8 +210,13 @@ public final class XYZMotionInterface {
         try {
                 if (on)
                     core_.setProperty(xystage_, "Enable joystick?", "True");
-                else
+                else {
                     core_.setProperty(xystage_, "Enable joystick?", "False");
+                    double x = core_.getXPosition(xystage_);
+                    double y = core_.getYPosition(xystage_);
+                    parent_.currentFOV_.setX(x);
+                    parent_.currentFOV_.setY(y);
+                            }
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -211,8 +226,11 @@ public final class XYZMotionInterface {
         try {
                 if (on)
                     core_.setProperty("OlympusHub", "Control", "Manual + Computer");
-                else
+                else {
                     core_.setProperty("OlympusHub", "Control", "Computer");
+                    double z = core_.getPosition(zstage_);
+                    parent_.currentFOV_.setZ(z);
+                }
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -223,8 +241,11 @@ public final class XYZMotionInterface {
         try {
                 if (on)
                     core_.setProperty("ManualFocus", "FocusWheel", "Frame");
-                else
+                else {
                     core_.setProperty("ManualFocus", "FocusWheel", "Off");
+                    double z = core_.getPosition(zstage_);
+                    parent_.currentFOV_.setZ(z);
+                }
         } catch (Exception e){
             System.out.println(e.getMessage());
         }

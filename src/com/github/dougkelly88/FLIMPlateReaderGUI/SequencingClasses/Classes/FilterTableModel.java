@@ -18,11 +18,12 @@ public class FilterTableModel extends AbstractTableModel {
    public static final int ND_INDEX = 2;
    public static final int DI_INDEX = 3;
    public static final int EM_INDEX = 4;
-   public static final int INT_INDEX = 5;
-   public static final int DELS_INDEX = 6;
+   public static final int CUBE_INDEX = 5;
+   public static final int INT_INDEX = 6;
+   public static final int DELS_INDEX = 7;
    
    private ArrayList<FilterSetup> data_ = new ArrayList<FilterSetup>();
-   private String[] colNames_ = { "Label", "Ex filter", "ND filter", "Dichroic", "Em filter", "Camera integration (ms)", "Delays" };
+   private String[] colNames_ = { "Label", "Ex filter", "ND filter", "Dichroic", "Em filter", "Filter Cube", "Camera integration (ms)", "Delays" };
    
    public FilterTableModel(String[] columnNames) {
          this.colNames_ = columnNames;
@@ -49,7 +50,7 @@ public class FilterTableModel extends AbstractTableModel {
     
     @Override
     public int getColumnCount() {
-        return 7;
+        return 8;
     }
     
     @Override
@@ -79,6 +80,8 @@ public class FilterTableModel extends AbstractTableModel {
             case DI_INDEX:
                 f.setDiFilt(value.toString());
                 break;
+            case CUBE_INDEX:
+                f.setCube(value.toString());
             case LABEL_INDEX:
                 f.setLabel(value.toString());
                 break;
@@ -106,6 +109,8 @@ public class FilterTableModel extends AbstractTableModel {
                 return f.getDiFilt();
             case EM_INDEX:
                 return f.getEmFilt();
+            case CUBE_INDEX:
+                return f.getCube();
             case INT_INDEX:
                 return f.getIntTime();
             case DELS_INDEX: 
@@ -126,6 +131,7 @@ public class FilterTableModel extends AbstractTableModel {
              case DI_INDEX:
              case EM_INDEX:
              case LABEL_INDEX:
+             case CUBE_INDEX:
              case ND_INDEX:
                 return String.class;
              case INT_INDEX:

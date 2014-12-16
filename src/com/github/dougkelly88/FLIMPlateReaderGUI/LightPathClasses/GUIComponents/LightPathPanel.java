@@ -7,8 +7,10 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.SliderControl;
 import com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.Classes.CurrentLightPath;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FilterSetup;
 import com.google.common.eventbus.Subscribe;
 import java.awt.BorderLayout;
 import javax.swing.JComboBox;
@@ -28,7 +30,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     PropertyChangedEvent event_;
     private SeqAcqProps sap_;
     private VariableTest var_;
-    Object parent_;
+    HCAFLIMPluginFrame parent_;
     SliderControl powerSlider_;
     CurrentLightPath currentLightPath_;
     // TODO: replace var_ stuff with currentLightPath_
@@ -370,8 +372,33 @@ public class LightPathPanel extends javax.swing.JPanel {
         setByLabel(objectiveComboBox, "Objective");
         currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
         var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
+        
+        double magnification = getMag((String) objectiveComboBox.getSelectedItem());
+        parent_.currentFOV_.setMagnification(magnification);
     }//GEN-LAST:event_objectiveComboBoxActionPerformed
 
+    private double getMag(String desc){
+        // TODO: CHECK THIS WORKS!
+        // TODO: make this more general/robust...
+        // assumes no "x"s other than as magnification...
+        double mag = 0;
+        double multiplier = 1;
+        int index = desc.indexOf("x") - 1;
+        boolean isNum = isNumeric(Character.toString(desc.charAt(index)));
+        while (isNum){
+            mag += multiplier * Double.parseDouble(Character.toString(desc.charAt(index))); 
+            index--;
+            multiplier = multiplier * 10;
+        }
+        
+        return mag;
+    }
+    
+    private static boolean isNumeric(String str){
+        return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
+        // ref: http://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-a-numeric-type-in-java
+    }
+    
     private void filterCubeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterCubeComboBoxActionPerformed
         setByLabel(filterCubeComboBox, "FilterCube");
         currentLightPath_.setFilterCubeLabel((String) filterCubeComboBox.getSelectedItem());
@@ -507,7 +534,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     }
 
     public void setParent(Object o) {
-        parent_ = o;
+        parent_ = (HCAFLIMPluginFrame) o;
     }
     
     public CurrentLightPath getCurrentLightPath(){

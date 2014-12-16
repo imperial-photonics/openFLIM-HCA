@@ -68,7 +68,7 @@ public class SpectralSequencing extends javax.swing.JPanel {
 //        tableModel_ = new FilterTableModel(new FilterSetup("GFP", "465/30",
 //                "1.0","473-561","520/35",100,initDummy()));
         tableModel_ = new FilterTableModel(new FilterSetup("", "",
-                "","","",100,initDummy()));
+                "","","","",100,initDummy()));
         tableModel_.addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
@@ -105,7 +105,7 @@ public class SpectralSequencing extends javax.swing.JPanel {
 //                        "ND 1.0","473/561","525/30",100,sap_.getDelaysArray().get(0)));
 //                tableModel_.insertRow(r+1, new FilterSetup("GFP", "465/30",
 //                "1.0","473-561","520/35",100,initDummy()));
-                tableModel_.insertRow(r+1, new FilterSetup("", "",
+                tableModel_.insertRow(r+1, new FilterSetup("", "","",
                 "","","",100,initDummy()));
             }
         });

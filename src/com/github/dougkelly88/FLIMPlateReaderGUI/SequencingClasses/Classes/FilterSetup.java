@@ -21,16 +21,18 @@ public class FilterSetup {
     private String ndFilt_ = "1.0";
     private String diFilt_ = "473-561";
     private String emFilt_ = "520/30";    
+    private String filtCube_ = "Empty (Sectioned)";
     private int intTime_ = 100;
     private ArrayList<Integer> delays_;
     
     public FilterSetup(String label, String ex, String nd, String di, String em,
-            int intTime, ArrayList<Integer> delays){
+            String cube, int intTime, ArrayList<Integer> delays){
         label_ = label;
         exFilt_ = ex;
         ndFilt_ = nd;
         diFilt_ = di;
         emFilt_ = em;
+        filtCube_ = cube;
         intTime_ = intTime;
         delays_ = delays;
     }
@@ -41,12 +43,21 @@ public class FilterSetup {
         ndFilt_ = lpp.getCurrentLightPath().getNdFilterLabel();
         diFilt_ = lpp.getCurrentLightPath().getDichroicLabel();
         emFilt_ = lpp.getCurrentLightPath().getEmFilterLabel();
+        filtCube_ = lpp.getCurrentLightPath().getFilterCubeLabel();
         intTime_ = intTime;
         delays_ = fp.getDelays();
     }
     
     public FilterSetup getFilterSetup(){
         return this;
+    }
+    
+    public String getCube() {
+        return filtCube_;
+    }
+
+    public void setCube(String cube) {
+        this.filtCube_ = cube;
     }
     
     public String getExFilt() {
@@ -109,6 +120,7 @@ public class FilterSetup {
    public String toString(){
        return "Filters: Label = " + this.label_ + ", ND = " + this.ndFilt_ 
                 + ", Excitation = " + this.exFilt_ + ", Emission = " + this.emFilt_
+                + ", Cube = "  + this.filtCube_
                 + ", Camera integration (ms) = " + this.intTime_ 
                 + ", Delays (ps) = " + this.delays_.toString();
    }

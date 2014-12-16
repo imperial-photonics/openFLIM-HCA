@@ -12,6 +12,9 @@
     <import file="nbproject/build-impl.xml"/>
     <target name="-post-jar">
         <copy file="${dist.jar}/" tofile="C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/FLIMPlateReaderGUI.jar"></copy>
+        <copy todir="OpenHCAFLIM">
+            <fileset dir="C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/"/>
+        </copy>
     </target>
     
     <!--
