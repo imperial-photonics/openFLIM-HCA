@@ -98,7 +98,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         this.setTitle("OpenFLIM-HCA Plugin");
         core_ = core;
         frame_ = this;
-
+        xYZPanel1.setParent(this);
+        xYZPanel1.setupAFParams(this);
+        
         MMStudio gui_ = MMStudio.getInstance();
         gui_.registerForEvents(this);
 

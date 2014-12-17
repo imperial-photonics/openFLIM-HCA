@@ -38,7 +38,7 @@ public class XYZPanel extends javax.swing.JPanel {
     private PlateProperties pp_;
     private double currentXUm_ = 128;
     private double currentYUm_ = 128;
-    private Object parent_;
+    private HCAFLIMPluginFrame parent_;
     private SeqAcqProps sap_;
     private XYZMotionInterface xyzmi_;
     private FOV currentFOV_;
@@ -678,30 +678,9 @@ public class XYZPanel extends javax.swing.JPanel {
         afOffsetLabel.setText("Autofocus offset " + um + ":");
         afSearchLabel.setText("Autofocus seach range " + um + ":");
         
-        HCAFLIMPluginFrame hfa = (HCAFLIMPluginFrame) parent_;
+//        HCAFLIMPluginFrame hfa = (HCAFLIMPluginFrame) parent_;
 //        core_ = hfa.getCore();
-        core_ = MMStudio.getInstance().getCore();
-        
-        // SETUP OBJECTIVE/AF PARAMS
-        try{
-            core_.setProperty("ManualFocus", "NearLimit", 9300);
-            core_.setProperty("ManualFocus", "FarLimit", 10);
-            core_.setProperty("Objective", "Safe Position", 3000); //TODO: check that this is a good compromise between clearance and speed
-            StrVector afObj = core_.getAllowedPropertyValues("AutoFocusZDC", "ObjectiveTypeSetting");
-            String[] installedObjStr = (core_.getAllowedPropertyValues("Objective", "Label")).toArray();
-            ArrayList<String> installedObj = new ArrayList(Arrays.asList(installedObjStr));
-            afObjectiveCombo.removeAllItems();
-            for (String str : afObj){
-                if (installedObj.contains(str))
-                    afObjectiveCombo.addItem(str);
-            }
-            xyzmi_.moveZAbsolute(3000);
-            core_.setProperty("AutoFocusZDC", "SearchRange", Double.parseDouble(afSearchField.getText()));
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-        
-        
+      
 
     }
     
@@ -737,8 +716,30 @@ public class XYZPanel extends javax.swing.JPanel {
     }
     
     public void setParent(Object o){
-        parent_ = o;
+        parent_ = (HCAFLIMPluginFrame) o;
         
+    }
+    
+    public void setupAFParams(HCAFLIMPluginFrame frame){
+    // SETUP OBJECTIVE/AF PARAMS
+        core_ = frame.core_;
+        try{
+            core_.setProperty("ManualFocus", "NearLimit", 9300);
+            core_.setProperty("ManualFocus", "FarLimit", 10);
+            core_.setProperty("Objective", "Safe Position", 3000); //TODO: check that this is a good compromise between clearance and speed
+            StrVector afObj = core_.getAllowedPropertyValues("AutoFocusZDC", "ObjectiveTypeSetting");
+            String[] installedObjStr = (core_.getAllowedPropertyValues("Objective", "Label")).toArray();
+            ArrayList<String> installedObj = new ArrayList(Arrays.asList(installedObjStr));
+            afObjectiveCombo.removeAllItems();
+            for (String str : afObj){
+                if (installedObj.contains(str))
+                    afObjectiveCombo.addItem(str);
+            }
+            xyzmi_.moveZAbsolute(3000);
+            core_.setProperty("AutoFocusZDC", "SearchRange", Double.parseDouble(afSearchField.getText()));
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
     
     public void onPlateConfigLoaded(boolean enable, PlateProperties pp){
