@@ -73,14 +73,15 @@ import org.json.JSONObject;
  */
 public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
-    CMMCore core_;
+    public CMMCore core_;
     static HCAFLIMPluginFrame frame_;
     private SeqAcqProps sap_;
     private VariableTest var_;
-    private PlateProperties pp_;
-    private XYZMotionInterface xyzmi_;
+    public PlateProperties pp_;
+    public XYZMotionInterface xyzmi_;
     private AcqOrderTableModel tableModel_;
     private JTable seqOrderTable_;
+    public FOV currentFOV_;
 
     @Subscribe
     public void onPropertyChanged(PropertyChangedEvent event) {
@@ -97,7 +98,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         this.setTitle("OpenFLIM-HCA Plugin");
         core_ = core;
         frame_ = this;
-
+        xYZPanel1.setParent(this);
+        xYZPanel1.setupAFParams(this);
+        
         MMStudio gui_ = MMStudio.getInstance();
         gui_.registerForEvents(this);
 
@@ -112,6 +115,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         sap_ = SeqAcqProps.getInstance();
         pp_ = new PlateProperties();
+        currentFOV_ = new FOV("C4", pp_, 1000);
 
         var_ = VariableTest.getInstance();
         currentBasePathField.setText(var_.basepath);
@@ -662,12 +666,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
 //        String fp = new File("").getAbsolutePath();
         File file = new File("mmplugins/OpenHCAFLIM/XPLT/Greiner uClear.xplt"); // relative path now
-        
         try {
             pp_ = pp_.loadProperties(file);
             xYZPanel1.onPlateConfigLoaded(true, pp_);
             xYSequencing1.onPlateConfigLoaded(true, pp_);
-            xyzmi_ = new XYZMotionInterface(pp_, core_);
+            xyzmi_ = new XYZMotionInterface(this);
             xYSequencing1.setXYZMotionInterface(xyzmi_);
             xYZPanel1.setXYZMotionInterface(xyzmi_);
             
@@ -841,9 +844,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         s = sas.getFilters().getExFilt();
                         if (!"".equals(s))
                             core_.setProperty("SpectralFW", "Label", s);
-                        s = sas.getFilters().getDiFilt();
+                        s = sas.getFilters().getCube();
                         if (!"".equals(s))
-                            core_.setProperty("CSUX-Dichroic Mirror", "Label", s);
+                            core_.setProperty("FilterCube", "Label", s);
                         s = sas.getFilters().getEmFilt();
                         if (!"".equals(s))
                             core_.setProperty("CSUX-Filter Wheel", "Label", s);
@@ -851,7 +854,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         if (!"".equals(s))
                             core_.setProperty("NDFW", "Label", s);
                         core_.setExposure(sas.getFilters().getIntTime());
-                        
+                        s = sas.getFilters().getDiFilt();
+                        if (!"".equals(s))
+                            core_.setProperty("CSUX-Dichroic Mirror", "Label", s);
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
@@ -877,7 +882,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     System.out.println(e.getMessage());
                 }
                 
-                acq.snapFLIMImage(path, sas.getFilters().getDelays());
+                acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
                 // shutter laser
                 // TODO: have this work properly in line with auto-shutter?
                 try {
@@ -908,7 +913,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         String fullname = (currentBasePathField.getText() + "/" + timeStamp + "_FLIMSnap.ome.tiff");
         //        acq.dummyTest();
         //        acq.doacqModulo();
-        acq.snapFLIMImage(fullname, sap_.getDelaysArray().get(0));
+        int exp = 100;
+        try {
+            exp = (int) core_.getExposure();
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        // so that same functions can be used, generate dummy SequencedAcquisitionSetup
+        acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
+                new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
     }//GEN-LAST:event_snapFLIMButtonActionPerformed
 
     private void snapBFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapBFButtonActionPerformed
