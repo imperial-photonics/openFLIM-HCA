@@ -807,8 +807,7 @@ public class XYSequencing extends javax.swing.JPanel {
     }//GEN-LAST:event_clearZButtonActionPerformed
 
     private void storedXYZpositionSaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_storedXYZpositionSaveButtonActionPerformed
-        testtt.setText("Läuft");
-        tableModel_.saveAsSpreadsheet();
+        tableModel_.saveFOVTableModelAsSpreadsheet();
        
     }//GEN-LAST:event_storedXYZpositionSaveButtonActionPerformed
 

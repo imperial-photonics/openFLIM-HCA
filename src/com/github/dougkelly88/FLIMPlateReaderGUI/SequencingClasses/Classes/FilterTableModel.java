@@ -5,8 +5,18 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 
+import static com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel.um;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  *
@@ -172,6 +182,53 @@ public class FilterTableModel extends AbstractTableModel {
         return true;
     }
     
+    public void saveFilterTableModelAsSpreadsheet(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+    //    HSSFSheet sheet1 = wb.createSheet("XYSequencing");
+        HSSFSheet sheet2 = wb.createSheet("SpectralSequencing");
+    //    HSSFSheet sheet3 = wb.createSheet("TimeCourseSequencing");
+        
+        
+        int RowSize=data_.size();
+            HSSFRow row0 = sheet2.createRow(0);
+            HSSFCell cell00 = row0.createCell(0);
+            HSSFCell cell01 = row0.createCell(1);
+            HSSFCell cell02 = row0.createCell(2);
+            HSSFCell cell03 = row0.createCell(3);
+            HSSFCell cell04 = row0.createCell(4);
+            cell00.setCellValue("Label");
+            cell01.setCellValue("Ex filter");
+            cell02.setCellValue("ND filter");
+            cell03.setCellValue("Dichroic");
+            cell04.setCellValue("Em filter");
+        for(int RowNum=0; RowNum<RowSize;RowNum++){
+            HSSFRow row = sheet2.createRow(RowNum+1);
+            HSSFCell cell0 = row.createCell(0);
+            HSSFCell cell1 = row.createCell(1);
+            HSSFCell cell2 = row.createCell(2);
+            HSSFCell cell3 = row.createCell(3);
+            HSSFCell cell4 = row.createCell(4);
+            cell0.setCellValue(data_.get(RowNum).getLabel());
+            cell1.setCellValue(data_.get(RowNum).getExFilt());
+            cell2.setCellValue(data_.get(RowNum).getNDFilt());
+            cell3.setCellValue(data_.get(RowNum).getDiFilt());
+            cell4.setCellValue(data_.get(RowNum).getEmFilt());
+            
+        }
+
+        FileOutputStream fileOut = null;
+        try {
+            fileOut = new FileOutputStream("C:\\Users\\Frederik\\Desktop\\OpenHCAFLIM_Sequenzing.xls");
+            wb.write(fileOut);
+            fileOut.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+        
+
         
 }
 
