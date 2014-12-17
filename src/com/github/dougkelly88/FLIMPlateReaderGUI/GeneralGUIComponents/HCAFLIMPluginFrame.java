@@ -880,7 +880,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     System.out.println(e.getMessage());
                 }
                 
-                acq.snapFLIMImage(path, sas.getFilters().getDelays());
+                acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
                 // shutter laser
                 // TODO: have this work properly in line with auto-shutter?
                 try {
@@ -911,7 +911,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         String fullname = (currentBasePathField.getText() + "/" + timeStamp + "_FLIMSnap.ome.tiff");
         //        acq.dummyTest();
         //        acq.doacqModulo();
-        acq.snapFLIMImage(fullname, sap_.getDelaysArray().get(0));
+        int exp = 100;
+        try {
+            exp = (int) core_.getExposure();
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        // so that same functions can be used, generate dummy SequencedAcquisitionSetup
+        acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
+                new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
     }//GEN-LAST:event_snapFLIMButtonActionPerformed
 
     private void snapBFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapBFButtonActionPerformed

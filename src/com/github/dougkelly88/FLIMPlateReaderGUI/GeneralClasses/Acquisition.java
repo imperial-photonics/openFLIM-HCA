@@ -7,6 +7,7 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FilterSetup;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.SeqAcqSetup;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.TimePoint;
 import java.util.ArrayList;
 
@@ -65,7 +66,7 @@ public class Acquisition {
         core_ = gui_.getCore();
     }
 
-    public void snapFLIMImage(String path, ArrayList<Integer> delays) {
+    public void snapFLIMImage(String path, ArrayList<Integer> delays, SeqAcqSetup sas) {
 
         
         
@@ -85,14 +86,13 @@ public class Acquisition {
                 gui_.enableLiveMode(false);
                 gui_.closeAllAcquisitions();
             }
-                
-        
-            OMEXMLMetadata m = setBasicMetadata(delays, 1);
+
+            OMEXMLMetadata m = setBasicMetadata(delays, 1, sas);
             IFormatWriter writer = generateWriter(path, m);
 
             for (Integer delay : delays) {
                 core_.setProperty("Delay box", "Delay (ps)", delay);
-                core_.sleep(100);
+                core_.sleep(50);
 
                 // EITHER
                 core_.snapImage();
@@ -193,7 +193,7 @@ public class Acquisition {
         return pitch;
     }
 
-    private OMEXMLMetadata setBasicMetadata(ArrayList<Integer> delays, int acc)
+    private OMEXMLMetadata setBasicMetadata(ArrayList<Integer> delays, int acc, SeqAcqSetup sas)
             throws ServiceException {
 
         OMEXMLServiceImpl serv = new OMEXMLServiceImpl();
@@ -215,6 +215,7 @@ public class Acquisition {
             m.setChannelSamplesPerPixel(new PositiveInteger(1), 0, 0);
             m.setPixelsBinDataBigEndian(Boolean.FALSE, 0, 0);
             m.setPixelsType(PixelType.UINT8, 0);
+            m.setImageDescription(sas.toString(), 0);
 
             long bpp = core_.getBytesPerPixel();
 
@@ -262,14 +263,17 @@ public class Acquisition {
                 System.out.println("done loop ind " + ii);
             }
 
-            CoreMetadata cm = new CoreMetadata();
+            // deal FLIMfit issue loading single plane images with moduloAlongT
+            if (no_delays < 2){ 
+                CoreMetadata cm = new CoreMetadata();
 
-            cm.moduloT.labels = delArrayStr;
-            cm.moduloT.unit = "ps";
-            cm.moduloT.typeDescription = "Gated";
-            cm.moduloT.type = loci.formats.FormatTools.LIFETIME;
-            serv.addModuloAlong(m, cm, 0);
-            System.out.println("did addModulo");
+                cm.moduloT.labels = delArrayStr;
+                cm.moduloT.unit = "ps";
+                cm.moduloT.typeDescription = "Gated";
+                cm.moduloT.type = loci.formats.FormatTools.LIFETIME;
+                serv.addModuloAlong(m, cm, 0);
+                System.out.println("did addModulo");
+            }
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
