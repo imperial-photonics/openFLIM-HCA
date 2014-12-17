@@ -372,33 +372,35 @@ public class LightPathPanel extends javax.swing.JPanel {
         setByLabel(objectiveComboBox, "Objective");
         currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
         var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
-        
-        double magnification = getMag((String) objectiveComboBox.getSelectedItem());
-        parent_.currentFOV_.setMagnification(magnification);
+//        double magnification = 1;
+//        if (!(objectiveComboBox.getSelectedItem() == null))
+//            magnification = getMag((String) objectiveComboBox.getSelectedItem());
+//        parent_.currentFOV_.setMagnification(magnification);
     }//GEN-LAST:event_objectiveComboBoxActionPerformed
 
-    private double getMag(String desc){
+    private double getMag(String desc) {
         // TODO: CHECK THIS WORKS!
         // TODO: make this more general/robust...
         // assumes no "x"s other than as magnification...
         double mag = 0;
         double multiplier = 1;
         int index = desc.indexOf("x") - 1;
-        boolean isNum = isNumeric(Character.toString(desc.charAt(index)));
-        while (isNum){
-            mag += multiplier * Double.parseDouble(Character.toString(desc.charAt(index))); 
-            index--;
-            multiplier = multiplier * 10;
+        if (index > 0) {
+            boolean isNum = isNumeric(Character.toString(desc.charAt(index)));
+            while (isNum) {
+                mag += multiplier * Double.parseDouble(Character.toString(desc.charAt(index)));
+                index--;
+                multiplier = multiplier * 10;
+            }
         }
-        
         return mag;
     }
-    
-    private static boolean isNumeric(String str){
+
+    private static boolean isNumeric(String str) {
         return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
         // ref: http://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-a-numeric-type-in-java
     }
-    
+
     private void filterCubeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterCubeComboBoxActionPerformed
         setByLabel(filterCubeComboBox, "FilterCube");
         currentLightPath_.setFilterCubeLabel((String) filterCubeComboBox.getSelectedItem());
@@ -460,7 +462,7 @@ public class LightPathPanel extends javax.swing.JPanel {
 
         //SwitchPort Load
         populateComboBoxes(switchPortComboBox, "LightPathPrism");
-        
+
         // set defaults
         setDefaultLightPath();
 
@@ -501,30 +503,40 @@ public class LightPathPanel extends javax.swing.JPanel {
         }
     }
 
-    private void setDefaultLightPath(){
+    private void setDefaultLightPath() {
         // make configurable? for now, use indices
         // rather than labels to avoid breaking things...
         // REMEMBER THAT COMBO BOXES END UP ORDERED!
-        if (dichroicComboBox.isEnabled())
+        if (dichroicComboBox.isEnabled()) {
             dichroicComboBox.setSelectedIndex(1);
-        if (emissionComboBox.isEnabled())
-        emissionComboBox.setSelectedIndex(2);
-        if (ndFWComboBox.isEnabled())
-        ndFWComboBox.setSelectedIndex(5);
-        if (excitationComboBox.isEnabled())
-        excitationComboBox.setSelectedIndex(1);
-        if (objectiveComboBox.isEnabled())
-        objectiveComboBox.setSelectedIndex(1);
-        if (filterCubeComboBox.isEnabled())
-        filterCubeComboBox.setSelectedIndex(1);
-        if (switchPortComboBox.isEnabled())
-        switchPortComboBox.setSelectedIndex(1);
+        }
+        if (emissionComboBox.isEnabled()) {
+            emissionComboBox.setSelectedIndex(2);
+        }
+        if (ndFWComboBox.isEnabled()) {
+            ndFWComboBox.setSelectedIndex(5);
+        }
+        if (excitationComboBox.isEnabled()) {
+            excitationComboBox.setSelectedIndex(1);
+        }
+        if (objectiveComboBox.isEnabled()) {
+            objectiveComboBox.setSelectedIndex(1);
+        }
+        if (filterCubeComboBox.isEnabled()) {
+            filterCubeComboBox.setSelectedIndex(1);
+        }
+        if (switchPortComboBox.isEnabled()) {
+            switchPortComboBox.setSelectedIndex(1);
+        }
     }
-    
+
     private void populateComboBoxes(JComboBox combo, String device) {
         StrVector vals = new StrVector();
         try {
             vals = core_.getAllowedPropertyValues(device, "Label");
+            System.out.println("Combo = " + combo);
+            System.out.println("Item = " + (String) combo.getSelectedItem());
+
             combo.removeAllItems();
             for (String str : vals) {
                 combo.addItem(str);
@@ -543,8 +555,8 @@ public class LightPathPanel extends javax.swing.JPanel {
     public void setParent(Object o) {
         parent_ = (HCAFLIMPluginFrame) o;
     }
-    
-    public CurrentLightPath getCurrentLightPath(){
+
+    public CurrentLightPath getCurrentLightPath() {
         return this.currentLightPath_;
     }
 

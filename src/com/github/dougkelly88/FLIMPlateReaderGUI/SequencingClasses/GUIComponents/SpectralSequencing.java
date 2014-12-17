@@ -158,7 +158,8 @@ public class SpectralSequencing extends javax.swing.JPanel {
         populateCombos(diCombo, "CSUX-Dichroic Mirror", FilterTableModel.DI_INDEX);
         JComboBox emCombo = new JComboBox();
         populateCombos(emCombo, "CSUX-Filter Wheel", FilterTableModel.EM_INDEX);
-        
+        JComboBox cubeCombo = new JComboBox();
+        populateCombos(cubeCombo, "FilterCube", FilterTableModel.CUBE_INDEX);
     }
     
     private void setParent(HCAFLIMPluginFrame frame){

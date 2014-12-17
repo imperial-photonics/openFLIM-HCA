@@ -723,6 +723,7 @@ public class XYZPanel extends javax.swing.JPanel {
     public void setupAFParams(HCAFLIMPluginFrame frame){
     // SETUP OBJECTIVE/AF PARAMS
         core_ = frame.core_;
+        xyzmi_ = frame.xyzmi_;
         try{
             core_.setProperty("ManualFocus", "NearLimit", 9300);
             core_.setProperty("ManualFocus", "FarLimit", 10);

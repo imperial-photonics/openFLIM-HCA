@@ -99,7 +99,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         core_ = core;
         frame_ = this;
         xYZPanel1.setParent(this);
-        xYZPanel1.setupAFParams(this);
+        
         
         MMStudio gui_ = MMStudio.getInstance();
         gui_.registerForEvents(this);
@@ -123,6 +123,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         loadDefaultPlateConfig();
         lightPathControls1.setLoadedHardwareValues();
         setupSequencingTable();
+        xYZPanel1.setupAFParams(this);
         
         try{
             String cam = core_.getCameraDevice();

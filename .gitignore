@@ -33,3 +33,4 @@ FLIMPlateReaderGUI/build.xml
 /dist/
 /build/
 nbproject/private/private.xml
+*.jar
