@@ -7,9 +7,22 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import static java.lang.Math.round;
 import java.util.ArrayList;
+import java.util.ListIterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.WorkbookUtil;
 
 /**
  *
@@ -242,6 +255,54 @@ public class FOVTableModel extends AbstractTableModel {
 
     public void setPlateProps(PlateProperties pp) {
         pp_ = pp;
+    }
+
+    public void saveFOVTableModelAsSpreadsheet(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet1 = wb.createSheet("XYSequencing");
+    //    HSSFSheet sheet2 = wb.createSheet("SpectralSequencing");
+    //    HSSFSheet sheet3 = wb.createSheet("TimeCourseSequencing");
+        
+        
+        int RowSize=data_.size();
+            HSSFRow row0 = sheet1.createRow(0);
+            HSSFCell cell00 = row0.createCell(0);
+            HSSFCell cell01 = row0.createCell(1);
+            HSSFCell cell02 = row0.createCell(2);
+            HSSFCell cell03 = row0.createCell(3);
+            HSSFCell cell04 = row0.createCell(4);
+            cell00.setCellValue("Well");
+            cell01.setCellValue("X " + um);
+            cell02.setCellValue("Y" + um);
+            cell03.setCellValue("Z" + um);
+            cell04.setCellValue("Group");
+        for(int RowNum=0; RowNum<RowSize;RowNum++){
+            HSSFRow row = sheet1.createRow(RowNum+1);
+            HSSFCell cell0 = row.createCell(0);
+            HSSFCell cell1 = row.createCell(1);
+            HSSFCell cell2 = row.createCell(2);
+            HSSFCell cell3 = row.createCell(3);
+            HSSFCell cell4 = row.createCell(4);
+            cell0.setCellValue(data_.get(RowNum).getWell());
+            cell1.setCellValue(data_.get(RowNum).getX());
+            cell2.setCellValue(data_.get(RowNum).getY());
+            cell3.setCellValue(data_.get(RowNum).getZ());
+            cell4.setCellValue(data_.get(RowNum).getGroup());
+        }
+
+        FileOutputStream fileOut = null;
+        try {
+            fileOut = new FileOutputStream("C:\\Users\\Frederik\\Desktop\\OpenHCAFLIM_Sequenzing.xls");
+            wb.write(fileOut);
+            fileOut.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+
+        //To change body of generated methods, choose Tools | Templates.
     }
 
 }

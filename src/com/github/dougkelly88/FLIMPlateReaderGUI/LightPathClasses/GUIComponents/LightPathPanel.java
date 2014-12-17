@@ -505,12 +505,19 @@ public class LightPathPanel extends javax.swing.JPanel {
         // make configurable? for now, use indices
         // rather than labels to avoid breaking things...
         // REMEMBER THAT COMBO BOXES END UP ORDERED!
-        dichroicComboBox.setSelectedIndex(1);
+        if (dichroicComboBox.isEnabled())
+            dichroicComboBox.setSelectedIndex(1);
+        if (emissionComboBox.isEnabled())
         emissionComboBox.setSelectedIndex(2);
+        if (ndFWComboBox.isEnabled())
         ndFWComboBox.setSelectedIndex(5);
+        if (excitationComboBox.isEnabled())
         excitationComboBox.setSelectedIndex(1);
+        if (objectiveComboBox.isEnabled())
         objectiveComboBox.setSelectedIndex(1);
+        if (filterCubeComboBox.isEnabled())
         filterCubeComboBox.setSelectedIndex(1);
+        if (switchPortComboBox.isEnabled())
         switchPortComboBox.setSelectedIndex(1);
     }
     

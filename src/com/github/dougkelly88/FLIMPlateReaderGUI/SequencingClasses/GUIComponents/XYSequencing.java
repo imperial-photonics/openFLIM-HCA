@@ -18,11 +18,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -34,6 +39,8 @@ import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.text.NumberFormatter;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  *
@@ -176,6 +183,8 @@ public class XYSequencing extends javax.swing.JPanel {
         genZStackButton = new javax.swing.JButton();
         zModeCombo = new javax.swing.JComboBox();
         clearZButton = new javax.swing.JButton();
+        storedXYZpositionSaveButton = new javax.swing.JButton();
+        testtt = new javax.swing.JTextField();
         prefindPanel = new javax.swing.JPanel();
         quickPFButton = new javax.swing.JButton();
         advancedPFButton = new javax.swing.JToggleButton();
@@ -244,20 +253,40 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
+        storedXYZpositionSaveButton.setText("Save stored XYZ position");
+        storedXYZpositionSaveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                storedXYZpositionSaveButtonActionPerformed(evt);
+            }
+        });
+
+        testtt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                testttActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout storedXYZPanelLayout = new javax.swing.GroupLayout(storedXYZPanel);
         storedXYZPanel.setLayout(storedXYZPanelLayout);
         storedXYZPanelLayout.setHorizontalGroup(
             storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, storedXYZPanelLayout.createSequentialGroup()
-                .addComponent(fovTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(storedXYZPanelLayout.createSequentialGroup()
+                        .addComponent(fovTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                    .addGroup(storedXYZPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(testtt, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(storedXYZpositionSaveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
                     .addComponent(storeXYZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(clearXYZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(genZStackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(zModeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(clearZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGap(34, 34, 34))
         );
         storedXYZPanelLayout.setVerticalGroup(
             storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -276,6 +305,10 @@ public class XYSequencing extends javax.swing.JPanel {
                         .addComponent(storeXYZButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(clearXYZButton)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(storedXYZpositionSaveButton)
+                    .addComponent(testtt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -776,6 +809,15 @@ public class XYSequencing extends javax.swing.JPanel {
         doZStackGeneration(getZStackParams());
     }//GEN-LAST:event_clearZButtonActionPerformed
 
+    private void storedXYZpositionSaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_storedXYZpositionSaveButtonActionPerformed
+        tableModel_.saveFOVTableModelAsSpreadsheet();
+       
+    }//GEN-LAST:event_storedXYZpositionSaveButtonActionPerformed
+
+    private void testttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testttActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_testttActionPerformed
+
     public void setPlateProperties(PlateProperties pp) {
         pp_ = pp;
     }
@@ -846,6 +888,8 @@ public class XYSequencing extends javax.swing.JPanel {
     private javax.swing.JFormattedTextField ringRadiusField;
     private javax.swing.JButton storeXYZButton;
     private javax.swing.JPanel storedXYZPanel;
+    private javax.swing.JButton storedXYZpositionSaveButton;
+    private javax.swing.JTextField testtt;
     private javax.swing.JComboBox zModeCombo;
     // End of variables declaration//GEN-END:variables
 }
