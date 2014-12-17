@@ -808,24 +808,8 @@ public class XYSequencing extends javax.swing.JPanel {
 
     private void storedXYZpositionSaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_storedXYZpositionSaveButtonActionPerformed
         testtt.setText("Läuft");
-        
-        Workbook wb = new HSSFWorkbook();
-    FileOutputStream fileOut = null;
-        try {
-            fileOut = new FileOutputStream("workbook.xls");
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(XYSequencing.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            wb.write(fileOut);
-        } catch (IOException ex) {
-            Logger.getLogger(XYSequencing.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            fileOut.close();  // TODO add your handling code here:
-        } catch (IOException ex) {
-            Logger.getLogger(XYSequencing.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        tableModel_.saveAsSpreadsheet();
+       
     }//GEN-LAST:event_storedXYZpositionSaveButtonActionPerformed
 
     private void testttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testttActionPerformed

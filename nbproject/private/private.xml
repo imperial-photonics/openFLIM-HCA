@@ -2,6 +2,13 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Open%20HCA%20FLIM/src/com/github/dougkelly88/FLIMPlateReaderGUI/GeneralClasses/Acquisition.java</file>
+            <file>file:/C:/Open%20HCA%20FLIM/src/com/github/dougkelly88/FLIMPlateReaderGUI/XYZClasses/GUIComponents/WellMapDrawPanel.java</file>
+            <file>file:/C:/Open%20HCA%20FLIM/src/com/github/dougkelly88/FLIMPlateReaderGUI/GeneralGUIComponents/HCAFLIMPluginFrame.java</file>
+            <file>file:/C:/Open%20HCA%20FLIM/src/com/github/dougkelly88/FLIMPlateReaderGUI/XYZClasses/GUIComponents/XYZPanel.java</file>
+            <file>file:/C:/Open%20HCA%20FLIM/src/com/github/dougkelly88/FLIMPlateReaderGUI/SequencingClasses/GUIComponents/XYSequencing.java</file>
+            <file>file:/C:/Open%20HCA%20FLIM/src/com/github/dougkelly88/FLIMPlateReaderGUI/LightPathClasses/Classes/CurrentLightPath.java</file>
+        </group>
     </open-files>
 </project-private>
