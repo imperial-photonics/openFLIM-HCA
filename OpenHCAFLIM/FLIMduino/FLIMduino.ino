@@ -75,8 +75,9 @@ bool processSerial()
       exposure = val;
 //      Serial.print("Setting exposure to ");
 //      Serial.println(exposure);
-      debug();
+//      debug();
       val = 0;
+      Serial.println(""+1);
       ret = false;
     }
     else if(ch == SET_READOUT_HEADER)
@@ -100,7 +101,7 @@ bool processSerial()
     }
     else if(ch == ACQ_FRAMES_HEADER)
     {
-     Serial.println("GO!");
+     //Serial.println("GO!");
      val = 0;
      ret = true;
     }
