@@ -7,11 +7,15 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import static com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel.um;
+import com.google.common.base.Functions;
+import static com.google.common.collect.DiscreteDomain.integers;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
@@ -226,7 +230,7 @@ public class FilterTableModel extends AbstractTableModel {
             HSSFCell cell4 = row.createCell(4);
             HSSFCell cell5 = row.createCell(5);
             HSSFCell cell6 = row.createCell(6);
-        //    HSSFCell cell7 = row.createCell(7);
+            HSSFCell cell7 = row.createCell(7);
             
             cell0.setCellValue(data_.get(RowNum).getLabel());
             cell1.setCellValue(data_.get(RowNum).getExFilt());
@@ -235,15 +239,29 @@ public class FilterTableModel extends AbstractTableModel {
             cell4.setCellValue(data_.get(RowNum).getEmFilt());
             cell5.setCellValue(data_.get(RowNum).getCube());
             cell6.setCellValue(data_.get(RowNum).getIntTime());
-    /*        ArrayList a=data_.get(RowNum).getDelays();
-            String b = null;
-             Iterator<Double> iterator = a.iterator();
+           
+            ArrayList<Integer> a = new ArrayList<Integer>();
+            a=data_.get(RowNum).getDelays();
+            List<String> newList = new ArrayList<String>(a.size()); 
+            for (Integer myInt : a) { 
+                newList.add(String.valueOf(myInt)); 
+            }
+        /*    double[] b=null;
+            Iterator<Double> iterator = a.iterator();
             for(int i = 0; i < a.size(); i++)
             {
-            b = Double.toString(iterator.next());
-            }
+            b[i] = iterator.next();
+            }*/
+            String b="[";
+            for (String s : newList)
+                {
+                   b += s + ", ";
+                }
+            int s=b.length();
+            b=b.substring(0, s-2);
+            b=b+"]";
             cell7.setCellValue(b);
-            */
+            
         }
 
         FileOutputStream fileOut = null;
