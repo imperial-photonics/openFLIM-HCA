@@ -259,13 +259,13 @@ public class FOVTableModel extends AbstractTableModel {
     }
 
     public void saveFOVTableModelAsSpreadsheet(){
-
-    //    HSSFWorkbook wb = new HSSFWorkbook();
+       
+    // Save FilterTable in first sheet of wb .xls
+    // Initialize first sheet
         HSSFSheet sheet1 = HCAFLIMPluginFrame.wb.createSheet("XYSequencing");
-    //    HSSFSheet sheet2 = wb.createSheet("SpectralSequencing");
-    //    HSSFSheet sheet3 = wb.createSheet("TimeCourseSequencing");
+
         
-        
+    // Initialize first row with headers    
          int RowSize=data_.size();
             HSSFRow row0 = sheet1.createRow(0);
             HSSFCell cell00 = row0.createCell(0);
@@ -278,6 +278,8 @@ public class FOVTableModel extends AbstractTableModel {
             cell02.setCellValue("Y" + um);
             cell03.setCellValue("Z" + um);
             cell04.setCellValue("Group");
+            
+    // write row for row from table to sheet        
        for(int RowNum=0; RowNum<RowSize;RowNum++){
             HSSFRow row = sheet1.createRow(RowNum+1);
             HSSFCell cell0 = row.createCell(0);
@@ -291,18 +293,8 @@ public class FOVTableModel extends AbstractTableModel {
             cell3.setCellValue(data_.get(RowNum).getZ());
             cell4.setCellValue(data_.get(RowNum).getGroup());
         }
-
-        FileOutputStream fileOut = null;
-        try {
-            fileOut = new FileOutputStream("C:\\Users\\Frederik\\Desktop\\OpenHCAFLIM_Sequenzing.xls");
-            HCAFLIMPluginFrame.wb.write(fileOut);
-            fileOut.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+       
+      
 
         //To change body of generated methods, choose Tools | Templates.
     }

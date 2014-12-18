@@ -6,24 +6,12 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
-import static com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel.um;
-import com.google.common.base.Functions;
-import static com.google.common.collect.DiscreteDomain.integers;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import static ucar.unidata.util.Format.i;
 
 /**
  *
@@ -196,12 +184,12 @@ public class FilterTableModel extends AbstractTableModel {
     }
     
     public void saveFilterTableModelAsSpreadsheet(){
-    //    HSSFWorkbook wb = new HSSFWorkbook();
-    //    HSSFSheet sheet1 = wb.createSheet("XYSequencing");
+        
+    // Save FilterTable in second sheet of wb .xls
+    // Initialize second sheet
         HSSFSheet sheet2 = HCAFLIMPluginFrame.wb.createSheet("SpectralSequencing");
-    //    HSSFSheet sheet3 = wb.createSheet("TimeCourseSequencing");
         
-        
+    // Initialize first row with headers
         int RowSize=data_.size();
             HSSFRow row0 = sheet2.createRow(0);
             HSSFCell cell00 = row0.createCell(0);
@@ -221,6 +209,8 @@ public class FilterTableModel extends AbstractTableModel {
             cell05.setCellValue("Filter Cube");
             cell06.setCellValue("Camera integration (ms)");
             cell07.setCellValue("Delays");
+            
+     // write row for row from table to .xls       
         for(int RowNum=0; RowNum<RowSize;RowNum++){
             HSSFRow row = sheet2.createRow(RowNum+1);
             HSSFCell cell0 = row.createCell(0);
@@ -239,19 +229,14 @@ public class FilterTableModel extends AbstractTableModel {
             cell4.setCellValue(data_.get(RowNum).getEmFilt());
             cell5.setCellValue(data_.get(RowNum).getCube());
             cell6.setCellValue(data_.get(RowNum).getIntTime());
-           
+            
+     // convert Array<List> to String like "[0, 1000, 2000, 3000]" and write it to .xls      
             ArrayList<Integer> a = new ArrayList<Integer>();
             a=data_.get(RowNum).getDelays();
             List<String> newList = new ArrayList<String>(a.size()); 
             for (Integer myInt : a) { 
                 newList.add(String.valueOf(myInt)); 
             }
-        /*    double[] b=null;
-            Iterator<Double> iterator = a.iterator();
-            for(int i = 0; i < a.size(); i++)
-            {
-            b[i] = iterator.next();
-            }*/
             String b="[";
             for (String s : newList)
                 {
@@ -263,17 +248,8 @@ public class FilterTableModel extends AbstractTableModel {
             cell7.setCellValue(b);
             
         }
+        
 
-        FileOutputStream fileOut = null;
-        try {
-            fileOut = new FileOutputStream("C:\\Users\\Frederik\\Desktop\\OpenHCAFLIM_Sequenzing.xls");
-            HCAFLIMPluginFrame.wb.write(fileOut);
-            fileOut.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
         
 
