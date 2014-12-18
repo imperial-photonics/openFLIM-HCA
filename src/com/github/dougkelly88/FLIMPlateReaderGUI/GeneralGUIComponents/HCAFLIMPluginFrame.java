@@ -959,7 +959,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             // write sheet to .xls
         FileOutputStream fileOut = null;
         try {
-            fileOut = new FileOutputStream("C:\\Users\\Frederik\\Desktop\\OpenHCAFLIM_Sequenzing.xls");
+            fileOut = new FileOutputStream(var_.basepath + "\\OpenHCAFLIM_Sequenzing.xls");
             wb.write(fileOut);
             fileOut.close();
         } catch (FileNotFoundException ex) {
