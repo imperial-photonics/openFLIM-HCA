@@ -36,6 +36,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.net.URL;
@@ -67,6 +68,9 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import mmcorej.DeviceType;
 import mmcorej.TaggedImage;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.json.JSONObject;
 
@@ -87,6 +91,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private JTable seqOrderTable_;
     public FOV currentFOV_;
     public static HSSFWorkbook wb = new HSSFWorkbook();
+    public static FileInputStream fileInputStream = null;
    
 //    public static HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -297,8 +302,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         setBaseFolderMenu = new javax.swing.JMenuItem();
         saveMetadataMenu = new javax.swing.JMenuItem();
         loadSoftwareConfig = new javax.swing.JMenuItem();
-        saveSequenzingTablesMenu = new javax.swing.JMenuItem();
+        saveSequencingTablesMenu = new javax.swing.JMenuItem();
         quitMenu = new javax.swing.JMenuItem();
+        loadSequencingTablesMenu = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         advancedMenu = new javax.swing.JMenuItem();
         calibrationMenu = new javax.swing.JMenuItem();
@@ -509,13 +515,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         });
         fileMenu.add(loadSoftwareConfig);
 
-        saveSequenzingTablesMenu.setText("Save sequenzing tables");
-        saveSequenzingTablesMenu.addActionListener(new java.awt.event.ActionListener() {
+        saveSequencingTablesMenu.setText("Save sequencing tables");
+        saveSequencingTablesMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveSequenzingTablesMenuActionPerformed(evt);
+                saveSequencingTablesMenuActionPerformed(evt);
             }
         });
-        fileMenu.add(saveSequenzingTablesMenu);
+        fileMenu.add(saveSequencingTablesMenu);
 
         quitMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
         quitMenu.setText("Quit");
@@ -525,6 +531,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
         });
         fileMenu.add(quitMenu);
+
+        loadSequencingTablesMenu.setText("Load sequencing tables");
+        loadSequencingTablesMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadSequencingTablesMenuActionPerformed(evt);
+            }
+        });
+        fileMenu.add(loadSequencingTablesMenu);
 
         jMenuBar2.add(fileMenu);
 
@@ -947,10 +961,50 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_snapBFButtonActionPerformed
 
-    private void saveSequenzingTablesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSequenzingTablesMenuActionPerformed
+    private void saveSequencingTablesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSequencingTablesMenuActionPerformed
         saveSequencingTablesFunction();
 
-    }//GEN-LAST:event_saveSequenzingTablesMenuActionPerformed
+    }//GEN-LAST:event_saveSequencingTablesMenuActionPerformed
+
+    private void loadSequencingTablesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadSequencingTablesMenuActionPerformed
+        try {
+            loadSequencingTablesFunction();// TODO add your handling code here:
+        } catch (IOException ex) {
+            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_loadSequencingTablesMenuActionPerformed
+   
+    public void loadSequencingTablesFunction() throws IOException{
+        
+        try {
+            fileInputStream = new FileInputStream("C:\\Users\\Frederik\\Desktop\\OpenHCAFLIM_Sequenzing.xls");
+            xYSequencing1.tableModel_.loadFOVTableModelfromSpreadsheet();
+/*          HSSFWorkbook workbook = new HSSFWorkbook(fileInputStream);
+            HSSFSheet worksheet = workbook.getSheet("XYSequencing");
+            HSSFRow row1 = worksheet.getRow(0);
+            HSSFCell cellA1 = row1.getCell((short) 0);
+            String a1Val = cellA1.getStringCellValue();
+            HSSFCell cellB1 = row1.getCell((short) 1);
+            String b1Val = cellB1.getStringCellValue();
+//            HSSFCell cellC1 = row1.getCell((short) 2);
+//            boolean c1Val = cellC1.getBooleanCellValue();
+//            HSSFCell cellD1 = row1.getCell((short) 3);
+//            Date d1Val = cellD1.getDateCellValue();
+            System.out.println("A1: " + a1Val);
+            System.out.println("B1: " + b1Val);
+//            System.out.println("C1: " + c1Val);
+//            System.out.println("D1: " + d1Val);*/
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                fileInputStream.close();
+            } catch (IOException ex) {
+                Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
     public void saveSequencingTablesFunction(){
         wb = new HSSFWorkbook();
         xYSequencing1.tableModel_.saveFOVTableModelAsSpreadsheet();
@@ -1035,10 +1089,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents.LightPathPanel lightPathControls1;
     private javax.swing.JMenuItem loadPlateConfigMenu;
     private javax.swing.JMenuItem loadPlateMetadataMenu;
+    private javax.swing.JMenuItem loadSequencingTablesMenu;
     private javax.swing.JMenuItem loadSoftwareConfig;
     private javax.swing.JMenuItem quitMenu;
     private javax.swing.JMenuItem saveMetadataMenu;
-    private javax.swing.JMenuItem saveSequenzingTablesMenu;
+    private javax.swing.JMenuItem saveSequencingTablesMenu;
     private javax.swing.JPanel seqOrderBasePanel;
     private javax.swing.JPanel sequenceSetupBasePanel;
     private javax.swing.JTabbedPane sequenceSetupTabbedPane;
