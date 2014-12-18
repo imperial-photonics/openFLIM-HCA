@@ -372,7 +372,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         setByLabel(objectiveComboBox, "Objective");
         currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
         var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
-//        double magnification = 1;
+        double magnification = 1;
 //        if (!(objectiveComboBox.getSelectedItem() == null))
 //            magnification = getMag((String) objectiveComboBox.getSelectedItem());
 //        parent_.currentFOV_.setMagnification(magnification);
