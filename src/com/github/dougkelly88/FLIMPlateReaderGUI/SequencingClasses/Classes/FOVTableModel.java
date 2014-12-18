@@ -6,6 +6,7 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.*;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -259,8 +260,8 @@ public class FOVTableModel extends AbstractTableModel {
 
     public void saveFOVTableModelAsSpreadsheet(){
 
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet1 = wb.createSheet("XYSequencing");
+    //    HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet1 = HCAFLIMPluginFrame.wb.createSheet("XYSequencing");
     //    HSSFSheet sheet2 = wb.createSheet("SpectralSequencing");
     //    HSSFSheet sheet3 = wb.createSheet("TimeCourseSequencing");
         
@@ -294,7 +295,7 @@ public class FOVTableModel extends AbstractTableModel {
         FileOutputStream fileOut = null;
         try {
             fileOut = new FileOutputStream("C:\\Users\\Frederik\\Desktop\\OpenHCAFLIM_Sequenzing.xls");
-            wb.write(fileOut);
+            HCAFLIMPluginFrame.wb.write(fileOut);
             fileOut.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);

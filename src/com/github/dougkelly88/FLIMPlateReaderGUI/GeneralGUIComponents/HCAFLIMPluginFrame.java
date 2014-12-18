@@ -19,12 +19,9 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Compa
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.YComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ZComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
-import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FilterSetup;
-import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FilterTableModel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.SeqAcqSetup;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.TimePoint;
-import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing;
 import com.google.common.eventbus.Subscribe;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -67,6 +64,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import mmcorej.DeviceType;
 import mmcorej.TaggedImage;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.json.JSONObject;
 
 
@@ -82,11 +80,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private VariableTest var_;
     public PlateProperties pp_;
     public XYZMotionInterface xyzmi_;
-//    public FOVTableModel tableModelFOV_;
-    private FilterTableModel tableModelFilter_;
     private AcqOrderTableModel tableModel_;
     private JTable seqOrderTable_;
     public FOV currentFOV_;
+    public static HSSFWorkbook wb = new HSSFWorkbook();
 
     @Subscribe
     public void onPropertyChanged(PropertyChangedEvent event) {
@@ -944,8 +941,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_snapBFButtonActionPerformed
 
     private void saveSequenzingTablesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSequenzingTablesMenuActionPerformed
+        
         xYSequencing1.tableModel_.saveFOVTableModelAsSpreadsheet();
-   //     tableModelFilter_.saveFilterTableModelAsSpreadsheet();
+        spectralSequencing1.tableModel_.saveFilterTableModelAsSpreadsheet();
     }//GEN-LAST:event_saveSequenzingTablesMenuActionPerformed
 
     private void calibrationMenuActionPerformed(java.awt.event.ActionEvent evt) {                                                
