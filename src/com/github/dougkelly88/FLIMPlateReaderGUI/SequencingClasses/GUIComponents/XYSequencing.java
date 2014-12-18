@@ -39,8 +39,6 @@ import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.text.NumberFormatter;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  *
@@ -50,7 +48,7 @@ public class XYSequencing extends javax.swing.JPanel {
 
     PlateProperties pp_;
     PlateMapDrawPanel pmdp_;
-    FOVTableModel tableModel_;
+    public FOVTableModel tableModel_;
     JTable fovTable_;
     SeqAcqProps sap_;
     HCAFLIMPluginFrame parent_;

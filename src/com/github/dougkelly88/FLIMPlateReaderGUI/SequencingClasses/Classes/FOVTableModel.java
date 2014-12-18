@@ -258,13 +258,14 @@ public class FOVTableModel extends AbstractTableModel {
     }
 
     public void saveFOVTableModelAsSpreadsheet(){
+
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("XYSequencing");
     //    HSSFSheet sheet2 = wb.createSheet("SpectralSequencing");
     //    HSSFSheet sheet3 = wb.createSheet("TimeCourseSequencing");
         
         
-        int RowSize=data_.size();
+         int RowSize=data_.size();
             HSSFRow row0 = sheet1.createRow(0);
             HSSFCell cell00 = row0.createCell(0);
             HSSFCell cell01 = row0.createCell(1);
@@ -276,7 +277,7 @@ public class FOVTableModel extends AbstractTableModel {
             cell02.setCellValue("Y" + um);
             cell03.setCellValue("Z" + um);
             cell04.setCellValue("Group");
-        for(int RowNum=0; RowNum<RowSize;RowNum++){
+       for(int RowNum=0; RowNum<RowSize;RowNum++){
             HSSFRow row = sheet1.createRow(RowNum+1);
             HSSFCell cell0 = row.createCell(0);
             HSSFCell cell1 = row.createCell(1);

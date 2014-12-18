@@ -19,9 +19,12 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Compa
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.YComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ZComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FilterSetup;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FilterTableModel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.SeqAcqSetup;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.TimePoint;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing;
 import com.google.common.eventbus.Subscribe;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -79,6 +82,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private VariableTest var_;
     public PlateProperties pp_;
     public XYZMotionInterface xyzmi_;
+//    public FOVTableModel tableModelFOV_;
+    private FilterTableModel tableModelFilter_;
     private AcqOrderTableModel tableModel_;
     private JTable seqOrderTable_;
     public FOV currentFOV_;
@@ -289,6 +294,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         setBaseFolderMenu = new javax.swing.JMenuItem();
         saveMetadataMenu = new javax.swing.JMenuItem();
         loadSoftwareConfig = new javax.swing.JMenuItem();
+        saveSequenzingTablesMenu = new javax.swing.JMenuItem();
         quitMenu = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         advancedMenu = new javax.swing.JMenuItem();
@@ -499,6 +505,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
         });
         fileMenu.add(loadSoftwareConfig);
+
+        saveSequenzingTablesMenu.setText("Save sequenzing tables");
+        saveSequenzingTablesMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveSequenzingTablesMenuActionPerformed(evt);
+            }
+        });
+        fileMenu.add(saveSequenzingTablesMenu);
 
         quitMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
         quitMenu.setText("Quit");
@@ -929,6 +943,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_snapBFButtonActionPerformed
 
+    private void saveSequenzingTablesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSequenzingTablesMenuActionPerformed
+        xYSequencing1.tableModel_.saveFOVTableModelAsSpreadsheet();
+   //     tableModelFilter_.saveFilterTableModelAsSpreadsheet();
+    }//GEN-LAST:event_saveSequenzingTablesMenuActionPerformed
+
     private void calibrationMenuActionPerformed(java.awt.event.ActionEvent evt) {                                                
         final JFileChooser fc = new JFileChooser("mmplugins/OpenHCAFLIM/KentechCalibration/CalibrationWithoutBias.csv");   // for debug, make more general
         int returnVal = fc.showOpenDialog(this);
@@ -999,6 +1018,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem loadSoftwareConfig;
     private javax.swing.JMenuItem quitMenu;
     private javax.swing.JMenuItem saveMetadataMenu;
+    private javax.swing.JMenuItem saveSequenzingTablesMenu;
     private javax.swing.JPanel seqOrderBasePanel;
     private javax.swing.JPanel sequenceSetupBasePanel;
     private javax.swing.JTabbedPane sequenceSetupTabbedPane;
