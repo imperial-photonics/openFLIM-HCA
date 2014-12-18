@@ -31,7 +31,7 @@ import org.micromanager.MMStudio;
  */
 public class TimeCourseSequencing extends javax.swing.JPanel {
     
-    TimeCourseTableModel tableModel_;
+    public TimeCourseTableModel tableModel_;
     JTable timeTable_;
     HCAFLIMPluginFrame parent_;
     SeqAcqProps sap_;

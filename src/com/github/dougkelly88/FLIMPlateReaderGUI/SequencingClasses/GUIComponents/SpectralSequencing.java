@@ -36,7 +36,7 @@ import org.micromanager.MMStudio;
  */
 public class SpectralSequencing extends javax.swing.JPanel {
     
-    FilterTableModel tableModel_;
+    public FilterTableModel tableModel_;
     JTable filtTable_;
     HCAFLIMPluginFrame parent_;
     SeqAcqProps sap_;

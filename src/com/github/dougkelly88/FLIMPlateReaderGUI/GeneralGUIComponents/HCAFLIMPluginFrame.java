@@ -19,6 +19,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Compa
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.YComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ZComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FilterSetup;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.SeqAcqSetup;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.TimePoint;
@@ -36,6 +37,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,6 +49,7 @@ import mmcorej.CMMCore;
 import org.micromanager.MMStudio;
 import org.micromanager.api.events.PropertyChangedEvent;
 import java.io.FileReader;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,6 +67,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import mmcorej.DeviceType;
 import mmcorej.TaggedImage;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.json.JSONObject;
 
 
@@ -82,6 +86,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private AcqOrderTableModel tableModel_;
     private JTable seqOrderTable_;
     public FOV currentFOV_;
+    public static HSSFWorkbook wb = new HSSFWorkbook();
+   
+//    public static HSSFWorkbook wb = new HSSFWorkbook();
 
     @Subscribe
     public void onPropertyChanged(PropertyChangedEvent event) {
@@ -99,6 +106,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         core_ = core;
         frame_ = this;
         xYZPanel1.setParent(this);
+        xYSequencing1.setParent(this);
         
         
         MMStudio gui_ = MMStudio.getInstance();
@@ -289,6 +297,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         setBaseFolderMenu = new javax.swing.JMenuItem();
         saveMetadataMenu = new javax.swing.JMenuItem();
         loadSoftwareConfig = new javax.swing.JMenuItem();
+        saveSequenzingTablesMenu = new javax.swing.JMenuItem();
         quitMenu = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         advancedMenu = new javax.swing.JMenuItem();
@@ -500,6 +509,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         });
         fileMenu.add(loadSoftwareConfig);
 
+        saveSequenzingTablesMenu.setText("Save sequenzing tables");
+        saveSequenzingTablesMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveSequenzingTablesMenuActionPerformed(evt);
+            }
+        });
+        fileMenu.add(saveSequenzingTablesMenu);
+
         quitMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
         quitMenu.setText("Quit");
         quitMenu.addActionListener(new java.awt.event.ActionListener() {
@@ -552,8 +569,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(frameScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 10, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -929,6 +947,27 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_snapBFButtonActionPerformed
 
+    private void saveSequenzingTablesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSequenzingTablesMenuActionPerformed
+        saveSequencingTablesFunction();
+
+    }//GEN-LAST:event_saveSequenzingTablesMenuActionPerformed
+    public void saveSequencingTablesFunction(){
+        wb = new HSSFWorkbook();
+        xYSequencing1.tableModel_.saveFOVTableModelAsSpreadsheet();
+        spectralSequencing1.tableModel_.saveFilterTableModelAsSpreadsheet();
+        timeCourseSequencing1.tableModel_.saveTimeCourseTableModelAsSpreadsheet();
+            // write sheet to .xls
+        FileOutputStream fileOut = null;
+        try {
+            fileOut = new FileOutputStream(var_.basepath + "\\OpenHCAFLIM_Sequenzing.xls");
+            wb.write(fileOut);
+            fileOut.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
+        }}
+    
     private void calibrationMenuActionPerformed(java.awt.event.ActionEvent evt) {                                                
         final JFileChooser fc = new JFileChooser("mmplugins/OpenHCAFLIM/KentechCalibration/CalibrationWithoutBias.csv");   // for debug, make more general
         int returnVal = fc.showOpenDialog(this);
@@ -999,6 +1038,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem loadSoftwareConfig;
     private javax.swing.JMenuItem quitMenu;
     private javax.swing.JMenuItem saveMetadataMenu;
+    private javax.swing.JMenuItem saveSequenzingTablesMenu;
     private javax.swing.JPanel seqOrderBasePanel;
     private javax.swing.JPanel sequenceSetupBasePanel;
     private javax.swing.JTabbedPane sequenceSetupTabbedPane;

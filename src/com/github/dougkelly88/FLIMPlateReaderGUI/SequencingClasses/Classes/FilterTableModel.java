@@ -5,18 +5,13 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 
-import static com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel.um;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  *
@@ -189,12 +184,12 @@ public class FilterTableModel extends AbstractTableModel {
     }
     
     public void saveFilterTableModelAsSpreadsheet(){
-        HSSFWorkbook wb = new HSSFWorkbook();
-    //    HSSFSheet sheet1 = wb.createSheet("XYSequencing");
-        HSSFSheet sheet2 = wb.createSheet("SpectralSequencing");
-    //    HSSFSheet sheet3 = wb.createSheet("TimeCourseSequencing");
         
+    // Save FilterTable in second sheet of wb .xls
+    // Initialize second sheet
+        HSSFSheet sheet2 = HCAFLIMPluginFrame.wb.createSheet("SpectralSequencing");
         
+    // Initialize first row with headers
         int RowSize=data_.size();
             HSSFRow row0 = sheet2.createRow(0);
             HSSFCell cell00 = row0.createCell(0);
@@ -202,11 +197,20 @@ public class FilterTableModel extends AbstractTableModel {
             HSSFCell cell02 = row0.createCell(2);
             HSSFCell cell03 = row0.createCell(3);
             HSSFCell cell04 = row0.createCell(4);
+            HSSFCell cell05 = row0.createCell(5);
+            HSSFCell cell06 = row0.createCell(6);
+            HSSFCell cell07 = row0.createCell(7);
+            
             cell00.setCellValue("Label");
             cell01.setCellValue("Ex filter");
             cell02.setCellValue("ND filter");
             cell03.setCellValue("Dichroic");
             cell04.setCellValue("Em filter");
+            cell05.setCellValue("Filter Cube");
+            cell06.setCellValue("Camera integration (ms)");
+            cell07.setCellValue("Delays");
+            
+     // write row for row from table to .xls       
         for(int RowNum=0; RowNum<RowSize;RowNum++){
             HSSFRow row = sheet2.createRow(RowNum+1);
             HSSFCell cell0 = row.createCell(0);
@@ -214,24 +218,38 @@ public class FilterTableModel extends AbstractTableModel {
             HSSFCell cell2 = row.createCell(2);
             HSSFCell cell3 = row.createCell(3);
             HSSFCell cell4 = row.createCell(4);
+            HSSFCell cell5 = row.createCell(5);
+            HSSFCell cell6 = row.createCell(6);
+            HSSFCell cell7 = row.createCell(7);
+            
             cell0.setCellValue(data_.get(RowNum).getLabel());
             cell1.setCellValue(data_.get(RowNum).getExFilt());
             cell2.setCellValue(data_.get(RowNum).getNDFilt());
             cell3.setCellValue(data_.get(RowNum).getDiFilt());
             cell4.setCellValue(data_.get(RowNum).getEmFilt());
+            cell5.setCellValue(data_.get(RowNum).getCube());
+            cell6.setCellValue(data_.get(RowNum).getIntTime());
+            
+     // convert Array<List> to String like "[0, 1000, 2000, 3000]" and write it to .xls      
+            ArrayList<Integer> a = new ArrayList<Integer>();
+            a=data_.get(RowNum).getDelays();
+            List<String> newList = new ArrayList<String>(a.size()); 
+            for (Integer myInt : a) { 
+                newList.add(String.valueOf(myInt)); 
+            }
+            String b="[";
+            for (String s : newList)
+                {
+                   b += s + ", ";
+                }
+            int s=b.length();
+            b=b.substring(0, s-2);
+            b=b+"]";
+            cell7.setCellValue(b);
             
         }
+        
 
-        FileOutputStream fileOut = null;
-        try {
-            fileOut = new FileOutputStream("C:\\Users\\Frederik\\Desktop\\OpenHCAFLIM_Sequenzing.xls");
-            wb.write(fileOut);
-            fileOut.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
         
 

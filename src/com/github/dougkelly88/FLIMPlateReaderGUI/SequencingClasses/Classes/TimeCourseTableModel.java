@@ -5,9 +5,19 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
+import static com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel.um;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 /**
  *
@@ -168,6 +178,41 @@ public class TimeCourseTableModel extends AbstractTableModel {
             fireTableDataChanged();
             
         }
+    }
+    
+    public void saveTimeCourseTableModelAsSpreadsheet(){
+
+    // Save FilterTable in third sheet of wb .xls
+    // Initialize third sheet
+        HSSFSheet sheet3 = HCAFLIMPluginFrame.wb.createSheet("TimeCourseSequencing");
+
+        
+    // Initialize first row with headers    
+         int RowSize=data_.size();
+            HSSFRow row0 = sheet3.createRow(0);
+            HSSFCell cell00 = row0.createCell(0);
+            HSSFCell cell01 = row0.createCell(1);
+            HSSFCell cell02 = row0.createCell(2);
+            cell00.setCellValue("Time (s)");
+            cell01.setCellValue("Liquid dispense volume" + ul);
+            cell02.setCellValue("Sound alert?");
+
+            
+    // write row for row from table to sheet        
+       for(int RowNum=0; RowNum<RowSize;RowNum++){
+            HSSFRow row = sheet3.createRow(RowNum+1);
+            HSSFCell cell0 = row.createCell(0);
+            HSSFCell cell1 = row.createCell(1);
+            HSSFCell cell2 = row.createCell(2);
+            cell0.setCellValue(data_.get(RowNum).getTimeCell());
+            cell1.setCellValue(data_.get(RowNum).getLDVolume());
+            cell2.setCellValue(data_.get(RowNum).getSAState());
+            
+        }
+       
+        
+
+        //To change body of generated methods, choose Tools | Templates.
     }
 
 }
