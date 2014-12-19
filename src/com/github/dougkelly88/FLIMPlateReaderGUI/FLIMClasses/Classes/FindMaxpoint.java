@@ -95,6 +95,19 @@ public class FindMaxpoint {
         return dataset;
     }
     
+    public XYDataset setData(ArrayList<Integer> delays, ArrayList<Double> data){
+        final XYSeries s1 = new XYSeries("RealMaxpoint");
+        for (int ind = 0; ind < delays.size(); ind++){
+            s1.add(delays.get(ind), data.get(ind));
+//                s1.add(i, 4000* exp(-((double) (i - maxpointDelay_))));
+        }
+//        delays_ = 
+        final XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(s1);
+        
+        return dataset;
+    }
+    
     /**
      * Creates a chart.
      * 
@@ -186,15 +199,18 @@ public class FindMaxpoint {
         plot.setDataset(1, gatePositionData_);
     }
     
-    public void acqMaxpointData(){
-        ArrayList<Integer> signal = new ArrayList<Integer>();
-        ArrayList<Integer> delays = new ArrayList<Integer>();
+    public void acqMaxpointData(ArrayList<Integer> delays, ArrayList<Double> means ){
+//        ArrayList<Integer> signal = new ArrayList<Integer>();
+//        ArrayList<Integer> delays = new ArrayList<Integer>();
  
         // instrument interacting fn, currently dummy
         // REMEMBER TO APPLY THRESHOLD
+  
+        
         
         // plot maxpoint data
-        findMaxpointData_ = createDummyMaxpointData(0);
+//        findMaxpointData_ = createDummyMaxpointData(0);
+        findMaxpointData_ = setData(delays, means);
         XYPlot plot = chart_.getXYPlot();
         plot.setDataset(0, findMaxpointData_);
         
@@ -202,26 +218,26 @@ public class FindMaxpoint {
         ArrayList<XYDataItem> dummy = new ArrayList<XYDataItem>(((XYSeriesCollection) findMaxpointData_).getSeries(0).getItems());
         for (XYDataItem dummy1 : dummy) {
             delays.add((Integer) dummy1.getX().intValue());
-            signal.add((Integer) dummy1.getY().intValue());
+            means.add((Double) dummy1.getY().doubleValue());
         }
         
-        int[] res = findMaxIndex(signal);
-        maxpointDelay_ = delays.get(res[0]);
+        Double[] res = findMaxIndex(means);
+        maxpointDelay_ = delays.get(res[0].intValue());
         
         // estimate lifetime
-        signal = new ArrayList<Integer>( signal.subList(res[0], signal.size()));
-        delays = new ArrayList<Integer>( delays.subList(res[0], delays.size()));
+        means = new ArrayList<Double>( means.subList(res[0].intValue(), means.size()));
+        delays = new ArrayList<Integer>( delays.subList(res[0].intValue(), delays.size()));
         double sumt2 = 0;
         double sumt = 0;
         double sumtlnI = 0;
         double sumlnI = 0; 
         
-        for (int i = 0; i < signal.size(); i++){
+        for (int i = 0; i < means.size(); i++){
         
             sumt2 = sumt2 + delays.get(i) * delays.get(i);
             sumt = sumt + delays.get(i);
-            sumlnI =  (sumlnI + log((double) signal.get(i)));
-            sumtlnI = sumtlnI + log((double) signal.get(i)) * delays.get(i);
+            sumlnI =  (sumlnI + log((double) means.get(i)));
+            sumtlnI = sumtlnI + log((double) means.get(i)) * delays.get(i);
             
         }
         
@@ -275,9 +291,9 @@ public class FindMaxpoint {
         return gates;
     }
     
-    private int[] findMaxIndex(ArrayList<Integer> list){
+    private Double[] findMaxIndex(ArrayList<Double> list){
         int maxIndex = 0;
-        int maxVal = Integer.MIN_VALUE;
+        Double maxVal = Double.MIN_VALUE;
         
         for(int i=0; i<list.size(); i++){
             if(list.get(i) > maxVal){
@@ -286,7 +302,7 @@ public class FindMaxpoint {
             }
         }
         
-        int[] ret = {maxIndex, maxVal};
+        Double[] ret = {(double)maxIndex, maxVal};
         return ret;
     }
 

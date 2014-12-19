@@ -113,6 +113,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         frame_ = this;
         xYZPanel1.setParent(this);
         xYSequencing1.setParent(this);
+        lightPathControls1.setParent(this);
         
         
         MMStudio gui_ = MMStudio.getInstance();

@@ -573,19 +573,22 @@ public class FLIMPanel extends javax.swing.JPanel {
 
     private void maxpointButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxpointButtonActionPerformed
             int delayResolution=Integer.parseInt(maxpointResolutionField.getText());
-            ArrayList<Double> meanValues= new ArrayList();
-            for(double delay=0; delay<15000; delay=delay+delayResolution){
+            ArrayList<Double> meanValues= new ArrayList<Double>();
+            ArrayList<Integer> delays = new ArrayList<Integer>();
+            for(int delay=0; delay<15000; delay=delay+delayResolution){
                 try {    
                     core_.setProperty("Delay box", "Delay (ps)", delay);
                     meanValues.add(fm_.getMeanValueOfImage());
-                    
+                    delays.add(delay);
                 } catch (Exception ex) {
                     Logger.getLogger(FLIMPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             
             }
             System.out.print(meanValues);
-        //    fm_.acqMaxpointData();
+            
+            fm_.acqMaxpointData(delays, meanValues);
+//            fm_.setData(delays, meanValues);
     }//GEN-LAST:event_maxpointButtonActionPerformed
 
     private void startFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_startFieldPropertyChange
