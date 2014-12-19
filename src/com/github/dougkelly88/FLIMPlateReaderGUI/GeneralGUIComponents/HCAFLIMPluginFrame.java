@@ -980,8 +980,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             FileInputStream fileInputStream1 = new FileInputStream("C:\\Users\\Frederik\\Desktop\\OpenHCAFLIM_Sequenzing.xls");
             wbLoad = new HSSFWorkbook(fileInputStream1);
             xYSequencing1.tableModel_.loadFOVTableModelfromSpreadsheet();
- //           fileInputStream = new FileInputStream("C:\\Users\\Frederik\\Desktop\\OpenHCAFLIM_Sequenzing.xls");
             spectralSequencing1.tableModel_.loadFilterTableModelfromSpreadsheet();
+            timeCourseSequencing1.tableModel_.loadTimeCourseTableModelfromSpreadsheet();
             fileInputStream1.close();
        
     }

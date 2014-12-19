@@ -270,7 +270,43 @@ public class FilterTableModel extends AbstractTableModel {
             HSSFCell cell5 = row.getCell(5);
             HSSFCell cell6 = row.getCell(6);
             HSSFCell cell7 = row.getCell(7);
-            ArrayList<Integer> delays=null;
+            String delayss= cell7.getStringCellValue();
+        // some initializations for changing String of numbers to arrayList        
+            int strLength=delayss.length();
+            int count=0;
+            ArrayList<Integer> delays=new ArrayList();
+            String findStr = ",";
+            int lastIndex = 0;
+            String label=null;
+            int labelInt=0;
+            int bbb=0;
+        // counting entries in txt file for property
+            while(lastIndex != -1){
+
+                lastIndex = delayss.indexOf(findStr,lastIndex);
+
+                if( lastIndex != -1){
+                  count ++;
+                    lastIndex+=findStr.length();
+                }
+            }
+            
+            String subStr1=delayss.substring(1,strLength-1);
+            
+        // writes every single value into arrayList
+            for(int i=0; i<count; i++)
+            {
+                bbb=subStr1.indexOf(",");
+                label=subStr1.substring(0,bbb);
+                labelInt= Integer.parseInt(label);
+                delays.add(labelInt);
+                subStr1=subStr1.substring(bbb+2);
+            }
+        // writes last entry  
+            label=subStr1;
+            labelInt=Integer.parseInt(label);
+            delays.add(labelInt);
+            
             FilterSetup fov = new FilterSetup( cell0.getStringCellValue(), cell1.getStringCellValue(), cell2.getStringCellValue(), cell3.getStringCellValue(), cell4.getStringCellValue(), cell5.getStringCellValue(),  (int) cell6.getNumericCellValue(), delays);
             load.add(fov);
         }
