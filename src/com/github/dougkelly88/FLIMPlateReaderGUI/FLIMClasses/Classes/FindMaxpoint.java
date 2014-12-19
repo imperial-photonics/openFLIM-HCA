@@ -38,8 +38,8 @@ import org.micromanager.utils.ImageUtils;
  * @author dk1109
  */
 public class FindMaxpoint {
-    MMStudio gui_;
-    CMMCore core_;
+//    MMStudio gui_;
+//    CMMCore core_;
     private JFreeChart chart_;
     private XYDataset findMaxpointData_;
     private ArrayList<Integer> rawMaxpointData_;
@@ -50,10 +50,10 @@ public class FindMaxpoint {
     private ArrayList<Integer> delays_;
     private int maxpointDelay_ = 1000;
 //    private XYDataset dataset_;
-    
+
     public FindMaxpoint(){
-        gui_ = MMStudio.getInstance();
-        core_ = gui_.getCore();
+//        gui_ = MMStudio.getInstance();
+//        core_ = gui_.getCore();
         findMaxpointData_ = createDummyMaxpointData(0);
         gatePositionData_ = createDummyGatingData();
         chart_ = createChart();
@@ -308,11 +308,17 @@ public class FindMaxpoint {
 
     
 
-    public double getMeanValueOfImage(){
+    public double getMeanValueOfImage(CMMCore core){
         double meanValue=-1;
+//        MMStudio gui = MMStudio.getInstance();
+//        CMMCore core = gui.getCore();
+        
+        // TODO: fix such that thresholding takes care of low value pixels
+
         try {
-            core_.snapImage();
-            ImageProcessor ip = ImageUtils.makeProcessor(core_, core_.getImage());
+//            core.getImage();
+            core.snapImage();
+            ImageProcessor ip = ImageUtils.makeProcessor(core, core.getImage());
             ImageStatistics i = ip.getStatistics();
             meanValue = i.mean;
             
