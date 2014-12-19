@@ -64,23 +64,23 @@ public class Acquisition {
                 core_.sleep(50);
 
                 // EITHER
-                core_.snapImage();
-                long dim = core_.getImageWidth()*core_.getImageHeight();
+//                core_.snapImage();
+                long dim = core_.getImageWidth() * core_.getImageHeight();
 //                Object img = core_.getImage();
-                float[] accImg = new float[(int)dim];
+                int[] accImg = new int[(int)dim];
                 for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
                     core_.snapImage();
                     Object img = core_.getImage();
                     // this bit c.f. FrameAverager
-                    if (core_.getImageBitDepth() == 2){
+                    if (core_.getBytesPerPixel() == 2){
                         short[] pixS = (short[]) img;
                         for (int j = 0; j < dim; j++) {
-                            accImg[j] = (float) (accImg[j] + (int) (pixS[j] & 0xffff));
+                            accImg[j] = (int) (accImg[j] + (int) (pixS[j] & 0xffff));
                         }
-                    } else if (core_.getImageBitDepth() == 1){
+                    } else if (core_.getBytesPerPixel() == 1){
                         byte[] pixB = (byte[]) img;
                         for (int j = 0; j < dim; j++) {
-                            accImg[j] = (float) (accImg[j] + (int) (pixB[j] & 0xff));
+                            accImg[j] = (int) (accImg[j] + (int) (pixB[j] & 0xff));
                         }
                     }
 
@@ -140,8 +140,8 @@ public class Acquisition {
             byte[] bytes = DataTools.shortsToBytes((short[]) img, true);
 //            System.out.println("Img is short[], converting to bytes, i = " + layer);
             writer.saveBytes(layer, bytes);
-        } else  if (img instanceof float[]){
-            byte[] bytes = DataTools.floatsToBytes((float[])img, true);
+        } else  if (img instanceof int[]){
+            byte[] bytes = DataTools.intsToBytes((int[]) img, true);
             writer.saveBytes(layer, bytes);
         } else
         {
@@ -208,20 +208,24 @@ public class Acquisition {
             m.setChannelID("Channel:0:0", 0, 0);
             m.setChannelSamplesPerPixel(new PositiveInteger(1), 0, 0);
             m.setPixelsBinDataBigEndian(Boolean.FALSE, 0, 0);
-            m.setPixelsType(PixelType.UINT8, 0);
+//            m.setPixelsType(PixelType.UINT8, 0);
             m.setImageDescription(sas.toString(), 0);
 
             long bpp = core_.getBytesPerPixel();
 
-            if (bpp == 1) {
-                m.setPixelsType(PixelType.UINT8, 0);
-            }
-            if (bpp == 2) {
-                m.setPixelsType(PixelType.UINT16, 0);
-            }
-            if (sas.getFilters().getAccFrames() > 1){
+//            if (sas.getFilters().getAccFrames() == 1){
+//                if (bpp == 1) {
+//                    m.setPixelsType(PixelType.UINT8, 0);
+//                }
+//                if (bpp == 2) {
+//                    m.setPixelsType(PixelType.UINT16, 0);
+//                }
+//            }
+//            else if (sas.getFilters().getAccFrames() > 0){ 
+                System.out.println("setting pixeltype to 32");
                 m.setPixelsType(PixelType.UINT32, 0);
-            }
+                
+//            }
 
             PositiveInteger w1 = new PositiveInteger((int) core_.getImageWidth());
             PositiveInteger h1 = new PositiveInteger((int) core_.getImageHeight());
@@ -258,7 +262,7 @@ public class Acquisition {
             }
 
             // deal FLIMfit issue loading single plane images with moduloAlongT
-            if (no_delays < 2){ 
+            if (no_delays > 2){ 
                 CoreMetadata cm = new CoreMetadata();
 
                 cm.moduloT.labels = delArrayStr;
