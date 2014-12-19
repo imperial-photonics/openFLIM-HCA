@@ -6,14 +6,8 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
-import static com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel.um;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -213,6 +207,25 @@ public class TimeCourseTableModel extends AbstractTableModel {
         
 
         //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void loadTimeCourseTableModelfromSpreadsheet() {
+        ArrayList<TimePoint> load=new ArrayList();
+        HSSFSheet worksheet = HCAFLIMPluginFrame.wbLoad.getSheet("TimeCourseSequencing");
+        int RowSize=worksheet.getPhysicalNumberOfRows();
+        for(int RowNum=0; RowNum<RowSize-1;RowNum++){
+            HSSFRow row = worksheet.getRow(RowNum+1);
+            HSSFCell cell0 = row.getCell(0);
+            HSSFCell cell1 = row.getCell(1);
+            HSSFCell cell2 = row.getCell(2);
+            
+            TimePoint fov = new TimePoint(cell0.getNumericCellValue(),cell1.getNumericCellValue(), cell2.getBooleanCellValue());
+            load.add(fov);
+        }
+        data_=load;
+        fireTableDataChanged();
+        
+    
     }
 
 }

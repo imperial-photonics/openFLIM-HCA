@@ -49,12 +49,12 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadSoftwareConfigActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="saveSequenzingTablesMenu">
+            <MenuItem class="javax.swing.JMenuItem" name="saveSequencingTablesMenu">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Save sequenzing tables"/>
+                <Property name="text" type="java.lang.String" value="Save sequencing tables"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveSequenzingTablesMenuActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveSequencingTablesMenuActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="quitMenu">
@@ -66,6 +66,14 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="quitMenuActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="loadSequencingTablesMenu">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Load sequencing tables"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadSequencingTablesMenuActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

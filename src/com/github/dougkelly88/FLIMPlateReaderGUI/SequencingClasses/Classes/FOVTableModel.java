@@ -30,7 +30,6 @@ import org.apache.poi.ss.util.WorkbookUtil;
  * @author dk1109
  */
 public class FOVTableModel extends AbstractTableModel {
-
     public static final int WELL_INDEX = 0;
     public static final int X_INDEX = 1;
     public static final int Y_INDEX = 2;
@@ -297,6 +296,27 @@ public class FOVTableModel extends AbstractTableModel {
       
 
         //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public void loadFOVTableModelfromSpreadsheet(){
+        ArrayList<FOV> load=new ArrayList();
+        HSSFSheet worksheet = HCAFLIMPluginFrame.wbLoad.getSheet("XYSequencing");
+        int RowSize=worksheet.getPhysicalNumberOfRows();
+        for(int RowNum=0; RowNum<RowSize-1;RowNum++){
+            HSSFRow row = worksheet.getRow(RowNum+1);
+            HSSFCell cell0 = row.getCell(0);
+            HSSFCell cell1 = row.getCell(1);
+            HSSFCell cell2 = row.getCell(2);
+            HSSFCell cell3 = row.getCell(3);
+            HSSFCell cell4 = row.getCell(4);
+            
+            FOV fov = new FOV(cell1.getNumericCellValue(),cell2.getNumericCellValue(),cell3.getNumericCellValue(),cell0.getStringCellValue(), pp_);
+            fov.setGroup(cell4.getStringCellValue());
+            load.add(fov);
+        }
+        data_=load;
+        fireTableDataChanged();
+        
     }
 
 }
