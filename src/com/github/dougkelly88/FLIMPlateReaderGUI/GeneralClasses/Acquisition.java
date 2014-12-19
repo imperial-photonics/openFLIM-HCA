@@ -25,10 +25,12 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.NonNegativeInteger;
 import java.io.IOException;
 import com.quirkware.guid.PlatformIndependentGuidGen;
+import ij.process.ImageProcessor;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
 import mmcorej.TaggedImage;
 import org.micromanager.api.ImageCache;
+import org.micromanager.utils.ImageUtils;
 
 /**
  *
@@ -47,8 +49,6 @@ public class Acquisition {
 
     public void snapFLIMImage(String path, ArrayList<Integer> delays, SeqAcqSetup sas) {
 
-        
-        
         try{
 
             if (gui_.isLiveModeOn() | gui_.isAcquisitionRunning()){
@@ -56,7 +56,7 @@ public class Acquisition {
                 gui_.closeAllAcquisitions();
             }
 
-            OMEXMLMetadata m = setBasicMetadata(delays, 1, sas);
+            OMEXMLMetadata m = setBasicMetadata(delays, sas);
             IFormatWriter writer = generateWriter(path, m);
 
             for (Integer delay : delays) {
@@ -65,7 +65,28 @@ public class Acquisition {
 
                 // EITHER
                 core_.snapImage();
-                saveLayersToOMETiff(writer, delays.indexOf(delay));
+                long dim = core_.getImageWidth()*core_.getImageHeight();
+//                Object img = core_.getImage();
+                float[] accImg = new float[(int)dim];
+                for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
+                    core_.snapImage();
+                    Object img = core_.getImage();
+                    // this bit c.f. FrameAverager
+                    if (core_.getImageBitDepth() == 2){
+                        short[] pixS = (short[]) img;
+                        for (int j = 0; j < dim; j++) {
+                            accImg[j] = (float) (accImg[j] + (int) (pixS[j] & 0xffff));
+                        }
+                    } else if (core_.getImageBitDepth() == 1){
+                        byte[] pixB = (byte[]) img;
+                        for (int j = 0; j < dim; j++) {
+                            accImg[j] = (float) (accImg[j] + (int) (pixB[j] & 0xff));
+                        }
+                    }
+
+                }
+//                core_.snapImage();
+                saveLayersToOMETiff(writer, accImg, delays.indexOf(delay));
                 ////
 
                 
@@ -109,17 +130,21 @@ public class Acquisition {
 
     }
 
-    private void saveLayersToOMETiff(IFormatWriter writer, int layer)
+    private void saveLayersToOMETiff(IFormatWriter writer, Object img, int layer)
             throws Exception {
-        Object img = core_.getImage();
+//        Object img = core_.getImage();
         if (img instanceof byte[]) {
             System.out.println("Img is in bytes");
             writer.saveBytes(layer, (byte[]) img);
         } else if (img instanceof short[]) {
             byte[] bytes = DataTools.shortsToBytes((short[]) img, true);
-            System.out.println("Img is short[], converting to bytes, i = " + layer);
+//            System.out.println("Img is short[], converting to bytes, i = " + layer);
             writer.saveBytes(layer, bytes);
-        } else {
+        } else  if (img instanceof float[]){
+            byte[] bytes = DataTools.floatsToBytes((float[])img, true);
+            writer.saveBytes(layer, bytes);
+        } else
+        {
             System.out.println("I don't know what type img is!");
         }
     }
@@ -162,7 +187,7 @@ public class Acquisition {
         return pitch;
     }
 
-    private OMEXMLMetadata setBasicMetadata(ArrayList<Integer> delays, int acc, SeqAcqSetup sas)
+    private OMEXMLMetadata setBasicMetadata(ArrayList<Integer> delays, SeqAcqSetup sas)
             throws ServiceException {
 
         OMEXMLServiceImpl serv = new OMEXMLServiceImpl();
@@ -194,7 +219,7 @@ public class Acquisition {
             if (bpp == 2) {
                 m.setPixelsType(PixelType.UINT16, 0);
             }
-            if (acc > 1){
+            if (sas.getFilters().getAccFrames() > 1){
                 m.setPixelsType(PixelType.UINT32, 0);
             }
 

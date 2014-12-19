@@ -555,6 +555,11 @@ public class LightPathPanel extends javax.swing.JPanel {
     public void setParent(Object o) {
         parent_ = (HCAFLIMPluginFrame) o;
     }
+    
+    
+    public Object getFrameParent(){
+        return parent_;
+    }
 
     public CurrentLightPath getCurrentLightPath() {
         return this.currentLightPath_;

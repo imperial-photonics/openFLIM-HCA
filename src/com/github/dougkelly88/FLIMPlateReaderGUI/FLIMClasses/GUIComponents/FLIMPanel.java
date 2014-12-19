@@ -576,7 +576,7 @@ public class FLIMPanel extends javax.swing.JPanel {
             ArrayList<Double> meanValues= new ArrayList();
             for(double delay=0; delay<15000; delay=delay+delayResolution){
                 try {    
-                    //core_.setProperty("Delay box", "Delay (ps)", delay);
+                    core_.setProperty("Delay box", "Delay (ps)", delay);
                     meanValues.add(fm_.getMeanValueOfImage());
                     
                 } catch (Exception ex) {

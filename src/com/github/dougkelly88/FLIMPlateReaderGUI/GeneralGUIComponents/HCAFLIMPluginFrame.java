@@ -1043,6 +1043,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         }
     }                                               
 
+    public int getAccFrames(){
+        return Integer.parseInt(accFramesField.getText());
+    }
     
     /**
      * @param args the command line arguments

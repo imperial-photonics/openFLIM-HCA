@@ -6,6 +6,7 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.GUIComponents.FLIMPanel;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents.LightPathPanel;
 import java.util.ArrayList;
 
@@ -23,7 +24,7 @@ public class FilterSetup {
     private String emFilt_ = "520/30";    
     private String filtCube_ = "Empty (Sectioned)";
     private int intTime_ = 100;
-    private int acqFrames_ = 1;
+    private int accFrames_ = 1;
     private ArrayList<Integer> delays_;
     
     public FilterSetup(String label, String ex, String nd, String di, String em,
@@ -46,12 +47,20 @@ public class FilterSetup {
         emFilt_ = lpp.getCurrentLightPath().getEmFilterLabel();
         filtCube_ = lpp.getCurrentLightPath().getFilterCubeLabel();
         intTime_ = intTime;
-        acqFrames_ = lpp.getParent().getAcqFrames();
+        accFrames_ = ((HCAFLIMPluginFrame) lpp.getFrameParent()).getAccFrames();
         delays_ = fp.getDelays();
     }
     
     public FilterSetup getFilterSetup(){
         return this;
+    }
+    
+    public void setAccFrames(int accframes){
+        accFrames_ = accframes;
+    }
+    
+    public int getAccFrames(){
+        return accFrames_;
     }
     
     public String getCube() {
@@ -124,6 +133,7 @@ public class FilterSetup {
                 + ", Excitation = " + this.exFilt_ + ", Emission = " + this.emFilt_
                 + ", Cube = "  + this.filtCube_
                 + ", Camera integration (ms) = " + this.intTime_ 
+                + ", Camera accumulated frames = " + this.accFrames_
                 + ", Delays (ps) = " + this.delays_.toString();
    }
     
