@@ -23,10 +23,11 @@ public class FilterSetup {
     private String emFilt_ = "520/30";    
     private String filtCube_ = "Empty (Sectioned)";
     private int intTime_ = 100;
+    private int acqFrames_ = 1;
     private ArrayList<Integer> delays_;
     
     public FilterSetup(String label, String ex, String nd, String di, String em,
-            String cube, int intTime, ArrayList<Integer> delays){
+            String cube, int intTime, int acqFrames, ArrayList<Integer> delays){
         label_ = label;
         exFilt_ = ex;
         ndFilt_ = nd;
@@ -45,6 +46,7 @@ public class FilterSetup {
         emFilt_ = lpp.getCurrentLightPath().getEmFilterLabel();
         filtCube_ = lpp.getCurrentLightPath().getFilterCubeLabel();
         intTime_ = intTime;
+        acqFrames_ = lpp.getParent().getAcqFrames();
         delays_ = fp.getDelays();
     }
     

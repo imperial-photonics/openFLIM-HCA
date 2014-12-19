@@ -47,6 +47,9 @@ import loci.common.Location;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
 import loci.formats.out.OMETiffWriter;
+import ij.process.ImageStatistics;
+import ij.process.ImageProcessor;
+import org.micromanager.utils.ImageUtils;
 
 import mmcorej.TaggedImage;
 import org.micromanager.api.ImageCache;
@@ -64,6 +67,7 @@ public class Acquisition {
     public Acquisition() {
         gui_ = MMStudio.getInstance();
         core_ = gui_.getCore();
+        
     }
 
     public void snapFLIMImage(String path, ArrayList<Integer> delays, SeqAcqSetup sas) {
@@ -96,7 +100,12 @@ public class Acquisition {
 
                 // EITHER
                 core_.snapImage();
-                saveLayersToOMETiff(writer, delays.indexOf(delay));
+                Object img = core_.getImage();
+                ImageProcessor ip = ImageUtils.makeProcessor(core_, img);
+                ImageStatistics i = ip.getStatistics();
+                double meanval = i.mean;
+                ip.getPixels();
+                saveLayersToOMETiff(writer, img, delays.indexOf(delay));
                 ////
 
                 
@@ -140,9 +149,9 @@ public class Acquisition {
 
     }
 
-    private void saveLayersToOMETiff(IFormatWriter writer, int layer)
+    private void saveLayersToOMETiff(IFormatWriter writer, Object img, int layer)
             throws Exception {
-        Object img = core_.getImage();
+//        Object img = core_.getImage();
         if (img instanceof byte[]) {
             System.out.println("Img is in bytes");
             writer.saveBytes(layer, (byte[]) img);
