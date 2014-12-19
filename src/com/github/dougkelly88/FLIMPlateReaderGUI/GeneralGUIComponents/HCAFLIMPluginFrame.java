@@ -91,7 +91,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private JTable seqOrderTable_;
     public FOV currentFOV_;
     public static HSSFWorkbook wb = new HSSFWorkbook();
-    public static FileInputStream fileInputStream = null;
+    public static HSSFWorkbook wbLoad = new HSSFWorkbook();
+    
    
 //    public static HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -976,41 +977,22 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
    
     public void loadSequencingTablesFunction() throws IOException{
         
-        try {
-            fileInputStream = new FileInputStream("C:\\Users\\Frederik\\Desktop\\OpenHCAFLIM_Sequenzing.xls");
+            FileInputStream fileInputStream1 = new FileInputStream("C:\\Users\\Frederik\\Desktop\\OpenHCAFLIM_Sequenzing.xls");
+            wbLoad = new HSSFWorkbook(fileInputStream1);
             xYSequencing1.tableModel_.loadFOVTableModelfromSpreadsheet();
-/*          HSSFWorkbook workbook = new HSSFWorkbook(fileInputStream);
-            HSSFSheet worksheet = workbook.getSheet("XYSequencing");
-            HSSFRow row1 = worksheet.getRow(0);
-            HSSFCell cellA1 = row1.getCell((short) 0);
-            String a1Val = cellA1.getStringCellValue();
-            HSSFCell cellB1 = row1.getCell((short) 1);
-            String b1Val = cellB1.getStringCellValue();
-//            HSSFCell cellC1 = row1.getCell((short) 2);
-//            boolean c1Val = cellC1.getBooleanCellValue();
-//            HSSFCell cellD1 = row1.getCell((short) 3);
-//            Date d1Val = cellD1.getDateCellValue();
-            System.out.println("A1: " + a1Val);
-            System.out.println("B1: " + b1Val);
-//            System.out.println("C1: " + c1Val);
-//            System.out.println("D1: " + d1Val);*/
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                fileInputStream.close();
-            } catch (IOException ex) {
-                Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+ //           fileInputStream = new FileInputStream("C:\\Users\\Frederik\\Desktop\\OpenHCAFLIM_Sequenzing.xls");
+            spectralSequencing1.tableModel_.loadFilterTableModelfromSpreadsheet();
+            fileInputStream1.close();
+       
     }
     
     public void saveSequencingTablesFunction(){
+    // write sheets to .xls
         wb = new HSSFWorkbook();
         xYSequencing1.tableModel_.saveFOVTableModelAsSpreadsheet();
         spectralSequencing1.tableModel_.saveFilterTableModelAsSpreadsheet();
         timeCourseSequencing1.tableModel_.saveTimeCourseTableModelAsSpreadsheet();
-            // write sheet to .xls
+    
         FileOutputStream fileOut = null;
         try {
             fileOut = new FileOutputStream(var_.basepath + "\\OpenHCAFLIM_Sequenzing.xls");

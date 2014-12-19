@@ -300,36 +300,22 @@ public class FOVTableModel extends AbstractTableModel {
     
     public void loadFOVTableModelfromSpreadsheet(){
         ArrayList<FOV> load=new ArrayList();
-        try {
-            HSSFWorkbook workbook = new HSSFWorkbook(HCAFLIMPluginFrame.fileInputStream);
-            HSSFSheet worksheet = workbook.getSheet("XYSequencing");
-            int RowSize=worksheet.getPhysicalNumberOfRows();
-           /* HSSFRow row0 = worksheet.getRow(0);
-            HSSFCell cell00 = row0.getCell(0);
-            String a1Val0 = cell00.getStringCellValue();
-            HSSFCell cell01 = row0.getCell(1);
-            String a2Val0 = cell01.getStringCellValue();
-            System.out.print(a1Val0+a2Val0);*/
+        HSSFSheet worksheet = HCAFLIMPluginFrame.wbLoad.getSheet("XYSequencing");
+        int RowSize=worksheet.getPhysicalNumberOfRows();
+        for(int RowNum=0; RowNum<RowSize-1;RowNum++){
+            HSSFRow row = worksheet.getRow(RowNum+1);
+            HSSFCell cell0 = row.getCell(0);
+            HSSFCell cell1 = row.getCell(1);
+            HSSFCell cell2 = row.getCell(2);
+            HSSFCell cell3 = row.getCell(3);
+            HSSFCell cell4 = row.getCell(4);
             
-            
-            for(int RowNum=0; RowNum<RowSize-1;RowNum++){
-                HSSFRow row = worksheet.getRow(RowNum+1);
-                HSSFCell cell0 = row.getCell(0);
-                HSSFCell cell1 = row.getCell(1);
-                HSSFCell cell2 = row.getCell(2);
-                HSSFCell cell3 = row.getCell(3);
-                HSSFCell cell4 = row.getCell(4);
-
-                FOV fov = new FOV(cell1.getNumericCellValue(),cell2.getNumericCellValue(),cell3.getNumericCellValue(),cell0.getStringCellValue(), pp_);
-                fov.setGroup(cell4.getStringCellValue());
-                load.add(fov);
-                }
-                data_=load;
-                fireTableDataChanged();
-                
-        } catch (IOException ex) {
-            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
+            FOV fov = new FOV(cell1.getNumericCellValue(),cell2.getNumericCellValue(),cell3.getNumericCellValue(),cell0.getStringCellValue(), pp_);
+            fov.setGroup(cell4.getStringCellValue());
+            load.add(fov);
         }
+        data_=load;
+        fireTableDataChanged();
         
     }
 
