@@ -22,6 +22,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent; 
 import static java.lang.Math.round; 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenuItem; 
 import javax.swing.JPopupMenu; 
 import javax.swing.JScrollPane; 
@@ -570,8 +572,20 @@ public class FLIMPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_maxpointResolutionFieldActionPerformed
 
     private void maxpointButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxpointButtonActionPerformed
-
-        fm_.acqMaxpointData();
+            int delayResolution=Integer.parseInt(maxpointResolutionField.getText());
+            ArrayList<Double> meanValues= new ArrayList();
+            for(double delay=0; delay<15000; delay=delay+delayResolution){
+                try {    
+                    //core_.setProperty("Delay box", "Delay (ps)", delay);
+                    meanValues.add(fm_.getMeanValueOfImage());
+                    
+                } catch (Exception ex) {
+                    Logger.getLogger(FLIMPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            
+            }
+            System.out.print(meanValues);
+        //    fm_.acqMaxpointData();
     }//GEN-LAST:event_maxpointButtonActionPerformed
 
     private void startFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_startFieldPropertyChange

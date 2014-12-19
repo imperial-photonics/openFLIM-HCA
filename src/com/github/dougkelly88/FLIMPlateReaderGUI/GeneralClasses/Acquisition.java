@@ -10,44 +10,23 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Filte
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.SeqAcqSetup;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.TimePoint;
 import java.util.ArrayList;
-
-import org.json.JSONObject;
-
-import java.util.Arrays;
-
 import mmcorej.CMMCore;
 import org.micromanager.MMStudio;
-
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLServiceImpl;
-import loci.formats.services.*;
 import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
 import loci.formats.ImageWriter;
-//import loci.formats.CoreMetadata;
 import loci.common.DataTools;
-
 import loci.formats.CoreMetadata;
-
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.NonNegativeInteger;
-
-import java.io.File;
 import java.io.IOException;
-
 import com.quirkware.guid.PlatformIndependentGuidGen;
-import ij.ImagePlus;
-import java.awt.Image;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import loci.common.Location;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
-import loci.formats.out.OMETiffWriter;
-
 import mmcorej.TaggedImage;
 import org.micromanager.api.ImageCache;
 
@@ -71,17 +50,7 @@ public class Acquisition {
         
         
         try{
-            // OR
-//        String acq = "acquisition";
-//        gui_.closeAllAcquisitions();
-//        gui_.openAcquisition(acq, path, delays.size(), 1, 1, true, false);
-//        int w = (int) core_.getImageWidth();
-//        int h = (int) core_.getImageHeight();
-//        int d = (int) core_.getBytesPerPixel();
-//        int bd = (int) (core_.getImageBitDepth());
-//        System.out.println("Acquisition params: " + w + "x" + h + "x" + d);
-//        gui_.initializeAcquisition(acq, w, h, d, bd);
-        ////
+
             if (gui_.isLiveModeOn() | gui_.isAcquisitionRunning()){
                 gui_.enableLiveMode(false);
                 gui_.closeAllAcquisitions();
