@@ -977,7 +977,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
    
     public void loadSequencingTablesFunction() throws IOException{
         
-            FileInputStream fileInputStream1 = new FileInputStream("C:\\Users\\Frederik\\Desktop\\OpenHCAFLIM_Sequenzing.xls");
+            FileInputStream fileInputStream1 = new FileInputStream(var_.basepath + "\\OpenHCAFLIM_Sequenzing.xls");
             wbLoad = new HSSFWorkbook(fileInputStream1);
             xYSequencing1.tableModel_.loadFOVTableModelfromSpreadsheet();
             spectralSequencing1.tableModel_.loadFilterTableModelfromSpreadsheet();
