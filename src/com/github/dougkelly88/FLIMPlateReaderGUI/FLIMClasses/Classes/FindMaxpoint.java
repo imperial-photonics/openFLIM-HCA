@@ -6,6 +6,8 @@
 
 package com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.Classes;
 
+import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -13,6 +15,9 @@ import java.awt.Rectangle;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import mmcorej.CMMCore;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -24,6 +29,8 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.util.ShapeUtilities;
+import org.micromanager.MMStudio;
+import org.micromanager.utils.ImageUtils;
 
 
 /**
@@ -31,7 +38,8 @@ import org.jfree.util.ShapeUtilities;
  * @author dk1109
  */
 public class FindMaxpoint {
-    
+    MMStudio gui_;
+    CMMCore core_;
     private JFreeChart chart_;
     private XYDataset findMaxpointData_;
     private ArrayList<Integer> rawMaxpointData_;
@@ -44,6 +52,8 @@ public class FindMaxpoint {
 //    private XYDataset dataset_;
     
     public FindMaxpoint(){
+        gui_ = MMStudio.getInstance();
+        core_ = gui_.getCore();
         findMaxpointData_ = createDummyMaxpointData(0);
         gatePositionData_ = createDummyGatingData();
         chart_ = createChart();
@@ -278,5 +288,22 @@ public class FindMaxpoint {
         
         int[] ret = {maxIndex, maxVal};
         return ret;
+    }
+
+    
+
+    public double getMeanValueOfImage(){
+        double meanValue=-1;
+        try {
+            core_.snapImage();
+            ImageProcessor ip = ImageUtils.makeProcessor(core_, core_.getImage());
+            ImageStatistics i = ip.getStatistics();
+            meanValue = i.mean;
+            
+            
+        } catch (Exception ex) {
+            Logger.getLogger(FindMaxpoint.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return meanValue;
     }
 }

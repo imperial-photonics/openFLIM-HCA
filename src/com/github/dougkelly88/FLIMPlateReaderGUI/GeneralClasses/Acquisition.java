@@ -10,47 +10,23 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Filte
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.SeqAcqSetup;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.TimePoint;
 import java.util.ArrayList;
-
-import org.json.JSONObject;
-
-import java.util.Arrays;
-
 import mmcorej.CMMCore;
 import org.micromanager.MMStudio;
-
 import loci.formats.ome.OMEXMLMetadata;
 import loci.formats.services.OMEXMLServiceImpl;
-import loci.formats.services.*;
 import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
 import loci.formats.ImageWriter;
-//import loci.formats.CoreMetadata;
 import loci.common.DataTools;
-
 import loci.formats.CoreMetadata;
-
 import ome.xml.model.enums.DimensionOrder;
 import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.NonNegativeInteger;
-
-import java.io.File;
 import java.io.IOException;
-
 import com.quirkware.guid.PlatformIndependentGuidGen;
-import ij.ImagePlus;
-import java.awt.Image;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import loci.common.Location;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
-import loci.formats.out.OMETiffWriter;
-import ij.process.ImageStatistics;
-import ij.process.ImageProcessor;
-import org.micromanager.utils.ImageUtils;
-
 import mmcorej.TaggedImage;
 import org.micromanager.api.ImageCache;
 
@@ -67,7 +43,6 @@ public class Acquisition {
     public Acquisition() {
         gui_ = MMStudio.getInstance();
         core_ = gui_.getCore();
-        
     }
 
     public void snapFLIMImage(String path, ArrayList<Integer> delays, SeqAcqSetup sas) {
@@ -75,17 +50,7 @@ public class Acquisition {
         
         
         try{
-            // OR
-//        String acq = "acquisition";
-//        gui_.closeAllAcquisitions();
-//        gui_.openAcquisition(acq, path, delays.size(), 1, 1, true, false);
-//        int w = (int) core_.getImageWidth();
-//        int h = (int) core_.getImageHeight();
-//        int d = (int) core_.getBytesPerPixel();
-//        int bd = (int) (core_.getImageBitDepth());
-//        System.out.println("Acquisition params: " + w + "x" + h + "x" + d);
-//        gui_.initializeAcquisition(acq, w, h, d, bd);
-        ////
+
             if (gui_.isLiveModeOn() | gui_.isAcquisitionRunning()){
                 gui_.enableLiveMode(false);
                 gui_.closeAllAcquisitions();
@@ -100,12 +65,7 @@ public class Acquisition {
 
                 // EITHER
                 core_.snapImage();
-                Object img = core_.getImage();
-                ImageProcessor ip = ImageUtils.makeProcessor(core_, img);
-                ImageStatistics i = ip.getStatistics();
-                double meanval = i.mean;
-                ip.getPixels();
-                saveLayersToOMETiff(writer, img, delays.indexOf(delay));
+                saveLayersToOMETiff(writer, delays.indexOf(delay));
                 ////
 
                 
@@ -149,9 +109,9 @@ public class Acquisition {
 
     }
 
-    private void saveLayersToOMETiff(IFormatWriter writer, Object img, int layer)
+    private void saveLayersToOMETiff(IFormatWriter writer, int layer)
             throws Exception {
-//        Object img = core_.getImage();
+        Object img = core_.getImage();
         if (img instanceof byte[]) {
             System.out.println("Img is in bytes");
             writer.saveBytes(layer, (byte[]) img);
