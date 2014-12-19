@@ -307,8 +307,8 @@ public class FilterTableModel extends AbstractTableModel {
             labelInt=Integer.parseInt(label);
             delays.add(labelInt);
             
-            FilterSetup fov = new FilterSetup( cell0.getStringCellValue(), cell1.getStringCellValue(), cell2.getStringCellValue(), cell3.getStringCellValue(), cell4.getStringCellValue(), cell5.getStringCellValue(),  (int) cell6.getNumericCellValue(), delays);
-            load.add(fov);
+//            FilterSetup fov = new FilterSetup( cell0.getStringCellValue(), cell1.getStringCellValue(), cell2.getStringCellValue(), cell3.getStringCellValue(), cell4.getStringCellValue(), cell5.getStringCellValue(),  (int) cell6.getNumericCellValue(), delays);
+//            load.add(fov);
         }
        data_=load;
        fireTableDataChanged();

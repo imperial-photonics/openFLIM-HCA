@@ -292,6 +292,10 @@
                                           </Group>
                                       </Group>
                                   </Group>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="accFramesField" min="-2" pref="30" max="-2" attributes="0"/>
                               </Group>
                               <Component id="jProgressBar1" alignment="0" max="32767" attributes="0"/>
                           </Group>
@@ -307,7 +311,11 @@
                               <Group type="102" attributes="0">
                                   <Component id="snapFLIMButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="snapBFButton" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="snapBFButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="accFramesField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="startSequenceButton" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -382,6 +390,19 @@
                     </DimensionLayout>
                   </Layout>
                 </Container>
+                <Component class="javax.swing.JLabel" name="jLabel2">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Accumulate frames: "/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JFormattedTextField" name="accFramesField">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="1"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="accFramesFieldActionPerformed"/>
+                  </Events>
+                </Component>
               </SubComponents>
             </Container>
             <Container class="javax.swing.JPanel" name="sequenceSetupBasePanel">

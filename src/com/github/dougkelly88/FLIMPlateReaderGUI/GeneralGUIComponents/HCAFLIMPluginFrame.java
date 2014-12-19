@@ -291,6 +291,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         currentBasePathField = new javax.swing.JFormattedTextField();
         jLabel1 = new javax.swing.JLabel();
         seqOrderBasePanel = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        accFramesField = new javax.swing.JFormattedTextField();
         sequenceSetupBasePanel = new javax.swing.JPanel();
         sequenceSetupTabbedPane = new javax.swing.JTabbedPane();
         xYSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing();
@@ -367,6 +369,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             .addGap(0, 83, Short.MAX_VALUE)
         );
 
+        jLabel2.setText("Accumulate frames: ");
+
+        accFramesField.setText("1");
+        accFramesField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                accFramesFieldActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout flimAcquisitionPanelLayout = new javax.swing.GroupLayout(flimAcquisitionPanel);
         flimAcquisitionPanel.setLayout(flimAcquisitionPanelLayout);
         flimAcquisitionPanelLayout.setHorizontalGroup(
@@ -387,7 +398,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                                 .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(snapFLIMButton, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(snapBFButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(startSequenceButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                    .addComponent(startSequenceButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(23, Short.MAX_VALUE))
         );
@@ -399,7 +414,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     .addGroup(flimAcquisitionPanelLayout.createSequentialGroup()
                         .addComponent(snapFLIMButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(snapBFButton)
+                        .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(snapBFButton)
+                            .addComponent(jLabel2)
+                            .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(startSequenceButton))
                     .addComponent(seqOrderBasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -974,6 +992,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_loadSequencingTablesMenuActionPerformed
+
+    private void accFramesFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accFramesFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_accFramesFieldActionPerformed
    
     public void loadSequencingTablesFunction() throws IOException{
         
@@ -1056,6 +1078,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem FLIMHCAHelpMenu;
     private javax.swing.JTabbedPane FLIMPanel;
     private javax.swing.JMenuItem aboutMenu;
+    private javax.swing.JFormattedTextField accFramesField;
     private javax.swing.JMenuItem advancedMenu;
     private javax.swing.JPanel basePanel;
     private javax.swing.JMenuItem calibrationMenu;
@@ -1066,6 +1089,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane frameScrollPane;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JProgressBar jProgressBar1;
     private com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents.LightPathPanel lightPathControls1;
