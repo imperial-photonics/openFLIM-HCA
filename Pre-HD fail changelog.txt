@@ -1,0 +1,160 @@
+[33m5b2f0f4[m[33m ([1;36mHEAD[m[33m, [1;31morigin/Threading_acquisition[m[33m)[m Modify save format to fit with FLIMfit (currently). Rebuild with 64 bit JDK. Modify .cfg to use ORCA (64 bit) rather than Artemis VS14 (32 bit).
+[33m7a7705a[m * Modified cfg to remove delays in FW. * Modified initialisation of spectral sequencing table to avoid default values being mistaken for real ones. * Added option for turning off AF in sequenced acquisition.
+[33m3202daf[m Matisse (netbeans) having issues throwing nullpointerexception when trying to display front panel...
+[33m271f614[m[33m ([1;31morigin/master[m[33m, [1;31morigin/HEAD[m[33m, [1;32mmaster[m[33m)[m Making autofocus settings accessible to sequenced acquisition
+[33m0ed0fd9[m Changed more paths to relative paths. Changed window title to be OpenFLIM-HCA
+[33m492f493[m Enabled delay box control and fixed issue with XYZPanel blocking editing of HCAFLIM front panel. Also modified titles to read OpenFLIM-HCA
+[33m32861a2[m * Include config files in source control * Enabled all manual control toggles, making use of modified Corvus device adapter which allows such control * Enabled autofocus front panel and functions relating to AF
+[33mcfff4b6[m Updated logo
+[33m50242ee[m Added scripts and configuration files for reference
+[33m27023b2[m * Re-enable file menu. * initialise members  with new keyword in constructor of PlateMapDrawPanel. * relabel CSUX-Dichroic Mirror correctly in sequenced acquisition such that filter change try-catch block doesn't fail.
+[33md1f8c32[m Modified device labels to fit in with "Standard" config file
+[33m2e6e640[m Significant chunk of code in sequencedAcquisition event...
+[33m2b301ed[m Use of current FOV/FilterSet/TimePoint if one or more is absent from sequence table tested. For now, independence of XY and Z sequencing removed - to do one without the other, the FOV table must be set up appropriately.
+[33mac5ff7d[m Deal with case in sequence when one (or more) of three main tables (FOV, TimeCourse, Filter) is not used. This involves creation and use of a CurrentLightPath class, created when LightPathPanel is instantiated and modified whenever controls in LPP change. This will serve as a template for the CurrentFOV class which will also need to be implemented, if only for displaying the well map panel. Such classes will also be useful for metadata saving...
+[33m69741b9[m Testing chained comparator method of sorting
+[33mfac8509[m Added overriden toString() methods in all classes concerning sequenced acquisition
+[33mc6bec02[m Implementing chained comparator methods, following http://www.codejava.net/java-core/collections/sorting-a-list-by-multiple-attributes-example.
+[33m388ccd9[m Test comparator method for ordering sequence params...
+[33mcee0dc2[m Attempts to fix UI display issues...
+[33m01a0fb5[m Sequencing table UI implemented. TODO: FIX ISSUE WITH LAYOUT!!!!
+[33mca898f1[m Intermediate sequencing - added sequencing order table
+[33m4ab9271[m Add the ability to generate Zs when store current is clicked
+[33m12d641f[m Z interface implementation started
+[33m5c4f468[m Tested and fixed issues with Fianium controls
+[33m6733f1b[m Modify laser source control on light path tab for complete control of all aspects of the fianium
+[33m9c3848b[m More updates to lightpathpanel:
+[33mb84587d[m Finish implementing selecting instrument properties by label rather than by index in LightPathPanel. Also renamed controls for consistency.
+[33m46876b9[m Work on light path panel, including: * fixed issue with populating beam path combo with objective labels; * remove null assignments, replace with initialising with new StrVector * load hw config on startup rather than on user interface * trial assigning by instrument property values by label rather than state/index - since JComboBoxes are automatically sorted alphabetically, the latter method doesn't work
+[33m3a37593[m Snap FLIM image functional, loads into FLIMfit
+[33mf16a260[m Generation and saving of dummy OME.TIFF images that can be opened in FLIMfit
+[33m2d85bf2[m Perform inverse transform on stage coordinates before generating FOV when Store Current... is clicked
+[33mf3ea2e8[m Panning tested Try implementation of getFOV instrument interfacing, via Store Current FOV button.
+[33m532b8ce[m Now deal with pan buttons in 5x5 grid, works visually
+[33mc7f514a[m Overlarge 2x panning buttons; will do at a push... 1x panning button functionality tested
+[33m1b77384[m First step in reimplementing panning layouts and controls - one step only
+[33m194b7ac[m Force well to uppercase before GOTO well operation
+[33ma11c82c[m Started modification to use FOV class in WellMap class Implemented xyz movement with buttons Modified XPLT loader to use relative path by default TODO: bundle default path with package?
+[33m10c8a97[m Modified to add "go to FOV" option in context menu, try interfacing with XYZMotionInterface - TO BE TESTED!
+[33m5ff892f[m Added XYZMotionInterface class with affine transform (prerequisite for calibration)
+[33mb257f8a[m Changed functionality such that Z stack is maintained as new XY FOVs are added; this is then removed using the clear Z stack button.
+[33ma2f3cfe[m Move Z stack generation to separate method
+[33mf1846a3[m Addition of "groups" field in FOV class allowing definition of e.g. Reference, BG and Experiment wells.
+[33m790a4ca[m And more...
+[33mfb21cb8[m Still further wiki files
+[33m2a1b6d8[m Further wiki files
+[33m61cf0ff[m Images for wiki
+[33m9873de1[m Multiple bug fixes: * updated FOV table to remove duplicates in same way as time course table now does, with override of equals method in FOV * ...noting that this is used both in manual adding of FOV and in generation of Z stacks * fixed bug with Z stacks whereby Longs and Doubles returned by JFormatttedTextField caused problems * fixed bug such that now when selecting wells on the platemap, the direction in which drawing is performed doesn't matter * fixed Clear current FOVs button such that plate map is updated appropriately.
+[33mc32e1dc[m Override sort and equals methods for TimePoint class in order that sorting and finding unique entries can be more easily achieved when TimePoint is used in the sequencing table.
+[33mf574a30[m Added functions to populate time course table automatically. TODO: validate no duplicate times in manually constructed time course.
+[33mf519708[m Changed time course setup to use dispense volume rather than boolean to allow more flexibility and remove need for a liquid handling setup dialog
+[33m889c6cf[m Updated libraries
+[33m0be0c8c[m Merge remote-tracking branch 'origin/Fred'
+[33m83b2ed4[m Trivial commit pre-merge: added TODO in code for storing XYZ
+[33md6012e5[m Added support for adding current FOV to list of FOVs
+[33m322448b[m Remove unused classes and imports.
+[33m35aa4c6[m Z stack working, but cumbersome?
+[33m7a84f1a[m[33m ([1;31morigin/Fred[m[33m)[m both booleans working. (now really finished/ tested)
+[33md78fde9[m table finished, boolean is working
+[33m106ef25[m getting closer, boolean in table still buggy
+[33m8b9531e[m Added clear FOV table button functionality.
+[33meb901ee[m Table with 3 columns: Time String "10s", Liquid Dispension boolean false, Sound Alert boolean false Not visible in tab!
+[33m55701ac[m interstage time table
+[33mf6eae44[m TimeCourseTable beginning, not shown till now.
+[33ma8df2ae[m Modulo functions abolished
+[33m30a0903[m Test branching
+[33ma2d437f[m Designed FP components for time course tab
+[33m5726627[m Added some front panel components
+[33md36bd56[m Fixed label cell behaviour, issue due to lack of "break" in case-switch block in setValue. Cleaned up code, removing extraneous commented regions.
+[33m84be9a7[m Fixed delay setting issue with sequenced filter table whereby all filtersets were showing the same delay sequence. TODO: make sure that editing the label of the filterset loses focus appropriately.
+[33m9f777ff[m Further work with filter sequencing - editors work, but table does not update
+[33m60cf516[m Filter sequencing work in progress; saving OME TIFFs still an issue
+[33m94e580b[m Fixed region at right of panel overfilling scroll pane
+[33m310bcd6[m SeqAcqProps modified to allow design of main FP in netbeans, with try/catch blocks Changed snapFLIMIMage class to Acquisition class ISSUES WITH VISUALS!!!
+[33m0bb869a[m Start of trial with setparent methods - main panel doesn't display properly in Netbeans...
+[33m025f838[m Fixed FOV validity checker to work with both circular and rectangular wells.
+[33m8cb586f[m FOV checker works more or less, could do with proper handling of circular wells
+[33mfc344ec[m Spiral works
+[33mf0fb16e[m Patched up remaining issues
+[33m529da1d[m Merge remote-tracking branch 'origin/Save-process-FLIMPanel'
+[33m98124b4[m Spiral generator work in progress
+[33maae2201[m[33m ([1;31morigin/Save-process-FLIMPanel[m[33m)[m FLIMPanel save and load working. Branch finished.
+[33m7b50056[m Populate FOVs (one per well) automatically when checkbox is ticked and wells are highlighted Modified cosmetically to include um symbols Added selection between z treated as offsets and z treated as absolute vals.
+[33mfa56864[m Add one FOV per well when autoFOV is checked
+[33maabc2fe[m Fixed issue with plate loading
+[33mc782bdc[m FOV table and supporting classes, including FOV object class
+[33md675ce1[m Fixed platemapdraw selection
+[33m906d6bb[m Work in progress well selection
+[33mc2f3eb1[m Added plate map for sequenced XY, updated paint method for both plate and well maps
+[33me39d341[m ArrayList save ok, load buggy
+[33mc767bb0[m Boolean and slider save finished and tested
+[33mc7e2e65[m Boolean save interstage
+[33mfd89d3d[m Fixed + Slider Save
+[33m24b9e73[m working copy
+[33m522d08b[m Scrollbar added to frame for easier viewing on small screens. .gitignore updated so that project properties are tracked again.
+[33ma2bf6ef[m Merge part II
+[33m8df2b40[m Merge remote-tracking branch 'origin/FredDev'
+[33mc009073[m Linked pan buttons to map. Note that click on map currently doesn't update XYZ position according to XYZPanel - fix with setters/getters or listener?
+[33m31766d2[m Added UI for loading plate properties, tied now to well mapping tool.
+[33m2657f81[m[33m ([1;31morigin/FredDev[m[33m)[m Load/Save Hardware Config
+[33med5291d[m Add plate properties, including (minimal) loading from XPLT
+[33m570ef22[m Save/load SoftwareConfig for LightPathControls finished
+[33m24da2a5[m Well map largely implemented. TODO: implement import of plate configuration. TODO: implement instrument communication functions.
+[33md95c2c2[m Added icons for XYZ panel Started drawing wellmap
+[33m8f3bab1[m Beginning of connecting save/load procedure.
+[33m13e3972[m interstage save/load! Save ok, load single labels.
+[33m89139ad[m Started work on UI on right hand side of main JFrame - sequencing and image acquisition
+[33m0705ea5[m Started work on XYZ control tab
+[33me832a99[m Reorganise packages to package-by-feature rather than package-by-layer (though both are used to a degree)
+[33m139e4b1[m (Attempted) merge remote-tracking branch 'origin/FredDev'
+[33m099d88a[m Added files for wiki
+[33ma102376[m Fixed build script to copy to working dir for more streamlined debugging. Minor cosmetic changes.
+[33m209aef1[m Implemented Help menu, fixed window size issue.
+[33m4cf0bfe[m Implemented current delay sliders.
+[33mdfc5a7b[m Lifetime estimation for autogating works (seems to underestimate?)
+[33m6c0266a[m Autogating enabled (tested independently of lifetime estimate)
+[33m4c4f16f[m Find maxpoint from data
+[33m38e43ea[m Load/Save interstage. (is working, but not fully implemented)
+[33mc8dc0fe[m Maxpoint button and resolution field controls enabled
+[33md142bf5[m Delays in sequenced acquisition tied to table by listener
+[33mc08fa1e[m Delay table tied to graph via listener, making things tidier/more extensible
+[33m0226e49[m Delay table changes tied to display graph
+[33mc023c41[m Some tidying of code
+[33m8553db8[m Delay table context menu working
+[33mcc9a9e5[m Progress with context menu. TODO: pass clicked row to action listener for subsequent menu selection
+[33ma6de5a8[m Clear delays functionality enabled
+[33m338435e[m Edit, (crude) delete, and populate function working well. Seq Acq Props updated.
+[33m09a4dd4[m Preliminary commit for a data table model listener
+[33mdeae2db[m Updated delay table Model and Renderer to get desired behaviour
+[33m4cce318[m Unfinished! Save procedure.
+[33me14a9fc[m Further cosmetic changes Added SnapFLIMImage class
+[33m9472a6f[m Cosmetic changes to find maxpoint class, updating contents of sequenced acquisition class, changed size of slider class.
+[33m9f317c2[m LightPathControlPanel finished and successfully tested on lab PC.
+[33mb42faa0[m Test commit on FredDev branch
+[33m59d76d7[m Added FindMaxpoint class
+[33m23cb3a9[m Changed approach to use a singleton (enum) SequencedAcquisitionProperties class.
+[33m17ca523[m Sequenced acquisition properties class implemented with listeners.
+[33mad5bf50[m Removing some bits that are no longer necessary
+[33m98e0074[m Merge branch 'master' of https://github.com/Fredxxx/uManagerPlugins
+[33mfcdbd23[m[33m ([1;31morigin/Fredxxx-master[m[33m)[m Added Open to plugin title to labour the point...
+[33m33827e5[m Added screenshot of delay box controls.
+[33me834f62[m Fixed issue whereby loading of Resource images failed, causing plugin to fail to run independently of netbeans. Added wiki files folder and first screen shot.
+[33mbfc1aa9[m Slider-based components now with listeners to feedback into main FLIM panel. Added "Are you sure" dialog for both menu-based and x-based quit methods.
+[33m2077002[m Implementation of generalised slider control class to avoid recoding the same behaviour repeatedly
+[33mad91409[m Changes relating to UI - icon, frame title, enabled quit
+[33m02465b8[m Fixed issue around drag-and-drop of Panel components into Frame in design mode by adding error handling.
+[33m44d045a[m Added about/splash screen, finalised template for use with all devices.
+[33mf5f5a56[m Further refactoring for simplicity. Added guava listeners to update GUI on MM changes.
+[33m527df8d[m Refactoring - added FLIM panel
+[33mf29cf74[m delete unused Panel
+[33m7af075e[m Olympus included
+[33md2671de[m FrontPanel Fred
+[33mb2c9e95[m Refactoring - added capability to get MM properties from front panel via HCAPluginControl
+[33mec97d6c[m Refactoring - added base frame and controls for same
+[33mc9060ef[m Refactoring - back to basics
+[33me806bb9[m First go at refactoring everything to separate control sw from GUI
+[33mf6c3e0e[m Added individual JPanels to front end JFrame
+[33m86ba115[m Testing interface between MM properties and front end
+[33m220bfc8[m Other plugins, including FLIMPlateReaderGUI first commit.
+[33maf7b1f6[m First commit with "Hello world" style plugin
+[33m44529e1[m Initial commit
