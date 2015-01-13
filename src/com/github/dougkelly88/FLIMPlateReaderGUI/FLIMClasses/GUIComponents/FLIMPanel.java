@@ -20,8 +20,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent; 
+import java.io.File;
 import static java.lang.Math.round; 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JMenuItem; 
@@ -57,6 +59,7 @@ public class FLIMPanel extends javax.swing.JPanel {
     private SeqAcqProps sap_;
     private VariableTest var_;
     private Object parent_;
+    Object calibrationDelayBox;
     
     @Subscribe
     public PropertyChangedEvent onPropertyChanged(PropertyChangedEvent event)
@@ -75,6 +78,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         gui_ = MMStudio.getInstance();
         sap_ = SeqAcqProps.getInstance().setUseScanFLIM(false);
         var_= VariableTest.getInstance();
+        setDelayComboBox();
         try{
             gui_.registerForEvents(this);
             core_ = gui_.getCore();
@@ -82,6 +86,7 @@ public class FLIMPanel extends javax.swing.JPanel {
             core_.setProperty("Delay box", "CalibrationPath", file);
             core_.setProperty("Delay box", "Calibrated", "Yes");
             String del = core_.getDeviceName("Delay box");
+            DelayBoxCalibrationComboBox.setSelectedItem("HDG800Calibration.csv");
             if ("KentechSingleEdgeHRI".equals(del)){
                 inhibitCheck.setEnabled(true);
                 
@@ -110,6 +115,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         mcpVoltagePanel = new javax.swing.JPanel();
         gatewidthPanel = new javax.swing.JPanel();
         inhibitCheck = new javax.swing.JCheckBox();
+        DelayBoxCalibrationComboBox = new javax.swing.JComboBox();
         FLIMToolsPanel = new javax.swing.JPanel();
         maxpointGraphPanel = new javax.swing.JPanel();
         autogateButton = new javax.swing.JButton();
@@ -174,6 +180,13 @@ public class FLIMPanel extends javax.swing.JPanel {
             }
         });
 
+        DelayBoxCalibrationComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        DelayBoxCalibrationComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DelayBoxCalibrationComboBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout HRIControlsPanelLayout = new javax.swing.GroupLayout(HRIControlsPanel);
         HRIControlsPanel.setLayout(HRIControlsPanelLayout);
         HRIControlsPanelLayout.setHorizontalGroup(
@@ -183,6 +196,8 @@ public class FLIMPanel extends javax.swing.JPanel {
                 .addGroup(HRIControlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(HRIControlsPanelLayout.createSequentialGroup()
                         .addComponent(inhibitCheck)
+                        .addGap(95, 95, 95)
+                        .addComponent(DelayBoxCalibrationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(HRIControlsPanelLayout.createSequentialGroup()
                         .addComponent(gatewidthPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -194,7 +209,9 @@ public class FLIMPanel extends javax.swing.JPanel {
             HRIControlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(HRIControlsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(inhibitCheck)
+                .addGroup(HRIControlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(inhibitCheck)
+                    .addComponent(DelayBoxCalibrationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(HRIControlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(mcpVoltagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -693,6 +710,37 @@ public class FLIMPanel extends javax.swing.JPanel {
 // TODO add your handling code here:
     }//GEN-LAST:event_fastBoxCalibratedCheckPropertyChange
 
+    private void DelayBoxCalibrationComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DelayBoxCalibrationComboBoxActionPerformed
+        try {
+            calibrationDelayBox=DelayBoxCalibrationComboBox.getSelectedItem();
+            String file="C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/OpenHCAFLIM/KentechCalibration/"+calibrationDelayBox;
+        //    String file = "C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/OpenHCAFLIM/KentechCalibration/CalibrationWithoutBias.csv";
+            core_.setProperty("Delay box", "CalibrationPath", file);
+            core_.setProperty("Delay box", "Calibrated", "Yes");
+            String del = core_.getDeviceName("Delay box");
+            maxpointResolutionField.setText(file);
+            //    currentLightPath_.setDichroicLabel((String) dichroicComboBox.getSelectedItem());
+            //    var_.DichroicComboBoxSelectedItem = (String) dichroicComboBox.getSelectedItem();        // TODO add your handling code here:
+        } catch (Exception ex) {
+            Logger.getLogger(FLIMPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_DelayBoxCalibrationComboBoxActionPerformed
+
+    private void setDelayComboBox(){
+        DelayBoxCalibrationComboBox.removeAllItems();
+        List<String> results = new ArrayList<String>();
+        File[] files = new File("C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/OpenHCAFLIM/KentechCalibration").listFiles();
+        //If this pathname does not denote a directory, then listFiles() returns null. 
+
+        for (File file : files) {
+            if (file.isFile()) {
+            results.add(file.getName());
+            DelayBoxCalibrationComboBox.addItem(file.getName());
+            }
+        }
+        
+        
+    }
     
     
     private void updateDelayField(JTextField field){
@@ -943,6 +991,7 @@ public class FLIMPanel extends javax.swing.JPanel {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox DelayBoxCalibrationComboBox;
     private javax.swing.JPanel FLIMToolsPanel;
     private javax.swing.JPanel HRIControlsPanel;
     private javax.swing.JButton autogateButton;
