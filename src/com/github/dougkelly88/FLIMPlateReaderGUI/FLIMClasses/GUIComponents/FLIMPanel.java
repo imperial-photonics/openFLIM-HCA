@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem; 
 import javax.swing.JPopupMenu; 
 import javax.swing.JScrollPane; 
@@ -60,7 +61,8 @@ public class FLIMPanel extends javax.swing.JPanel {
     private VariableTest var_;
     private Object parent_;
     Object calibrationDelayBox;
-    
+    String DelayPath="C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/OpenHCAFLIM/KentechCalibration";
+        
     @Subscribe
     public PropertyChangedEvent onPropertyChanged(PropertyChangedEvent event)
     {
@@ -82,7 +84,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         try{
             gui_.registerForEvents(this);
             core_ = gui_.getCore();
-            String file = "C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/OpenHCAFLIM/KentechCalibration/CalibrationWithoutBias.csv";
+            String file = DelayPath+"HDG800Calibration.csv";
             core_.setProperty("Delay box", "CalibrationPath", file);
             core_.setProperty("Delay box", "Calibrated", "Yes");
             String del = core_.getDeviceName("Delay box");
@@ -115,7 +117,6 @@ public class FLIMPanel extends javax.swing.JPanel {
         mcpVoltagePanel = new javax.swing.JPanel();
         gatewidthPanel = new javax.swing.JPanel();
         inhibitCheck = new javax.swing.JCheckBox();
-        DelayBoxCalibrationComboBox = new javax.swing.JComboBox();
         FLIMToolsPanel = new javax.swing.JPanel();
         maxpointGraphPanel = new javax.swing.JPanel();
         autogateButton = new javax.swing.JButton();
@@ -141,6 +142,12 @@ public class FLIMPanel extends javax.swing.JPanel {
         slowDelayBoxPanel = new javax.swing.JPanel();
         slowBoxCalibrated = new javax.swing.JCheckBox();
         slowCurrentDelayPanel = new javax.swing.JPanel();
+        DelayBoxCalibrationFilePanel = new javax.swing.JPanel();
+        DelayBoxCalibrationComboBox = new javax.swing.JComboBox();
+        CalibrationFileLabel = new javax.swing.JLabel();
+        CalibrationPathLabel = new javax.swing.JLabel();
+        CalibrationPathField = new javax.swing.JTextField();
+        jToggleButton1 = new javax.swing.JToggleButton();
 
         HRIControlsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("HRI controls"));
 
@@ -180,13 +187,6 @@ public class FLIMPanel extends javax.swing.JPanel {
             }
         });
 
-        DelayBoxCalibrationComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        DelayBoxCalibrationComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                DelayBoxCalibrationComboBoxActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout HRIControlsPanelLayout = new javax.swing.GroupLayout(HRIControlsPanel);
         HRIControlsPanel.setLayout(HRIControlsPanelLayout);
         HRIControlsPanelLayout.setHorizontalGroup(
@@ -196,8 +196,6 @@ public class FLIMPanel extends javax.swing.JPanel {
                 .addGroup(HRIControlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(HRIControlsPanelLayout.createSequentialGroup()
                         .addComponent(inhibitCheck)
-                        .addGap(95, 95, 95)
-                        .addComponent(DelayBoxCalibrationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(HRIControlsPanelLayout.createSequentialGroup()
                         .addComponent(gatewidthPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -209,9 +207,7 @@ public class FLIMPanel extends javax.swing.JPanel {
             HRIControlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(HRIControlsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(HRIControlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(inhibitCheck)
-                    .addComponent(DelayBoxCalibrationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(inhibitCheck)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(HRIControlsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(mcpVoltagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -414,7 +410,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         delayTablePanel.setLayout(delayTablePanelLayout);
         delayTablePanelLayout.setHorizontalGroup(
             delayTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 126, Short.MAX_VALUE)
+            .addGap(0, 132, Short.MAX_VALUE)
         );
         delayTablePanelLayout.setVerticalGroup(
             delayTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -531,31 +527,86 @@ public class FLIMPanel extends javax.swing.JPanel {
                 .addGroup(slowDelayBoxPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(slowBoxCalibrated)
                     .addComponent(slowCurrentDelayPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(235, Short.MAX_VALUE))
+                .addContainerGap(242, Short.MAX_VALUE))
         );
         slowDelayBoxPanelLayout.setVerticalGroup(
             slowDelayBoxPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(slowDelayBoxPanelLayout.createSequentialGroup()
                 .addGap(11, 11, 11)
                 .addComponent(slowBoxCalibrated)
-                .addGap(18, 21, Short.MAX_VALUE)
+                .addGap(18, 22, Short.MAX_VALUE)
                 .addComponent(slowCurrentDelayPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addContainerGap(58, Short.MAX_VALUE))
         );
 
         delayBoxTabbedPane.addTab("Slow delay box", slowDelayBoxPanel);
+
+        DelayBoxCalibrationComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        DelayBoxCalibrationComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DelayBoxCalibrationComboBoxActionPerformed(evt);
+            }
+        });
+
+        CalibrationFileLabel.setText("Calibration Files:");
+
+        CalibrationPathLabel.setText("Calibration file folder path");
+
+        CalibrationPathField.setText("DelayPath");
+        CalibrationPathField.setMaximumSize(new java.awt.Dimension(229, 20));
+        CalibrationPathField.setPreferredSize(new java.awt.Dimension(500, 20));
+
+        jToggleButton1.setText("Change path");
+        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jToggleButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout DelayBoxCalibrationFilePanelLayout = new javax.swing.GroupLayout(DelayBoxCalibrationFilePanel);
+        DelayBoxCalibrationFilePanel.setLayout(DelayBoxCalibrationFilePanelLayout);
+        DelayBoxCalibrationFilePanelLayout.setHorizontalGroup(
+            DelayBoxCalibrationFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(DelayBoxCalibrationFilePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(DelayBoxCalibrationFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(DelayBoxCalibrationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(CalibrationFileLabel)
+                    .addGroup(DelayBoxCalibrationFilePanelLayout.createSequentialGroup()
+                        .addComponent(CalibrationPathLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jToggleButton1))
+                    .addComponent(CalibrationPathField, javax.swing.GroupLayout.PREFERRED_SIZE, 502, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(85, Short.MAX_VALUE))
+        );
+        DelayBoxCalibrationFilePanelLayout.setVerticalGroup(
+            DelayBoxCalibrationFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(DelayBoxCalibrationFilePanelLayout.createSequentialGroup()
+                .addGap(13, 13, 13)
+                .addComponent(CalibrationFileLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(DelayBoxCalibrationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                .addGroup(DelayBoxCalibrationFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(CalibrationPathLabel, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jToggleButton1, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(CalibrationPathField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27))
+        );
+
+        delayBoxTabbedPane.addTab("Delay box calibration file", DelayBoxCalibrationFilePanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(HRIControlsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(delayBoxTabbedPane, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(FLIMToolsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(FLIMToolsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(delayBoxTabbedPane, javax.swing.GroupLayout.Alignment.LEADING)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -619,9 +670,44 @@ public class FLIMPanel extends javax.swing.JPanel {
 //            fm_.setData(delays, meanValues);
     }//GEN-LAST:event_maxpointButtonActionPerformed
 
+    private void maxpointResolutionFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_maxpointResolutionFieldFocusLost
+        int num = Integer.parseInt(maxpointResolutionField.getText());
+        fm_.setResolution(num);
+    }//GEN-LAST:event_maxpointResolutionFieldFocusLost
+
+    private void autogateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autogateButtonActionPerformed
+        tableModel_.addWholeData(fm_.genAutogates());
+    }//GEN-LAST:event_autogateButtonActionPerformed
+
+    private void DelayBoxCalibrationComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DelayBoxCalibrationComboBoxActionPerformed
+        try {
+            calibrationDelayBox=DelayBoxCalibrationComboBox.getSelectedItem();
+            String file=DelayPath+calibrationDelayBox;
+            //    String file = "C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/OpenHCAFLIM/KentechCalibration/CalibrationWithoutBias.csv";
+            core_.setProperty("Delay box", "CalibrationPath", file);
+            core_.setProperty("Delay box", "Calibrated", "Yes");
+            // TODO add your handling code here:
+        } catch (Exception ex) {
+            Logger.getLogger(FLIMPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_DelayBoxCalibrationComboBoxActionPerformed
+
+    private void slowBoxCalibratedStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_slowBoxCalibratedStateChanged
+        var_.slowBoxCalibratedCheck=slowBoxCalibrated.isSelected();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_slowBoxCalibratedStateChanged
+
     private void startFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_startFieldPropertyChange
 
     }//GEN-LAST:event_startFieldPropertyChange
+
+    private void startFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startFieldActionPerformed
+        updateDelayField(startField);
+    }//GEN-LAST:event_startFieldActionPerformed
+
+    private void startFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_startFieldFocusLost
+        updateDelayField(startField);
+    }//GEN-LAST:event_startFieldFocusLost
 
     private void populateDelaysButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_populateDelaysButtonActionPerformed
         int max;
@@ -650,16 +736,27 @@ public class FLIMPanel extends javax.swing.JPanel {
 
         tableModel_.addWholeData(dv);
         //var_.delays=dv;
-      
     }//GEN-LAST:event_populateDelaysButtonActionPerformed
 
     private void incrementFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_incrementFieldActionPerformed
         updateDelayField(incrementField);
     }//GEN-LAST:event_incrementFieldActionPerformed
 
+    private void incrementFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_incrementFieldFocusLost
+        updateDelayField(incrementField);
+    }//GEN-LAST:event_incrementFieldFocusLost
+
+    private void endFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_endFieldPropertyChange
+        updateDelayField(endField);
+    }//GEN-LAST:event_endFieldPropertyChange
+
     private void endFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endFieldActionPerformed
         updateDelayField(endField);
     }//GEN-LAST:event_endFieldActionPerformed
+
+    private void endFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_endFieldFocusLost
+        updateDelayField(endField);
+    }//GEN-LAST:event_endFieldFocusLost
 
     private void clearDelayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearDelayButtonActionPerformed
         tableModel_.clearAllData();
@@ -668,80 +765,43 @@ public class FLIMPanel extends javax.swing.JPanel {
     private void scanDelCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scanDelCheckActionPerformed
         sap_ = sap_.setUseScanFLIM(scanDelCheck.isSelected());
         var_.scanDelCheck=scanDelCheck.isSelected();
-        
     }//GEN-LAST:event_scanDelCheckActionPerformed
 
-    private void startFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startFieldActionPerformed
-        updateDelayField(startField);
-    }//GEN-LAST:event_startFieldActionPerformed
-
-    private void startFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_startFieldFocusLost
-        updateDelayField(startField);
-    }//GEN-LAST:event_startFieldFocusLost
-
-    private void endFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_endFieldPropertyChange
-        updateDelayField(endField);
-    }//GEN-LAST:event_endFieldPropertyChange
-
-    private void endFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_endFieldFocusLost
-        updateDelayField(endField);
-    }//GEN-LAST:event_endFieldFocusLost
-
-    private void incrementFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_incrementFieldFocusLost
-        updateDelayField(incrementField);
-    }//GEN-LAST:event_incrementFieldFocusLost
-
-    private void maxpointResolutionFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_maxpointResolutionFieldFocusLost
-        int num = Integer.parseInt(maxpointResolutionField.getText());
-        fm_.setResolution(num);
-    }//GEN-LAST:event_maxpointResolutionFieldFocusLost
-
-    private void autogateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autogateButtonActionPerformed
-        tableModel_.addWholeData(fm_.genAutogates());
-    }//GEN-LAST:event_autogateButtonActionPerformed
-
-    private void slowBoxCalibratedStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_slowBoxCalibratedStateChanged
-       var_.slowBoxCalibratedCheck=slowBoxCalibrated.isSelected(); 
-        // TODO add your handling code here:
-    }//GEN-LAST:event_slowBoxCalibratedStateChanged
-
     private void fastBoxCalibratedCheckPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_fastBoxCalibratedCheckPropertyChange
-       var_.fastBoxCalibratedCheck=fastBoxCalibratedCheck.isSelected();
-// TODO add your handling code here:
+        var_.fastBoxCalibratedCheck=fastBoxCalibratedCheck.isSelected();
+        // TODO add your handling code here:
     }//GEN-LAST:event_fastBoxCalibratedCheckPropertyChange
 
-    private void DelayBoxCalibrationComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DelayBoxCalibrationComboBoxActionPerformed
-        try {
-            calibrationDelayBox=DelayBoxCalibrationComboBox.getSelectedItem();
-            String file="C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/OpenHCAFLIM/KentechCalibration/"+calibrationDelayBox;
-        //    String file = "C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/OpenHCAFLIM/KentechCalibration/CalibrationWithoutBias.csv";
-            core_.setProperty("Delay box", "CalibrationPath", file);
-            core_.setProperty("Delay box", "Calibrated", "Yes");
-            String del = core_.getDeviceName("Delay box");
-            maxpointResolutionField.setText(file);
-            //    currentLightPath_.setDichroicLabel((String) dichroicComboBox.getSelectedItem());
-            //    var_.DichroicComboBoxSelectedItem = (String) dichroicComboBox.getSelectedItem();        // TODO add your handling code here:
-        } catch (Exception ex) {
-            Logger.getLogger(FLIMPanel.class.getName()).log(Level.SEVERE, null, ex);
+    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
+        String DelayPath="C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/OpenHCAFLIM/KentechCalibration";
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Select target directory");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        Component parentFrame = null;
+        int returnVal = chooser.showOpenDialog(parentFrame);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            DelayPath = chooser.getSelectedFile().getPath();
         }
-    }//GEN-LAST:event_DelayBoxCalibrationComboBoxActionPerformed
+
+        //        statusTextArea.setText("Selected base path: " + var_.basepath);
+       
+        CalibrationPathField.setText(DelayPath);
+        
+
+    }//GEN-LAST:event_jToggleButton1ActionPerformed
 
     private void setDelayComboBox(){
         DelayBoxCalibrationComboBox.removeAllItems();
-        List<String> results = new ArrayList<String>();
-        File[] files = new File("C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/OpenHCAFLIM/KentechCalibration").listFiles();
-        //If this pathname does not denote a directory, then listFiles() returns null. 
-
+        File[] files = new File(DelayPath).listFiles();
         for (File file : files) {
             if (file.isFile()) {
-            results.add(file.getName());
             DelayBoxCalibrationComboBox.addItem(file.getName());
             }
+            CalibrationPathField.setText(DelayPath);
         }
         
         
     }
-    
     
     private void updateDelayField(JTextField field){
         int num = 0;
@@ -991,7 +1051,11 @@ public class FLIMPanel extends javax.swing.JPanel {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel CalibrationFileLabel;
+    private javax.swing.JTextField CalibrationPathField;
+    private javax.swing.JLabel CalibrationPathLabel;
     private javax.swing.JComboBox DelayBoxCalibrationComboBox;
+    private javax.swing.JPanel DelayBoxCalibrationFilePanel;
     private javax.swing.JPanel FLIMToolsPanel;
     private javax.swing.JPanel HRIControlsPanel;
     private javax.swing.JButton autogateButton;
@@ -1010,6 +1074,7 @@ public class FLIMPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JButton maxpointButton;
     private javax.swing.JPanel maxpointGraphPanel;
     private javax.swing.JPanel maxpointPanel;
