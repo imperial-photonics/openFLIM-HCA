@@ -61,7 +61,7 @@ public class FLIMPanel extends javax.swing.JPanel {
     private VariableTest var_;
     private Object parent_;
     Object calibrationDelayBox;
-    String DelayPath="C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/OpenHCAFLIM/KentechCalibration";
+    String DelayPath="C:/Program Files/Micro-Manager-1.4 x64 g/mmplugins/OpenHCAFLIM/KentechCalibration";
         
     @Subscribe
     public PropertyChangedEvent onPropertyChanged(PropertyChangedEvent event)
@@ -680,15 +680,17 @@ public class FLIMPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_autogateButtonActionPerformed
 
     private void DelayBoxCalibrationComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DelayBoxCalibrationComboBoxActionPerformed
+        System.out.println("Alles ok");
         try {
             calibrationDelayBox=DelayBoxCalibrationComboBox.getSelectedItem();
             String file=DelayPath+calibrationDelayBox;
             //    String file = "C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/OpenHCAFLIM/KentechCalibration/CalibrationWithoutBias.csv";
-            core_.setProperty("Delay box", "CalibrationPath", file);
-            core_.setProperty("Delay box", "Calibrated", "Yes");
+         //   core_.setProperty("Delay box", "CalibrationPath", file);
+         //   core_.setProperty("Delay box", "Calibrated", "Yes");
             // TODO add your handling code here:
-        } catch (Exception ex) {
-            Logger.getLogger(FLIMPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            System.out.println("Delay box calibration file not found");
+            gui_.showMessage("Error in FLIMPanel constructor: DelayBoxCalibrationComboBox" + e.getMessage());
         }
     }//GEN-LAST:event_DelayBoxCalibrationComboBoxActionPerformed
 
@@ -773,7 +775,6 @@ public class FLIMPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_fastBoxCalibratedCheckPropertyChange
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
-        String DelayPath="C:/Program Files/Micro-Manager-1.4 x64 December build/mmplugins/OpenHCAFLIM/KentechCalibration";
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Select target directory");
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);

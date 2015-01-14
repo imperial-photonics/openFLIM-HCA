@@ -51,7 +51,6 @@ import org.micromanager.MMStudio;
 import org.micromanager.api.events.PropertyChangedEvent;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,12 +66,7 @@ import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import mmcorej.DeviceType;
-import mmcorej.TaggedImage;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.json.JSONObject;
 
 
 /**
