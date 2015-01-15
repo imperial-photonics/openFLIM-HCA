@@ -28,8 +28,6 @@ import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.util.ShapeUtilities;
-import org.micromanager.MMStudio;
 import org.micromanager.utils.ImageUtils;
 
 
@@ -167,9 +165,9 @@ public class FindMaxpoint {
         renderer2.setSeriesPaint(0, Color.CYAN);
         renderer2.setSeriesShapesFilled(0, Boolean.TRUE);
         renderer2.setBaseShapesVisible(true);
-        renderer2.setShape(new Rectangle(-2,-100,4,200));
-        renderer2.setOutlineStroke(new BasicStroke(1));
-        renderer2.setOutlinePaint(Color.GRAY);
+        renderer2.setBaseShape(new Rectangle(-2,-100,4,200));
+        renderer2.setBaseOutlineStroke(new BasicStroke(1));
+        renderer2.setBaseOutlinePaint(Color.GRAY);
         renderer2.setUseOutlinePaint(true);
         plot.setRenderer(1, renderer2);
         

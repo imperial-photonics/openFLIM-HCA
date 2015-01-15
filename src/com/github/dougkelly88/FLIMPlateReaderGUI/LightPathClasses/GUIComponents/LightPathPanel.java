@@ -421,7 +421,6 @@ public class LightPathPanel extends javax.swing.JPanel {
                 System.out.println("Not setting property for device " + device
                         + "because combo hasn't yet been populated (setByLabel method)");
             }
-            // TODO: implement updating of var_ here rather than in individual actionlisteners?
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

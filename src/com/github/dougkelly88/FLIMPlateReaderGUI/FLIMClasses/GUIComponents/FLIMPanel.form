@@ -595,7 +595,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="CalibrationPathLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="jToggleButton1" min="-2" max="-2" attributes="0"/>
+                              <Component id="CalibrationPathButton" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="CalibrationPathField" alignment="0" min="-2" pref="502" max="-2" attributes="0"/>
                       </Group>
@@ -611,9 +611,9 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="DelayBoxCalibrationComboBox" min="-2" max="-2" attributes="0"/>
                       <EmptySpace pref="50" max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="CalibrationPathLabel" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Component id="jToggleButton1" alignment="1" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="CalibrationPathLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="CalibrationPathButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="CalibrationPathField" min="-2" max="-2" attributes="0"/>
@@ -659,12 +659,12 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="javax.swing.JToggleButton" name="jToggleButton1">
+            <Component class="javax.swing.JButton" name="CalibrationPathButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Change path"/>
+                <Property name="text" type="java.lang.String" value="Chose Path"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jToggleButton1ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CalibrationPathButtonActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

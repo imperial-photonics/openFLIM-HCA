@@ -7,7 +7,6 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
-import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.*;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 import org.apache.poi.hssf.usermodel.HSSFCell;
