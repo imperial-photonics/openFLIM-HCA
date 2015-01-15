@@ -774,8 +774,11 @@ public class FLIMPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_CalibrationPathButtonActionPerformed
 
     private void setDelayComboBox(){
+        String file1 = null;
         File FileCalibrationDelayBox=new File(".").getAbsoluteFile();
         String stringFileCalibrationDelayBox=FileCalibrationDelayBox.getAbsolutePath();
+        int aa=stringFileCalibrationDelayBox.length();
+        stringFileCalibrationDelayBox=stringFileCalibrationDelayBox.substring(0, aa-2);
        // stringFileCalibrationDelayBox.substring(0, 5);
         DelayPath=stringFileCalibrationDelayBox+"\\mmplugins\\OpenHCAFLIM\\KentechCalibration";
         DelayBoxCalibrationComboBox.removeAllItems();
@@ -784,13 +787,13 @@ public class FLIMPanel extends javax.swing.JPanel {
             if (file.isFile()) {
             DelayBoxCalibrationComboBox.addItem(file.getName());
             }
-            CalibrationPathField.setText(DelayPath);
+            
         }
             try{
             gui_.registerForEvents(this);
             core_ = gui_.getCore();
-            String file = DelayPath+"HDG800Calibration.csv";
-            core_.setProperty("Delay box", "CalibrationPath", file);
+            file1 = DelayPath+"\\HDG800Calibration.csv";
+            core_.setProperty("Delay box", "CalibrationPath", file1);
             core_.setProperty("Delay box", "Calibrated", "Yes");
             String del = core_.getDeviceName("Delay box");
             DelayBoxCalibrationComboBox.setSelectedItem("HDG800Calibration.csv");
@@ -800,7 +803,7 @@ public class FLIMPanel extends javax.swing.JPanel {
             } catch (Exception ex) {
             Logger.getLogger(FLIMPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+        CalibrationPathField.setText(file1);
     }
     
     private void updateDelayField(JTextField field){
