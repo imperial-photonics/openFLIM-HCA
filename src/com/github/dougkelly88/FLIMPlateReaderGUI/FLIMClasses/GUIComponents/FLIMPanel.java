@@ -667,8 +667,7 @@ public class FLIMPanel extends javax.swing.JPanel {
             file = DelayPath+"\\"+setval;
             // only send command if combo has been properly populated
             if (setval != null) {
-    //            core_.setProperty("DWheel", "Label", "State-0");
-                core_.setProperty("Delay box", "CalibrationPath", file);
+                core_.setProperty("DWheel", "Label", "State-0");
                 core_.setProperty("Delay box", "Calibrated", "Yes");
                 CalibrationPathField.setText(file);
             } else {
@@ -771,8 +770,15 @@ public class FLIMPanel extends javax.swing.JPanel {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             DelayPath = chooser.getSelectedFile().getPath();
             }
-
-            CalibrationPathField.setText(DelayPath);
+        
+        DelayBoxCalibrationComboBox.removeAllItems();
+        File[] files = new File(DelayPath).listFiles();
+        for (File file : files) {
+            if (file.isFile()) {
+            DelayBoxCalibrationComboBox.addItem(file.getName());
+            }
+        }
+        CalibrationPathField.setText(DelayPath);
     }//GEN-LAST:event_CalibrationPathButtonActionPerformed
 
     private void setDelayComboBox(){
