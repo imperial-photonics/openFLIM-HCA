@@ -667,17 +667,19 @@ public class FLIMPanel extends javax.swing.JPanel {
             file = DelayPath+"\\"+setval;
             // only send command if combo has been properly populated
             if (setval != null) {
-                core_.setProperty("Delay box", "Label", file);
+    //            core_.setProperty("DWheel", "Label", "State-0");
+                core_.setProperty("Delay box", "CalibrationPath", file);
                 core_.setProperty("Delay box", "Calibrated", "Yes");
+                CalibrationPathField.setText(file);
             } else {
                 System.out.println("Error DelayBoxCalibrationComboBoxActionPerformed (1)");
             }
-            CalibrationPathField.setText(file);
+            
             // TODO: implement updating of var_ here rather than in individual actionlisteners?
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        CalibrationPathField.setText(file);
+        
     }//GEN-LAST:event_DelayBoxCalibrationComboBoxActionPerformed
 
     private void slowBoxCalibratedStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_slowBoxCalibratedStateChanged
