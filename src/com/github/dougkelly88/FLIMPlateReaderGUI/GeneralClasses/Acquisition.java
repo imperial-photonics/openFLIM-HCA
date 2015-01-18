@@ -25,22 +25,21 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.NonNegativeInteger;
 import java.io.IOException;
 import com.quirkware.guid.PlatformIndependentGuidGen;
-import ij.process.ImageProcessor;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
 import mmcorej.TaggedImage;
 import org.micromanager.api.ImageCache;
-import org.micromanager.utils.ImageUtils;
 
 /**
  *
  * @author dk1109
  */
 public class Acquisition {
-
     MMStudio gui_;
     CMMCore core_;
     CoreMetadata cm;
+    private DisplayImage DisplayImage_;
+
 
     public Acquisition() {
         gui_ = MMStudio.getInstance();
@@ -71,6 +70,7 @@ public class Acquisition {
                 for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
                     core_.snapImage();
                     Object img = core_.getImage();
+                    showImage(img);
                     // this bit c.f. FrameAverager
                     if (core_.getBytesPerPixel() == 2){
                         short[] pixS = (short[]) img;
@@ -284,5 +284,9 @@ public class Acquisition {
         // TODO: pass an instance of a single class containing all the input vars, also some stuff regarding autofocus?
 
         // go through order arraylist and build a 2D arraylist containing all vars in appropriate order...
+    }
+    
+    public void showImage(Object img){
+            DisplayImage_.display();
     }
 }
