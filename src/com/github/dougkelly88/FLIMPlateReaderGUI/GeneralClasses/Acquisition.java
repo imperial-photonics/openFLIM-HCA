@@ -70,7 +70,7 @@ public class Acquisition {
                 for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
                     core_.snapImage();
                     Object img = core_.getImage();
-                    showImage(img);
+ //                   showImage();
                     // this bit c.f. FrameAverager
                     if (core_.getBytesPerPixel() == 2){
                         short[] pixS = (short[]) img;
@@ -286,7 +286,7 @@ public class Acquisition {
         // go through order arraylist and build a 2D arraylist containing all vars in appropriate order...
     }
     
-    public void showImage(Object img){
+    public void showImage(){
             DisplayImage_.display();
     }
 }

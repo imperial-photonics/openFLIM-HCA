@@ -760,7 +760,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         }
         // set loaded values in all panels
         lightPathControls1.setLoadedSoftwareValues();
-        fLIMPanel1.setLoadedSoftwareValues();
+//rtz        fLIMPanel1.setLoadedSoftwareValues();
     }//GEN-LAST:event_loadSoftwareConfigActionPerformed
 
     private void loadPlateMetadataMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadPlateMetadataMenuActionPerformed
@@ -807,7 +807,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
-                fss.add(new FilterSetup(lightPathControls1, intTime, fLIMPanel1));
+//rtz                fss.add(new FilterSetup(lightPathControls1, intTime, fLIMPanel1));
             } else {
                 fss = spectralSequencing1.getFilterTable();
             } 
@@ -963,7 +963,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             
             // RESET DELAY TO BE CONSISTENT WITH UI
             try{
-                core_.setProperty("Delay box", "Delay (ps)", fLIMPanel1.getCurrentDelay());
+//rtz                core_.setProperty("Delay box", "Delay (ps)", fLIMPanel1.getCurrentDelay());
             } catch (Exception  e){
                 System.out.println(e.getMessage());
             }
@@ -983,8 +983,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             System.out.println(e.getMessage());
         }
         // so that same functions can be used, generate dummy SequencedAcquisitionSetup
-        acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
-                new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
+//rtz        acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
+//rtz                new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
     }//GEN-LAST:event_snapFLIMButtonActionPerformed
 
     private void snapBFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapBFButtonActionPerformed
