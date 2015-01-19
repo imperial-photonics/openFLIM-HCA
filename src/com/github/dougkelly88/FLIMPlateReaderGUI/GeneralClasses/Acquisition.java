@@ -287,6 +287,6 @@ public class Acquisition {
     }
     
     public void showImage(){
-            DisplayImage_.display();
+          //  DisplayImage_.display();
     }
 }

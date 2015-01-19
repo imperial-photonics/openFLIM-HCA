@@ -790,14 +790,20 @@ public class FLIMPanel extends javax.swing.JPanel {
        // stringFileCalibrationDelayBox.substring(0, 5);
         DelayPath=stringFileCalibrationDelayBox+"\\mmplugins\\OpenHCAFLIM\\KentechCalibration";
         DelayBoxCalibrationComboBox.removeAllItems();
-        File[] files = new File(DelayPath).listFiles();
+        File[] files;
+        try{
+            files = new File(DelayPath).listFiles();
+        }catch(Exception ex){
+            files=new File("C:").listFiles();   
+        }
         for (File file : files) {
             if (file.isFile()) {
             DelayBoxCalibrationComboBox.addItem(file.getName());
             }
             
         }
-            try{
+
+        try{
             gui_.registerForEvents(this);
             core_ = gui_.getCore();
             file1 = DelayPath+"\\HDG800Calibration.csv";
