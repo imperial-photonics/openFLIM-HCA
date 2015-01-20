@@ -80,7 +80,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         gui_ = MMStudio.getInstance();
         sap_ = SeqAcqProps.getInstance().setUseScanFLIM(false);
         var_= VariableTest.getInstance();
-        setDelayComboBox();
+//        setDelayComboBox();
       
         setControlDefaults();
     }
@@ -781,7 +781,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         CalibrationPathField.setText(DelayPath);
     }//GEN-LAST:event_CalibrationPathButtonActionPerformed
 
-    private void setDelayComboBox(){
+    public void setDelayComboBox(){
         String file1 = null;
         File FileCalibrationDelayBox=new File(".").getAbsoluteFile();
         String stringFileCalibrationDelayBox=FileCalibrationDelayBox.getAbsolutePath();
@@ -790,12 +790,8 @@ public class FLIMPanel extends javax.swing.JPanel {
        // stringFileCalibrationDelayBox.substring(0, 5);
         DelayPath=stringFileCalibrationDelayBox+"\\mmplugins\\OpenHCAFLIM\\KentechCalibration";
         DelayBoxCalibrationComboBox.removeAllItems();
-        File[] files;
-        try{
-            files = new File(DelayPath).listFiles();
-        }catch(Exception ex){
-            files=new File("C:").listFiles();   
-        }
+         
+        File[] files = new File(DelayPath).listFiles();
         for (File file : files) {
             if (file.isFile()) {
             DelayBoxCalibrationComboBox.addItem(file.getName());

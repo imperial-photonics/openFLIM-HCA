@@ -112,6 +112,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         lightPathControls1.setParent(this);
         
         
+        
         MMStudio gui_ = MMStudio.getInstance();
         gui_.registerForEvents(this);
 
@@ -135,6 +136,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         lightPathControls1.setLoadedHardwareValues();
         setupSequencingTable();
         xYZPanel1.setupAFParams(this);
+        fLIMPanel1.setDelayComboBox();
         
         try{
             String cam = core_.getCameraDevice();
@@ -278,6 +280,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         FLIMPanel = new javax.swing.JTabbedPane();
         lightPathControls1 = new com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents.LightPathPanel();
         xYZPanel1 = new com.github.dougkelly88.FLIMPlateReaderGUI.XYZClasses.GUIComponents.XYZPanel();
+        fLIMPanel1 = new com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.GUIComponents.FLIMPanel();
         statusLabel = new javax.swing.JLabel();
         flimAcquisitionPanel = new javax.swing.JPanel();
         jProgressBar1 = new javax.swing.JProgressBar();
@@ -319,6 +322,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         xYZPanel1.setEnabled(false);
         FLIMPanel.addTab("XYZ control", xYZPanel1);
+        FLIMPanel.addTab("FLIM control", fLIMPanel1);
 
         flimAcquisitionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("FLIM acquisition"));
 
@@ -760,7 +764,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         }
         // set loaded values in all panels
         lightPathControls1.setLoadedSoftwareValues();
-//rtz        fLIMPanel1.setLoadedSoftwareValues();
+        fLIMPanel1.setLoadedSoftwareValues();
     }//GEN-LAST:event_loadSoftwareConfigActionPerformed
 
     private void loadPlateMetadataMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadPlateMetadataMenuActionPerformed
@@ -807,7 +811,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
-//rtz                fss.add(new FilterSetup(lightPathControls1, intTime, fLIMPanel1));
+                fss.add(new FilterSetup(lightPathControls1, intTime, fLIMPanel1));
             } else {
                 fss = spectralSequencing1.getFilterTable();
             } 
@@ -963,7 +967,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             
             // RESET DELAY TO BE CONSISTENT WITH UI
             try{
-//rtz                core_.setProperty("Delay box", "Delay (ps)", fLIMPanel1.getCurrentDelay());
+                core_.setProperty("Delay box", "Delay (ps)", fLIMPanel1.getCurrentDelay());
             } catch (Exception  e){
                 System.out.println(e.getMessage());
             }
@@ -983,8 +987,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             System.out.println(e.getMessage());
         }
         // so that same functions can be used, generate dummy SequencedAcquisitionSetup
-//rtz        acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
-//rtz                new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
+        acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
+                new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
     }//GEN-LAST:event_snapFLIMButtonActionPerformed
 
     private void snapBFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapBFButtonActionPerformed
@@ -1102,6 +1106,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JPanel basePanel;
     private javax.swing.JMenuItem calibrationMenu;
     private javax.swing.JFormattedTextField currentBasePathField;
+    private com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.GUIComponents.FLIMPanel fLIMPanel1;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JPanel flimAcquisitionPanel;
     private javax.swing.JScrollPane frameScrollPane;
