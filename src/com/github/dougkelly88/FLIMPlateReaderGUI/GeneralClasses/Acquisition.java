@@ -25,6 +25,8 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.NonNegativeInteger;
 import java.io.IOException;
 import com.quirkware.guid.PlatformIndependentGuidGen;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
 import mmcorej.TaggedImage;
@@ -44,6 +46,7 @@ public class Acquisition {
     public Acquisition() {
         gui_ = MMStudio.getInstance();
         core_ = gui_.getCore();
+        DisplayImage_ =DisplayImage.getInstance();
     }
 
     public void snapFLIMImage(String path, ArrayList<Integer> delays, SeqAcqSetup sas) {
@@ -70,7 +73,7 @@ public class Acquisition {
                 for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
                     core_.snapImage();
                     Object img = core_.getImage();
- //                   showImage();
+//                    DisplayImage_.display(img);
                     // this bit c.f. FrameAverager
                     if (core_.getBytesPerPixel() == 2){
                         short[] pixS = (short[]) img;
@@ -102,7 +105,16 @@ public class Acquisition {
             // clean up writer when finished...
             writer.close();
         } catch (Exception e) {
+            byte[] imgDemo =null;
+            try {
+                core_.snapImage();
+                imgDemo = (byte[]) core_.getImage();
+            } catch (Exception ex) {
+                System.out.print("no picture snaped");
+            }
+            
             System.out.println(e.getMessage());
+            DisplayImage_.display(imgDemo);
         }
 
     }
@@ -286,7 +298,9 @@ public class Acquisition {
         // go through order arraylist and build a 2D arraylist containing all vars in appropriate order...
     }
     
+
+    
     public void showImage(){
-          //  DisplayImage_.display();
+        //  DisplayImage_.display();
     }
 }

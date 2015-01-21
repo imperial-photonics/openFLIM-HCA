@@ -59,11 +59,6 @@ public class VariableTest {
     public ArrayList<Integer> delays;
     
     
-    
-  public static VariableTest getInstance() {
-      
-      return fINSTANCE;
-  }
 
   // PRIVATE
 
@@ -130,6 +125,16 @@ public class VariableTest {
         String ok="OK!";
         return ok;
   }
+  
+  public String displayxx(int a){
+        System.out.print("Läuft auch acqu   "+a);
+        return "ok";
+        //  DisplayImage_.display();
+    }
+  public static VariableTest getInstance() {
+      
+      return fINSTANCE;
+  }    
   public String findLabelOfProperty(String searchedProperty){
             //String entireFileText= new Scanner(new File("C:\\Users\\Frederik\\Desktop\\ConfigSoftware.txt"))
              // .useDelimiter("\\A").next();
@@ -157,7 +162,7 @@ public class VariableTest {
         }
         return label; 
   }
-    public ArrayList<Integer> findLabelOfPropertyForArrayList(String searchedProperty){
+  public ArrayList<Integer> findLabelOfPropertyForArrayList(String searchedProperty){
 
         String label=null;
         ArrayList<Integer> delaysVar= new ArrayList<Integer>();

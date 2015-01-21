@@ -138,6 +138,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         xYZPanel1.setupAFParams(this);
         fLIMPanel1.setDelayComboBox();
         
+        DisplayImage_ = DisplayImage.getInstance();
+        
         try{
             String cam = core_.getCameraDevice();
             if ("HamamatsuHam_DCAM".equals(cam)){
@@ -1013,7 +1015,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_accFramesFieldActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       DisplayImage_.display();
+        
+    //    DisplayImage_.display();
+        
+        
+    //    DisplayImage_.displayx();
        // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
    

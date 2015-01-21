@@ -80,7 +80,6 @@ public class FLIMPanel extends javax.swing.JPanel {
         gui_ = MMStudio.getInstance();
         sap_ = SeqAcqProps.getInstance().setUseScanFLIM(false);
         var_= VariableTest.getInstance();
-//        setDelayComboBox();
       
         setControlDefaults();
     }
@@ -667,13 +666,11 @@ public class FLIMPanel extends javax.swing.JPanel {
             file = DelayPath+"\\"+setval;
             // only send command if combo has been properly populated
             if (setval != null) {
-                core_.setProperty("DWheel", "Label", "State-0");
+                setDelayBox(file, 1);
+            /*    core_.setProperty("Delay box", "CalibrationPath", file);
                 core_.setProperty("Delay box", "Calibrated", "Yes");
-                CalibrationPathField.setText(file);
-            } else {
-                System.out.println("Error DelayBoxCalibrationComboBoxActionPerformed (1)");
+                CalibrationPathField.setText(file);*/
             }
-            
             // TODO: implement updating of var_ here rather than in individual actionlisteners?
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -798,22 +795,35 @@ public class FLIMPanel extends javax.swing.JPanel {
             }
             
         }
-
-        try{
             gui_.registerForEvents(this);
             core_ = gui_.getCore();
             file1 = DelayPath+"\\HDG800Calibration.csv";
+            setDelayBox(file1, 0);
+        /*try{
+        
             core_.setProperty("Delay box", "CalibrationPath", file1);
             core_.setProperty("Delay box", "Calibrated", "Yes");
-            String del = core_.getDeviceName("Delay box");
+//            String del = core_.getDeviceName("Delay box");
             DelayBoxCalibrationComboBox.setSelectedItem("HDG800Calibration.csv");
-            if ("KentechSingleEdgeHRI".equals(del)){
+/*            if ("KentechSingleEdgeHRI".equals(del)){
                 inhibitCheck.setEnabled(true);
             }
             } catch (Exception ex) {
-            Logger.getLogger(FLIMPanel.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
         }
-        CalibrationPathField.setText(file1);
+        CalibrationPathField.setText(file1);*/
+    }
+    private void setDelayBox(String file, int x) {
+        try {
+            core_.setProperty("Delay box", "CalibrationPath", file);
+            core_.setProperty("Delay box", "Calibrated", "Yes");
+            if(x==0){
+                DelayBoxCalibrationComboBox.setSelectedItem("HDG800Calibration.csv");
+            }
+            CalibrationPathField.setText(file);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
     }
     
     private void updateDelayField(JTextField field){
