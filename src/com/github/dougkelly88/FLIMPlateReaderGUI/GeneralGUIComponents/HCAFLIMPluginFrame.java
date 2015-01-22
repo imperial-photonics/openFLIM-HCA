@@ -88,7 +88,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private DisplayImage DisplayImage_;
     public static HSSFWorkbook wb = new HSSFWorkbook();
     public static HSSFWorkbook wbLoad = new HSSFWorkbook();
-    
+    boolean abortHCAsequencBoolean;
+    public static String testMu;
+    public static ArrayList<String> order;
    
 //    public static HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -131,6 +133,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         var_ = VariableTest.getInstance();
         currentBasePathField.setText(var_.basepath);
+        
 
         loadDefaultPlateConfig();
         lightPathControls1.setLoadedHardwareValues();
@@ -295,6 +298,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         accFramesField = new javax.swing.JFormattedTextField();
         jButton1 = new javax.swing.JButton();
+        abortHCAsequencesButton = new javax.swing.JButton();
         sequenceSetupBasePanel = new javax.swing.JPanel();
         sequenceSetupTabbedPane = new javax.swing.JTabbedPane();
         xYSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing();
@@ -387,6 +391,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
         });
 
+        abortHCAsequencesButton.setText("Abort HCA sequences");
+        abortHCAsequencesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                abortHCAsequencesButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout flimAcquisitionPanelLayout = new javax.swing.GroupLayout(flimAcquisitionPanel);
         flimAcquisitionPanel.setLayout(flimAcquisitionPanelLayout);
         flimAcquisitionPanelLayout.setHorizontalGroup(
@@ -416,7 +427,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                                 .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(flimAcquisitionPanelLayout.createSequentialGroup()
                                 .addGap(10, 10, 10)
-                                .addComponent(jButton1))))
+                                .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(abortHCAsequencesButton)
+                                    .addComponent(jButton1)))))
                     .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(23, Short.MAX_VALUE))
         );
@@ -435,7 +448,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                             .addComponent(jLabel2)
                             .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(startSequenceButton))
+                        .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(startSequenceButton)
+                            .addComponent(abortHCAsequencesButton)))
                     .addComponent(seqOrderBasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                 .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -778,10 +793,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_currentBasePathFieldActionPerformed
     
     private void startSequenceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startSequenceButtonActionPerformed
-
-            // TODO: break up into submethods!
-        
-            Acquisition acq = new Acquisition();
+            setStaticValuesForThread();
+            Thread sequenceThread =new Thread(new sequencingThread());  
+            sequenceThread.start();
+            System.out.println("in mainThread");
+/*            Acquisition acq = new Acquisition();
             ArrayList<FOV> fovs = new ArrayList<FOV>();
             ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
             ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
@@ -828,7 +844,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
             }
             
-           System.out.print(sass+"\n");
+//55           System.out.print(sass+"\n");
             // use chained comparators to sort by multiple fields SIMULTANEOUSLY,
             // based on order determined in UI table. 
             // DEBUG
@@ -846,7 +862,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     comparators.add(new TComparator());
             }
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
-            System.out.print(sass+"\n");
+//55            System.out.print(sass+"\n");
             // DEBUG
 //            System.out.println("After sorting according to UI: ");
 //            for (SeqAcqSetup sas : sass){
@@ -967,6 +983,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 lastFOV = sas.getFOV();
                 lastZ = sas.getFOV().getZ();
                 lastFiltLabel = sas.getFilters().getLabel();
+                
+
+                
+               
             }
             
             // RESET DELAY TO BE CONSISTENT WITH UI
@@ -974,7 +994,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 core_.setProperty("Delay box", "Delay (ps)", fLIMPanel1.getCurrentDelay());
             } catch (Exception  e){
                 System.out.println(e.getMessage());
-            }
+            }*/
     }//GEN-LAST:event_startSequenceButtonActionPerformed
 
     private void snapFLIMButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapFLIMButtonActionPerformed
@@ -1024,7 +1044,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     //    DisplayImage_.displayx();
        // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void abortHCAsequencesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abortHCAsequencesButtonActionPerformed
+       
+    }//GEN-LAST:event_abortHCAsequencesButtonActionPerformed
    
+    public void changeAbortHCAsequencBoolean(){
+    abortHCAsequencBoolean=abortHCAsequencesButton.isSelected();
+    }
+    
     public void loadSequencingTablesFunction() throws IOException{
         
             FileInputStream fileInputStream1 = new FileInputStream(var_.basepath + "\\OpenHCAFLIM_Sequenzing.xls");
@@ -1071,6 +1099,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         }
     }                                               
 
+    
+     public void setStaticValuesForThread() {
+        testMu=var_.basepath;
+        order= tableModel_.getData();
+    }
+     
+    
     public int getAccFrames(){
         return Integer.parseInt(accFramesField.getText());
     }
@@ -1108,6 +1143,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem FLIMHCAHelpMenu;
     private javax.swing.JTabbedPane FLIMPanel;
+    private javax.swing.JButton abortHCAsequencesButton;
     private javax.swing.JMenuItem aboutMenu;
     private javax.swing.JFormattedTextField accFramesField;
     private javax.swing.JMenuItem advancedMenu;

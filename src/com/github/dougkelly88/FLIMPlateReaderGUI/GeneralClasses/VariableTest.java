@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -24,12 +25,12 @@ import mmcorej.StrVector;
 public class VariableTest {
 // All variables define here:
     //Test variables:
-    
-    public String tet1="yes";
+    public AtomicInteger value = new AtomicInteger(10);
+    public volatile String tet1="Got it!";
     public int tet2;
     
     // General variables:
-    public String basepath=basepath = System.getProperty("user.home");//Default basepath
+    public String basepath= System.getProperty("user.home");//Default basepath
     public String entireFileText;
     
     // LightPathControl variables:
