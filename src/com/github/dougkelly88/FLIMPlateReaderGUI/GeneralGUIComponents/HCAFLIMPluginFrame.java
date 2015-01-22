@@ -828,6 +828,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
             }
             
+           System.out.print(sass+"\n");
             // use chained comparators to sort by multiple fields SIMULTANEOUSLY,
             // based on order determined in UI table. 
             // DEBUG
@@ -845,7 +846,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     comparators.add(new TComparator());
             }
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
-            
+            System.out.print(sass+"\n");
             // DEBUG
 //            System.out.println("After sorting according to UI: ");
 //            for (SeqAcqSetup sas : sass){
@@ -885,6 +886,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 // TODO: how much can these steps be parallelised?
                 // set FOV params
                 SeqAcqSetup sas = sass.get(ind);
+ //55               System.out.print(sas+"\n");
                 // if time point changed different from last time, wait until 
                 // next time point reached...
                 if ((!sas.getTimePoint().getTimeCell().equals(lastTime)) & (order.contains("Time course"))){
@@ -933,12 +935,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 String fovLabel = String.format("%05d", ind);
 //                String path = baseLevelPath + "/" + "T=" + sas.getTimePoint().getTimeCell() + 
                 String path = baseLevelPath + "/" + sas.getFilters().getLabel() + "/"+ 
-                        "T=" + sas.getTimePoint().getTimeCell() + 
-                        " Filterset=" + sas.getFilters().getLabel() + 
-                        " Z=" + sas.getFOV().getZ() + 
-                        " Well=" + sas.getFOV().getWell() + 
+                        " Well=" + sas.getFOV().getWell() +                        
                         " X=" + sas.getFOV().getX() +
                         " Y=" + sas.getFOV().getY() +
+                        "T=" + sas.getTimePoint().getTimeCell() + 
+                        " Filterset=" + sas.getFilters().getLabel() + 
+                        " Z=" + sas.getFOV().getZ() +
                         " ID=" + fovLabel + 
                         ".ome.tiff";
                 try{
