@@ -5,12 +5,7 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents;
 
-import java.awt.BorderLayout;
 import javax.swing.BorderFactory;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 import javax.swing.border.Border;
 
 /**
@@ -18,7 +13,10 @@ import javax.swing.border.Border;
  * @author Frederik
  */
 public class ProgressBar extends javax.swing.JPanel {
-
+    private HCAFLIMPluginFrame frameProBar;
+    static Thread t;
+    double i=0;
+    double sassSize=1;
 
     /**
      * Creates new form ProgressBar
@@ -30,60 +28,25 @@ public class ProgressBar extends javax.swing.JPanel {
         Border border = BorderFactory.createTitledBorder("HCA sequence Progress...");
         jProgressBar1.setBorder(border);
         jProgressBar1.repaint();
-    }
-    public static void main(){
-            JFrame parentFrame = new JFrame();
-            parentFrame.setSize(500, 150);
-            JLabel jl = new JLabel();
-            jl.setText("Count : 0");
-
-            parentFrame.add(BorderLayout.CENTER, jl);
-            parentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-            parentFrame.setVisible(true);
-
-            final JDialog dlg = new JDialog(parentFrame, "Progress Dialog", true);
-            JProgressBar dpb = new JProgressBar(0, 500);
-            dlg.add(BorderLayout.CENTER, dpb);
-            dlg.add(BorderLayout.NORTH, new JLabel("Progress..."));
-            dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-            dlg.setSize(300, 75);
-            dlg.setLocationRelativeTo(parentFrame);
-
-            Thread t = new Thread(new Runnable() {
-            public void run() {
-                dlg.setVisible(true);
-            }
-            });
-            t.start();
-            for (int i = 0; i <= 500; i++) {
-                    jl.setText("Count : " + i);
-                    dpb.setValue(i);
-                if(dpb.getValue() == 500){
-                    dlg.setVisible(false);
-                    System.exit(0);
         
-                }
-            try {
-                Thread.sleep(25);
-            } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        }
-            dlg.setVisible(true);
-    
     }
     
     
-
-    public void addProgressBarIncrement(double ind, double sassSize) { 
+    public void stepIncrement(double ind, double sassSize) throws InterruptedException { 
         double prozentIncr= 1/sassSize*100;
         double prozentDouble= (ind+1)*prozentIncr;
         int prozentInt=(int) prozentDouble;
         jProgressBar1.setValue(prozentInt);
         jProgressBar1.repaint();
-        System.out.println(prozentInt);
-}
+
+    }
+    
+    public void setTo(int to){
+        jProgressBar1.setValue(to);
+    }
+    
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -102,7 +65,7 @@ public class ProgressBar extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -116,9 +79,4 @@ public class ProgressBar extends javax.swing.JPanel {
     private javax.swing.JProgressBar jProgressBar1;
     // End of variables declaration//GEN-END:variables
 
-    void initialize() {
-        Thread PBThread=new Thread(new ProgressBarThread() {});
-        PBThread.start();
-        repaint();
-    }
 }

@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents;
+package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
+
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 
 /**
  *
@@ -21,9 +23,13 @@ public class sequencingThread implements Runnable {
     @Override
     public void run() {
         
-      frame.doSequenceAcquisition();
-      // sequencingThread sTh= new sequencingThread();
-      //  sequencingThread.frame_.doSequenceAcquisition();
+        try {
+            frame.doSequenceAcquisition();
+            // sequencingThread sTh= new sequencingThread();
+            //  sequencingThread.frame_.doSequenceAcquisition();
+        } catch (InterruptedException ex) {
+            System.out.println("sequncingThread no acces to mainFrame!");
+        }
         
     }
     

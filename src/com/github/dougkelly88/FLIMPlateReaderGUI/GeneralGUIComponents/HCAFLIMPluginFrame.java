@@ -5,6 +5,7 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents;
 
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.sequencingThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Acquisition;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.DisplayImage;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
@@ -77,7 +78,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
     public CMMCore core_;
-    public static CMMCore coreTh_;
     static HCAFLIMPluginFrame frame_;
     private SeqAcqProps sap_;
     private VariableTest var_;
@@ -87,24 +87,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private JTable seqOrderTable_;
     public  FOV currentFOV_;
     private DisplayImage DisplayImage_;
-    private ProgressBar ProBar_;
     public static HSSFWorkbook wb = new HSSFWorkbook();
     public static HSSFWorkbook wbLoad = new HSSFWorkbook();
-    boolean abortHCAsequencBoolean;
-//    Values for sequencing Thread!
-    public static String testMuTh1;
-    public static ArrayList<String> orderTh1;
-    public static Acquisition acqTh1;
-    public static ArrayList<FOV> fovsTh1;
-    public static ArrayList<TimePoint> tpsTh1;
-    public static ArrayList<FilterSetup> fssTh1;
-    public static FOV fovsAddTh1;
-    public static TimePoint timePointTh1;
-    public static FilterSetup fssAddTh1;
-    public static boolean aFInSequenceTh1;
-    public static double sampleAFOffsetTh1;
-    public static double currentDelayTh1;
-
+    public Thread sequenceThread;
+    private ProgressBar sequencingProBar_;
+    private double incr=0;
+    private double sassSize=5;
+    private boolean terminate=false;
 
    
 //    public static HSSFWorkbook wb = new HSSFWorkbook();
@@ -127,7 +116,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         xYZPanel1.setParent(this);
         xYSequencing1.setParent(this);
         lightPathControls1.setParent(this);
-        ProgressBar HCAProgressBar_;
+     //   ProgressBar sequencingProBar_;
         
         
         
@@ -168,6 +157,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
+        sequencingProBar_ = new ProgressBar();
+        progressBarPanel.setLayout(new BorderLayout());
+        progressBarPanel.add(sequencingProBar_, BorderLayout.SOUTH);
     }
 
     public CMMCore getCore() {
@@ -312,8 +304,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         seqOrderBasePanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         accFramesField = new javax.swing.JFormattedTextField();
-        abortHCAsequencesButton = new javax.swing.JButton();
         progressBarPanel = new javax.swing.JPanel();
+        stopSequenceButton = new javax.swing.JToggleButton();
         sequenceSetupBasePanel = new javax.swing.JPanel();
         sequenceSetupTabbedPane = new javax.swing.JTabbedPane();
         xYSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing();
@@ -399,13 +391,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
         });
 
-        abortHCAsequencesButton.setText("Abort HCA sequences");
-        abortHCAsequencesButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                abortHCAsequencesButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout progressBarPanelLayout = new javax.swing.GroupLayout(progressBarPanel);
         progressBarPanel.setLayout(progressBarPanelLayout);
         progressBarPanelLayout.setHorizontalGroup(
@@ -416,6 +401,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             progressBarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 47, Short.MAX_VALUE)
         );
+
+        stopSequenceButton.setText("Stop HCA sequence");
+        stopSequenceButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stopSequenceButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout HCAsequenceProgressBarLayout = new javax.swing.GroupLayout(HCAsequenceProgressBar);
         HCAsequenceProgressBar.setLayout(HCAsequenceProgressBarLayout);
@@ -440,15 +432,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                                         .addComponent(snapFLIMButton, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(snapBFButton, javax.swing.GroupLayout.Alignment.TRAILING)
                                         .addComponent(startSequenceButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGap(7, 7, 7)
                             .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
+                                    .addGap(7, 7, 7)
                                     .addComponent(jLabel2)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                     .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
-                                    .addGap(10, 10, 10)
-                                    .addComponent(abortHCAsequencesButton))))))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(stopSequenceButton))))))
                 .addContainerGap(23, Short.MAX_VALUE))
         );
         HCAsequenceProgressBarLayout.setVerticalGroup(
@@ -466,7 +458,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(startSequenceButton)
-                            .addComponent(abortHCAsequencesButton)))
+                            .addComponent(stopSequenceButton)))
                     .addComponent(seqOrderBasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -807,23 +799,25 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
    
     private void startSequenceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startSequenceButtonActionPerformed
-        //       setStaticValuesForThread();
-               Thread sequenceThread =new Thread(new sequencingThread(this));
-               sequenceThread.start();
-        //    double incr=0;
-        //    double sassSize=5;
-        //    ProBar_.initialize();
-        //    Thread ProgressBarThread =new Thread(new ProgressBarThread() {});
-        //   ProgressBarThread.start();
-            
-            
-        /*    synchronized(ProgressBarThread){    
-            Acquisition acq = new Acquisition();
-            ArrayList<FOV> fovs = new ArrayList<FOV>();
-            ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
-            ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
-            
+        
+            sequenceThread =new Thread(new sequencingThread(this));
+            sequenceThread.start();
+         try {   
+             sequencingProBar_.stepIncrement(incr, sassSize);
+        } catch (InterruptedException ex) {
+            System.out.println("no probar action");
+        }
+        
+    }//GEN-LAST:event_startSequenceButtonActionPerformed
 
+    
+    public void doSequenceAcquisition() throws InterruptedException{
+        sequencingProBar_.setTo(0);
+        Acquisition acq = new Acquisition();
+        ArrayList<FOV> fovs = new ArrayList<FOV>();
+        ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
+        ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
+            
             // get all sequence parameters and put them together into an 
             // array list of objects containing all acquisition points...
             // Note that if a term is absent from the sequence setup, current
@@ -879,7 +873,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     comparators.add(new TComparator());
             }
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
-            System.out.print(sass+"\n");
             sassSize=sass.size();
             
             
@@ -911,6 +904,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             Double lastZ = 0.0;
 //            int fovSinceLastAF = 0;
             for (int ind = 0; ind < sass.size(); ind++){
+                if(terminate){
+                //    sequencingProBar_.setTo(0);
+                    sequencingProBar_.stepIncrement(ind, sass.size());
+                    terminate=false;
+                    stopSequenceButton.setSelected(false);
+                break;
+                }
+                incr=ind;
+                sequencingProBar_.stepIncrement(ind, sass.size());
                 // TODO: how much can these steps be parallelised?
                 // set FOV params
                 SeqAcqSetup sas = sass.get(ind);
@@ -996,13 +998,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 lastZ = sas.getFOV().getZ();
                 lastFiltLabel = sas.getFilters().getLabel();
                 
-            ProBar_.addProgressBarIncrement(ind, sassSize);
-    /*55            try {
-                    ProgressBarThread.wait();
-                } catch (InterruptedException ex) {
-                    System.out.println("ProgressBarThread.wait(); not working");
-                }
-            }55
+                
             
             // RESET DELAY TO BE CONSISTENT WITH UI
             try{
@@ -1010,203 +1006,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             } catch (Exception  e){
                 System.out.println(e.getMessage());
             }
-        }*/
-    }//GEN-LAST:event_startSequenceButtonActionPerformed
-
-    public void doSequenceAcquisition(){
-    //        HCAFLIMPluginFrame newHCA=new HCAFLIMPluginFrame(coreTh_);
-            Acquisition acq = new Acquisition();
-            ArrayList<FOV> fovs = new ArrayList<FOV>();
-            ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
-            ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
             
-
-            // get all sequence parameters and put them together into an 
-            // array list of objects containing all acquisition points...
-            // Note that if a term is absent from the sequence setup, current
-            // values should be used instead...
+            sequencingProBar_.setTo(100);
             
-            List<SeqAcqSetup> sass = new ArrayList<SeqAcqSetup>();
-            ArrayList<String> order = tableModel_.getData();
-            if (!order.contains("XYZ")){
-                fovs.add(xyzmi_.getCurrentFOV());
-            } else {
-                fovs = xYSequencing1.getFOVTable();
-            }
-            
-            if (!order.contains("Time course")){
-                tps.add(new TimePoint(0.0));
-            } else {
-                tps = timeCourseSequencing1.getTimeTable();
-            }
-            
-            if (!order.contains("Filter change")){
-                int intTime = 100;
-                try {
-                    intTime = (int) core_.getExposure();
-                } catch (Exception e){
-                    System.out.println(e.getMessage());
-                }
-                fss.add(new FilterSetup(lightPathControls1, intTime, fLIMPanel1));
-            } else {
-                fss = spectralSequencing1.getFilterTable();
-            } 
-            
-            List<Comparator<SeqAcqSetup>> comparators = new ArrayList<Comparator<SeqAcqSetup>>();
-            
-            for (FOV fov : fovs){
-                for (TimePoint tp : tps){
-                    for (FilterSetup fs : fss){
-                        sass.add(new SeqAcqSetup(fov, tp, fs));
-                    }
-                }
-            }
-            
-//55           System.out.print(sass+"\n");
-            // use chained comparators to sort by multiple fields SIMULTANEOUSLY,
-            // based on order determined in UI table.
-            for (String str : order){
-                if (str.equals("XYZ")){
-                        comparators.add(new WellComparator());
-                        comparators.add(new ZComparator());
-                }
-                else if (str.equals("Filter change"))
-                    comparators.add(new FComparator());
-                else if (str.equals("Time course"))
-                    comparators.add(new TComparator());
-            }
-            Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
-            System.out.print(sass+"\n");
-//55            sassSize=sass.size();
-            
-            
-            long start_time = System.currentTimeMillis();
-            // TODO: modify data saving such that time courses, z can be put in a 
-            // single OME.TIFF. DISCUSS WITH IAN!
-            // N.B. z should be relatively easy...
-            // for now, just make a base folder and name files based on 
-            // filterlabel, time point.  
-            String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
-            String baseLevelPath = currentBasePathField.getText() + "/Sequenced FLIM acquisition " +
-                    timeStamp;
-            for (FilterSetup fs : fss){
-                String flabel = fs.getLabel();
-                File f = new File(baseLevelPath + "/" + flabel);
-                try {
-                    boolean check1 = f.mkdirs();
-                } catch (Exception e){
-                    System.out.println(e.getMessage());
-                }
-            }
-            
-            
-            
-//            for (SeqAcqSetup sas : sass){
-            Double lastTime = 0.0;
-            String lastFiltLabel = "";
-            FOV lastFOV = new FOV(0, 0, 0, pp_);
-            Double lastZ = 0.0;
-//            int fovSinceLastAF = 0;
-            for (int ind = 0; ind < sass.size(); ind++){
-                // TODO: how much can these steps be parallelised?
-                // set FOV params
-                SeqAcqSetup sas = sass.get(ind);
- //55               System.out.print(sas+"\n");
-                // if time point changed different from last time, wait until 
-                // next time point reached...
-                if ((!sas.getTimePoint().getTimeCell().equals(lastTime)) & (order.contains("Time course"))){
-                    Double next_time = sas.getTimePoint().getTimeCell() * 1000;
-                    while ((System.currentTimeMillis() - start_time) < next_time){
-                        Double timeLeft = next_time - (System.currentTimeMillis() - start_time);
-                        System.out.println("Waiting for " + timeLeft + " until next time point...");
-                    }
-                }
-                // if FOV different, deal with it here...
-                if ( ( (!sas.getFOV().equals(lastFOV)) | (sas.getFOV().getZ() != lastZ) ) & (order.contains("XYZ")) ){
-                    // TODO: this needs tweaking in order that autofocus works properly with Z stacks...
-                    // Perhaps only do when XY change, and not Z?
-                    xyzmi_.gotoFOV(sas.getFOV());
-                    if (xYZPanel1.getAFInSequence())
-                        xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());                     
-                }
-                
-                // set filter params - can these be handled by a single class?
-                if ( (!sas.getFilters().getLabel().equals(lastFiltLabel)) & order.contains("Filter change") ){
-                    try {
-                        String s = core_.getShutterDevice();
-                        if (!"".equals(s))
-                            core_.setShutterOpen(false);
-                        s = sas.getFilters().getExFilt();
-                        if (!"".equals(s))
-                            core_.setProperty("SpectralFW", "Label", s);
-                        s = sas.getFilters().getCube();
-                        if (!"".equals(s))
-                            core_.setProperty("FilterCube", "Label", s);
-                        s = sas.getFilters().getEmFilt();
-                        if (!"".equals(s))
-                            core_.setProperty("CSUX-Filter Wheel", "Label", s);
-                        s = sas.getFilters().getNDFilt();
-                        if (!"".equals(s))
-                            core_.setProperty("NDFW", "Label", s);
-                        core_.setExposure(sas.getFilters().getIntTime());
-                        s = sas.getFilters().getDiFilt();
-                        if (!"".equals(s))
-                            core_.setProperty("CSUX-Dichroic Mirror", "Label", s);
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
-                // do acquisition
-                String fovLabel = String.format("%05d", ind);
-//                String path = baseLevelPath + "/" + "T=" + sas.getTimePoint().getTimeCell() + 
-                String path = baseLevelPath + "/" + sas.getFilters().getLabel() + "/"+ 
-                        " Well=" + sas.getFOV().getWell() +                        
-                        " X=" + sas.getFOV().getX() +
-                        " Y=" + sas.getFOV().getY() +
-                        "T=" + sas.getTimePoint().getTimeCell() + 
-                        " Filterset=" + sas.getFilters().getLabel() + 
-                        " Z=" + sas.getFOV().getZ() +
-                        " ID=" + fovLabel + 
-                        ".ome.tiff";
-                try{
-                    core_.setShutterOpen(true);
-                    core_.waitForDeviceType(DeviceType.XYStageDevice);
-                    core_.waitForDeviceType(DeviceType.AutoFocusDevice);
-                }
-                catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-                
-                acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
-                
-                // shutter laser
-                // TODO: have this work properly in line with auto-shutter?
-                try {
-//                    core_.setProperty("NDFW", "Label", "STOP");
-                    core_.setShutterOpen(false);
-                } catch (Exception e){
-                    System.out.println(e.getMessage());
-                }
-                
-                lastTime = sas.getTimePoint().getTimeCell();
-                lastFOV = sas.getFOV();
-                lastZ = sas.getFOV().getZ();
-                lastFiltLabel = sas.getFilters().getLabel();
-                
-//55            ProBar_.addProgressBarIncrement(ind, sassSize);
-    /*55            try {
-                    ProgressBarThread.wait();
-                } catch (InterruptedException ex) {
-                    System.out.println("ProgressBarThread.wait(); not working");
-                }
-            }55*/
-            
-            // RESET DELAY TO BE CONSISTENT WITH UI
-            try{
-                core_.setProperty("Delay box", "Delay (ps)", fLIMPanel1.getCurrentDelay());
-            } catch (Exception  e){
-                System.out.println(e.getMessage());
-            }
+           
         }
     }
     
@@ -1250,12 +1053,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_accFramesFieldActionPerformed
 
-    private void abortHCAsequencesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abortHCAsequencesButtonActionPerformed
-       
-    }//GEN-LAST:event_abortHCAsequencesButtonActionPerformed
+    private void stopSequenceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopSequenceButtonActionPerformed
+        terminate=stopSequenceButton.isSelected();
+        System.out.println(terminate);
+    }//GEN-LAST:event_stopSequenceButtonActionPerformed
    
     public void changeAbortHCAsequencBoolean(){
-    abortHCAsequencBoolean=abortHCAsequencesButton.isSelected();
+    //abortHCAsequencBoolean=abortHCAsequencesButton.isSelected();
     }
     
     public void loadSequencingTablesFunction() throws IOException{
@@ -1303,29 +1107,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             System.out.println("File access cancelled by user.");
         }
     }                                               
-
-    
-     public void setStaticValuesForThread() {
-        testMuTh1=var_.basepath;
-        orderTh1= tableModel_.getData();
-        fovsTh1 = xYSequencing1.getFOVTable();
-        tpsTh1 = timeCourseSequencing1.getTimeTable();
-        fssTh1 =spectralSequencing1.getFilterTable();
-        fovsAddTh1= xyzmi_.getCurrentFOV();
-        timePointTh1=new TimePoint(0.0);
-        int intTime = 100;
-                try {
-                    intTime = (int) core_.getExposure();
-                } catch (Exception e){
-                    System.out.println(e.getMessage());
-                }
-        fssAddTh1=new FilterSetup(lightPathControls1, intTime, fLIMPanel1);
-        aFInSequenceTh1=xYZPanel1.getAFInSequence();
-        sampleAFOffsetTh1=xYZPanel1.getSampleAFOffset();
-        currentDelayTh1=fLIMPanel1.getCurrentDelay();
-    }
      
-    
     public int getAccFrames(){
         return Integer.parseInt(accFramesField.getText());
     }
@@ -1364,7 +1146,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem FLIMHCAHelpMenu;
     private javax.swing.JTabbedPane FLIMPanel;
     private javax.swing.JPanel HCAsequenceProgressBar;
-    private javax.swing.JButton abortHCAsequencesButton;
     private javax.swing.JMenuItem aboutMenu;
     private javax.swing.JFormattedTextField accFramesField;
     private javax.swing.JMenuItem advancedMenu;
@@ -1396,6 +1177,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.SpectralSequencing spectralSequencing1;
     private javax.swing.JButton startSequenceButton;
     private javax.swing.JLabel statusLabel;
+    private javax.swing.JToggleButton stopSequenceButton;
     private com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.TimeCourseSequencing timeCourseSequencing1;
     private javax.swing.JMenu toolsMenu;
     private javax.swing.JMenuItem wizardMenu;
