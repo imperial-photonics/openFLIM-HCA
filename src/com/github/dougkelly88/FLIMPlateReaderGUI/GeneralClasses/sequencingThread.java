@@ -12,11 +12,10 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPlu
  * @author Frederik
  */
 public class sequencingThread implements Runnable {
-    
     private HCAFLIMPluginFrame frame;
     
-    public sequencingThread(HCAFLIMPluginFrame frame_)
-    {
+    public sequencingThread(HCAFLIMPluginFrame frame_){
+        // initialize new instance of HCAFLIMPluginFrame
         frame = frame_;
     }
     
@@ -24,11 +23,11 @@ public class sequencingThread implements Runnable {
     public void run() {
         
         try {
+            // calls function in frame, which is an instance of the class HCAFLIMPluginFrame
             frame.doSequenceAcquisition();
-            // sequencingThread sTh= new sequencingThread();
-            //  sequencingThread.frame_.doSequenceAcquisition();
+            
         } catch (InterruptedException ex) {
-            System.out.println("sequncingThread no acces to mainFrame!");
+            System.out.println("Error: sequncingThread no acces to class HCAFLIMPluginFrame.");
         }
         
     }

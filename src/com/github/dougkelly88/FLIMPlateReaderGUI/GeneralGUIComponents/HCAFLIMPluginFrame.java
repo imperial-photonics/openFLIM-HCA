@@ -91,8 +91,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public static HSSFWorkbook wbLoad = new HSSFWorkbook();
     public Thread sequenceThread;
     private ProgressBar sequencingProBar_;
-    private double incr=0;
-    private double sassSize=5;
     private boolean terminate=false;
 
    
@@ -799,14 +797,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
    
     private void startSequenceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startSequenceButtonActionPerformed
-        
+        // starts sequence in new thread
             sequenceThread =new Thread(new sequencingThread(this));
             sequenceThread.start();
-         try {   
-             sequencingProBar_.stepIncrement(incr, sassSize);
-        } catch (InterruptedException ex) {
-            System.out.println("no probar action");
-        }
+        // set progress bar to 0
+            sequencingProBar_.setTo(0);
+       
         
     }//GEN-LAST:event_startSequenceButtonActionPerformed
 
@@ -873,7 +869,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     comparators.add(new TComparator());
             }
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
-            sassSize=sass.size();
+            int sassSize=sass.size();
             
             
             long start_time = System.currentTimeMillis();
@@ -895,8 +891,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
             }
             
-            
-            
 //            for (SeqAcqSetup sas : sass){
             Double lastTime = 0.0;
             String lastFiltLabel = "";
@@ -904,14 +898,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             Double lastZ = 0.0;
 //            int fovSinceLastAF = 0;
             for (int ind = 0; ind < sass.size(); ind++){
+                //check for flag (stop button) and abort sequence
                 if(terminate){
-                //    sequencingProBar_.setTo(0);
                     sequencingProBar_.stepIncrement(ind, sass.size());
                     terminate=false;
                     stopSequenceButton.setSelected(false);
                 break;
                 }
-                incr=ind;
+                //set progress bar on increment further
                 sequencingProBar_.stepIncrement(ind, sass.size());
                 // TODO: how much can these steps be parallelised?
                 // set FOV params

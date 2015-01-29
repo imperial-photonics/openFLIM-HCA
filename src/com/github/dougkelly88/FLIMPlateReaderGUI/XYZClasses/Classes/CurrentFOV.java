@@ -5,8 +5,6 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.XYZClasses.Classes;
 
-import com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.Classes.*;
-
 /**
  *
  * @author dk1109

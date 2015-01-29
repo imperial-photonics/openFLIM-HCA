@@ -13,10 +13,7 @@ import javax.swing.border.Border;
  * @author Frederik
  */
 public class ProgressBar extends javax.swing.JPanel {
-    private HCAFLIMPluginFrame frameProBar;
-    static Thread t;
-    double i=0;
-    double sassSize=1;
+
 
     /**
      * Creates new form ProgressBar
@@ -32,7 +29,8 @@ public class ProgressBar extends javax.swing.JPanel {
     }
     
     
-    public void stepIncrement(double ind, double sassSize) throws InterruptedException { 
+    public void stepIncrement(double ind, double sassSize) throws InterruptedException {
+        //set a step in progress bar
         double prozentIncr= 1/sassSize*100;
         double prozentDouble= (ind+1)*prozentIncr;
         int prozentInt=(int) prozentDouble;
@@ -41,8 +39,9 @@ public class ProgressBar extends javax.swing.JPanel {
 
     }
     
-    public void setTo(int to){
-        jProgressBar1.setValue(to);
+    public void setTo(int value){
+        // set progress bar to value
+        jProgressBar1.setValue(value);
     }
     
 

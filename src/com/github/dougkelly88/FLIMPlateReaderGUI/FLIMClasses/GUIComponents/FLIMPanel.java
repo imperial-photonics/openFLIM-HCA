@@ -61,6 +61,7 @@ public class FLIMPanel extends javax.swing.JPanel {
     private Object parent_;
     Object calibrationDelayBox;
     String DelayPath;
+    boolean calibrationDelayBoxYesNo=true;
     
     
     @Subscribe
@@ -80,6 +81,14 @@ public class FLIMPanel extends javax.swing.JPanel {
         gui_ = MMStudio.getInstance();
         sap_ = SeqAcqProps.getInstance().setUseScanFLIM(false);
         var_= VariableTest.getInstance();
+        try {
+            core_.setProperty("Delay box", "Calibrated", "Yes");
+            fastBoxCalibratedCheck.setSelected(true);
+        } catch (Exception ex) {
+            System.out.println("Error in Delay Box Calibration: Couldn't set Delay Box Calibrated to YES.");    
+
+        }
+        
       
         setControlDefaults();
     }
@@ -294,6 +303,11 @@ public class FLIMPanel extends javax.swing.JPanel {
         );
 
         fastBoxCalibratedCheck.setText("Calibrated?");
+        fastBoxCalibratedCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fastBoxCalibratedCheckActionPerformed(evt);
+            }
+        });
         fastBoxCalibratedCheck.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 fastBoxCalibratedCheckPropertyChange(evt);
@@ -667,13 +681,15 @@ public class FLIMPanel extends javax.swing.JPanel {
             // only send command if combo has been properly populated
             if (setval != null) {
                 setDelayBox(file, 1);
-            /*    core_.setProperty("Delay box", "CalibrationPath", file);
+                core_.setProperty("Delay box", "CalibrationPath", file);
                 core_.setProperty("Delay box", "Calibrated", "Yes");
-                CalibrationPathField.setText(file);*/
+                fastBoxCalibratedCheck.setSelected(true);
+                CalibrationPathField.setText(file);
             }
             // TODO: implement updating of var_ here rather than in individual actionlisteners?
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error in Delay Box Calibration: Couldn't set Delay Box Calibrated to YES.");    
+
         }
         
     }//GEN-LAST:event_DelayBoxCalibrationComboBoxActionPerformed
@@ -778,6 +794,17 @@ public class FLIMPanel extends javax.swing.JPanel {
         CalibrationPathField.setText(DelayPath);
     }//GEN-LAST:event_CalibrationPathButtonActionPerformed
 
+    private void fastBoxCalibratedCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fastBoxCalibratedCheckActionPerformed
+        calibrationDelayBoxYesNo=fastBoxCalibratedCheck.isSelected();
+        if(calibrationDelayBoxYesNo==true){
+            try {
+                core_.setProperty("Delay box", "Calibrated", "Yes");
+            } catch (Exception ex) {
+                System.out.println("Error in Delay Box Calibration: Couldn't set Delay Box Calibrated to YES.");    
+            }
+        }
+    }//GEN-LAST:event_fastBoxCalibratedCheckActionPerformed
+
     public void setDelayComboBox(){
         String file1 = null;
         File FileCalibrationDelayBox=new File(".").getAbsoluteFile();
@@ -799,24 +826,13 @@ public class FLIMPanel extends javax.swing.JPanel {
             core_ = gui_.getCore();
             file1 = DelayPath+"\\HDG800Calibration.csv";
             setDelayBox(file1, 0);
-        /*try{
-        
-            core_.setProperty("Delay box", "CalibrationPath", file1);
-            core_.setProperty("Delay box", "Calibrated", "Yes");
-//            String del = core_.getDeviceName("Delay box");
-            DelayBoxCalibrationComboBox.setSelectedItem("HDG800Calibration.csv");
-/*            if ("KentechSingleEdgeHRI".equals(del)){
-                inhibitCheck.setEnabled(true);
-            }
-            } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-        CalibrationPathField.setText(file1);*/
+
     }
     private void setDelayBox(String file, int x) {
         try {
             core_.setProperty("Delay box", "CalibrationPath", file);
             core_.setProperty("Delay box", "Calibrated", "Yes");
+            fastBoxCalibratedCheck.setSelected(true);
             if(x==0){
                 DelayBoxCalibrationComboBox.setSelectedItem("HDG800Calibration.csv");
             }
