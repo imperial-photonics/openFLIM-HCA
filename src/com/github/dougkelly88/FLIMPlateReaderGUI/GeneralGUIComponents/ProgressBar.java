@@ -5,6 +5,7 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents;
 
+import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
@@ -27,7 +28,18 @@ public class ProgressBar extends javax.swing.JPanel {
         jProgressBar1.repaint();
         
     }
+    public void changeTitelTo(String TitelBorder){
+        Border border = BorderFactory.createTitledBorder(TitelBorder);
+        jProgressBar1.setBorder(border);
+    }
     
+    public void changeColorTo(int color){
+        if(color==0){
+            jProgressBar1.setForeground(Color.blue);
+        } else if(color==1){
+            jProgressBar1.setForeground(Color.green);
+        }
+    }
     
     public void stepIncrement(double ind, double sassSize) throws InterruptedException {
         //set a step in progress bar
