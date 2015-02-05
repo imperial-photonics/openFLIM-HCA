@@ -793,11 +793,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_currentBasePathFieldActionPerformed
     
     private void startSequenceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startSequenceButtonActionPerformed
-            setStaticValuesForThread();
+/*            setStaticValuesForThread();
             Thread sequenceThread =new Thread(new sequencingThread());  
             sequenceThread.start();
-            System.out.println("in mainThread");
-/*            Acquisition acq = new Acquisition();
+            System.out.println("in mainThread");*/
+            Acquisition acq = new Acquisition();
             ArrayList<FOV> fovs = new ArrayList<FOV>();
             ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
             ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
@@ -994,7 +994,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 core_.setProperty("Delay box", "Delay (ps)", fLIMPanel1.getCurrentDelay());
             } catch (Exception  e){
                 System.out.println(e.getMessage());
-            }*/
+            }
     }//GEN-LAST:event_startSequenceButtonActionPerformed
 
     private void snapFLIMButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapFLIMButtonActionPerformed
