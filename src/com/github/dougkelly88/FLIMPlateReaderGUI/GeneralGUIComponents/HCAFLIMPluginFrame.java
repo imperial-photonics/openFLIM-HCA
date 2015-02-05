@@ -5,6 +5,7 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents;
 
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.sequencingThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Acquisition;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.DisplayImage;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
@@ -84,13 +85,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public XYZMotionInterface xyzmi_;
     private AcqOrderTableModel tableModel_;
     private JTable seqOrderTable_;
-    public FOV currentFOV_;
+    public  FOV currentFOV_;
     private DisplayImage DisplayImage_;
     public static HSSFWorkbook wb = new HSSFWorkbook();
     public static HSSFWorkbook wbLoad = new HSSFWorkbook();
-    boolean abortHCAsequencBoolean;
-    public static String testMu;
-    public static ArrayList<String> order;
+    public Thread sequenceThread;
+    private ProgressBar sequencingProBar_;
+    private boolean terminate=false;
+
    
 //    public static HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -112,6 +114,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         xYZPanel1.setParent(this);
         xYSequencing1.setParent(this);
         lightPathControls1.setParent(this);
+     //   ProgressBar sequencingProBar_;
         
         
         
@@ -152,6 +155,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
+        sequencingProBar_ = new ProgressBar();
+        progressBarPanel.setLayout(new BorderLayout());
+        progressBarPanel.add(sequencingProBar_, BorderLayout.SOUTH);
     }
 
     public CMMCore getCore() {
@@ -287,8 +293,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         xYZPanel1 = new com.github.dougkelly88.FLIMPlateReaderGUI.XYZClasses.GUIComponents.XYZPanel();
         fLIMPanel1 = new com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.GUIComponents.FLIMPanel();
         statusLabel = new javax.swing.JLabel();
-        flimAcquisitionPanel = new javax.swing.JPanel();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        HCAsequenceProgressBar = new javax.swing.JPanel();
         snapFLIMButton = new javax.swing.JButton();
         startSequenceButton = new javax.swing.JButton();
         snapBFButton = new javax.swing.JButton();
@@ -297,8 +302,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         seqOrderBasePanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         accFramesField = new javax.swing.JFormattedTextField();
-        jButton1 = new javax.swing.JButton();
-        abortHCAsequencesButton = new javax.swing.JButton();
+        progressBarPanel = new javax.swing.JPanel();
+        stopSequenceButton = new javax.swing.JToggleButton();
         sequenceSetupBasePanel = new javax.swing.JPanel();
         sequenceSetupTabbedPane = new javax.swing.JTabbedPane();
         xYSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing();
@@ -330,7 +335,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         FLIMPanel.addTab("XYZ control", xYZPanel1);
         FLIMPanel.addTab("FLIM control", fLIMPanel1);
 
-        flimAcquisitionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("FLIM acquisition"));
+        HCAsequenceProgressBar.setBorder(javax.swing.BorderFactory.createTitledBorder("FLIM acquisition"));
 
         snapFLIMButton.setText("Snap FLIM image");
         snapFLIMButton.addActionListener(new java.awt.event.ActionListener() {
@@ -384,81 +389,82 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        javax.swing.GroupLayout progressBarPanelLayout = new javax.swing.GroupLayout(progressBarPanel);
+        progressBarPanel.setLayout(progressBarPanelLayout);
+        progressBarPanelLayout.setHorizontalGroup(
+            progressBarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        progressBarPanelLayout.setVerticalGroup(
+            progressBarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 47, Short.MAX_VALUE)
+        );
+
+        stopSequenceButton.setText("Stop HCA sequence");
+        stopSequenceButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                stopSequenceButtonActionPerformed(evt);
             }
         });
 
-        abortHCAsequencesButton.setText("Abort HCA sequences");
-        abortHCAsequencesButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                abortHCAsequencesButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout flimAcquisitionPanelLayout = new javax.swing.GroupLayout(flimAcquisitionPanel);
-        flimAcquisitionPanel.setLayout(flimAcquisitionPanelLayout);
-        flimAcquisitionPanelLayout.setHorizontalGroup(
-            flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(flimAcquisitionPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout HCAsequenceProgressBarLayout = new javax.swing.GroupLayout(HCAsequenceProgressBar);
+        HCAsequenceProgressBar.setLayout(HCAsequenceProgressBarLayout);
+        HCAsequenceProgressBarLayout.setHorizontalGroup(
+            HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(flimAcquisitionPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(currentBasePathField, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(flimAcquisitionPanelLayout.createSequentialGroup()
-                        .addGap(9, 9, 9)
-                        .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(seqOrderBasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(flimAcquisitionPanelLayout.createSequentialGroup()
-                                .addGap(207, 207, 207)
-                                .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(snapFLIMButton, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(snapBFButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(startSequenceButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(flimAcquisitionPanelLayout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(flimAcquisitionPanelLayout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(abortHCAsequencesButton)
-                                    .addComponent(jButton1)))))
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(progressBarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(currentBasePathField, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
+                            .addGap(9, 9, 9)
+                            .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(seqOrderBasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
+                                    .addGap(207, 207, 207)
+                                    .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(snapFLIMButton, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(snapBFButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(startSequenceButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
+                                    .addGap(7, 7, 7)
+                                    .addComponent(jLabel2)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(stopSequenceButton))))))
                 .addContainerGap(23, Short.MAX_VALUE))
         );
-        flimAcquisitionPanelLayout.setVerticalGroup(
-            flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, flimAcquisitionPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(flimAcquisitionPanelLayout.createSequentialGroup()
-                        .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(snapFLIMButton)
-                            .addComponent(jButton1))
+        HCAsequenceProgressBarLayout.setVerticalGroup(
+            HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, HCAsequenceProgressBarLayout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
+                        .addComponent(snapFLIMButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(snapBFButton)
                             .addComponent(jLabel2)
                             .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(startSequenceButton)
-                            .addComponent(abortHCAsequencesButton)))
+                            .addComponent(stopSequenceButton)))
                     .addComponent(seqOrderBasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
-                .addGroup(flimAcquisitionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(currentBasePathField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(progressBarPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(128, 128, 128))
         );
 
         sequenceSetupBasePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Setup HCA sequenced acquisition"));
@@ -492,33 +498,31 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 .addContainerGap(1273, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, basePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(sequenceSetupBasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(basePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(HCAsequenceProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sequenceSetupBasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(611, 611, 611))
             .addGroup(basePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(basePanelLayout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(FLIMPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 622, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                    .addComponent(flimAcquisitionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(630, Short.MAX_VALUE)))
+                    .addContainerGap(1292, Short.MAX_VALUE)))
         );
         basePanelLayout.setVerticalGroup(
             basePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(basePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(sequenceSetupBasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(141, 141, 141)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(HCAsequenceProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusLabel)
                 .addGap(74, 74, 74))
             .addGroup(basePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, basePanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(FLIMPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 851, Short.MAX_VALUE)
-                    .addContainerGap())
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, basePanelLayout.createSequentialGroup()
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(flimAcquisitionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(25, 25, 25)))
+                    .addComponent(FLIMPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 934, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
 
         frameScrollPane.setViewportView(basePanel);
@@ -632,10 +636,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(frameScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 20, Short.MAX_VALUE)
+                .addComponent(frameScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1319, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -791,17 +794,26 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private void currentBasePathFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_currentBasePathFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_currentBasePathFieldActionPerformed
-    
-    private void startSequenceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startSequenceButtonActionPerformed
-/*            setStaticValuesForThread();
-            Thread sequenceThread =new Thread(new sequencingThread());  
-            sequenceThread.start();
-            System.out.println("in mainThread");*/
-            Acquisition acq = new Acquisition();
-            ArrayList<FOV> fovs = new ArrayList<FOV>();
-            ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
-            ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
 
+   
+    private void startSequenceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startSequenceButtonActionPerformed
+        // starts sequence in new thread
+            sequenceThread =new Thread(new sequencingThread(this));
+            sequenceThread.start();
+        // set progress bar to 0
+            sequencingProBar_.setTo(0);
+       
+        
+    }//GEN-LAST:event_startSequenceButtonActionPerformed
+
+    
+    public void doSequenceAcquisition() throws InterruptedException{
+        sequencingProBar_.setTo(0);
+        Acquisition acq = new Acquisition();
+        ArrayList<FOV> fovs = new ArrayList<FOV>();
+        ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
+        ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
+            
             // get all sequence parameters and put them together into an 
             // array list of objects containing all acquisition points...
             // Note that if a term is absent from the sequence setup, current
@@ -809,11 +821,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             
             List<SeqAcqSetup> sass = new ArrayList<SeqAcqSetup>();
             ArrayList<String> order = tableModel_.getData();
-            
             if (!order.contains("XYZ")){
                 fovs.add(xyzmi_.getCurrentFOV());
             } else {
-                 fovs = xYSequencing1.getFOVTable();
+                fovs = xYSequencing1.getFOVTable();
             }
             
             if (!order.contains("Time course")){
@@ -846,29 +857,20 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             
 //55           System.out.print(sass+"\n");
             // use chained comparators to sort by multiple fields SIMULTANEOUSLY,
-            // based on order determined in UI table. 
-            // DEBUG
-//            testSorting(sass);
+            // based on order determined in UI table.
             for (String str : order){
                 if (str.equals("XYZ")){
                         comparators.add(new WellComparator());
                         comparators.add(new ZComparator());
                 }
-//                else if (str.equals("Z"))
-//                    comparators.add(new ZComparator());
                 else if (str.equals("Filter change"))
                     comparators.add(new FComparator());
                 else if (str.equals("Time course"))
                     comparators.add(new TComparator());
             }
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
-//55            System.out.print(sass+"\n");
-            // DEBUG
-//            System.out.println("After sorting according to UI: ");
-//            for (SeqAcqSetup sas : sass){
-//                System.out.println(sas.toString());
-//            }
-//            System.out.println("Pause here during debug");
+            int sassSize=sass.size();
+            
             
             long start_time = System.currentTimeMillis();
             // TODO: modify data saving such that time courses, z can be put in a 
@@ -881,7 +883,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     timeStamp;
             for (FilterSetup fs : fss){
                 String flabel = fs.getLabel();
-//                File f = new File(baseLevelPath);
                 File f = new File(baseLevelPath + "/" + flabel);
                 try {
                     boolean check1 = f.mkdirs();
@@ -890,8 +891,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
             }
             
-            
-            
 //            for (SeqAcqSetup sas : sass){
             Double lastTime = 0.0;
             String lastFiltLabel = "";
@@ -899,6 +898,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             Double lastZ = 0.0;
 //            int fovSinceLastAF = 0;
             for (int ind = 0; ind < sass.size(); ind++){
+                //check for flag (stop button) and abort sequence
+                if(terminate){
+                    sequencingProBar_.stepIncrement(ind, sass.size());
+                    terminate=false;
+                    stopSequenceButton.setSelected(false);
+                break;
+                }
+                //set progress bar on increment further
+                sequencingProBar_.stepIncrement(ind, sass.size());
                 // TODO: how much can these steps be parallelised?
                 // set FOV params
                 SeqAcqSetup sas = sass.get(ind);
@@ -984,10 +992,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 lastZ = sas.getFOV().getZ();
                 lastFiltLabel = sas.getFilters().getLabel();
                 
-
                 
-               
-            }
             
             // RESET DELAY TO BE CONSISTENT WITH UI
             try{
@@ -995,8 +1000,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             } catch (Exception  e){
                 System.out.println(e.getMessage());
             }
-    }//GEN-LAST:event_startSequenceButtonActionPerformed
-
+            
+            sequencingProBar_.setTo(100);
+            
+           
+        }
+    }
+    
+    
     private void snapFLIMButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapFLIMButtonActionPerformed
         
         Acquisition acq = new Acquisition();
@@ -1036,21 +1047,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_accFramesFieldActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-    //    DisplayImage_.display();
-        
-        
-    //    DisplayImage_.displayx();
-       // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void abortHCAsequencesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abortHCAsequencesButtonActionPerformed
-       
-    }//GEN-LAST:event_abortHCAsequencesButtonActionPerformed
+    private void stopSequenceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopSequenceButtonActionPerformed
+        terminate=stopSequenceButton.isSelected();
+        System.out.println(terminate);
+    }//GEN-LAST:event_stopSequenceButtonActionPerformed
    
     public void changeAbortHCAsequencBoolean(){
-    abortHCAsequencBoolean=abortHCAsequencesButton.isSelected();
+    //abortHCAsequencBoolean=abortHCAsequencesButton.isSelected();
     }
     
     public void loadSequencingTablesFunction() throws IOException{
@@ -1098,14 +1101,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             System.out.println("File access cancelled by user.");
         }
     }                                               
-
-    
-     public void setStaticValuesForThread() {
-        testMu=var_.basepath;
-        order= tableModel_.getData();
-    }
      
-    
     public int getAccFrames(){
         return Integer.parseInt(accFramesField.getText());
     }
@@ -1143,7 +1139,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem FLIMHCAHelpMenu;
     private javax.swing.JTabbedPane FLIMPanel;
-    private javax.swing.JButton abortHCAsequencesButton;
+    private javax.swing.JPanel HCAsequenceProgressBar;
     private javax.swing.JMenuItem aboutMenu;
     private javax.swing.JFormattedTextField accFramesField;
     private javax.swing.JMenuItem advancedMenu;
@@ -1152,19 +1148,17 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JFormattedTextField currentBasePathField;
     private com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.GUIComponents.FLIMPanel fLIMPanel1;
     private javax.swing.JMenu fileMenu;
-    private javax.swing.JPanel flimAcquisitionPanel;
     private javax.swing.JScrollPane frameScrollPane;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuBar jMenuBar2;
-    private javax.swing.JProgressBar jProgressBar1;
     private com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents.LightPathPanel lightPathControls1;
     private javax.swing.JMenuItem loadPlateConfigMenu;
     private javax.swing.JMenuItem loadPlateMetadataMenu;
     private javax.swing.JMenuItem loadSequencingTablesMenu;
     private javax.swing.JMenuItem loadSoftwareConfig;
+    private javax.swing.JPanel progressBarPanel;
     private javax.swing.JMenuItem quitMenu;
     private javax.swing.JMenuItem saveMetadataMenu;
     private javax.swing.JMenuItem saveSequencingTablesMenu;
@@ -1177,6 +1171,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.SpectralSequencing spectralSequencing1;
     private javax.swing.JButton startSequenceButton;
     private javax.swing.JLabel statusLabel;
+    private javax.swing.JToggleButton stopSequenceButton;
     private com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.TimeCourseSequencing timeCourseSequencing1;
     private javax.swing.JMenu toolsMenu;
     private javax.swing.JMenuItem wizardMenu;

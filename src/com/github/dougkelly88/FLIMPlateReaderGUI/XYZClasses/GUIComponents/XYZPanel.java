@@ -92,6 +92,9 @@ public class XYZPanel extends javax.swing.JPanel {
         afSearchField = new javax.swing.JFormattedTextField();
         afNowButton = new javax.swing.JButton();
         afInSequence = new javax.swing.JCheckBox();
+        currentZPositionField = new javax.swing.JTextField();
+        currentZPositionText = new javax.swing.JLabel();
+        updateCurrentZPositionButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         manUscopeCheck = new javax.swing.JCheckBox();
         manStageCheck = new javax.swing.JCheckBox();
@@ -338,7 +341,7 @@ public class XYZPanel extends javax.swing.JPanel {
                             .addComponent(afSearchLabel)
                             .addGap(18, 18, 18)
                             .addComponent(afSearchField))))
-                .addContainerGap(129, Short.MAX_VALUE))
+                .addContainerGap(130, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -362,6 +365,15 @@ public class XYZPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        currentZPositionText.setText("Current z-Position");
+
+        updateCurrentZPositionButton.setText("update");
+        updateCurrentZPositionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateCurrentZPositionButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout ZPanelLayout = new javax.swing.GroupLayout(ZPanel);
         ZPanel.setLayout(ZPanelLayout);
         ZPanelLayout.setHorizontalGroup(
@@ -370,16 +382,32 @@ public class XYZPanel extends javax.swing.JPanel {
                 .addGap(38, 38, 38)
                 .addComponent(zPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(ZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(ZPanelLayout.createSequentialGroup()
+                        .addGroup(ZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(currentZPositionField, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(ZPanelLayout.createSequentialGroup()
+                                .addComponent(currentZPositionText)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(updateCurrentZPositionButton)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         ZPanelLayout.setVerticalGroup(
             ZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ZPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(ZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(zPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(ZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(ZPanelLayout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(ZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(currentZPositionText)
+                            .addComponent(updateCurrentZPositionButton))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(currentZPositionField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(zPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -499,6 +527,7 @@ public class XYZPanel extends javax.swing.JPanel {
     private void zDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zDButtonActionPerformed
         Double step = -1 * Double.parseDouble(zStepSizeField.getText());
         xyzmi_.moveZRelative(step);
+        currentZPositionField.setText(Double.toString(xyzmi_.getZAbsolute()));
     }//GEN-LAST:event_zDButtonActionPerformed
 
     private void goToWellButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goToWellButtonActionPerformed
@@ -517,6 +546,7 @@ public class XYZPanel extends javax.swing.JPanel {
     private void zUButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zUButtonActionPerformed
         Double step = Double.parseDouble(zStepSizeField.getText());
         xyzmi_.moveZRelative(step);
+        currentZPositionField.setText(Double.toString(xyzmi_.getZAbsolute()));
     }//GEN-LAST:event_zUButtonActionPerformed
 
     private void manUscopeCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manUscopeCheckActionPerformed
@@ -543,6 +573,10 @@ public class XYZPanel extends javax.swing.JPanel {
             System.out.println(e.getMessage());
         }
     }//GEN-LAST:event_afSearchFieldActionPerformed
+
+    private void updateCurrentZPositionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateCurrentZPositionButtonActionPerformed
+       currentZPositionField.setText(Double.toString(xyzmi_.getZAbsolute()));
+    }//GEN-LAST:event_updateCurrentZPositionButtonActionPerformed
 
     private void setControlDefaults(){
         
@@ -737,6 +771,7 @@ public class XYZPanel extends javax.swing.JPanel {
                     afObjectiveCombo.addItem(str);
             }
             xyzmi_.moveZAbsolute(3000);
+            currentZPositionField.setText(Double.toString(xyzmi_.getZAbsolute()));
             core_.setProperty("AutoFocusZDC", "SearchRange", Double.parseDouble(afSearchField.getText()));
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -767,6 +802,8 @@ public class XYZPanel extends javax.swing.JPanel {
     private javax.swing.JLabel afOffsetLabel;
     private javax.swing.JFormattedTextField afSearchField;
     private javax.swing.JLabel afSearchLabel;
+    private javax.swing.JTextField currentZPositionField;
+    private javax.swing.JLabel currentZPositionText;
     private javax.swing.JButton goToWellButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
@@ -780,6 +817,7 @@ public class XYZPanel extends javax.swing.JPanel {
     private javax.swing.JPanel panningPanel;
     private javax.swing.JFormattedTextField stepSizeField;
     private javax.swing.JLabel stepSizeLabel;
+    private javax.swing.JButton updateCurrentZPositionButton;
     private javax.swing.JTextField wellField;
     private javax.swing.JPanel wellMapPanel;
     private javax.swing.JButton zDButton;
