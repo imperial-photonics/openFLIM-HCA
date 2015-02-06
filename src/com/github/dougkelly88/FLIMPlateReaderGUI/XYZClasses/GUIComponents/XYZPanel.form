@@ -495,6 +495,9 @@
           </SubComponents>
         </Container>
         <Component class="javax.swing.JTextField" name="currentZPositionField">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="currentZPositionFieldActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="currentZPositionText">
           <Properties>

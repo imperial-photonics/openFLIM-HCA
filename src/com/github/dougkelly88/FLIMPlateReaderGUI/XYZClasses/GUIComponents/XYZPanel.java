@@ -361,6 +361,12 @@ public class XYZPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        currentZPositionField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                currentZPositionFieldActionPerformed(evt);
+            }
+        });
+
         currentZPositionText.setText("Current z-Position");
 
         updateCurrentZPositionButton.setText("update");
@@ -573,6 +579,11 @@ public class XYZPanel extends javax.swing.JPanel {
     private void updateCurrentZPositionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateCurrentZPositionButtonActionPerformed
        currentZPositionField.setText(Double.toString(xyzmi_.getZAbsolute()));
     }//GEN-LAST:event_updateCurrentZPositionButtonActionPerformed
+
+    private void currentZPositionFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_currentZPositionFieldActionPerformed
+        System.out.println(Double.parseDouble(currentZPositionField.getText()));
+        xyzmi_.moveZAbsolute(Double.parseDouble(currentZPositionField.getText()));
+    }//GEN-LAST:event_currentZPositionFieldActionPerformed
 
     private void setControlDefaults(){
         
