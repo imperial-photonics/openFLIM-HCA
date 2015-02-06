@@ -11,6 +11,8 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.Classes.FindMaxpoin
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.SliderControl;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.sequencingThread;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.google.common.eventbus.Subscribe;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -62,6 +64,8 @@ public class FLIMPanel extends javax.swing.JPanel {
     Object calibrationDelayBox;
     String DelayPath;
     boolean calibrationDelayBoxYesNo=true;
+    private HCAFLIMPluginFrame frame;
+    public Thread findMaxPointThread;
     
     
     @Subscribe
@@ -81,6 +85,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         gui_ = MMStudio.getInstance();
         sap_ = SeqAcqProps.getInstance().setUseScanFLIM(false);
         var_= VariableTest.getInstance();
+        
         try {
             core_.setProperty("Delay box", "Calibrated", "Yes");
             fastBoxCalibratedCheck.setSelected(true);
@@ -408,7 +413,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         );
         delayTablePanelLayout.setVerticalGroup(
             delayTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 130, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout delaySeqPanelLayout = new javax.swing.GroupLayout(delaySeqPanel);
@@ -607,11 +612,11 @@ public class FLIMPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addComponent(delayBoxTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(FLIMToolsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(HRIControlsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(19, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -634,7 +639,18 @@ public class FLIMPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_maxpointResolutionFieldActionPerformed
 
     private void maxpointButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxpointButtonActionPerformed
-        // stop live mode        
+        frame = HCAFLIMPluginFrame.getInstance();
+        // set progress bar to start       
+        frame.progressBar_.setStart("Find max point");
+        // starts sequence in new thread
+        findMaxPointThread =new Thread(new findMaxPointThread(this));
+        findMaxPointThread.start();
+        
+        
+    }//GEN-LAST:event_maxpointButtonActionPerformed
+
+    public void findMaxPoint(){
+            // stop live mode
         if (gui_.isLiveModeOn() | gui_.isAcquisitionRunning()){
                 gui_.enableLiveMode(false);
                 gui_.closeAllAcquisitions();
@@ -643,17 +659,23 @@ public class FLIMPanel extends javax.swing.JPanel {
         int delayResolution=Integer.parseInt(maxpointResolutionField.getText());
             ArrayList<Double> meanValues= new ArrayList<Double>();
             ArrayList<Integer> delays = new ArrayList<Integer>();
+        int endOk=0;
             try {  
             for(int delay=0; delay<15000; delay=delay+delayResolution){
-                  
+                if(frame.terminate){
+                   frame.setStopButtonFalse(delay, 15000, "Find max point");
+                   endOk=0;
+                   break;
+                }
                     core_.setProperty("Delay box", "Delay (ps)", delay);
                     core_.sleep(50);
                     meanValues.add(fm_.getMeanValueOfImage(core_));
                     delays.add(delay);
-                
+                    frame.progressBar_.stepIncrement(delay, 15000);
             
                 // reset to previous delay 
                 core_.setProperty("Delay box", "Delay (ps)", fastDelaySlider_.getValue());
+                 endOk=1;  
             }
                 } catch (Exception ex) {
                     Logger.getLogger(FLIMPanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -661,9 +683,12 @@ public class FLIMPanel extends javax.swing.JPanel {
             System.out.print(meanValues);
             
             fm_.acqMaxpointData(delays, meanValues);
-//            fm_.setData(delays, meanValues);
-    }//GEN-LAST:event_maxpointButtonActionPerformed
-
+            if(endOk==1){
+                frame.progressBar_.setEnd("Find max point");
+            }
+            
+    }
+    
     private void maxpointResolutionFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_maxpointResolutionFieldFocusLost
         int num = Integer.parseInt(maxpointResolutionField.getText());
         fm_.setResolution(num);
@@ -1130,5 +1155,7 @@ public class FLIMPanel extends javax.swing.JPanel {
     private Object File(String string) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+
 }
 
