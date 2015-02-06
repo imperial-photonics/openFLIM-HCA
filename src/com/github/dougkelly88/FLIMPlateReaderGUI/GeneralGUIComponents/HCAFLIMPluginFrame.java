@@ -11,6 +11,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.DisplayImage;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.snapFlimImageThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZMotionInterface;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.AcqOrderTableModel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.FComparator;
@@ -90,8 +91,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public static HSSFWorkbook wb = new HSSFWorkbook();
     public static HSSFWorkbook wbLoad = new HSSFWorkbook();
     public Thread sequenceThread;
+    public Thread snapFlimImageThread;
     public ProgressBar progressBar_;
     public boolean terminate=false;
+    public int singleImage;
 
    
 //    public static HSSFWorkbook wb = new HSSFWorkbook();
@@ -809,6 +812,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
         ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
         int endOk=0;
+        singleImage=0;
         
             // get all sequence parameters and put them together into an 
             // array list of objects containing all acquisition points...
@@ -1024,7 +1028,30 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }
     
     private void snapFLIMButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapFLIMButtonActionPerformed
-        
+        singleImage=1;
+        progressBar_.setStart("Snap FLIM image");
+        System.out.println("Button pressed.............");
+        snapFlimImageThread =new Thread(new snapFlimImageThread(this));
+        snapFlimImageThread.start();
+ /*       Acquisition acq = new Acquisition();
+        String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
+        String fullname = (currentBasePathField.getText() + "/" + timeStamp + "_FLIMSnap.ome.tiff");
+        //        acq.dummyTest();
+        //        acq.doacqModulo();
+        int exp = 100;
+        try {
+            exp = (int) core_.getExposure();
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        // so that same functions can be used, generate dummy SequencedAcquisitionSetup
+        acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
+                new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
+        progressBar_.setEnd("Snap FLIM image");*/
+    }//GEN-LAST:event_snapFLIMButtonActionPerformed
+
+    public void snapFLIMImageButton(){
+        System.out.println("In Action.............");
         Acquisition acq = new Acquisition();
         String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
         String fullname = (currentBasePathField.getText() + "/" + timeStamp + "_FLIMSnap.ome.tiff");
@@ -1039,8 +1066,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         // so that same functions can be used, generate dummy SequencedAcquisitionSetup
         acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
                 new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
-    }//GEN-LAST:event_snapFLIMButtonActionPerformed
-
+        progressBar_.setEnd("Snap FLIM image");
+    }
+    
     private void snapBFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapBFButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_snapBFButtonActionPerformed
