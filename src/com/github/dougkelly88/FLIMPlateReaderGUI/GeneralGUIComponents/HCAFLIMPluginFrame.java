@@ -1028,26 +1028,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }
     
     private void snapFLIMButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapFLIMButtonActionPerformed
+        // is button pressed?
         singleImage=1;
+        // open new Thread for snap Image
         progressBar_.setStart("Snap FLIM image");
-        System.out.println("Button pressed.............");
         snapFlimImageThread =new Thread(new snapFlimImageThread(this));
         snapFlimImageThread.start();
- /*       Acquisition acq = new Acquisition();
-        String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
-        String fullname = (currentBasePathField.getText() + "/" + timeStamp + "_FLIMSnap.ome.tiff");
-        //        acq.dummyTest();
-        //        acq.doacqModulo();
-        int exp = 100;
-        try {
-            exp = (int) core_.getExposure();
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-        // so that same functions can be used, generate dummy SequencedAcquisitionSetup
-        acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
-                new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
-        progressBar_.setEnd("Snap FLIM image");*/
     }//GEN-LAST:event_snapFLIMButtonActionPerformed
 
     public void snapFLIMImageButton(){
