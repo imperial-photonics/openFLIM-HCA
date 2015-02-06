@@ -8,6 +8,7 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import java.awt.Point;
 import java.awt.Rectangle;
+import static jdk.nashorn.internal.objects.NativeMath.round;
 
 /**
  *
@@ -120,6 +121,7 @@ public class FOV implements Comparable<FOV> {
     }
 
     public double getZ() {
+        z_=round(z_,2);
         return z_;
     }
 
