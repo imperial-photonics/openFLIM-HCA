@@ -25,8 +25,6 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.NonNegativeInteger;
 import java.io.IOException;
 import com.quirkware.guid.PlatformIndependentGuidGen;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
 import mmcorej.TaggedImage;
