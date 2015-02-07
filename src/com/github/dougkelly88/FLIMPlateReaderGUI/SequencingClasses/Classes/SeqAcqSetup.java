@@ -5,10 +5,6 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
-import java.awt.Point;
-import java.awt.Rectangle;
-
 /**
  *
  * @author dk1109

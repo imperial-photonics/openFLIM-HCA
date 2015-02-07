@@ -5,6 +5,7 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FilterSetup;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.SeqAcqSetup;
@@ -39,12 +40,14 @@ public class Acquisition {
     CMMCore core_;
     CoreMetadata cm;
     private DisplayImage DisplayImage_;
+    private HCAFLIMPluginFrame frame_;
 
 
     public Acquisition() {
         gui_ = MMStudio.getInstance();
         core_ = gui_.getCore();
         DisplayImage_ =DisplayImage.getInstance();
+        frame_= HCAFLIMPluginFrame.getInstance();
     }
 
     public void snapFLIMImage(String path, ArrayList<Integer> delays, SeqAcqSetup sas) {
@@ -60,8 +63,10 @@ public class Acquisition {
             IFormatWriter writer = generateWriter(path, m);
 
             for (Integer delay : delays) {
+                int del=delays.indexOf(delay);
+                
                 core_.setProperty("Delay box", "Delay (ps)", delay);
-                core_.sleep(50);
+                
 
                 // EITHER
 //                core_.snapImage();
@@ -95,7 +100,9 @@ public class Acquisition {
 //                gui_.snapAndAddImage(acq, delays.indexOf(delay), 0, 0, 0);
                 
                 ////
-                
+                if(frame_.singleImage==1){
+                    frame_.progressBar_.stepIncrement(del, delays.size());
+                }
             }
             // OR
 //            saveAcqToOMETiff(writer, acq, delays.size());
@@ -110,7 +117,6 @@ public class Acquisition {
            // } catch (Exception ex) {
               //  System.out.print("no picture snaped");
            // }
-            
             System.out.println(e.getMessage());
            // DisplayImage_.display(imgDemo);
         }

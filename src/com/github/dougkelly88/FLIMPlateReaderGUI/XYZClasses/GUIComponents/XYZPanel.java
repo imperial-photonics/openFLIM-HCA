@@ -12,10 +12,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPlu
 import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZMotionInterface;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -26,7 +23,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import mmcorej.CMMCore;
 import mmcorej.StrVector;
-import org.micromanager.MMStudio;
 
 /**
  *
@@ -254,29 +250,22 @@ public class XYZPanel extends javax.swing.JPanel {
                 .addGroup(zPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(zStepSizeField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(zStepSizeLabel)
-                    .addComponent(zUButton))
+                    .addComponent(zUButton)
+                    .addComponent(zDButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(zPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(zPanelLayout.createSequentialGroup()
-                    .addGap(25, 25, 25)
-                    .addComponent(zDButton)
-                    .addContainerGap(26, Short.MAX_VALUE)))
         );
         zPanelLayout.setVerticalGroup(
             zPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(zPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(zUButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(95, 95, 95)
+                .addGap(18, 18, 18)
+                .addComponent(zDButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38)
                 .addComponent(zStepSizeLabel)
                 .addGap(2, 2, 2)
                 .addComponent(zStepSizeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
-            .addGroup(zPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(zPanelLayout.createSequentialGroup()
-                    .addGap(76, 76, 76)
-                    .addComponent(zDButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(77, Short.MAX_VALUE)))
         );
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Autofocus"));
@@ -364,6 +353,12 @@ public class XYZPanel extends javax.swing.JPanel {
                     .addComponent(afInSequence))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        currentZPositionField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                currentZPositionFieldActionPerformed(evt);
+            }
+        });
 
         currentZPositionText.setText("Current z-Position");
 
@@ -577,6 +572,11 @@ public class XYZPanel extends javax.swing.JPanel {
     private void updateCurrentZPositionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateCurrentZPositionButtonActionPerformed
        currentZPositionField.setText(Double.toString(xyzmi_.getZAbsolute()));
     }//GEN-LAST:event_updateCurrentZPositionButtonActionPerformed
+
+    private void currentZPositionFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_currentZPositionFieldActionPerformed
+        System.out.println(Double.parseDouble(currentZPositionField.getText()));
+        xyzmi_.moveZAbsolute(Double.parseDouble(currentZPositionField.getText()));
+    }//GEN-LAST:event_currentZPositionFieldActionPerformed
 
     private void setControlDefaults(){
         

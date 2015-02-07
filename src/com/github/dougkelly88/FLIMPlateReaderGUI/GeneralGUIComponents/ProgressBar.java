@@ -5,6 +5,7 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents;
 
+import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
@@ -22,26 +23,52 @@ public class ProgressBar extends javax.swing.JPanel {
         initComponents();
         jProgressBar1.setValue(0);
         jProgressBar1.setStringPainted(true);
-        Border border = BorderFactory.createTitledBorder("HCA sequence Progress...");
+        Border border = BorderFactory.createTitledBorder("Nothing in progress!");
         jProgressBar1.setBorder(border);
         jProgressBar1.repaint();
         
     }
+    public void setTitel(String TitelBorder){
+        Border border = BorderFactory.createTitledBorder(TitelBorder);
+        jProgressBar1.setBorder(border);
+    }
     
+    public void setColor(int color){
+        if(color==0){
+            jProgressBar1.setForeground(Color.blue);
+        } else if(color==1){
+            jProgressBar1.setForeground(Color.green);
+        } else if(color==2){
+            jProgressBar1.setForeground(Color.red);
+        }
+    }
     
-    public void stepIncrement(double ind, double sassSize) throws InterruptedException {
+    public void stepIncrement(double step, double end) throws InterruptedException {
         //set a step in progress bar
-        double prozentIncr= 1/sassSize*100;
-        double prozentDouble= (ind+1)*prozentIncr;
+        double prozentIncr= 1/end*100;
+        double prozentDouble= (step+1)*prozentIncr;
         int prozentInt=(int) prozentDouble;
+        System.out.println(prozentInt);
         jProgressBar1.setValue(prozentInt);
         jProgressBar1.repaint();
 
     }
     
-    public void setTo(int value){
+    public void setValue(int value){
         // set progress bar to value
         jProgressBar1.setValue(value);
+    }
+    
+    public void setStart(String name){
+        setTitel(name+" in progress...");
+        setColor(1);
+        setValue(0);
+    }
+    
+    public void setEnd(String name){
+        setTitel(name+" done!");
+        setColor(0);
+        setValue(100);
     }
     
 
