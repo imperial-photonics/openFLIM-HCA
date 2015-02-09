@@ -73,6 +73,12 @@ public class Arduino {
         core_.setProperty("Arduino-Shutter", "OnOff", 1);
         core_.setProperty("Arduino-Switch", "Blanking Mode", "On");
         core_.setProperty("Arduino-Switch", "Blank On", "Low");
+        eight=0;
+        nine=0;
+        ten=0;
+        eleven=0;
+        twelve=0;
+        thirteen=0;
     }
     
     public void setOutputsLow() throws Exception{
@@ -81,5 +87,28 @@ public class Arduino {
     
     public void setOutputsHigh() throws Exception{
         core_.setProperty("Arduino-Switch", "Blank On", "High");
+    }
+    
+    public int getInputValue(int numInput) throws Exception{
+        int in=0;
+        String input="AnalogInput"+numInput;
+        in=Integer.parseInt(core_.getProperty("Arduino-Input", input));
+        in=5/1023*in;
+        return in;
+    }
+    
+        public String getInputHighLow(int numInput) throws Exception{
+        int in=0;
+        String highLow=null;
+        String input="AnalogInput"+numInput;
+        in=Integer.parseInt(core_.getProperty("Arduino-Input", input));
+        if(in >= 500){
+            highLow="high";
+        }else if(in< 500){
+            highLow="low";
+        }else{
+            highLow=null;
+        }
+        return highLow;
     }
 }
