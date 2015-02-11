@@ -640,6 +640,7 @@ public class FLIMPanel extends javax.swing.JPanel {
 
     private void maxpointButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxpointButtonActionPerformed
         frame = HCAFLIMPluginFrame.getInstance();
+        
         // set progress bar to start       
         frame.progressBar_.setStart("Find max point");
         // starts sequence in new thread
@@ -696,6 +697,7 @@ public class FLIMPanel extends javax.swing.JPanel {
 
     private void autogateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autogateButtonActionPerformed
         tableModel_.addWholeData(fm_.genAutogates());
+        // test
     }//GEN-LAST:event_autogateButtonActionPerformed
 
     private void DelayBoxCalibrationComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DelayBoxCalibrationComboBoxActionPerformed
