@@ -6,8 +6,6 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mmcorej.CMMCore;
 import org.micromanager.MMStudio;
 
@@ -24,33 +22,18 @@ public class Arduino {
     int eleven=0;
     int twelve=0;
     int thirteen=0;
+    private static final Arduino fINSTANCE =  new Arduino();
     
     public Arduino(){
     gui_ = MMStudio.getInstance();
     core_ = gui_.getCore();
     }
-    
-    public void setAllOutputsLow(){
-        try {
-            core_.setProperty("Arduino-Switch", "Blank On", "Low");
-            core_.setProperty("Arduino-Switch", "Label", 63);
-            core_.setProperty("Arduino-Switch", "Blank On", "Low");
-        } catch (Exception ex) {
-            System.out.println("Error: setAllOutputsLow");
-        }
+        
+    public static Arduino getInstance() {
+       return fINSTANCE;
     }
-    
-    public void setAllOutputsHigh(){
-        try {
-            core_.setProperty("Arduino-Switch", "Label", 63);
-            core_.setProperty("Arduino-Switch", "Blank On", "High");
-        } catch (Exception ex) {
-            System.out.println("Error: setAllOutputsHigh");
-        }
-    }
-    
-    public void activateOutput(ArrayList<Integer> numOut) throws Exception{
-        if(numOut.contains(8)){
+    public void initializeArduino() throws Exception{
+   /*     if(numOut.contains(8)){
             eight=1;
         }
         if(numOut.contains(9)){
@@ -69,10 +52,11 @@ public class Arduino {
             thirteen=32;
         }
         int sum=eight+nine+ten+eleven+twelve+thirteen;
-        core_.setProperty("Arduino-Switch", "Label", sum);
+        core_.setProperty("Arduino-Switch", "Label", sum);*/
         core_.setProperty("Arduino-Shutter", "OnOff", 1);
-        core_.setProperty("Arduino-Switch", "Blanking Mode", "On");
-        core_.setProperty("Arduino-Switch", "Blank On", "Low");
+        core_.setProperty("Arduino-Switch", "Label", 63);
+        core_.setProperty("Arduino-Switch", "Blanking Mode", "Off");
+        core_.setProperty("Arduino-Switch", "Sequence", "Off");
         eight=0;
         nine=0;
         ten=0;
@@ -81,23 +65,23 @@ public class Arduino {
         thirteen=0;
     }
     
-    public void setOutputsLow() throws Exception{
-        core_.setProperty("Arduino-Switch", "Blank On", "Low");
+    public void openArduinoShutter() throws Exception{
+        core_.setProperty("Arduino-Shutter", "OnOff", "0");
     }
     
-    public void setOutputsHigh() throws Exception{
-        core_.setProperty("Arduino-Switch", "Blank On", "High");
+    public void closeArduinoShutter() throws Exception{
+        core_.setProperty("Arduino-Shutter", "OnOff", "1");
     }
     
     public int getInputValue(int numInput) throws Exception{
         int in=0;
         String input="AnalogInput"+numInput;
         in=Integer.parseInt(core_.getProperty("Arduino-Input", input));
-        in=5/1023*in;
+        in=5/1025*in;
         return in;
     }
     
-        public String getInputHighLow(int numInput) throws Exception{
+    public String getInputHighLow(int numInput) throws Exception{
         int in=0;
         String highLow=null;
         String input="AnalogInput"+numInput;

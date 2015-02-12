@@ -7,6 +7,7 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.sequencingThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Acquisition;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.DisplayImage;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
@@ -93,6 +94,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public Thread sequenceThread;
     public Thread snapFlimImageThread;
     public ProgressBar progressBar_;
+    public Arduino arduino_;
     public boolean terminate=false;
     public int singleImage;
 
@@ -117,8 +119,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         xYZPanel1.setParent(this);
         xYSequencing1.setParent(this);
         lightPathControls1.setParent(this);
-        
-        
+        arduino_ = Arduino.getInstance();
+        try {
+            arduino_.initializeArduino();
+        } catch (Exception ex) {
+            System.out.println("Arduino not initialized!");
+        }
         
         MMStudio gui_ = MMStudio.getInstance();
         gui_.registerForEvents(this);
