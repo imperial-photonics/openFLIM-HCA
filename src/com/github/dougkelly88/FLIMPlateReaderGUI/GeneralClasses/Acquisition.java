@@ -60,7 +60,7 @@ public class Acquisition {
             }
 
             OMEXMLMetadata m = setBasicMetadata(delays, sas);
-            IFormatWriter writer = generateWriter(path, m);
+            IFormatWriter writer = generateWriter(path+".ome.tiff", m);
 
             for (Integer delay : delays) {
                 int del=delays.indexOf(delay);

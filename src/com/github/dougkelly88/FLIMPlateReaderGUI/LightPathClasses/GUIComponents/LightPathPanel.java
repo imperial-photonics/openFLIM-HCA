@@ -330,7 +330,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         if (laserToggle.isSelected()) {
             laserToggle.setText("Turn laser OFF");
             try {
-                arduino_.openArduinoShutter();
+                arduino_.setArduinoShutterOpen();
                // core_.setProperty("FianiumSC", "LaserOn?", "On");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -338,7 +338,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         } else {
             laserToggle.setText("Turn laser ON");
             try {
-                arduino_.closeArduinoShutter();
+                arduino_.setArduinoShutterClose();
                // core_.setProperty("FianiumSC", "LaserOn?", "Off");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
