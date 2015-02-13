@@ -898,6 +898,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             Double lastZ = 0.0;
 //            int fovSinceLastAF = 0;
             for (int ind = 0; ind < sass.size(); ind++){
+            
                 //check for flag (stop button) and abort sequence
                 if(terminate){
                     sequencingProBar_.stepIncrement(ind, sass.size());
@@ -920,6 +921,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         System.out.println("Waiting for " + timeLeft + " until next time point...");
                     }
                 }
+            try {
+                core_.setProperty("NDFW", "Label", "0.2");
+            } catch (Exception ex) {
+                Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
                 // if FOV different, deal with it here...
                 if ( ( (!sas.getFOV().equals(lastFOV)) | (sas.getFOV().getZ() != lastZ) ) & (order.contains("XYZ")) ){
                     // TODO: this needs tweaking in order that autofocus works properly with Z stacks...
@@ -981,8 +987,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 // shutter laser
                 // TODO: have this work properly in line with auto-shutter?
                 try {
-//                    core_.setProperty("NDFW", "Label", "STOP");
-                    core_.setShutterOpen(false);
+                    core_.setProperty("NDFW", "Label", "Stop");
+ //                   core_.setShutterOpen(false);
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
