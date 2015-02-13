@@ -121,7 +121,7 @@ public class FOV implements Comparable<FOV> {
     }
 
     public double getZ() {
-        z_=round(z_,2);
+        z_=(double) round(z_,2);
         return z_;
     }
 
