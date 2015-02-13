@@ -5,8 +5,6 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mmcorej.CMMCore;
 import org.micromanager.MMStudio;
 
@@ -25,6 +23,7 @@ public class Arduino {
     int thirteen=0;
     private static final Arduino fINSTANCE =  new Arduino();
     
+    
     public Arduino(){
     gui_ = MMStudio.getInstance();
     core_ = gui_.getCore();
@@ -33,6 +32,8 @@ public class Arduino {
     public static Arduino getInstance() {
        return fINSTANCE;
     }
+    
+
     
     public void initializeArduino() {
         
@@ -63,7 +64,7 @@ public class Arduino {
             core_.setProperty("Arduino-Switch", "Sequence", "Off");
 
         } catch (Exception ex) {
-           System.out.println("Error: Class-Arduino; methode-initializeArduino");
+            System.out.println("Error: Class-Arduino; methode-initializeArduino");
         }            
         eight=0;
         nine=0;
@@ -103,7 +104,7 @@ public class Arduino {
     
     public String getInputHighLow(int numInput){
         int in=0;
-        String highLow=null;
+        String highLow;
         String input="AnalogInput"+numInput;
         try {
             in=Integer.parseInt(core_.getProperty("Arduino-Input", input));
