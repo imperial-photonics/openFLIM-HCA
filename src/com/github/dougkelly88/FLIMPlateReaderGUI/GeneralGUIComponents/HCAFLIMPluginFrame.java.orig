@@ -907,6 +907,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     timeStamp;
             for (FilterSetup fs : fss){
                 String flabel = fs.getLabel();
+                if(flabel=="Unknown"){
+                    flabel=experimentNameField.getText();
+                }
                 File f = new File(baseLevelPath + "/" + flabel);
                 try {
                     boolean check1 = f.mkdirs();
@@ -951,11 +954,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
                     }
                 }
+<<<<<<< HEAD
             try {
                 core_.setProperty("NDFW", "Label", "0.2");
             } catch (Exception ex) {
                 Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
+=======
+                
+>>>>>>> origin/master
                 // if FOV different, deal with it here...
                 if ( ( (!sas.getFOV().equals(lastFOV)) | (sas.getFOV().getZ() != lastZ) ) & (order.contains("XYZ")) ){
                     // TODO: this needs tweaking in order that autofocus works properly with Z stacks...
@@ -1018,6 +1025,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 // shutter laser
                 // TODO: have this work properly in line with auto-shutter?
                 try {
+<<<<<<< HEAD
+=======
+                    
+>>>>>>> origin/master
                     core_.setProperty("NDFW", "Label", "Stop");
  //                   core_.setShutterOpen(false);
                 } catch (Exception e){
