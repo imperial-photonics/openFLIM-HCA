@@ -1160,7 +1160,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
         FileOutputStream fileOut = null;
         try {
-            fileOut = new FileOutputStream(path+ "\\OpenHCAFLIM_Sequenzing.xls");
+            fileOut = new FileOutputStream(path+".xls");
             wb.write(fileOut);
             fileOut.close();
         } catch (FileNotFoundException ex) {
