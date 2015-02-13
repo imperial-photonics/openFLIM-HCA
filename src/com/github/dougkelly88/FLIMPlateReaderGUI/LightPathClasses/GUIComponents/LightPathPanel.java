@@ -5,6 +5,7 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents;
 
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
@@ -31,6 +32,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     HCAFLIMPluginFrame parent_;
     SliderControl powerSlider_;
     CurrentLightPath currentLightPath_;
+    Arduino arduino_;
     // TODO: replace var_ stuff with currentLightPath_
 //    private SequencedAcquisitionProperties sap_;
     // TODO: generate a method that checks for spectral overlap between
@@ -48,6 +50,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         gui_ = MMStudio.getInstance();
         sap_ = SeqAcqProps.getInstance();
         var_ = VariableTest.getInstance();
+        arduino_ = Arduino.getInstance();
         try {
             gui_.registerForEvents(this);
             core_ = gui_.getCore();
@@ -327,14 +330,16 @@ public class LightPathPanel extends javax.swing.JPanel {
         if (laserToggle.isSelected()) {
             laserToggle.setText("Turn laser OFF");
             try {
-                core_.setProperty("FianiumSC", "LaserOn?", "On");
+                arduino_.openArduinoShutter();
+               // core_.setProperty("FianiumSC", "LaserOn?", "On");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         } else {
             laserToggle.setText("Turn laser ON");
             try {
-                core_.setProperty("FianiumSC", "LaserOn?", "Off");
+                arduino_.closeArduinoShutter();
+               // core_.setProperty("FianiumSC", "LaserOn?", "Off");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
