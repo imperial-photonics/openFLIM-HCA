@@ -5,7 +5,8 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
-import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mmcorej.CMMCore;
 import org.micromanager.MMStudio;
 
@@ -32,31 +33,38 @@ public class Arduino {
     public static Arduino getInstance() {
        return fINSTANCE;
     }
-    public void initializeArduino() throws Exception{
-   /*     if(numOut.contains(8)){
+    
+    public void initializeArduino() {
+        
+            /*     if(numOut.contains(8)){
             eight=1;
-        }
-        if(numOut.contains(9)){
+            }
+            if(numOut.contains(9)){
             nine=2;
-        }
-        if(numOut.contains(10)){
+            }
+            if(numOut.contains(10)){
             ten=4;
-        }
-        if(numOut.contains(11)){
+            }
+            if(numOut.contains(11)){
             eleven=8;
-        }
-        if(numOut.contains(12)){
+            }
+            if(numOut.contains(12)){
             twelve=16;
-        }
-        if(numOut.contains(13)){
+            }
+            if(numOut.contains(13)){
             thirteen=32;
-        }
-        int sum=eight+nine+ten+eleven+twelve+thirteen;
-        core_.setProperty("Arduino-Switch", "Label", sum);*/
-        core_.setProperty("Arduino-Shutter", "OnOff", 1);
-        core_.setProperty("Arduino-Switch", "Label", 63);
-        core_.setProperty("Arduino-Switch", "Blanking Mode", "Off");
-        core_.setProperty("Arduino-Switch", "Sequence", "Off");
+            }
+            int sum=eight+nine+ten+eleven+twelve+thirteen;
+            core_.setProperty("Arduino-Switch", "Label", sum);*/
+        try {    
+            core_.setProperty("Arduino-Shutter", "OnOff", 1);
+            core_.setProperty("Arduino-Switch", "Label", 63);
+            core_.setProperty("Arduino-Switch", "Blanking Mode", "Off");
+            core_.setProperty("Arduino-Switch", "Sequence", "Off");
+
+        } catch (Exception ex) {
+           System.out.println("Error: Class-Arduino; methode-initializeArduino");
+        }            
         eight=0;
         nine=0;
         ten=0;
@@ -65,27 +73,43 @@ public class Arduino {
         thirteen=0;
     }
     
-    public void openArduinoShutter() throws Exception{
-        core_.setProperty("Arduino-Shutter", "OnOff", "0");
+    public void setArduinoShutterOpen() {
+        try {
+            core_.setProperty("Arduino-Shutter", "OnOff", "0");
+        } catch (Exception ex) {
+            System.out.println("Error: Class-Arduino; methode-openArduinoShutter");
+        }
     }
     
-    public void closeArduinoShutter() throws Exception{
-        core_.setProperty("Arduino-Shutter", "OnOff", "1");
+    public void setArduinoShutterClose() {
+        try {
+            core_.setProperty("Arduino-Shutter", "OnOff", "1");
+        } catch (Exception ex) {
+            System.out.println("Error: Class-Arduino; methode-closeArduinoShutter");
+        }
     }
     
-    public int getInputValue(int numInput) throws Exception{
+    public int getInputValue(int numInput){
         int in=0;
         String input="AnalogInput"+numInput;
-        in=Integer.parseInt(core_.getProperty("Arduino-Input", input));
+        try {
+            in=Integer.parseInt(core_.getProperty("Arduino-Input", input));
+        } catch (Exception ex) {
+            System.out.println("Error: Class-Arduino; methode-getInputValue; Cannot get arduino input"+input);
+        }
         in=5/1025*in;
         return in;
     }
     
-    public String getInputHighLow(int numInput) throws Exception{
+    public String getInputHighLow(int numInput){
         int in=0;
         String highLow=null;
         String input="AnalogInput"+numInput;
-        in=Integer.parseInt(core_.getProperty("Arduino-Input", input));
+        try {
+            in=Integer.parseInt(core_.getProperty("Arduino-Input", input));
+        } catch (Exception ex) {
+            System.out.println("Error: Class-Arduino; methode-getInputHighLow; Cannot get arduino input"+input);
+        }
         if(in >= 500){
             highLow="high";
         }else if(in< 500){

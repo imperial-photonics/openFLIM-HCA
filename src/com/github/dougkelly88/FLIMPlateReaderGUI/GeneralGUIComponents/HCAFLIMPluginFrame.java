@@ -1064,6 +1064,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_snapFLIMButtonActionPerformed
 
     public void snapFLIMImageButton(){
+            
+//44        arduino_.openArduinoShutter();
         System.out.println("In Action.............");
         Acquisition acq = new Acquisition();
         String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
@@ -1080,6 +1082,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
                 new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
         progressBar_.setEnd("Snap FLIM image");
+//44        arduino_.closeArduinoShutter();
     }
     
     private void snapBFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapBFButtonActionPerformed
