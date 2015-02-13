@@ -120,11 +120,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         xYSequencing1.setParent(this);
         lightPathControls1.setParent(this);
         arduino_ = Arduino.getInstance();
-        try {
-            arduino_.initializeArduino();
-        } catch (Exception ex) {
-            System.out.println("Arduino not initialized!");
-        }
+        arduino_.initializeArduino();
         
         MMStudio gui_ = MMStudio.getInstance();
         gui_.registerForEvents(this);
@@ -339,7 +335,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        FLIMPanel.addTab("Light Path Control", lightPathControls1);
+        FLIMPanel.addTab("Light path control", lightPathControls1);
 
         xYZPanel1.setEnabled(false);
         FLIMPanel.addTab("XYZ control", xYZPanel1);
@@ -993,8 +989,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
                 // do acquisition
                 String fovLabel = String.format("%05d", ind);
-//                String path = baseLevelPath + "/" + "T=" + sas.getTimePoint().getTimeCell() + 
-                String path = baseLevelPath + "/" + sas.getFilters().getLabel() + "/"+ 
+                String path=baseLevelPath + "/" + sas.getFilters().getLabel() + "/"+ 
+                        " Well=" + sas.getFOV().getWell() +                        
+                        " X=" + sas.getFOV().getX() +
+                        " Y=" + sas.getFOV().getY() +
+                        "T=" + sas.getTimePoint().getTimeCell() + 
+                        " Filterset=" + sas.getFilters().getLabel() + 
+                        " Z=" + sas.getFOV().getZ() +
+                        " ID=" + fovLabel;
+/*99                String path = baseLevelPath + "/" + sas.getFilters().getLabel() + "/"+ 
                         " Well=" + sas.getFOV().getWell() +                        
                         " X=" + sas.getFOV().getX() +
                         " Y=" + sas.getFOV().getY() +
@@ -1002,10 +1005,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         " Filterset=" + sas.getFilters().getLabel() + 
                         " Z=" + sas.getFOV().getZ() +
                         " ID=" + fovLabel + 
-                        ".ome.tiff";
+                        ".ome.tiff";99*/
                 try{
                     core_.setProperty("NDFW", "Label", var_.NDFWComboBoxSelectedItem);
-//                    core_.setShutterOpen(true);
+//44                    arduino_.setArduinoShutterOpen();
                     core_.waitForDeviceType(DeviceType.XYStageDevice);
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                 }
@@ -1014,12 +1017,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
                 
                 acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
-                
+                saveSequencingTablesForDebugging(path);
                 // shutter laser
                 // TODO: have this work properly in line with auto-shutter?
                 try {
                     core_.setProperty("NDFW", "Label", "Stop");
- //                   core_.setShutterOpen(false);
+//44                    arduino_.setArduinoShutterClose();
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
@@ -1065,6 +1068,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_snapFLIMButtonActionPerformed
 
     public void snapFLIMImageButton(){
+            
+//44        arduino_.openArduinoShutter();
         System.out.println("In Action.............");
         Acquisition acq = new Acquisition();
         String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
@@ -1081,6 +1086,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
                 new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
         progressBar_.setEnd("Snap FLIM image");
+//44        arduino_.closeArduinoShutter();
     }
     
     private void snapBFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapBFButtonActionPerformed
@@ -1144,6 +1150,25 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
         }}
+    
+    public void saveSequencingTablesForDebugging(String path){
+            // write sheets to .xls
+        wb = new HSSFWorkbook();
+        xYSequencing1.tableModel_.saveFOVTableModelAsSpreadsheet();
+        spectralSequencing1.tableModel_.saveFilterTableModelAsSpreadsheet();
+        timeCourseSequencing1.tableModel_.saveTimeCourseTableModelAsSpreadsheet();
+    
+        FileOutputStream fileOut = null;
+        try {
+            fileOut = new FileOutputStream(path+ "\\OpenHCAFLIM_Sequenzing.xls");
+            wb.write(fileOut);
+            fileOut.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(FOVTableModel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     private void calibrationMenuActionPerformed(java.awt.event.ActionEvent evt) {                                                
         final JFileChooser fc = new JFileChooser("mmplugins/OpenHCAFLIM/KentechCalibration/CalibrationWithoutBias.csv");   // for debug, make more general

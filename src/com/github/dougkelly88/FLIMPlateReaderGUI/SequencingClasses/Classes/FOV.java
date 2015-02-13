@@ -233,7 +233,7 @@ public class FOV implements Comparable<FOV> {
         Rectangle fov = new Rectangle(
                 (int) (this.x_ - this.width_ / 2), (int) (this.y_ - this.height_ / 2),
                 (int) this.width_, (int) this.height_);
-        if (pp_.getWellShape() == "Circle") {
+        if ("Circle".equals(pp_.getWellShape())) {
             Circle well = new Circle(pp_.getTopLeftWellOffsetH() + (wellNumber - 1) * pp_.getWellSpacingH(),
                     pp_.getTopLeftWellOffsetV() + (letterIndex - 1) * pp_.getWellSpacingV(),
                     pp_.getWellSize() / 2);
@@ -309,8 +309,9 @@ public class FOV implements Comparable<FOV> {
         double otherX = ((FOV) other).getX();
         double otherY = ((FOV) other).getY();
         
-        if (thisX == otherX & thisY == otherY)
+        if (thisX == otherX & thisY == otherY){
             return true;
+        }
         
         return false;
     }
