@@ -950,6 +950,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
             try {
                 core_.setProperty("NDFW", "Label", "0.2");
+//44                    arduino_.setArduinoShutterOpen();
             } catch (Exception ex) {
                 Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1009,7 +1010,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         ".ome.tiff";99*/
                 try{
                     core_.setProperty("NDFW", "Label", var_.NDFWComboBoxSelectedItem);
-//44                    arduino_.setArduinoShutterOpen();
                     core_.waitForDeviceType(DeviceType.XYStageDevice);
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                 }
