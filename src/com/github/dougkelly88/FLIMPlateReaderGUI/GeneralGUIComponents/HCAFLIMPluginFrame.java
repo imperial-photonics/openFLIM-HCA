@@ -875,7 +875,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
             }
             
-//55           System.out.print(sass+"\n");
             // use chained comparators to sort by multiple fields SIMULTANEOUSLY,
             // based on order determined in UI table.
             for (String str : order){
@@ -931,8 +930,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 
                 // TODO: how much can these steps be parallelised?
                 // set FOV params
-                SeqAcqSetup sas = sass.get(ind);
- //55               System.out.print(sas+"\n");
+                SeqAcqSetup sas = sass.get(ind);;
                 // if time point changed different from last time, wait until 
                 // next time point reached...
                 if ((!sas.getTimePoint().getTimeCell().equals(lastTime)) & (order.contains("Time course"))){
@@ -1008,8 +1006,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         " ID=" + fovLabel + 
                         ".ome.tiff";99*/
                 try{
-                    core_.setProperty("NDFW", "Label", var_.NDFWComboBoxSelectedItem);
-//44                    arduino_.setArduinoShutterOpen();
+//44                    core_.setProperty("NDFW", "Label", var_.NDFWComboBoxSelectedItem);
+                    arduino_.setArduinoShutterOpen();
                     core_.waitForDeviceType(DeviceType.XYStageDevice);
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                 }
@@ -1022,8 +1020,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 // shutter laser
                 // TODO: have this work properly in line with auto-shutter?
                 try {
-                    core_.setProperty("NDFW", "Label", "Stop");
-//44                    arduino_.setArduinoShutterClose();
+//44                    core_.setProperty("NDFW", "Label", "Stop");
+                    arduino_.setArduinoShutterClose();
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
