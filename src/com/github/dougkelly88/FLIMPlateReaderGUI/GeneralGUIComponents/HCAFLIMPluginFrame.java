@@ -1019,7 +1019,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         ".ome.tiff";99*/
                 try{
 //44                    core_.setProperty("NDFW", "Label", var_.NDFWComboBoxSelectedItem);
-                    arduino_.checkSafety();
+                    boolean abort=arduino_.checkSafety();;
+                    if(abort==true){
+                        break;
+                    }
                     arduino_.setArduinoShutterOpen();
                     core_.waitForDeviceType(DeviceType.XYStageDevice);
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);

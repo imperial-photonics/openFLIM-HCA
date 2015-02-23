@@ -109,7 +109,7 @@ public class Arduino {
         return highLow;
     }
     
-    public void checkSafety(){
+    public boolean checkSafety(){
         
        // reading the input  values from Adruino AO and A1. If they are low under 0.5. Then nothing is happening. If they
        // are high. Message is popping up and is telling reduce light.
@@ -125,27 +125,53 @@ public class Arduino {
         if (value2==-1){
             value2=0;
             System.out.println("No value detected on Arduino input 1. Go on in unsafe mode. Be aware this can damage the HRI.");
-        }
+        }    
+        Object[] options = {"Try again.",
+                    "Stop acquisition"};
         while(check==false){
-        if(value1>var_.th1&&value2<var_.th2){
-            JOptionPane.showMessageDialog(frame,
-            "Incubation light chamber is on. This can damage the HRI. Please turn it off to start the measurement!",
-            "Incubation light alarm",
-            JOptionPane.WARNING_MESSAGE);
+            if(value1>var_.th1&&value2<var_.th2){
+                int n = JOptionPane.showOptionDialog(frame,
+                "Incubation light chamber is on. This can damage the HRI. Please turn it off to start the measurement!",
+                    "Incubation light alarm",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                options,
+                options[1]);
+                if(n==1){
+                  check=true;
+                }
         } else if(value1<var_.th1&&value2>var_.th2){
-            JOptionPane.showMessageDialog(frame,
+            int n = JOptionPane.showOptionDialog(frame,
             "Room light is on. Please turn it off to start the measurement!",
             "Room light alarm",
-            JOptionPane.WARNING_MESSAGE);
+            JOptionPane.YES_NO_CANCEL_OPTION,
+            JOptionPane.WARNING_MESSAGE,
+            null,
+            options,
+            options[1]);
+            if(n==1){
+                check=true;
+            }
         } else if(value1>var_.th1&&value2>var_.th2){
-            JOptionPane.showMessageDialog(frame,
-            "Room light and incubation chamber light is on. Please turn it off to start the measurement",
+            int n = JOptionPane.showOptionDialog(frame,
+            "Room light and incubation chamber light is on. Please turn it off to start the measurement.",
             "Light alarm",
-            JOptionPane.WARNING_MESSAGE);
+            JOptionPane.YES_NO_CANCEL_OPTION,
+            JOptionPane.WARNING_MESSAGE,
+            null,
+            options,
+            options[1]);
+            if(n==1){
+                check=true;
+            }
         } else if (value1<var_.th1&&value2<var_.th2){
-            check=true;
+            check=true; 
+            return false;
         }
         }
+        return true;
+        
     }
     
     public double getLaserIntensity(){
