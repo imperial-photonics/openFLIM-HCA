@@ -5,6 +5,9 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
+import static com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.HCAFLIMPlugin.frame_;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
+import javax.swing.JOptionPane;
 import mmcorej.CMMCore;
 import org.micromanager.MMStudio;
 
@@ -16,18 +19,18 @@ public class Arduino {
     MMStudio gui_;
     CMMCore core_;
     private static final Arduino fINSTANCE =  new Arduino();
+    private static HCAFLIMPluginFrame frame;
     
     
     public Arduino(){
     gui_ = MMStudio.getInstance();
     core_ = gui_.getCore();
+    frame = (HCAFLIMPluginFrame) frame_;
     }
         
     public static Arduino getInstance() {
        return fINSTANCE;
     }
-    
-
     
     public void initializeArduino() {
         try {    
@@ -65,7 +68,7 @@ public class Arduino {
         } catch (Exception ex) {
             System.out.println("Error: Class-Arduino; methode-getInputValue; Cannot get arduino input"+input);
         }
-        in=5/1025*in;
+        in=5/1023*in;
         return in;
     }
     
@@ -86,5 +89,44 @@ public class Arduino {
             highLow=null;
         }
         return highLow;
+    }
+    
+    public void checkSafety(){
+        
+       // reading the input  values from Adruino AO and A1. If they are low under 0.5. Then nothing is happening. If they
+       // are high. Message is popping up and is telling reduce light.
+        boolean check=false;
+        int value1=-1;
+        int value2=-1;
+        value1=getInputValue(0);
+        value2=getInputValue(1);
+        if (value1==-1){
+            value1=0;
+            System.out.println("No value detected on Arduino input 0. Go on in unsafe mode. Be aware this can damage the HRI.");
+        }
+        if (value2==-1){
+            value2=0;
+            System.out.println("No value detected on Arduino input 1. Go on in unsafe mode. Be aware this can damage the HRI.");
+        }
+        while(check==false){
+        if(value1>0.5&&value2<0.5){
+            JOptionPane.showMessageDialog(frame,
+            "Incubation light chamber is on. This can damage the HRI. Please turn it off to start the measurement!",
+            "Incubation light alarm",
+            JOptionPane.WARNING_MESSAGE);
+        } else if(value1<0.5&&value2>0.5){
+            JOptionPane.showMessageDialog(frame,
+            "Room light is on. Please turn it off to start the measurement!",
+            "Room light alarm",
+            JOptionPane.WARNING_MESSAGE);
+        } else if(value1>0.5&&value2>0.5){
+            JOptionPane.showMessageDialog(frame,
+            "Room light and incubation chamber light is on. Please turn it off to start the measurement",
+            "Light alarm",
+            JOptionPane.WARNING_MESSAGE);
+        } else if (value1<0.5&&value2<0.5){
+            check=true;
+        }
+        }
     }
 }

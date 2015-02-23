@@ -50,7 +50,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         gui_ = MMStudio.getInstance();
         sap_ = SeqAcqProps.getInstance();
         var_ = VariableTest.getInstance();
-        arduino_ = Arduino.getInstance();
+        
         try {
             gui_.registerForEvents(this);
             core_ = gui_.getCore();
@@ -326,7 +326,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void laserToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_laserToggleActionPerformed
-
+            arduino_ = Arduino.getInstance();
         if (laserToggle.isSelected()) {
             laserToggle.setText("Turn laser OFF");
             try {
