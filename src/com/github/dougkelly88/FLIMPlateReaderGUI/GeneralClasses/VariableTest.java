@@ -6,7 +6,6 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.SaveData;
-import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.TimePoint;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -60,7 +59,9 @@ public class VariableTest {
     public boolean slowBoxCalibratedCheck;
     public ArrayList<Integer> delays;
     
-    
+    //ProSetings
+    public double th1;
+    public double th2;
 
   // PRIVATE
 

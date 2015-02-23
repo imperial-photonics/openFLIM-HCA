@@ -297,6 +297,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         lightPathControls1 = new com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents.LightPathPanel();
         xYZPanel1 = new com.github.dougkelly88.FLIMPlateReaderGUI.XYZClasses.GUIComponents.XYZPanel();
         fLIMPanel1 = new com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.GUIComponents.FLIMPanel();
+        proSettingsGUI1 = new ProSettings.ProSettingsGUI();
         statusLabel = new javax.swing.JLabel();
         HCAsequenceProgressBar = new javax.swing.JPanel();
         snapFLIMButton = new javax.swing.JButton();
@@ -344,6 +345,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         xYZPanel1.setEnabled(false);
         FLIMPanel.addTab("XYZ control", xYZPanel1);
         FLIMPanel.addTab("FLIM control", fLIMPanel1);
+        FLIMPanel.addTab("ProSettings", proSettingsGUI1);
 
         HCAsequenceProgressBar.setBorder(javax.swing.BorderFactory.createTitledBorder("FLIM acquisition"));
 
@@ -1274,6 +1276,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem loadPlateMetadataMenu;
     private javax.swing.JMenuItem loadSequencingTablesMenu;
     private javax.swing.JMenuItem loadSoftwareConfig;
+    private ProSettings.ProSettingsGUI proSettingsGUI1;
     private javax.swing.JPanel progressBarPanel;
     private javax.swing.JMenuItem quitMenu;
     private javax.swing.JMenuItem saveMetadataMenu;

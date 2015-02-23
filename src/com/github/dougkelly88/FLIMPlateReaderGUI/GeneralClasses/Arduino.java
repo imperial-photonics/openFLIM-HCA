@@ -3,6 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
+/* 
+AO= incubation light photodiode
+A1= room light photodiode
+A2= laser intensity photodiode
+All digital outputs used as shutter
+*/
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
 import static com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.HCAFLIMPlugin.frame_;
@@ -20,12 +27,16 @@ public class Arduino {
     CMMCore core_;
     private static final Arduino fINSTANCE =  new Arduino();
     private static HCAFLIMPluginFrame frame;
-    
+    double th1=0.5;
+    double th2=0.5;
+    private VariableTest var_;
     
     public Arduino(){
     gui_ = MMStudio.getInstance();
     core_ = gui_.getCore();
     frame = (HCAFLIMPluginFrame) frame_;
+    var_ = VariableTest.getInstance();
+    
     }
         
     public static Arduino getInstance() {
@@ -109,24 +120,29 @@ public class Arduino {
             System.out.println("No value detected on Arduino input 1. Go on in unsafe mode. Be aware this can damage the HRI.");
         }
         while(check==false){
-        if(value1>0.5&&value2<0.5){
+        if(value1>var_.th1&&value2<var_.th2){
             JOptionPane.showMessageDialog(frame,
             "Incubation light chamber is on. This can damage the HRI. Please turn it off to start the measurement!",
             "Incubation light alarm",
             JOptionPane.WARNING_MESSAGE);
-        } else if(value1<0.5&&value2>0.5){
+        } else if(value1<var_.th1&&value2>var_.th2){
             JOptionPane.showMessageDialog(frame,
             "Room light is on. Please turn it off to start the measurement!",
             "Room light alarm",
             JOptionPane.WARNING_MESSAGE);
-        } else if(value1>0.5&&value2>0.5){
+        } else if(value1>var_.th1&&value2>var_.th2){
             JOptionPane.showMessageDialog(frame,
             "Room light and incubation chamber light is on. Please turn it off to start the measurement",
             "Light alarm",
             JOptionPane.WARNING_MESSAGE);
-        } else if (value1<0.5&&value2<0.5){
+        } else if (value1<var_.th1&&value2<var_.th2){
             check=true;
         }
         }
+    }
+    
+    public int getLaserIntensity(){
+        int value=getInputValue(2);
+        return value;
     }
 }

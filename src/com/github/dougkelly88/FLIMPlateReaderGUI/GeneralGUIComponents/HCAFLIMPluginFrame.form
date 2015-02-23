@@ -247,6 +247,15 @@
                     </Constraint>
                   </Constraints>
                 </Component>
+                <Component class="ProSettings.ProSettingsGUI" name="proSettingsGUI1">
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                      <JTabbedPaneConstraints tabName="ProSettings">
+                        <Property name="tabTitle" type="java.lang.String" value="ProSettings"/>
+                      </JTabbedPaneConstraints>
+                    </Constraint>
+                  </Constraints>
+                </Component>
               </SubComponents>
             </Container>
             <Component class="javax.swing.JLabel" name="statusLabel">
