@@ -311,11 +311,7 @@
                                               </Group>
                                           </Group>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="TEST" min="-2" max="-2" attributes="0"/>
-                                              <Component id="TEST1" min="-2" max="-2" attributes="0"/>
-                                              <Component id="TEST2" min="-2" max="-2" attributes="0"/>
-                                          </Group>
+                                          <Component id="TEST" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <EmptySpace min="0" pref="11" max="32767" attributes="0"/>
@@ -343,15 +339,11 @@
                                       <Component id="snapBFButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="accFramesField" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="TEST1" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="startSequenceButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="stopSequenceButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Component id="TEST2" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="startSequenceButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="stopSequenceButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <Component id="seqOrderBasePanel" min="-2" max="-2" attributes="0"/>
@@ -476,19 +468,9 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="jButton1"/>
                   </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="TEST1">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="jTextField1"/>
-                  </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TEST1ActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TESTActionPerformed"/>
                   </Events>
-                </Component>
-                <Component class="javax.swing.JTextField" name="TEST2">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="jTextField2"/>
-                  </Properties>
                 </Component>
               </SubComponents>
             </Container>

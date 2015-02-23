@@ -14,8 +14,11 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
 import static com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.HCAFLIMPlugin.frame_;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import mmcorej.CMMCore;
+import static oracle.jrockit.jfr.events.Bits.doubleValue;
 import org.micromanager.MMStudio;
 
 /**
@@ -71,27 +74,36 @@ public class Arduino {
         }
     }
     
-    public int getInputValue(int numInput){
-        int in=0;
+    public double getInputValue(int numInput){
+        String value=null;
+        double in=0;
         String input="AnalogInput"+numInput;
         try {
-            in=Integer.parseInt(core_.getProperty("Arduino-Input", input));
+            value=core_.getProperty("Arduino-Input", input);
         } catch (Exception ex) {
             System.out.println("Error: Class-Arduino; methode-getInputValue; Cannot get arduino input"+input);
         }
+        int ind=value.indexOf(".");
+        value=value.substring(0, ind);
+        int inte=Integer.parseInt(value);
+        in=doubleValue(inte);
         in=5/1023*in;
         return in;
     }
     
     public String getInputHighLow(int numInput){
+        String value=null;
         int in=0;
         String highLow;
         String input="AnalogInput"+numInput;
         try {
-            in=Integer.parseInt(core_.getProperty("Arduino-Input", input));
+            value=core_.getProperty("Arduino-Input", input);
         } catch (Exception ex) {
             System.out.println("Error: Class-Arduino; methode-getInputHighLow; Cannot get arduino input"+input);
         }
+        int ind=value.indexOf(".");
+        value=value.substring(0, ind);
+        in=Integer.parseInt(value);
         if(in >= 500){
             highLow="high";
         }else if(in< 500){
@@ -107,8 +119,8 @@ public class Arduino {
        // reading the input  values from Adruino AO and A1. If they are low under 0.5. Then nothing is happening. If they
        // are high. Message is popping up and is telling reduce light.
         boolean check=false;
-        int value1=-1;
-        int value2=-1;
+        double value1=-1;
+        double value2=-1;
         value1=getInputValue(0);
         value2=getInputValue(1);
         if (value1==-1){
@@ -141,8 +153,22 @@ public class Arduino {
         }
     }
     
-    public int getLaserIntensity(){
-        int value=getInputValue(2);
+    public double getLaserIntensity(){
+        double value=getInputValue(2);
         return value;
+    }
+
+    public int testApp() {
+       String value="-1";
+       int valInt=-1;
+        try {
+            value = core_.getProperty("Arduino-Input", "AnalogInput0");
+        } catch (Exception ex) {
+            Logger.getLogger(Arduino.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        int ind=value.indexOf(".");
+        value=value.substring(0, ind);
+        valInt=Integer.parseInt(value);
+       return valInt; 
     }
 }
