@@ -60,8 +60,8 @@ public class VariableTest {
     public ArrayList<Integer> delays;
     
     //ProSetings
-    public double th1;
-    public double th2;
+    public double th1=0.5;
+    public double th2=0.5;
 
   // PRIVATE
 

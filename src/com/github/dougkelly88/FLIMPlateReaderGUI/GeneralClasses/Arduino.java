@@ -76,19 +76,14 @@ public class Arduino {
     
     public double getInputValue(int numInput){
         String value=null;
-        double in=0;
         String input="AnalogInput"+numInput;
         try {
             value=core_.getProperty("Arduino-Input", input);
         } catch (Exception ex) {
             System.out.println("Error: Class-Arduino; methode-getInputValue; Cannot get arduino input"+input);
         }
-        int ind=value.indexOf(".");
-        value=value.substring(0, ind);
-        int inte=Integer.parseInt(value);
-        in=doubleValue(inte);
-        in=5/1023*in;
-        return in;
+        double in1=Double.parseDouble(value)*5/1023;
+        return in1;
     }
     
     public String getInputHighLow(int numInput){
