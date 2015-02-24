@@ -44,6 +44,7 @@ public class ProSettingsGUI extends javax.swing.JPanel {
         updateLaserIntensityButton = new javax.swing.JButton();
         shutterResponseLabel = new javax.swing.JLabel();
         shutterResponseField = new javax.swing.JTextField();
+        enableLightCheckButton = new javax.swing.JRadioButton();
         warningPanel = new javax.swing.JPanel();
         importantInfo = new javax.swing.JScrollPane();
         warningTextArea = new javax.swing.JTextArea();
@@ -73,31 +74,42 @@ public class ProSettingsGUI extends javax.swing.JPanel {
 
         shutterResponseField.setText("0");
 
+        enableLightCheckButton.setText("Enable light check (make sure HRI is turned off)");
+        enableLightCheckButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                enableLightCheckButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout ArduinoPanelLayout = new javax.swing.GroupLayout(ArduinoPanel);
         ArduinoPanel.setLayout(ArduinoPanelLayout);
         ArduinoPanelLayout.setHorizontalGroup(
             ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ArduinoPanelLayout.createSequentialGroup()
-                .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(shutterResponseField)
-                    .addComponent(thresholdA0Field, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
-                    .addComponent(thresholdA1Field)
-                    .addComponent(laserIntensityField))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ArduinoPanelLayout.createSequentialGroup()
+                        .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(shutterResponseField)
+                            .addComponent(thresholdA0Field, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+                            .addComponent(thresholdA1Field)
+                            .addComponent(laserIntensityField))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(thresholdA1Label)
-                            .addComponent(thresholdA0Label, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(updateLaserIntensityButton)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(ArduinoPanelLayout.createSequentialGroup()
+                                .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(thresholdA1Label)
+                                    .addComponent(thresholdA0Label, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(updateLaserIntensityButton)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(laserIntensityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(ArduinoPanelLayout.createSequentialGroup()
+                                .addComponent(shutterResponseLabel)
+                                .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(ArduinoPanelLayout.createSequentialGroup()
-                        .addComponent(laserIntensityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(ArduinoPanelLayout.createSequentialGroup()
-                        .addComponent(shutterResponseLabel)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(enableLightCheckButton)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         ArduinoPanelLayout.setVerticalGroup(
             ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -117,7 +129,10 @@ public class ProSettingsGUI extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(shutterResponseLabel)
-                    .addComponent(shutterResponseField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(shutterResponseField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(enableLightCheckButton)
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
         warningPanel.setBackground(new java.awt.Color(255, 0, 51));
@@ -160,7 +175,7 @@ public class ProSettingsGUI extends javax.swing.JPanel {
                 .addComponent(warningPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ArduinoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(260, Short.MAX_VALUE))
+                .addContainerGap(235, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -174,9 +189,18 @@ public class ProSettingsGUI extends javax.swing.JPanel {
         var_.shutterResponse=Integer.parseInt(thresholdA0Field.getText());
     }//GEN-LAST:event_updateLaserIntensityButtonActionPerformed
 
+    private void enableLightCheckButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enableLightCheckButtonActionPerformed
+        if (enableLightCheckButton.isSelected()){
+            var_.safetyOff=true;
+        } else {
+            var_.safetyOff=false;
+        }
+    }//GEN-LAST:event_enableLightCheckButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ArduinoPanel;
+    private javax.swing.JRadioButton enableLightCheckButton;
     private javax.swing.JScrollPane importantInfo;
     private javax.swing.JTextField laserIntensityField;
     private javax.swing.JLabel laserIntensityLabel;

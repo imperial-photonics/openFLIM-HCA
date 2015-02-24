@@ -63,7 +63,8 @@ public class VariableTest {
     public double th1=0.5;
     public double th2=0.5;
     public double laserIntensity=0;
-    public int shutterResponse;
+    public int shutterResponse=0;
+    public boolean safetyOff=false;
 
   // PRIVATE
 

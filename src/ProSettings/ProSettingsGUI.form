@@ -26,7 +26,7 @@
               <Component id="warningPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="ArduinoPanel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="260" max="32767" attributes="0"/>
+              <EmptySpace pref="235" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -44,33 +44,39 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                      <Component id="shutterResponseField" max="32767" attributes="0"/>
-                      <Component id="thresholdA0Field" alignment="0" pref="69" max="32767" attributes="0"/>
-                      <Component id="thresholdA1Field" alignment="1" max="32767" attributes="0"/>
-                      <Component id="laserIntensityField" alignment="1" max="32767" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+              <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="thresholdA1Label" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="thresholdA0Label" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="shutterResponseField" max="32767" attributes="0"/>
+                              <Component id="thresholdA0Field" alignment="0" pref="69" max="32767" attributes="0"/>
+                              <Component id="thresholdA1Field" alignment="1" max="32767" attributes="0"/>
+                              <Component id="laserIntensityField" alignment="1" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
-                          <Component id="updateLaserIntensityButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
-                      </Group>
-                      <Group type="102" attributes="0">
-                          <Component id="laserIntensityLabel" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="thresholdA1Label" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="thresholdA0Label" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="updateLaserIntensityButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              </Group>
+                              <Component id="laserIntensityLabel" max="32767" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Component id="shutterResponseLabel" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
                       </Group>
                       <Group type="102" attributes="0">
-                          <Component id="shutterResponseLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="enableLightCheckButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -97,6 +103,9 @@
                       <Component id="shutterResponseLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="shutterResponseField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="enableLightCheckButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="12" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -149,6 +158,14 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="0"/>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="enableLightCheckButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Enable light check (make sure HRI is turned off)"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="enableLightCheckButtonActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
