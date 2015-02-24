@@ -7,7 +7,7 @@
 /* 
 AO= incubation light photodiode
 A1= room light photodiode
-A2= laser intensity photodiode
+A5= laser intensity photodiode
 All digital outputs used as shutter
 */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
@@ -18,7 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import mmcorej.CMMCore;
-import static oracle.jrockit.jfr.events.Bits.doubleValue;
 import org.micromanager.MMStudio;
 
 /**
@@ -26,24 +25,28 @@ import org.micromanager.MMStudio;
  * @author Frederik
  */
 public class Arduino {
-    MMStudio gui_;
-    CMMCore core_;
+    private MMStudio gui_;
+    private CMMCore core_;
     private static final Arduino fINSTANCE =  new Arduino();
     private static HCAFLIMPluginFrame frame;
     double th1=0.5;
     double th2=0.5;
     private VariableTest var_;
     
-    public Arduino(){
-    gui_ = MMStudio.getInstance();
-    core_ = gui_.getCore();
-    frame = (HCAFLIMPluginFrame) frame_;
-    var_ = VariableTest.getInstance();
-    
-    }
-        
     public static Arduino getInstance() {
        return fINSTANCE;
+    }
+    
+    
+    public Arduino(){
+        try{
+            gui_ = MMStudio.getInstance();
+            core_ = gui_.getCore();
+        }catch(Exception e){
+            System.out.println("Error: Arduino initalization unsure!");
+        }
+    frame = (HCAFLIMPluginFrame) frame_;
+    var_ = VariableTest.getInstance();
     }
     
     public void initializeArduino() {
@@ -55,7 +58,7 @@ public class Arduino {
 
         } catch (Exception ex) {
             System.out.println("Error: Class-Arduino; methode-initializeArduino");
-        }            
+        }           
     }
     
     public void setArduinoShutterOpen() {
@@ -175,7 +178,7 @@ public class Arduino {
     }
     
     public double getLaserIntensity(){
-        double value=getInputValue(2);
+        double value=getInputValue(5)*20;
         return value;
     }
 
@@ -192,4 +195,5 @@ public class Arduino {
         valInt=Integer.parseInt(value);
        return valInt; 
     }
+    
 }

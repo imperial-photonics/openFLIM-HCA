@@ -62,6 +62,7 @@ public class VariableTest {
     //ProSetings
     public double th1=0.5;
     public double th2=0.5;
+    public double laserIntensity=0;
 
   // PRIVATE
 
@@ -121,6 +122,12 @@ public class VariableTest {
         writer.println("MCP Voltage: "+mcpSlider+";");
         writer.println("Gate Width: "+gatewidthSlider+";");
         writer.println("-----------------------------------------------------------------------------");
+        writer.println("ProSettings:");
+        writer.println();
+        writer.println("Threshold analog input A0: "+th1+";");
+        writer.println("Threshold analog input A1: "+th2+";");
+        writer.println("Laser intensity: "+laserIntensity+";");
+        writer.println();
         writer.close();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
             Logger.getLogger(SaveData.class.getName()).log(Level.SEVERE, null, ex);

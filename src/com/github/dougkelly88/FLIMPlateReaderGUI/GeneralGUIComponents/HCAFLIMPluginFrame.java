@@ -116,13 +116,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         this.setTitle("OpenFLIM-HCA Plugin");
         core_ = core;
         frame_ = this;
-        arduino_ = Arduino.getInstance();
-        arduino_.initializeArduino();
         xYZPanel1.setParent(this);
         xYSequencing1.setParent(this);
         lightPathControls1.setParent(this);
-        
-        
         MMStudio gui_ = MMStudio.getInstance();
         gui_.registerForEvents(this);
 
@@ -163,6 +159,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         progressBar_ = new ProgressBar();
         progressBarPanel.setLayout(new BorderLayout());
         progressBarPanel.add(progressBar_, BorderLayout.SOUTH);
+        
+        arduino_ = Arduino.getInstance();
+        arduino_.initializeArduino();
     }
 
     public CMMCore getCore() {
@@ -668,14 +667,17 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(frameScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1351, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(frameScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1367, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(frameScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 949, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(frameScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 930, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -1017,8 +1019,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         " Z=" + sas.getFOV().getZ() +
                         " ID=" + fovLabel + 
                         ".ome.tiff";99*/
-                try{
-//44                    core_.setProperty("NDFW", "Label", var_.NDFWComboBoxSelectedItem);
+ /*               try{
                     boolean abort=arduino_.checkSafety();;
                     if(abort==true){
                         break;
@@ -1029,18 +1030,17 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
                 catch (Exception e) {
                     System.out.println(e.getMessage());
-                }
+                }*/
                 
                 acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
                 saveSequencingTablesForDebugging(path);
                 // shutter laser
                 // TODO: have this work properly in line with auto-shutter?
-                try {
-//44                    core_.setProperty("NDFW", "Label", "Stop");
+/*                try {
                     arduino_.setArduinoShutterClose();
                 } catch (Exception e){
                     System.out.println(e.getMessage());
-                }
+                }*/
                 
                 lastTime = sas.getTimePoint().getTimeCell();
                 lastFOV = sas.getFOV();
@@ -1083,25 +1083,38 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_snapFLIMButtonActionPerformed
 
     public void snapFLIMImageButton(){
-            
-//44        arduino_.setArduinoShutterOpen();
-        System.out.println("In Action.............");
-        Acquisition acq = new Acquisition();
-        String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
-        String fullname = (currentBasePathField.getText() + "/" + timeStamp + "_FLIMSnap.ome.tiff");
-        //        acq.dummyTest();
-        //        acq.doacqModulo();
-        int exp = 100;
-        try {
-            exp = (int) core_.getExposure();
-        } catch (Exception e){
-            System.out.println(e.getMessage());
+        boolean jump=false;
+        try{
+            boolean abort=arduino_.checkSafety();;
+            if(abort==true){
+                jump=true;
+            } else{
+                arduino_.setArduinoShutterOpen();
+            }
+            core_.waitForDeviceType(DeviceType.XYStageDevice);
+            core_.waitForDeviceType(DeviceType.AutoFocusDevice);
+        } catch (Exception ex) {
+            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        // so that same functions can be used, generate dummy SequencedAcquisitionSetup
-        acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
-                new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
-        progressBar_.setEnd("Snap FLIM image");
-//44        arduino_.setArduinoShutterClose();
+        if (jump==false){
+            Acquisition acq = new Acquisition();
+            String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
+            String intensity=Double.toString(arduino_.getLaserIntensity());
+            String fullname = (currentBasePathField.getText()+ " Laser intensity=" + intensity + "/" + timeStamp + "_FLIMSnap.ome.tiff");
+            //        acq.dummyTest();
+            //        acq.doacqModulo();
+            int exp = 100;
+            try {
+                exp = (int) core_.getExposure();
+            } catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+            // so that same functions can be used, generate dummy SequencedAcquisitionSetup
+            acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
+                    new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
+            progressBar_.setEnd("Snap FLIM image");
+        }
+        arduino_.setArduinoShutterClose();
     }
     
     private void snapBFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapBFButtonActionPerformed

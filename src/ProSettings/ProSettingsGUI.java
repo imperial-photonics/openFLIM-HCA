@@ -5,6 +5,8 @@
  */
 package ProSettings;
 
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
 
 /**
@@ -13,12 +15,14 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
  */
 public class ProSettingsGUI extends javax.swing.JPanel {
     private VariableTest var_;
+    private Arduino arduino_;
     /**
      * Creates new form ProSettingsGUI
      */
     public ProSettingsGUI() {
         initComponents();
         var_ = VariableTest.getInstance();
+        arduino_ = Arduino.getInstance();
     }
 
     /**
@@ -35,6 +39,9 @@ public class ProSettingsGUI extends javax.swing.JPanel {
         thresholdA1Field = new javax.swing.JTextField();
         thresholdA0Label = new javax.swing.JLabel();
         thresholdA1Label = new javax.swing.JLabel();
+        laserIntensityField = new javax.swing.JTextField();
+        laserIntensityLabel = new javax.swing.JLabel();
+        updateLaserIntensityButton = new javax.swing.JButton();
         warningPanel = new javax.swing.JPanel();
         importantInfo = new javax.swing.JScrollPane();
         warningTextArea = new javax.swing.JTextArea();
@@ -59,21 +66,38 @@ public class ProSettingsGUI extends javax.swing.JPanel {
 
         thresholdA1Label.setText("Threshold for photodiode A1 (0-3.3V)");
 
+        laserIntensityField.setText("0");
+
+        laserIntensityLabel.setText("Laser intensity");
+
+        updateLaserIntensityButton.setText("Update");
+        updateLaserIntensityButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateLaserIntensityButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout ArduinoPanelLayout = new javax.swing.GroupLayout(ArduinoPanel);
         ArduinoPanel.setLayout(ArduinoPanelLayout);
         ArduinoPanelLayout.setHorizontalGroup(
             ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ArduinoPanelLayout.createSequentialGroup()
+                .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(laserIntensityField, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(thresholdA0Field, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+                    .addComponent(thresholdA1Field, javax.swing.GroupLayout.Alignment.LEADING))
                 .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(thresholdA0Field, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
-                    .addComponent(thresholdA1Field))
-                .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ArduinoPanelLayout.createSequentialGroup()
                         .addGap(13, 13, 13)
                         .addComponent(thresholdA0Label))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ArduinoPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(thresholdA1Label)))
+                        .addComponent(thresholdA1Label))
+                    .addGroup(ArduinoPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(laserIntensityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(updateLaserIntensityButton)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         ArduinoPanelLayout.setVerticalGroup(
@@ -85,17 +109,21 @@ public class ProSettingsGUI extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(thresholdA1Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(thresholdA1Label)))
+                    .addComponent(thresholdA1Label))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(laserIntensityField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(laserIntensityLabel)
+                    .addComponent(updateLaserIntensityButton)))
         );
 
-        warningPanel.setBackground(new java.awt.Color(0, 0, 0));
-        warningPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Important Inforamtion", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 13), new java.awt.Color(255, 0, 0))); // NOI18N
+        warningPanel.setBackground(new java.awt.Color(255, 0, 51));
+        warningPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Important Inforamtion"));
 
         warningTextArea.setEditable(false);
-        warningTextArea.setBackground(new java.awt.Color(0, 0, 0));
+        warningTextArea.setBackground(new java.awt.Color(255, 0, 51));
         warningTextArea.setColumns(20);
         warningTextArea.setFont(new java.awt.Font("Monospaced", 0, 24)); // NOI18N
-        warningTextArea.setForeground(new java.awt.Color(255, 0, 0));
         warningTextArea.setRows(5);
         warningTextArea.setText("Don't change anything on this page! \nChanging these values can damage the HRI \nand/or changes the behavior of the setup,\nso it might not work anymore.");
         warningTextArea.setBorder(null);
@@ -129,7 +157,7 @@ public class ProSettingsGUI extends javax.swing.JPanel {
                 .addComponent(warningPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ArduinoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(300, Short.MAX_VALUE))
+                .addContainerGap(289, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -141,14 +169,23 @@ public class ProSettingsGUI extends javax.swing.JPanel {
         var_.th2=Double.parseDouble(thresholdA1Field.getText());
     }//GEN-LAST:event_thresholdA1FieldActionPerformed
 
+    private void updateLaserIntensityButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateLaserIntensityButtonActionPerformed
+        double intensity=arduino_.getLaserIntensity();
+        String intensityy=Double.toString(intensity);
+        laserIntensityField.setText(intensityy);
+    }//GEN-LAST:event_updateLaserIntensityButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ArduinoPanel;
     private javax.swing.JScrollPane importantInfo;
+    private javax.swing.JTextField laserIntensityField;
+    private javax.swing.JLabel laserIntensityLabel;
     private javax.swing.JTextField thresholdA0Field;
     private javax.swing.JLabel thresholdA0Label;
     private javax.swing.JTextField thresholdA1Field;
     private javax.swing.JLabel thresholdA1Label;
+    private javax.swing.JButton updateLaserIntensityButton;
     private javax.swing.JPanel warningPanel;
     private javax.swing.JTextArea warningTextArea;
     // End of variables declaration//GEN-END:variables
