@@ -63,6 +63,7 @@ public class VariableTest {
     public double th1=0.5;
     public double th2=0.5;
     public double laserIntensity=0;
+    public int shutterResponse;
 
   // PRIVATE
 
@@ -127,6 +128,7 @@ public class VariableTest {
         writer.println("Threshold analog input A0: "+th1+";");
         writer.println("Threshold analog input A1: "+th2+";");
         writer.println("Laser intensity: "+laserIntensity+";");
+        writer.println("Shutter response: "+shutterResponse+";");
         writer.println();
         writer.close();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {

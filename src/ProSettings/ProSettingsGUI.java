@@ -42,6 +42,8 @@ public class ProSettingsGUI extends javax.swing.JPanel {
         laserIntensityField = new javax.swing.JTextField();
         laserIntensityLabel = new javax.swing.JLabel();
         updateLaserIntensityButton = new javax.swing.JButton();
+        shutterResponseLabel = new javax.swing.JLabel();
+        shutterResponseField = new javax.swing.JTextField();
         warningPanel = new javax.swing.JPanel();
         importantInfo = new javax.swing.JScrollPane();
         warningTextArea = new javax.swing.JTextArea();
@@ -49,18 +51,8 @@ public class ProSettingsGUI extends javax.swing.JPanel {
         ArduinoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Arduino"));
 
         thresholdA0Field.setText("0.5");
-        thresholdA0Field.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                thresholdA0FieldActionPerformed(evt);
-            }
-        });
 
         thresholdA1Field.setText("0.5");
-        thresholdA1Field.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                thresholdA1FieldActionPerformed(evt);
-            }
-        });
 
         thresholdA0Label.setText("Threshold for photodiode A0 (0-3.3V)");
 
@@ -77,35 +69,43 @@ public class ProSettingsGUI extends javax.swing.JPanel {
             }
         });
 
+        shutterResponseLabel.setText("Time between shutter and snapFlimImage");
+
+        shutterResponseField.setText("0");
+
         javax.swing.GroupLayout ArduinoPanelLayout = new javax.swing.GroupLayout(ArduinoPanel);
         ArduinoPanel.setLayout(ArduinoPanelLayout);
         ArduinoPanelLayout.setHorizontalGroup(
             ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ArduinoPanelLayout.createSequentialGroup()
                 .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(laserIntensityField, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(thresholdA0Field, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
-                    .addComponent(thresholdA1Field, javax.swing.GroupLayout.Alignment.LEADING))
-                .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(shutterResponseField)
+                    .addComponent(thresholdA0Field, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+                    .addComponent(thresholdA1Field)
+                    .addComponent(laserIntensityField))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ArduinoPanelLayout.createSequentialGroup()
-                        .addGap(13, 13, 13)
-                        .addComponent(thresholdA0Label))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ArduinoPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(thresholdA1Label))
+                        .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(thresholdA1Label)
+                            .addComponent(thresholdA0Label, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(updateLaserIntensityButton)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(ArduinoPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(laserIntensityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(updateLaserIntensityButton)
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(laserIntensityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(ArduinoPanelLayout.createSequentialGroup()
+                        .addComponent(shutterResponseLabel)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         ArduinoPanelLayout.setVerticalGroup(
             ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ArduinoPanelLayout.createSequentialGroup()
                 .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(thresholdA0Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(thresholdA0Label))
+                    .addComponent(thresholdA0Label)
+                    .addComponent(updateLaserIntensityButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(thresholdA1Field, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -113,8 +113,11 @@ public class ProSettingsGUI extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(laserIntensityField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(laserIntensityLabel)
-                    .addComponent(updateLaserIntensityButton)))
+                    .addComponent(laserIntensityLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(shutterResponseLabel)
+                    .addComponent(shutterResponseField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         warningPanel.setBackground(new java.awt.Color(255, 0, 51));
@@ -157,22 +160,18 @@ public class ProSettingsGUI extends javax.swing.JPanel {
                 .addComponent(warningPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ArduinoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(289, Short.MAX_VALUE))
+                .addContainerGap(260, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void thresholdA0FieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thresholdA0FieldActionPerformed
-       var_.th1=Double.parseDouble(thresholdA0Field.getText());
-    }//GEN-LAST:event_thresholdA0FieldActionPerformed
-
-    private void thresholdA1FieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thresholdA1FieldActionPerformed
-        var_.th2=Double.parseDouble(thresholdA1Field.getText());
-    }//GEN-LAST:event_thresholdA1FieldActionPerformed
-
     private void updateLaserIntensityButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateLaserIntensityButtonActionPerformed
         double intensity=arduino_.getLaserIntensity();
+        intensity = Math.round(100.0 * intensity) / 100.0;
         String intensityy=Double.toString(intensity);
         laserIntensityField.setText(intensityy);
+        var_.th2=Double.parseDouble(thresholdA1Field.getText());
+        var_.th1=Double.parseDouble(thresholdA0Field.getText());
+        var_.shutterResponse=Integer.parseInt(thresholdA0Field.getText());
     }//GEN-LAST:event_updateLaserIntensityButtonActionPerformed
 
 
@@ -181,6 +180,8 @@ public class ProSettingsGUI extends javax.swing.JPanel {
     private javax.swing.JScrollPane importantInfo;
     private javax.swing.JTextField laserIntensityField;
     private javax.swing.JLabel laserIntensityLabel;
+    private javax.swing.JTextField shutterResponseField;
+    private javax.swing.JLabel shutterResponseLabel;
     private javax.swing.JTextField thresholdA0Field;
     private javax.swing.JLabel thresholdA0Label;
     private javax.swing.JTextField thresholdA1Field;

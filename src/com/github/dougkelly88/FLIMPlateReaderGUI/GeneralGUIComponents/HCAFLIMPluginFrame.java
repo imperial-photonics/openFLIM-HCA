@@ -1090,6 +1090,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 jump=true;
             } else{
                 arduino_.setArduinoShutterOpen();
+                wait(var_.shutterResponse);
             }
             core_.waitForDeviceType(DeviceType.XYStageDevice);
             core_.waitForDeviceType(DeviceType.AutoFocusDevice);
@@ -1100,7 +1101,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             Acquisition acq = new Acquisition();
             String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
             String intensity=Double.toString(arduino_.getLaserIntensity());
-            String fullname = (currentBasePathField.getText()+ " Laser intensity=" + intensity + "/" + timeStamp + "_FLIMSnap.ome.tiff");
+            String fullname = (currentBasePathField.getText()+ "/" + timeStamp + " Laser intensity=" + intensity + "_FLIMSnap.ome.tiff");
             //        acq.dummyTest();
             //        acq.doacqModulo();
             int exp = 100;

@@ -26,7 +26,7 @@
               <Component id="warningPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="ArduinoPanel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="289" max="32767" attributes="0"/>
+              <EmptySpace pref="260" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -46,27 +46,31 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                      <Component id="laserIntensityField" alignment="0" max="32767" attributes="0"/>
-                      <Component id="thresholdA0Field" alignment="0" pref="37" max="32767" attributes="0"/>
-                      <Component id="thresholdA1Field" alignment="0" max="32767" attributes="0"/>
+                      <Component id="shutterResponseField" max="32767" attributes="0"/>
+                      <Component id="thresholdA0Field" alignment="0" pref="69" max="32767" attributes="0"/>
+                      <Component id="thresholdA1Field" alignment="1" max="32767" attributes="0"/>
+                      <Component id="laserIntensityField" alignment="1" max="32767" attributes="0"/>
                   </Group>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
-                          <Component id="thresholdA0Label" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="thresholdA1Label" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="thresholdA1Label" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="thresholdA0Label" alignment="1" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="updateLaserIntensityButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="laserIntensityLabel" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Component id="shutterResponseLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="updateLaserIntensityButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -76,6 +80,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="thresholdA0Field" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="thresholdA0Label" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="updateLaserIntensityButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -86,7 +91,11 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="laserIntensityField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="laserIntensityLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="updateLaserIntensityButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="shutterResponseLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="shutterResponseField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -97,17 +106,11 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="0.5"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="thresholdA0FieldActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="thresholdA1Field">
           <Properties>
             <Property name="text" type="java.lang.String" value="0.5"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="thresholdA1FieldActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="thresholdA0Label">
           <Properties>
@@ -136,6 +139,16 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="updateLaserIntensityButtonActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="shutterResponseLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Time between shutter and snapFlimImage"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="shutterResponseField">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="0"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
