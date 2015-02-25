@@ -326,4 +326,10 @@ public class FindMaxpoint {
         }
         return meanValue;
     }
+    
+    
+    public String getAcquiredMaxpointValue(){
+        return Integer.toString(maxpointDelay_);
+    }
+    
 }
