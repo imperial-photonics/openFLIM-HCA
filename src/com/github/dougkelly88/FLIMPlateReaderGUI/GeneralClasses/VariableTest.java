@@ -59,7 +59,12 @@ public class VariableTest {
     public boolean slowBoxCalibratedCheck;
     public ArrayList<Integer> delays;
     
-    
+    //ProSetings
+    public double th1=0.5;
+    public double th2=0.5;
+    public double laserIntensity=0;
+    public int shutterResponse=0;
+    public boolean safetyOff=false;
 
   // PRIVATE
 
@@ -71,6 +76,10 @@ public class VariableTest {
   * Private constructor prevents construction outside this class.
   */
  
+    /**
+     * Private constructor prevents construction outside this class.
+     * @return
+     */
   public String saveMetadata(){
       //Saving the all data in basepath+ConfigSoftware.txt
       // Check if basepath is defined. If yes saves, if not open dialog.
@@ -115,10 +124,15 @@ public class VariableTest {
         writer.println("MCP Voltage: "+mcpSlider+";");
         writer.println("Gate Width: "+gatewidthSlider+";");
         writer.println("-----------------------------------------------------------------------------");
+        writer.println("ProSettings:");
+        writer.println();
+        writer.println("Threshold analog input A0: "+th1+";");
+        writer.println("Threshold analog input A1: "+th2+";");
+        writer.println("Laser intensity: "+laserIntensity+";");
+        writer.println("Shutter response: "+shutterResponse+";");
+        writer.println();
         writer.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(SaveData.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (UnsupportedEncodingException ex) {
+        } catch (FileNotFoundException | UnsupportedEncodingException ex) {
             Logger.getLogger(SaveData.class.getName()).log(Level.SEVERE, null, ex);
         }
        
@@ -127,15 +141,12 @@ public class VariableTest {
         return ok;
   }
   
-  public String displayxx(int a){
-        System.out.print("Läuft auch acqu   "+a);
-        return "ok";
-        //  DisplayImage_.display();
-    }
+  
   public static VariableTest getInstance() {
       
       return fINSTANCE;
   }    
+  
   public String findLabelOfProperty(String searchedProperty){
             //String entireFileText= new Scanner(new File("C:\\Users\\Frederik\\Desktop\\ConfigSoftware.txt"))
              // .useDelimiter("\\A").next();
@@ -163,6 +174,7 @@ public class VariableTest {
         }
         return label; 
   }
+  
   public ArrayList<Integer> findLabelOfPropertyForArrayList(String searchedProperty){
 
         String label=null;

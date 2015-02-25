@@ -5,14 +5,18 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents;
 
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.SliderControl;
 import com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.Classes.CurrentLightPath;
 import java.awt.BorderLayout;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import mmcorej.CMMCore;
+import mmcorej.DeviceType;
 import mmcorej.StrVector;
 import org.micromanager.MMStudio;
 import org.micromanager.api.events.PropertyChangedEvent;
@@ -31,6 +35,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     HCAFLIMPluginFrame parent_;
     SliderControl powerSlider_;
     CurrentLightPath currentLightPath_;
+    private Arduino arduino_;
     // TODO: replace var_ stuff with currentLightPath_
 //    private SequencedAcquisitionProperties sap_;
     // TODO: generate a method that checks for spectral overlap between
@@ -48,6 +53,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         gui_ = MMStudio.getInstance();
         sap_ = SeqAcqProps.getInstance();
         var_ = VariableTest.getInstance();
+        arduino_ = Arduino.getInstance();
         try {
             gui_.registerForEvents(this);
             core_ = gui_.getCore();
@@ -323,18 +329,24 @@ public class LightPathPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void laserToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_laserToggleActionPerformed
-
+            
         if (laserToggle.isSelected()) {
             laserToggle.setText("Turn laser OFF");
-            try {
-                core_.setProperty("FianiumSC", "LaserOn?", "On");
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
+            try{
+                boolean abort=arduino_.checkSafety();;
+                if (abort==false){
+                    arduino_.setArduinoShutterOpen();
+                }
+                } catch (Exception ex) {
+            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
+           // core_.setProperty("FianiumSC", "LaserOn?", "On");
+            
         } else {
             laserToggle.setText("Turn laser ON");
             try {
-                core_.setProperty("FianiumSC", "LaserOn?", "Off");
+                arduino_.setArduinoShutterClose();
+               // core_.setProperty("FianiumSC", "LaserOn?", "Off");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
