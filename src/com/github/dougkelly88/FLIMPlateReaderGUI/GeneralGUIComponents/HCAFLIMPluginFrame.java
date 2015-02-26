@@ -8,7 +8,7 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.sequencingThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Acquisition;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.DisplayImage;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.DisplayImage2;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
@@ -88,7 +88,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private AcqOrderTableModel tableModel_;
     private JTable seqOrderTable_;
     public  FOV currentFOV_;
-    private DisplayImage DisplayImage_;
+    private DisplayImage2 displayImage2_;
     public static HSSFWorkbook wb = new HSSFWorkbook();
     public static HSSFWorkbook wbLoad = new HSSFWorkbook();
     public Thread sequenceThread;
@@ -146,7 +146,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         xYZPanel1.setupAFParams(this);
         fLIMPanel1.setDelayComboBox();
         
-        DisplayImage_ = DisplayImage.getInstance();
+        displayImage2_ = DisplayImage2.getInstance();
         
         try{
             String cam = core_.getCameraDevice();
@@ -690,7 +690,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(frameScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 930, Short.MAX_VALUE)
+                .addComponent(frameScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1017, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -866,6 +866,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
         ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
         int endOk=0;
+        int ind=0;
         singleImage=0;
         
             // get all sequence parameters and put them together into an 
@@ -951,11 +952,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             FOV lastFOV = new FOV(0, 0, 0, pp_);
             Double lastZ = 0.0;
 //            int fovSinceLastAF = 0;
-            for (int ind = 0; ind < sass.size(); ind++){
+            for ( ind = 0; ind < sass.size(); ind++){
             
                 //check for flag (stop button) and abort sequence
                 if(terminate){
-                    setStopButtonFalse(ind, sass.size(), "FLIM sequence");
                     endOk=1;
                 break;
                 }
@@ -973,10 +973,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         System.out.println("Waiting for " + timeLeft + " until next time point...");
                         //check for flag (stop button) and abort time course wait
                         if(terminate){
-                        setStopButtonFalse(ind, sass.size(), "FLIM sequence");
-                        endOk=1;
-                        break;
-                }
+                            endOk=1;
+                            break;    
+                        }else{
+                            System.out.println("dfghjkl;kjhgfhjkl");
+                        }
                     }
                 }
                 // if FOV different, deal with it here...
@@ -985,7 +986,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     // Perhaps only do when XY change, and not Z?
                     xyzmi_.gotoFOV(sas.getFOV());
                     if (xYZPanel1.getAFInSequence())
-                        xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());                     
+                        xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                    if(terminate){
+                        endOk=1;
+                        break;
+                    }
                 }
                 
                 // set filter params - can these be handled by a single class?
@@ -1014,6 +1019,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         System.out.println(e.getMessage());
                     }
                 }*/
+                //Get laser intensity
                 String intensity=Double.toString(arduino_.getLaserIntensity());
                 // do acquisition
                 String fovLabel = String.format("%05d", ind);
@@ -1042,6 +1048,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 
                 acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
                 saveSequencingTablesForDebugging(path);
+                
                 // shutter laser
                 // TODO: have this work properly in line with auto-shutter?
                 try {
@@ -1063,13 +1070,17 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             } catch (Exception  e){
                 System.out.println(e.getMessage());
             }
-            //set progress bar on increment further
+            //set progress bar one increment further
+            displayImage2_.showImageInIJ();
             progressBar_.stepIncrement(ind, sass.size());
             endOk=0;
-            }
-            if(endOk==0){
-                progressBar_.setEnd("FLIM sequence");
-            }
+            
+        }
+        if(endOk==1){
+                setStopButtonFalse(ind, sass.size(), "FLIM sequence");
+            } else {
+            progressBar_.setEnd("FLIM sequence");
+        }
             
     }
 
@@ -1163,9 +1174,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_TESTActionPerformed
 
     private void TEST2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TEST2ActionPerformed
-        core_.setAutoShutter(true);
-        boolean ttest=core_.getAutoShutter();
-        System.out.println(ttest);
+        displayImage2_.showImageInIJ();
     }//GEN-LAST:event_TEST2ActionPerformed
    
     public void changeAbortHCAsequencBoolean(){

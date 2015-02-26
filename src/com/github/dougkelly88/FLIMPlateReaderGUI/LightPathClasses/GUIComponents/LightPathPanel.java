@@ -11,6 +11,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.SliderControl;
 import com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.Classes.CurrentLightPath;
+import com.github.dougkelly88.FLIMPlateReaderGUI.XYZClasses.GUIComponents.XYZPanel;
 import java.awt.BorderLayout;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,6 +37,8 @@ public class LightPathPanel extends javax.swing.JPanel {
     SliderControl powerSlider_;
     CurrentLightPath currentLightPath_;
     private Arduino arduino_;
+    private XYZPanel xYZPanel_;
+    private static final LightPathPanel fINSTANCE =  new LightPathPanel();
     // TODO: replace var_ stuff with currentLightPath_
 //    private SequencedAcquisitionProperties sap_;
     // TODO: generate a method that checks for spectral overlap between
@@ -54,6 +57,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         sap_ = SeqAcqProps.getInstance();
         var_ = VariableTest.getInstance();
         arduino_ = Arduino.getInstance();
+        xYZPanel_ = XYZPanel.getInstance();
         try {
             gui_.registerForEvents(this);
             core_ = gui_.getCore();
@@ -382,6 +386,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         setByLabel(objectiveComboBox, "Objective");
         currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
         var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
+        xYZPanel_.afObjectiveCombo.setSelectedItem(var_.ObjectiveComboBoxSelectedItem);
         double magnification = 1;
 //        if (!(objectiveComboBox.getSelectedItem() == null))
 //            magnification = getMag((String) objectiveComboBox.getSelectedItem());
@@ -423,7 +428,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         var_.SwitchPortComboBoxSelectedItem = (String) switchPortComboBox.getSelectedItem();
     }//GEN-LAST:event_switchPortComboBoxActionPerformed
 
-    private void setByLabel(JComboBox combo, String device) {
+    public void setByLabel(JComboBox combo, String device) {
         try {
             String setval = (String) combo.getSelectedItem();
             // only send command if combo has been properly populated
@@ -573,6 +578,10 @@ public class LightPathPanel extends javax.swing.JPanel {
     public CurrentLightPath getCurrentLightPath() {
         return this.currentLightPath_;
     }
+    
+    public static LightPathPanel getInstance() {
+            return fINSTANCE;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Filters;
@@ -595,7 +604,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     private javax.swing.JLabel laserTemperatureLabel;
     private javax.swing.JToggleButton laserToggle;
     private javax.swing.JComboBox ndFWComboBox;
-    private javax.swing.JComboBox objectiveComboBox;
+    public javax.swing.JComboBox objectiveComboBox;
     private javax.swing.JPanel outputPowerPanel;
     private javax.swing.JComboBox switchPortComboBox;
     // End of variables declaration//GEN-END:variables

@@ -63,7 +63,7 @@ public class Arduino {
     
     public void setArduinoShutterOpen() {
         try {
-            core_.setProperty("Arduino-Shutter", "OnOff", "0");
+            core_.setProperty("Arduino-Shutter", "OnOff", "1");
         } catch (Exception ex) {
             System.out.println("Error: Class-Arduino; methode-openArduinoShutter");
         }
@@ -71,14 +71,14 @@ public class Arduino {
     
     public void setArduinoShutterClose() {
         try {
-            core_.setProperty("Arduino-Shutter", "OnOff", "1");
+            core_.setProperty("Arduino-Shutter", "OnOff", "0");
         } catch (Exception ex) {
             System.out.println("Error: Class-Arduino; methode-closeArduinoShutter");
         }
     }
     
     public double getInputValue(int numInput){
-        String value=null;
+        String value="-1";
         String input="AnalogInput"+numInput;
         try {
             value=core_.getProperty("Arduino-Input", input);
