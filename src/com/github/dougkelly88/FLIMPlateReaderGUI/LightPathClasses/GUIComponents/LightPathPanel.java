@@ -386,7 +386,6 @@ public class LightPathPanel extends javax.swing.JPanel {
         setByLabel(objectiveComboBox, "Objective");
         currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
         var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
-        xYZPanel_.afObjectiveCombo.setSelectedItem(var_.ObjectiveComboBoxSelectedItem);
         double magnification = 1;
 //        if (!(objectiveComboBox.getSelectedItem() == null))
 //            magnification = getMag((String) objectiveComboBox.getSelectedItem());
@@ -436,7 +435,7 @@ public class LightPathPanel extends javax.swing.JPanel {
                 core_.setProperty(device, "Label", setval);
             } else {
                 System.out.println("Not setting property for device " + device
-                        + "because combo hasn't yet been populated (setByLabel method)");
+                        + " because combo hasn't yet been populated (setByLabel method)");
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -582,6 +581,11 @@ public class LightPathPanel extends javax.swing.JPanel {
     public static LightPathPanel getInstance() {
             return fINSTANCE;
     }
+    
+    public void updatePanel(){
+         // do something when LightPathPanel is selected
+        objectiveComboBox.setSelectedItem(var_.ObjectiveComboBoxSelectedItem);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Filters;
@@ -608,4 +612,5 @@ public class LightPathPanel extends javax.swing.JPanel {
     private javax.swing.JPanel outputPowerPanel;
     private javax.swing.JComboBox switchPortComboBox;
     // End of variables declaration//GEN-END:variables
+
 }

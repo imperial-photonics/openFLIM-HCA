@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ProSettings;
+package ProSettingsGUI;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
@@ -13,13 +13,13 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
  *
  * @author Frederik
  */
-public class ProSettingsGUI extends javax.swing.JPanel {
+public class ProSettingsPanel extends javax.swing.JPanel {
     private VariableTest var_;
     private Arduino arduino_;
     /**
      * Creates new form ProSettingsGUI
      */
-    public ProSettingsGUI() {
+    public ProSettingsPanel() {
         initComponents();
         var_ = VariableTest.getInstance();
         arduino_ = Arduino.getInstance();
@@ -197,6 +197,10 @@ public class ProSettingsGUI extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_enableLightCheckButtonActionPerformed
 
+    
+    public void updatePanel(){
+       // do something when ProSettingsPanel is selected
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ArduinoPanel;

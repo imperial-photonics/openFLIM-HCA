@@ -24,7 +24,7 @@ public class CurrentLightPath {
         ndFilterLabel = "0";
         dichroicLabel = "473-561";
         filterCubeLabel = "Empty (Sectioned)";
-        objectiveLabel = "LUCPlanFLN 40x 0.6";
+        objectiveLabel = "LUCPLFLN40X";
         portLabel = "Camera";
     }
     
@@ -41,7 +41,7 @@ public class CurrentLightPath {
         ndFilterLabel = ndfilt;
         dichroicLabel = dichroic;
         filterCubeLabel = "Empty (Sectioned)";
-        objectiveLabel = "LUCPlanFLN 40x 0.6";
+        objectiveLabel = "LUCPLFLN40X";
         portLabel = "Camera";
         filterCubeLabel = "None (sectioned)";
     }

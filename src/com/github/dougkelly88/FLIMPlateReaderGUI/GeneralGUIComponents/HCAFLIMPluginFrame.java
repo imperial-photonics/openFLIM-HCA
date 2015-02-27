@@ -299,7 +299,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         lightPathControls1 = new com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents.LightPathPanel();
         xYZPanel1 = new com.github.dougkelly88.FLIMPlateReaderGUI.XYZClasses.GUIComponents.XYZPanel();
         fLIMPanel1 = new com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.GUIComponents.FLIMPanel();
-        proSettingsGUI1 = new ProSettings.ProSettingsGUI();
+        proSettingsGUI1 = new ProSettingsGUI.ProSettingsPanel();
         statusLabel = new javax.swing.JLabel();
         HCAsequenceProgressBar = new javax.swing.JPanel();
         snapFLIMButton = new javax.swing.JButton();
@@ -341,6 +341,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        FLIMPanel.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                FLIMPanelStateChanged(evt);
+            }
+        });
         FLIMPanel.addTab("Light path control", lightPathControls1);
 
         xYZPanel1.setEnabled(false);
@@ -1176,6 +1181,19 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private void TEST2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TEST2ActionPerformed
         displayImage2_.showImageInIJ();
     }//GEN-LAST:event_TEST2ActionPerformed
+
+    private void FLIMPanelStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_FLIMPanelStateChanged
+        int tab=FLIMPanel.getSelectedIndex();
+        if (tab==0){
+            lightPathControls1.updatePanel();
+        }else if (tab==1){
+            xYZPanel1.updatePanel();
+        }else if (tab==2){
+            fLIMPanel1.updatePanel();
+        }else if (tab==3){
+            proSettingsGUI1.updatePanel();
+        }
+    }//GEN-LAST:event_FLIMPanelStateChanged
    
     public void changeAbortHCAsequencBoolean(){
     //abortHCAsequencBoolean=abortHCAsequencesButton.isSelected();
@@ -1306,7 +1324,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem loadPlateMetadataMenu;
     private javax.swing.JMenuItem loadSequencingTablesMenu;
     private javax.swing.JMenuItem loadSoftwareConfig;
-    private ProSettings.ProSettingsGUI proSettingsGUI1;
+    private ProSettingsGUI.ProSettingsPanel proSettingsGUI1;
     private javax.swing.JPanel progressBarPanel;
     private javax.swing.JMenuItem quitMenu;
     private javax.swing.JMenuItem saveMetadataMenu;

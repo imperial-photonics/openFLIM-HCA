@@ -21,7 +21,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import mmcorej.CMMCore;
 import mmcorej.StrVector;
@@ -44,6 +48,9 @@ public class XYZPanel extends javax.swing.JPanel {
     private static final XYZPanel fINSTANCE =  new XYZPanel();
     private LightPathPanel lightPathPanel_;
     private VariableTest var_;
+    private StrVector afObj;
+    private ArrayList<String> installedObj;
+    private boolean flag=true;
     
     public static final int X_AXIS = 0;
     public static final int Y_AXIS = 1;
@@ -554,31 +561,54 @@ public class XYZPanel extends javax.swing.JPanel {
         xyzmi_.enableManualZControls(manUscopeCheck.isSelected());
     }//GEN-LAST:event_manUscopeCheckActionPerformed
 
+    @SuppressWarnings("empty-statement")
     private void afNowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_afNowButtonActionPerformed
-        // TODO: deal with potential plate slope, c.f. current uManager HCA tool
-        xyzmi_.customAutofocus(Double.parseDouble(afOffsetField.getText()));
+        // Is checking if objective is suitable for autofocus
+        if(flag){
+            String[] allObj = afObj.toArray();
+            List<String> list = new ArrayList<String>();
+            int count=0;
+            for (String str : afObj){
+                if (installedObj.contains(str)){
+                    list.add(str);   
+                }
+            }
+            int length=list.size();
+            String[] choices= new String[length];
+            for(int i = 0; i<length;i++){
+                choices[i]=list.get(i);
+            }
+            
+            // popup window to choose autofocus objective
+            String input = (String) JOptionPane.showInputDialog(null, "Autofocus is not supporting current objective. Please change the objective to use autofocus.",
+            "Autofocus objective missmatch", JOptionPane.QUESTION_MESSAGE, null,choices,choices[1]); 
+            try {
+                core_.setProperty("Objective", "Label", input);
+            } catch (Exception ex) {
+                Logger.getLogger(XYZPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            xyzmi_.customAutofocus(Double.parseDouble(afOffsetField.getText()));
+        } else{
+            xyzmi_.customAutofocus(Double.parseDouble(afOffsetField.getText()));
+        }
     }//GEN-LAST:event_afNowButtonActionPerformed
 
     private void afObjectiveComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_afObjectiveComboActionPerformed
         try{
-            core_.setProperty("AutoFocusZDC", "ObjectiveTypeSetting", (String) afObjectiveCombo.getSelectedItem());
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-        try {
             String setval = (String) afObjectiveCombo.getSelectedItem();
+            core_.setProperty("AutoFocusZDC", "ObjectiveTypeSetting", setval);
             // only send command if combo has been properly populated
             if (setval != null) {
                 core_.setProperty("Objective", "Label", setval);
             } else {
-                System.out.println("Not setting property for device " + "Objective"
-                        + "because combo hasn't yet been populated (setByLabel method)");
+                System.out.println("Not setting property for device " + "AutoFocusObjective"
+                        + " because combo hasn't yet been populated (setByLabel method)");
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        flag=false;
         var_.ObjectiveComboBoxSelectedItem = (String) afObjectiveCombo.getSelectedItem();
-        lightPathPanel_.objectiveComboBox.setSelectedItem(var_.ObjectiveComboBoxSelectedItem);
     }//GEN-LAST:event_afObjectiveComboActionPerformed
 
     private void afSearchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_afSearchFieldActionPerformed
@@ -782,9 +812,9 @@ public class XYZPanel extends javax.swing.JPanel {
             core_.setProperty("ManualFocus", "NearLimit", 9300);
             core_.setProperty("ManualFocus", "FarLimit", 10);
             core_.setProperty("Objective", "Safe Position", 3000); //TODO: check that this is a good compromise between clearance and speed
-            StrVector afObj = core_.getAllowedPropertyValues("AutoFocusZDC", "ObjectiveTypeSetting");
+            afObj = core_.getAllowedPropertyValues("AutoFocusZDC", "ObjectiveTypeSetting");
             String[] installedObjStr = (core_.getAllowedPropertyValues("Objective", "Label")).toArray();
-            ArrayList<String> installedObj = new ArrayList(Arrays.asList(installedObjStr));
+            installedObj = new ArrayList(Arrays.asList(installedObjStr));
             afObjectiveCombo.removeAllItems();
             for (String str : afObj){
                 if (installedObj.contains(str))
@@ -814,6 +844,29 @@ public class XYZPanel extends javax.swing.JPanel {
     
     public static XYZPanel getInstance() {
             return fINSTANCE;
+    }
+    
+    public void updatePanel(){
+        // do something when XYZPanel is selected
+        String[] tet=afObj.toArray();
+        List<String> list = new ArrayList<String>();
+            int count=0;
+            for (String str : afObj){
+                if (installedObj.contains(str)){
+                    list.add(str);   
+                }
+            }
+            int length=list.size();
+            String[] choices= new String[length];
+            for(int i = 0; i<length;i++){
+                choices[i]=list.get(i);
+            }
+        if(Arrays.asList(choices).contains(var_.ObjectiveComboBoxSelectedItem)){
+            afObjectiveCombo.setSelectedItem(var_.ObjectiveComboBoxSelectedItem);
+            flag=false;
+        } else{
+            flag=true;
+        }
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -850,4 +903,6 @@ public class XYZPanel extends javax.swing.JPanel {
     private javax.swing.JLabel zStepSizeLabel;
     private javax.swing.JButton zUButton;
     // End of variables declaration//GEN-END:variables
+
+    
 }

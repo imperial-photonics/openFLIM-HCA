@@ -1130,6 +1130,10 @@ public class FLIMPanel extends javax.swing.JPanel {
         return fastDelaySlider_.getValue();
     }
     
+    public void updatePanel(){
+        // do something when FLIMPanel is selected
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel CalibrationFileLabel;
     private javax.swing.JButton CalibrationPathButton;
