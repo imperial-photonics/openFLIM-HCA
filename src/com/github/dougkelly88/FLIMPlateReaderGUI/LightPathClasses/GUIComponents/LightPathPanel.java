@@ -84,6 +84,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         laserTemperatureLabel = new javax.swing.JLabel();
         laserSerialNumberLabel = new javax.swing.JLabel();
         laserRunTimeLabel = new javax.swing.JLabel();
+        ledToggle = new javax.swing.JToggleButton();
         Filters = new javax.swing.JPanel();
         ndFWComboBox = new javax.swing.JComboBox();
         excitationComboBox = new javax.swing.JComboBox();
@@ -129,14 +130,23 @@ public class LightPathPanel extends javax.swing.JPanel {
 
         laserRunTimeLabel.setText("Laser run time (mins):");
 
+        ledToggle.setText("Turn brightfield light ON");
+        ledToggle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ledToggleActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout excitationSourceLayout = new javax.swing.GroupLayout(excitationSource);
         excitationSource.setLayout(excitationSourceLayout);
         excitationSourceLayout.setHorizontalGroup(
             excitationSourceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(excitationSourceLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(laserToggle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(excitationSourceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(ledToggle, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                    .addComponent(laserToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(82, 82, 82)
                 .addComponent(outputPowerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(excitationSourceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -164,7 +174,9 @@ public class LightPathPanel extends javax.swing.JPanel {
                                 .addComponent(laserRunTimeLabel))))
                     .addGroup(excitationSourceLayout.createSequentialGroup()
                         .addGap(33, 33, 33)
-                        .addComponent(laserToggle, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(laserToggle, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ledToggle)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -296,7 +308,7 @@ public class LightPathPanel extends javax.swing.JPanel {
                 .addGroup(OlympusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
                     .addComponent(switchPortComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         OlympusLayout.setVerticalGroup(
             OlympusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -339,7 +351,7 @@ public class LightPathPanel extends javax.swing.JPanel {
             try{
                 boolean abort=arduino_.checkSafety();;
                 if (abort==false){
-                    arduino_.setArduinoShutterOpen();
+                    arduino_.setDigitalOutHigh();
                 }
                 } catch (Exception ex) {
             Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -349,7 +361,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         } else {
             laserToggle.setText("Turn laser ON");
             try {
-                arduino_.setArduinoShutterClose();
+                arduino_.setDigitalOutLow();
                // core_.setProperty("FianiumSC", "LaserOn?", "Off");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -426,6 +438,35 @@ public class LightPathPanel extends javax.swing.JPanel {
         currentLightPath_.setPortLabel((String) switchPortComboBox.getSelectedItem());
         var_.SwitchPortComboBoxSelectedItem = (String) switchPortComboBox.getSelectedItem();
     }//GEN-LAST:event_switchPortComboBoxActionPerformed
+
+    private void ledToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ledToggleActionPerformed
+        
+        if (ledToggle.isSelected()) {
+            arduino_.setMode("led");
+            ledToggle.setText("Turn brightfield light OFF");
+            try{
+                boolean abort=arduino_.checkSafety();
+                if (abort==false){
+                    arduino_.setDigitalOutHigh();
+                }
+                } catch (Exception ex) {
+            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           // core_.setProperty("FianiumSC", "LaserOn?", "On");
+            
+        } else { 
+            arduino_.setMode("shutter");
+            ledToggle.setText("Turn brightfield light ON");
+            try {
+                boolean abort=arduino_.checkSafety();
+                arduino_.setDigitalOutLow();
+               // core_.setProperty("FianiumSC", "LaserOn?", "Off");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }   
+       
+    }//GEN-LAST:event_ledToggleActionPerformed
 
     public void setByLabel(JComboBox combo, String device) {
         try {
@@ -607,6 +648,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     private javax.swing.JLabel laserSerialNumberLabel;
     private javax.swing.JLabel laserTemperatureLabel;
     private javax.swing.JToggleButton laserToggle;
+    private javax.swing.JToggleButton ledToggle;
     private javax.swing.JComboBox ndFWComboBox;
     public javax.swing.JComboBox objectiveComboBox;
     private javax.swing.JPanel outputPowerPanel;

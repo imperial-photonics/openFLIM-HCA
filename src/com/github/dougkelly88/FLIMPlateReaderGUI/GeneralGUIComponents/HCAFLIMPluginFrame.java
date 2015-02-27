@@ -1045,7 +1045,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     }
                     core_.waitForDeviceType(DeviceType.XYStageDevice);
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);
-                    arduino_.setArduinoShutterOpen();
+                    arduino_.setDigitalOutHigh();
                 }
                 catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -1057,7 +1057,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 // shutter laser
                 // TODO: have this work properly in line with auto-shutter?
                 try {
-                    arduino_.setArduinoShutterClose();
+                    arduino_.setDigitalOutLow();
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
@@ -1113,7 +1113,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             if(abort==true){
                 jump=true;
             } else{
-                arduino_.setArduinoShutterOpen();
+                arduino_.setDigitalOutHigh();
                 wait(var_.shutterResponse);
             }
             core_.waitForDeviceType(DeviceType.XYStageDevice);
@@ -1139,7 +1139,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
             progressBar_.setEnd("Snap FLIM image");
         }
-        arduino_.setArduinoShutterClose();
+        arduino_.setDigitalOutLow();
     }
     
     private void snapBFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapBFButtonActionPerformed

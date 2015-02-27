@@ -8,7 +8,9 @@
 AO= incubation light photodiode
 A1= room light photodiode
 A5= laser intensity photodiode
-All digital outputs used as shutter
+D8=shutter
+D9=shutter
+D10=LED
 */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
@@ -57,23 +59,42 @@ public class Arduino {
             core_.setProperty("Arduino-Switch", "Sequence", "Off");
 
         } catch (Exception ex) {
-            System.out.println("Error: Class-Arduino; methode-initializeArduino");
+            System.out.println("Error: Class-Arduino; initializeArduino");
         }           
     }
     
-    public void setArduinoShutterOpen() {
+    public String setMode(String mode){
+        if("shutter".equals(mode)){
+            try {
+                core_.setProperty("Arduino-Switch", "State", "3");
+            } catch (Exception ex) {
+                System.out.println("Error: Class-Arduino; setShutterMode; shutter");
+            }
+        }else if("led".equals(mode)){
+            try{
+                core_.setProperty("Arduino-Switch", "State", "4");
+            } catch (Exception ex) {
+                System.out.println("Error: Class-Arduino; setShutterMode; led");
+            }
+        }else{
+            mode="Mode not found. Valid commands 'shutter' or 'led'.";
+        }
+        return mode;
+    }
+    
+    public void setDigitalOutHigh() {
         try {
             core_.setProperty("Arduino-Shutter", "OnOff", "1");
         } catch (Exception ex) {
-            System.out.println("Error: Class-Arduino; methode-openArduinoShutter");
+            System.out.println("Error: Class-Arduino; setDigitalOutHigh");
         }
     }
     
-    public void setArduinoShutterClose() {
+    public void setDigitalOutLow() {
         try {
             core_.setProperty("Arduino-Shutter", "OnOff", "0");
         } catch (Exception ex) {
-            System.out.println("Error: Class-Arduino; methode-closeArduinoShutter");
+            System.out.println("Error: Class-Arduino; setDigitalOutLow");
         }
     }
     
@@ -83,7 +104,7 @@ public class Arduino {
         try {
             value=core_.getProperty("Arduino-Input", input);
         } catch (Exception ex) {
-            System.out.println("Error: Class-Arduino; methode-getInputValue; Cannot get arduino input"+input);
+            System.out.println("Error: Class-Arduino; getInputValue; Cannot get arduino input"+input);
         }
         double in1=Double.parseDouble(value)*5/1023;
         return in1;
@@ -97,7 +118,7 @@ public class Arduino {
         try {
             value=core_.getProperty("Arduino-Input", input);
         } catch (Exception ex) {
-            System.out.println("Error: Class-Arduino; methode-getInputHighLow; Cannot get arduino input"+input);
+            System.out.println("Error: Class-Arduino; getInputHighLow; Cannot get arduino input"+input);
         }
         int ind=value.indexOf(".");
         value=value.substring(0, ind);
@@ -131,7 +152,7 @@ public class Arduino {
                 System.out.println("No value detected on Arduino input 1. Go on in unsafe mode. Be aware this can damage the HRI.");
             }    
             Object[] options = {"Try again.",
-                        "Stop acquisition"};
+                        "Cancel"};
             while(check==false){
                 if(value1>var_.th1&&value2<var_.th2){
                     int n = JOptionPane.showOptionDialog(frame,
