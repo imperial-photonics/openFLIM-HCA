@@ -78,7 +78,7 @@ public class Arduino {
     }
     
     public double getInputValue(int numInput){
-        String value=null;
+        String value="-1";
         String input="AnalogInput"+numInput;
         try {
             value=core_.getProperty("Arduino-Input", input);

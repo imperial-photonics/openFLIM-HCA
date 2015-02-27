@@ -8,8 +8,10 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.XYZClasses.GUIComponents;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZMotionInterface;
+import com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents.LightPathPanel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -39,6 +41,9 @@ public class XYZPanel extends javax.swing.JPanel {
     private XYZMotionInterface xyzmi_;
     private FOV currentFOV_;
     private CMMCore core_;
+    private static final XYZPanel fINSTANCE =  new XYZPanel();
+    private LightPathPanel lightPathPanel_;
+    private VariableTest var_;
     
     public static final int X_AXIS = 0;
     public static final int Y_AXIS = 1;
@@ -48,7 +53,8 @@ public class XYZPanel extends javax.swing.JPanel {
     public XYZPanel() {
         initComponents();
         setControlDefaults();
-        
+        var_ = VariableTest.getInstance();
+        lightPathPanel_= LightPathPanel.getInstance();
         // add micro symbols
         stepSizeLabel.setText("Step size " + um);
         zStepSizeLabel.setText("Step size " + um);
@@ -559,6 +565,20 @@ public class XYZPanel extends javax.swing.JPanel {
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
+        try {
+            String setval = (String) afObjectiveCombo.getSelectedItem();
+            // only send command if combo has been properly populated
+            if (setval != null) {
+                core_.setProperty("Objective", "Label", setval);
+            } else {
+                System.out.println("Not setting property for device " + "Objective"
+                        + "because combo hasn't yet been populated (setByLabel method)");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        var_.ObjectiveComboBoxSelectedItem = (String) afObjectiveCombo.getSelectedItem();
+        lightPathPanel_.objectiveComboBox.setSelectedItem(var_.ObjectiveComboBoxSelectedItem);
     }//GEN-LAST:event_afObjectiveComboActionPerformed
 
     private void afSearchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_afSearchFieldActionPerformed
@@ -792,12 +812,16 @@ public class XYZPanel extends javax.swing.JPanel {
         return afInSequence.isSelected();
     }
     
+    public static XYZPanel getInstance() {
+            return fINSTANCE;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel XYPanel;
     private javax.swing.JPanel ZPanel;
     private javax.swing.JCheckBox afInSequence;
     private javax.swing.JButton afNowButton;
-    private javax.swing.JComboBox afObjectiveCombo;
+    public javax.swing.JComboBox afObjectiveCombo;
     private javax.swing.JFormattedTextField afOffsetField;
     private javax.swing.JLabel afOffsetLabel;
     private javax.swing.JFormattedTextField afSearchField;

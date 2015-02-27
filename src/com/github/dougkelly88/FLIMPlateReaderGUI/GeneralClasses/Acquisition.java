@@ -39,14 +39,12 @@ public class Acquisition {
     MMStudio gui_;
     CMMCore core_;
     CoreMetadata cm;
-    private DisplayImage DisplayImage_;
     private HCAFLIMPluginFrame frame_;
 
 
     public Acquisition() {
         gui_ = MMStudio.getInstance();
         core_ = gui_.getCore();
-        DisplayImage_ =DisplayImage.getInstance();
         frame_= HCAFLIMPluginFrame.getInstance();
     }
 
