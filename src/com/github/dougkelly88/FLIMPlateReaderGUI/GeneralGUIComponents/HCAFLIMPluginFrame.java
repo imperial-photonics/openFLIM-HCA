@@ -1046,6 +1046,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     core_.waitForDeviceType(DeviceType.XYStageDevice);
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                     arduino_.setDigitalOutHigh();
+                    wait(var_.shutterResponse);
+                    
                 }
                 catch (Exception e) {
                     System.out.println(e.getMessage());
