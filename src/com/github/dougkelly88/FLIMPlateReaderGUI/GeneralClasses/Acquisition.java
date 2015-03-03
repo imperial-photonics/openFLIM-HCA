@@ -108,15 +108,7 @@ public class Acquisition {
             // clean up writer when finished...
             writer.close();
        } catch (Exception e) {
-           // byte[] imgDemo =null;
-           // try {
-             //   core_.snapImage();
-             //   imgDemo = (byte[]) core_.getImage();
-           // } catch (Exception ex) {
-              //  System.out.print("no picture snaped");
-           // }
             System.out.println(e.getMessage());
-           // DisplayImage_.display(imgDemo);
         }
 
     }

@@ -980,8 +980,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         if(terminate){
                             endOk=1;
                             break;    
-                        }else{
-                            System.out.println("dfghjkl;kjhgfhjkl");
                         }
                     }
                 }
@@ -1028,7 +1026,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 String intensity=Double.toString(arduino_.getLaserIntensity());
                 // do acquisition
                 String fovLabel = String.format("%05d", ind);
-                String path=baseLevelPath + "/" + sas.getFilters().getLabel() + "/"+ 
+                String path;
+                if(sas.getFilters().getLabel().equals("Unknown")){
+                    path=baseLevelPath + "/"+ 
                         " Well=" + sas.getFOV().getWell() +                        
                         " X=" + sas.getFOV().getX() +
                         " Y=" + sas.getFOV().getY() +
@@ -1037,7 +1037,17 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         " Z=" + sas.getFOV().getZ() +
                         " ID=" + fovLabel+
                         " Laser intensity=" + intensity;
-
+                } else{
+                    path=baseLevelPath + "/" + sas.getFilters().getLabel() + "/"+ 
+                        " Well=" + sas.getFOV().getWell() +                        
+                        " X=" + sas.getFOV().getX() +
+                        " Y=" + sas.getFOV().getY() +
+                        "T=" + sas.getTimePoint().getTimeCell() + 
+                        " Filterset=" + sas.getFilters().getLabel() + 
+                        " Z=" + sas.getFOV().getZ() +
+                        " ID=" + fovLabel+
+                        " Laser intensity=" + intensity;
+                }
                 try{
                     boolean abort=arduino_.checkSafety();
                     if(abort==true){
