@@ -339,8 +339,8 @@ public class LightPathPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Filters, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Olympus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(Olympus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(87, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -356,13 +356,11 @@ public class LightPathPanel extends javax.swing.JPanel {
                 } catch (Exception ex) {
             Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-           // core_.setProperty("FianiumSC", "LaserOn?", "On");
             
         } else {
             laserToggle.setText("Turn laser ON");
             try {
                 arduino_.setDigitalOutLow();
-               // core_.setProperty("FianiumSC", "LaserOn?", "Off");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -442,6 +440,11 @@ public class LightPathPanel extends javax.swing.JPanel {
     private void ledToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ledToggleActionPerformed
         
         if (ledToggle.isSelected()) {
+            try {
+                core_.setProperty("LightPathPrism", "Label", (String) switchPortComboBox.getSelectedItem());
+            } catch (Exception ex) {
+                System.out.println("Not setting property for device LightPathPrism because combo hasn't yet been populated (setByLabel method)");
+            }
             arduino_.setMode("led");
             ledToggle.setText("Turn brightfield light OFF");
             try{
@@ -452,7 +455,6 @@ public class LightPathPanel extends javax.swing.JPanel {
                 } catch (Exception ex) {
             Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-           // core_.setProperty("FianiumSC", "LaserOn?", "On");
             
         } else { 
             arduino_.setMode("shutter");
@@ -460,7 +462,6 @@ public class LightPathPanel extends javax.swing.JPanel {
             try {
                 boolean abort=arduino_.checkSafety();
                 arduino_.setDigitalOutLow();
-               // core_.setProperty("FianiumSC", "LaserOn?", "Off");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
