@@ -16,8 +16,6 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
 import static com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.HCAFLIMPlugin.frame_;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import mmcorej.CMMCore;
 import org.micromanager.MMStudio;
@@ -53,8 +51,8 @@ public class Arduino {
     
     public void initializeArduino() {
         try {    
-            core_.setProperty("Arduino-Shutter", "OnOff", 1);
-            core_.setProperty("Arduino-Switch", "Label", 63);
+            core_.setProperty("Arduino-Shutter", "OnOff", "0");
+            core_.setProperty("Arduino-Switch", "State", "3");
             core_.setProperty("Arduino-Switch", "Blanking Mode", "Off");
             core_.setProperty("Arduino-Switch", "Sequence", "Off");
 
@@ -64,20 +62,22 @@ public class Arduino {
     }
     
     public String setMode(String mode){
-        if("shutter".equals(mode)){
-            try {
-                core_.setProperty("Arduino-Switch", "State", "3");
-            } catch (Exception ex) {
-                System.out.println("Error: Class-Arduino; setShutterMode; shutter");
-            }
-        }else if("led".equals(mode)){
-            try{
-                core_.setProperty("Arduino-Switch", "State", "4");
-            } catch (Exception ex) {
-                System.out.println("Error: Class-Arduino; setShutterMode; led");
-            }
-        }else{
-            mode="Mode not found. Valid commands 'shutter' or 'led'.";
+        if(null != mode)switch (mode) {
+            case "shutter":
+                try {
+                    core_.setProperty("Arduino-Switch", "State", "3");
+                } catch (Exception ex) {
+                    System.out.println("Error: Class-Arduino; setShutterMode; shutter");
+                }   break;
+            case "led":
+                try{
+                    core_.setProperty("Arduino-Switch", "State", "4");
+                } catch (Exception ex) {
+                    System.out.println("Error: Class-Arduino; setShutterMode; led");
+            }   break;
+            default:
+                mode="Mode not found. Valid commands 'shutter' or 'led'.";
+                break;
         }
         return mode;
     }
@@ -205,20 +205,6 @@ public class Arduino {
         double value=getInputValue(5)*20;
         value = Math.round(100.0 * value) / 100.0;
         return value;
-    }
-
-    public int testApp() {
-       String value="-1";
-       int valInt=-1;
-        try {
-            value = core_.getProperty("Arduino-Input", "AnalogInput0");
-        } catch (Exception ex) {
-            Logger.getLogger(Arduino.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        int ind=value.indexOf(".");
-        value=value.substring(0, ind);
-        valInt=Integer.parseInt(value);
-       return valInt; 
     }
     
 }

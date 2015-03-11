@@ -864,7 +864,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         
     }//GEN-LAST:event_startSequenceButtonActionPerformed
 
-    
     public void doSequenceAcquisition() throws InterruptedException{
         Acquisition acq = new Acquisition();
         ArrayList<FOV> fovs = new ArrayList<FOV>();
@@ -1070,6 +1069,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 // TODO: have this work properly in line with auto-shutter?
                 try {
                     arduino_.setDigitalOutLow();
+                    lightPathControls1.setLaserToggleFalse();
+                    lightPathControls1.setLaserToggleText("Turn laser ON");
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
@@ -1152,6 +1153,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             progressBar_.setEnd("Snap FLIM image");
         }
         arduino_.setDigitalOutLow();
+        lightPathControls1.setLaserToggleFalse();
+        lightPathControls1.setLaserToggleText("Turn laser ON");
     }
     
     private void snapBFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapBFButtonActionPerformed
