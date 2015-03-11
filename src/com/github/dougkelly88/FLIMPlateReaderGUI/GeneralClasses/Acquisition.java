@@ -40,6 +40,8 @@ public class Acquisition {
     CMMCore core_;
     CoreMetadata cm;
     private HCAFLIMPluginFrame frame_;
+    public boolean bleechingComp=false;
+    
 
 
     public Acquisition() {
@@ -56,13 +58,13 @@ public class Acquisition {
                 gui_.enableLiveMode(false);
                 gui_.closeAllAcquisitions();
             }
-
+            
+            
+            
             OMEXMLMetadata m = setBasicMetadata(delays, sas);
             IFormatWriter writer = generateWriter(path+".ome.tiff", m);
-
             for (Integer delay : delays) {
                 int del=delays.indexOf(delay);
-                
                 core_.setProperty("Delay box", "Delay (ps)", delay);
                 
 

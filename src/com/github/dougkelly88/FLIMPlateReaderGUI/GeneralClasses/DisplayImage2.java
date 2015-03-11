@@ -5,13 +5,11 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
-import ij.IJ;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mmcorej.CMMCore;
 import mmcorej.TaggedImage;
 import org.micromanager.MMStudio;
-import org.micromanager.utils.MMScriptException;
 
 /**
  *
@@ -30,7 +28,7 @@ public class DisplayImage2 {
         try {
             gui_ = MMStudio.getInstance();
             core_ = gui_.getCore();
-            core_.snapImage();
+        //    core_.snapImage();
             TaggedImage taggedImage = core_.getTaggedImage();
             gui_.displayImage(taggedImage);
  
