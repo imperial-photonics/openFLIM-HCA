@@ -16,8 +16,6 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
 import static com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.HCAFLIMPlugin.frame_;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import mmcorej.CMMCore;
 import org.micromanager.MMStudio;

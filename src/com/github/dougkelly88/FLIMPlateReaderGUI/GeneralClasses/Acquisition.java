@@ -138,6 +138,7 @@ public class Acquisition {
 
     }
 
+    
     private void saveLayersToOMETiff(IFormatWriter writer, Object img, int layer)
             throws Exception {
 //        Object img = core_.getImage();

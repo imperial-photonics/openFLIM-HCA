@@ -351,6 +351,7 @@ public class LightPathPanel extends javax.swing.JPanel {
             try{
                 boolean abort=arduino_.checkSafety();;
                 if (abort==false){
+                    arduino_.setMode("shutter");
                     arduino_.setDigitalOutHigh();
                 }
                 } catch (Exception ex) {
@@ -627,6 +628,14 @@ public class LightPathPanel extends javax.swing.JPanel {
     public void updatePanel(){
          // do something when LightPathPanel is selected
         objectiveComboBox.setSelectedItem(var_.ObjectiveComboBoxSelectedItem);
+    }
+    
+    public void setLaserToggleFalse(){
+        laserToggle.setSelected(false);
+    }
+    
+    public void setLaserToggleText(String text){
+        laserToggle.setText(text);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
