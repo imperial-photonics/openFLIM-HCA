@@ -997,7 +997,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
                 
                 // set filter params - can these be handled by a single class?
-                /*if ( (!sas.getFilters().getLabel().equals(lastFiltLabel)) & order.contains("Filter change") ){
+                if ( (!sas.getFilters().getLabel().equals(lastFiltLabel)) & order.contains("Filter change") ){
                     try {
                         String s = core_.getShutterDevice();
                         if (!"".equals(s))
@@ -1021,7 +1021,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
-                }*/
+                }
                 //Get laser intensity
                 String intensity=Double.toString(arduino_.getLaserIntensity());
                 // do acquisition

@@ -318,6 +318,11 @@ public class XYZPanel extends javax.swing.JPanel {
         });
 
         afInSequence.setText("AF in sequenced acquisition?");
+        afInSequence.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                afInSequenceActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -627,6 +632,10 @@ public class XYZPanel extends javax.swing.JPanel {
         System.out.println(Double.parseDouble(currentZPositionField.getText()));
         xyzmi_.moveZAbsolute(Double.parseDouble(currentZPositionField.getText()));
     }//GEN-LAST:event_currentZPositionFieldActionPerformed
+
+    private void afInSequenceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_afInSequenceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_afInSequenceActionPerformed
 
     private void setControlDefaults(){
         

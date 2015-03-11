@@ -257,6 +257,7 @@ public final class XYZMotionInterface {
             this.moveZRelative(-offset);
             core_.setProperty("AutoFocusZDC", "MeasureOffset", "Now");
             Double focusOffset = Double.parseDouble(core_.getProperty("AutoFocusZDC", "Offset"));
+        //    this.moveZAbsolute(offset + focusOffset);
             this.moveZRelative(offset - focusOffset);
         } catch (Exception e){
             System.out.println(e.getMessage());
