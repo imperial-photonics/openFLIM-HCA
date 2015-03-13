@@ -252,16 +252,20 @@ public final class XYZMotionInterface {
     
     }
     
-    public void customAutofocus(Double offset){
+    public double customAutofocus(Double offset){
+        Double focusOffset = null;
         try{
+            core_.setProperty("Objective", "Use Safe Position", "0");
             this.moveZRelative(-offset);
             core_.setProperty("AutoFocusZDC", "MeasureOffset", "Now");
-            Double focusOffset = Double.parseDouble(core_.getProperty("AutoFocusZDC", "Offset"));
+            focusOffset = Double.parseDouble(core_.getProperty("AutoFocusZDC", "Offset"));
         //    this.moveZAbsolute(offset + focusOffset);
-            this.moveZRelative(offset - focusOffset);
+            this.moveZRelative(offset - focusOffset); // Doug
+        //    this.moveZRelative(offset);
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
+        return focusOffset;
     }
     
 }

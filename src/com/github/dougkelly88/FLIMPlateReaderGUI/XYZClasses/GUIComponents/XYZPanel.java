@@ -104,6 +104,8 @@ public class XYZPanel extends javax.swing.JPanel {
         currentZPositionField = new javax.swing.JTextField();
         currentZPositionText = new javax.swing.JLabel();
         updateCurrentZPositionButton = new javax.swing.JButton();
+        focusOffsetField = new javax.swing.JTextField();
+        focusOffsetLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         manUscopeCheck = new javax.swing.JCheckBox();
         manStageCheck = new javax.swing.JCheckBox();
@@ -146,7 +148,7 @@ public class XYZPanel extends javax.swing.JPanel {
                         .addComponent(stepSizeLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(stepSizeField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
         panningPanelLayout.setVerticalGroup(
             panningPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -348,7 +350,7 @@ public class XYZPanel extends javax.swing.JPanel {
                             .addComponent(afSearchLabel)
                             .addGap(18, 18, 18)
                             .addComponent(afSearchField))))
-                .addContainerGap(130, Short.MAX_VALUE))
+                .addContainerGap(131, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -387,6 +389,8 @@ public class XYZPanel extends javax.swing.JPanel {
             }
         });
 
+        focusOffsetLabel.setText("FocusOffset (Autofocus)");
+
         javax.swing.GroupLayout ZPanelLayout = new javax.swing.GroupLayout(ZPanel);
         ZPanel.setLayout(ZPanelLayout);
         ZPanelLayout.setHorizontalGroup(
@@ -404,6 +408,10 @@ public class XYZPanel extends javax.swing.JPanel {
                                 .addComponent(currentZPositionText)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(updateCurrentZPositionButton)))
+                        .addGap(18, 18, 18)
+                        .addGroup(ZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(focusOffsetLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(focusOffsetField))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -417,9 +425,12 @@ public class XYZPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(ZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(currentZPositionText)
-                            .addComponent(updateCurrentZPositionButton))
+                            .addComponent(updateCurrentZPositionButton)
+                            .addComponent(focusOffsetLabel))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(currentZPositionField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(ZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(currentZPositionField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(focusOffsetField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(zPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -592,9 +603,11 @@ public class XYZPanel extends javax.swing.JPanel {
             } catch (Exception ex) {
                 Logger.getLogger(XYZPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
-            xyzmi_.customAutofocus(Double.parseDouble(afOffsetField.getText()));
+            Double fO=xyzmi_.customAutofocus(Double.parseDouble(afOffsetField.getText()));
+            focusOffsetField.setText(Double.toString(fO));   
         } else{
-            xyzmi_.customAutofocus(Double.parseDouble(afOffsetField.getText()));
+            Double fO=xyzmi_.customAutofocus(Double.parseDouble(afOffsetField.getText()));
+            focusOffsetField.setText(Double.toString(fO));
         }
     }//GEN-LAST:event_afNowButtonActionPerformed
 
@@ -890,6 +903,8 @@ public class XYZPanel extends javax.swing.JPanel {
     private javax.swing.JLabel afSearchLabel;
     private javax.swing.JTextField currentZPositionField;
     private javax.swing.JLabel currentZPositionText;
+    private javax.swing.JTextField focusOffsetField;
+    private javax.swing.JLabel focusOffsetLabel;
     private javax.swing.JButton goToWellButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;

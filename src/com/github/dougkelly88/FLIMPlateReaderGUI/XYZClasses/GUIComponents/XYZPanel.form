@@ -114,7 +114,7 @@
                               <Component id="stepSizeField" min="-2" pref="40" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="44" max="32767" attributes="0"/>
+                      <EmptySpace pref="46" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -237,6 +237,11 @@
                                   <Component id="updateCurrentZPositionButton" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="focusOffsetLabel" max="32767" attributes="0"/>
+                              <Component id="focusOffsetField" max="32767" attributes="0"/>
+                          </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -255,9 +260,13 @@
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="currentZPositionText" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="updateCurrentZPositionButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="focusOffsetLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="currentZPositionField" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="currentZPositionField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="focusOffsetField" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                       <Component id="zPanel" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -389,7 +398,7 @@
                               </Group>
                           </Group>
                       </Group>
-                      <EmptySpace pref="130" max="32767" attributes="0"/>
+                      <EmptySpace pref="131" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -506,6 +515,13 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="updateCurrentZPositionButtonActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JTextField" name="focusOffsetField">
+        </Component>
+        <Component class="javax.swing.JLabel" name="focusOffsetLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="FocusOffset (Autofocus)"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
