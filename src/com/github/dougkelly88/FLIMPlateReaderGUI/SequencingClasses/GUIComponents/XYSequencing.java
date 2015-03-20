@@ -582,7 +582,7 @@ public class XYSequencing extends javax.swing.JPanel {
                 }
             }
             dirind++;
-            System.out.print("Dirind = " + dirind + "\n");
+        //    System.out.print("Dirind = " + dirind + "\n");
         }
         // trim, a bit hacky but works
         int currsize = spiralFOVs.size();
@@ -593,7 +593,69 @@ public class XYSequencing extends javax.swing.JPanel {
     }
 
     private ArrayList<FOV> generateRing(int noFOV, String wellString) {
-        return new ArrayList<FOV>();
+                // cover whole well in a rectangle; remove those outwith well bounds;
+        // finally trim to #fov. Deals with asymmetric FOV
+        ArrayList<FOV> ringFOVs = new ArrayList<FOV>();
+        FOV fov = new FOV(wellString, pp_, 0);
+        double[] centrexy = {fov.getX(), fov.getY()};
+//        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
+        double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
+        
+    //    int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+    //    double[] dxy = new double[2];
+    //    int stepsInCurrentDir;
+
+    //    ringFOVs.add(fov);
+    //    int fovind = 1;
+    //    int dirind = 0;
+        double ringRadius=Double.parseDouble(ringRadiusField.getText());
+    //  new stuff
+        double[] centrexyUp = {centrexy[0], centrexy[1]+ringRadius};
+        double[] centrexyDown = {centrexy[0], centrexy[1]-ringRadius};
+        double[] centrexyLeft = {centrexy[0]+ringRadius, centrexy[1]};
+        double[] centrexyRight = {centrexy[0]-ringRadius, centrexy[1]};
+        FOV fovUp = new FOV(wellString, pp_, 0);
+        fovUp = new FOV(centrexyUp[0], centrexyUp[1], 0,wellString, pp_);
+        ringFOVs.add(fovUp);
+        FOV fovDown = new FOV(wellString, pp_, 0);
+        fovDown = new FOV(centrexyDown[0], centrexyDown[1], 0,wellString, pp_);
+        ringFOVs.add(fovDown);;
+        FOV fovLeft = new FOV(wellString, pp_, 0);
+        fovLeft = new FOV(centrexyLeft[0], centrexyLeft[1], 0,wellString, pp_);
+        ringFOVs.add(fovLeft);
+        FOV fovRight = new FOV(wellString, pp_, 0);
+        fovRight = new FOV(centrexyRight[0], centrexyRight[1], 0,wellString, pp_);
+        ringFOVs.add(fovRight);
+        
+        
+        System.out.println("ringFOVs = " + ringFOVs);
+    
+        
+    /*    while (fovind < noFOV & dirind < 100) {   // just in case we have a runaway case...
+
+            stepsInCurrentDir = (int) Math.ceil((double) (dirind) / 2);
+
+            dxy[0] = dir[dirind % 4][0] * DXY[0];
+            dxy[1] = dir[dirind % 4][1] * DXY[1];
+            for (int j = 0; j < stepsInCurrentDir; j++) {
+                centrexy[0] += dxy[0];
+                centrexy[1] += dxy[1];
+                fov = new FOV(centrexy[0], centrexy[1], 0,
+                        wellString, pp_);
+                if (fov.isValid()) {
+                    ringFOVs.add(fov);
+                    fovind++;
+                }
+            }
+            dirind++;
+            System.out.print("Dirind = " + dirind + "\n");
+        }
+        // trim, a bit hacky but works
+        int currsize = ringFOVs.size();
+        for (int j = currsize - 1; j > noFOV - 1; j--) {
+            ringFOVs.remove(j);
+        }*/
+        return ringFOVs;
     }
 
     private void noFOVsFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noFOVsFieldActionPerformed

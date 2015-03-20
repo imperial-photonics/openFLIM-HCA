@@ -1063,7 +1063,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
                 
                 acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
-                saveSequencingTablesForDebugging(path);
+            //    saveSequencingTablesForDebugging(path);
                 
                 // shutter laser
                 // TODO: have this work properly in line with auto-shutter?

@@ -590,6 +590,11 @@ public class FLIMPanel extends javax.swing.JPanel {
         CalibrationPathField.setText("DelayPath");
         CalibrationPathField.setMaximumSize(new java.awt.Dimension(229, 20));
         CalibrationPathField.setPreferredSize(new java.awt.Dimension(500, 20));
+        CalibrationPathField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CalibrationPathFieldActionPerformed(evt);
+            }
+        });
 
         CalibrationPathButton.setText("Chose Path");
         CalibrationPathButton.addActionListener(new java.awt.event.ActionListener() {
@@ -885,6 +890,10 @@ public class FLIMPanel extends javax.swing.JPanel {
         
     }//GEN-LAST:event_invertDataCheckBoxActionPerformed
 
+    private void CalibrationPathFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CalibrationPathFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CalibrationPathFieldActionPerformed
+
     public void setDelayComboBox(){
         String file1 = null;
         File FileCalibrationDelayBox=new File(".").getAbsoluteFile();
@@ -904,7 +913,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         }
             gui_.registerForEvents(this);
             core_ = gui_.getCore();
-            file1 = DelayPath+"\\HDG800Calibration.csv";
+            file1 = DelayPath+"\\HDG800Calibration41MHz_25ps_sampling.csv";
             setDelayBox(file1, 0);
 
     }
