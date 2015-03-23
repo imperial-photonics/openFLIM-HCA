@@ -1089,7 +1089,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 System.out.println(e.getMessage());
             }
             //set progress bar one increment further
-            displayImage2_.showImageInIJ();
+    //99        displayImage2_.showImageInIJ();
             progressBar_.stepIncrement(ind, sass.size());
             endOk=0;
             
