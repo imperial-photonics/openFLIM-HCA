@@ -32,6 +32,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.text.NumberFormatter;
 
+
 /**
  *
  * @author dk1109
@@ -48,6 +49,8 @@ public class XYSequencing extends javax.swing.JPanel {
     boolean zAsOffset_ = true;
     double[] zStackParams = {0.0, 0.0, 1.0};
     XYZMotionInterface xyzmi_;
+    public boolean sendEmailBoolean=false;
+    String emailString;
 
     /**
      * Creates new form XYSequencing
@@ -192,6 +195,8 @@ public class XYSequencing extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         groupDescField = new javax.swing.JTextField();
+        sendEmailCheckBox = new javax.swing.JCheckBox();
+        sendEmailField = new javax.swing.JTextField();
 
         storedXYZPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Stored XYZ positions"));
 
@@ -422,26 +427,46 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
+        sendEmailCheckBox.setText("Send email after finished to:");
+        sendEmailCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendEmailCheckBoxActionPerformed(evt);
+            }
+        });
+
+        sendEmailField.setText("f.gorlitz14@imperial.ac.uk");
+        sendEmailField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendEmailFieldActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout autoFOVPanelLayout = new javax.swing.GroupLayout(autoFOVPanel);
         autoFOVPanel.setLayout(autoFOVPanelLayout);
         autoFOVPanelLayout.setHorizontalGroup(
             autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(autoFOVPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(sendEmailField)
                     .addGroup(autoFOVPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ringRadiusField, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(autoGenerateFOVsCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, autoFOVPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(noFOVsField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(FOVPatternCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel6)
-                    .addComponent(groupDescField))
-                .addContainerGap(20, Short.MAX_VALUE))
+                        .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(autoFOVPanelLayout.createSequentialGroup()
+                                    .addComponent(jLabel2)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(ringRadiusField, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(autoGenerateFOVsCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, autoFOVPanelLayout.createSequentialGroup()
+                                    .addComponent(jLabel1)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(noFOVsField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(FOVPatternCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel6)
+                                .addComponent(groupDescField))
+                            .addComponent(sendEmailCheckBox))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         autoFOVPanelLayout.setVerticalGroup(
             autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -458,10 +483,14 @@ public class XYSequencing extends javax.swing.JPanel {
                 .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ringRadiusField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addGap(52, 52, 52)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(groupDescField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
+                .addComponent(sendEmailCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(sendEmailField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -470,7 +499,7 @@ public class XYSequencing extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(prefindPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -479,8 +508,7 @@ public class XYSequencing extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(plateMapBasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(autoFOVPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(autoFOVPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -592,7 +620,7 @@ public class XYSequencing extends javax.swing.JPanel {
         return spiralFOVs;
     }
 
-    private ArrayList<FOV> generateRing(int noFOV, String wellString) {
+    private ArrayList<FOV> generateRing1(int noFOV, String wellString) {
                 // cover whole well in a rectangle; remove those outwith well bounds;
         // finally trim to #fov. Deals with asymmetric FOV
         ArrayList<FOV> ringFOVs = new ArrayList<FOV>();
@@ -658,6 +686,91 @@ public class XYSequencing extends javax.swing.JPanel {
         return ringFOVs;
     }
 
+    private ArrayList<FOV> generateRing(int noFOV, String wellString) {
+                // cover whole well in a rectangle; remove those outwith well bounds;
+        // finally trim to #fov. Deals with asymmetric FOV
+        ArrayList<FOV> ringFOVs = new ArrayList<FOV>();
+        FOV fov = new FOV(wellString, pp_, 0);
+        double[] centrexy = {fov.getX(), fov.getY()};
+        
+    //    int stepsInCurrentDir;
+
+        int fovind = 1;
+        int dirind=0;
+        int stepSize = (int) (2*Math.PI)/noFOV;
+        
+        double ringRadius=Double.parseDouble(ringRadiusField.getText());
+        
+        while (fovind < noFOV & dirind < 100) {   // just in case we have a runaway case...
+
+            
+            
+            for (int j = 0; j < stepSize; j++) {
+                double xRing=Math.cos(stepSize*j)*ringRadius;
+                double yRing=Math.sin(stepSize*j)*ringRadius;
+                
+                
+                double[] centrexyNew = {xRing, yRing};
+                fov = new FOV(centrexyNew[0], centrexyNew[1], 0,
+                        wellString, pp_);
+                if (fov.isValid()) {
+                    ringFOVs.add(fov);
+                    fovind++;
+                }
+            }
+            dirind++;
+        //    System.out.print("Dirind = " + dirind + "\n");
+        }
+        
+    //  new stuff
+    /*    double[] centrexyUp = {centrexy[0], centrexy[1]+ringRadius};
+        double[] centrexyDown = {centrexy[0], centrexy[1]-ringRadius};
+        double[] centrexyLeft = {centrexy[0]+ringRadius, centrexy[1]};
+        double[] centrexyRight = {centrexy[0]-ringRadius, centrexy[1]};
+        FOV fovUp = new FOV(wellString, pp_, 0);
+        fovUp = new FOV(centrexyUp[0], centrexyUp[1], 0,wellString, pp_);
+        ringFOVs.add(fovUp);
+        FOV fovDown = new FOV(wellString, pp_, 0);
+        fovDown = new FOV(centrexyDown[0], centrexyDown[1], 0,wellString, pp_);
+        ringFOVs.add(fovDown);;
+        FOV fovLeft = new FOV(wellString, pp_, 0);
+        fovLeft = new FOV(centrexyLeft[0], centrexyLeft[1], 0,wellString, pp_);
+        ringFOVs.add(fovLeft);
+        FOV fovRight = new FOV(wellString, pp_, 0);
+        fovRight = new FOV(centrexyRight[0], centrexyRight[1], 0,wellString, pp_);
+        ringFOVs.add(fovRight);
+    */    
+        
+        System.out.println("ringFOVs = " + ringFOVs);
+    
+        
+    /*    while (fovind < noFOV & dirind < 100) {   // just in case we have a runaway case...
+
+            stepsInCurrentDir = (int) Math.ceil((double) (dirind) / 2);
+
+            dxy[0] = dir[dirind % 4][0] * DXY[0];
+            dxy[1] = dir[dirind % 4][1] * DXY[1];
+            for (int j = 0; j < stepsInCurrentDir; j++) {
+                centrexy[0] += dxy[0];
+                centrexy[1] += dxy[1];
+                fov = new FOV(centrexy[0], centrexy[1], 0,
+                        wellString, pp_);
+                if (fov.isValid()) {
+                    ringFOVs.add(fov);
+                    fovind++;
+                }
+            }
+            dirind++;
+            System.out.print("Dirind = " + dirind + "\n");
+        }
+        // trim, a bit hacky but works
+        int currsize = ringFOVs.size();
+        for (int j = currsize - 1; j > noFOV - 1; j--) {
+            ringFOVs.remove(j);
+        }*/
+        return ringFOVs;
+    }
+    
     private void noFOVsFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noFOVsFieldActionPerformed
         generateFOVs();
     }//GEN-LAST:event_noFOVsFieldActionPerformed
@@ -834,7 +947,56 @@ public class XYSequencing extends javax.swing.JPanel {
         setZStackParams(0.0,0.0,1);
         doZStackGeneration(getZStackParams());
     }//GEN-LAST:event_clearZButtonActionPerformed
+/*
+    private void sendEmailCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendEmailCheckBoxActionPerformed
+       if(sendEmailCheckBox.isSelected()){
+           sendEmailBoolean=true;
+       } else {
+           sendEmailBoolean=false;
+       }
+    }//GEN-LAST:event_sendEmailCheckBoxActionPerformed
 
+    private void sendEmailFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendEmailFieldActionPerformed
+        emailString=sendEmailField.getText();
+    }//GEN-LAST:event_sendEmailFieldActionPerformed
+
+    public void sendEmail(){
+        final String username = "platereaderOracle@hotmail.com";
+        final String password = "Platereader1!";
+        emailString=sendEmailField.getText();
+        Properties props = new Properties();
+        props.setProperty("mail.transport.protocol", "smtp");
+        props.setProperty("mail.host", "smtp.live.com");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.auth", "true");
+        Session session;
+        session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+                    protected  javax.mail.PasswordAuthentication getPasswordAuthentication() {
+                        return new javax.mail.PasswordAuthentication(username, password);
+                    }
+                });
+        try {
+            
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("platereaderOracle@hotmail.com"));
+            message.setRecipients(Message.RecipientType.TO,
+                    InternetAddress.parse("f.goerlitz@gmx.net"));
+            message.setSubject("Platereader finished!");
+            message.setText("Dear Mail Crawler,"
+                    + "\n\n No spam to my email, please!");
+            
+            Transport.send(message);
+            
+            System.out.println("Done");
+            
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    
+        
+    }*/
+    
     public void setPlateProperties(PlateProperties pp) {
         pp_ = pp;
     }
@@ -903,6 +1065,8 @@ public class XYSequencing extends javax.swing.JPanel {
     private javax.swing.JPanel prefindPanel;
     private javax.swing.JButton quickPFButton;
     private javax.swing.JFormattedTextField ringRadiusField;
+    private javax.swing.JCheckBox sendEmailCheckBox;
+    private javax.swing.JTextField sendEmailField;
     private javax.swing.JButton storeXYZButton;
     private javax.swing.JPanel storedXYZPanel;
     private javax.swing.JComboBox zModeCombo;
