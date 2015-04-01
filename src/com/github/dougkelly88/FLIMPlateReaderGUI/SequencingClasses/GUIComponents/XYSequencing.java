@@ -5,8 +5,10 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents;
 
+import ProSettingsGUI.ProSettingsPanel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZMotionInterface;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
@@ -42,6 +44,7 @@ public class XYSequencing extends javax.swing.JPanel {
     PlateProperties pp_;
     PlateMapDrawPanel pmdp_;
     public FOVTableModel tableModel_;
+    private static final XYSequencing fINSTANCE =  new XYSequencing();
     JTable fovTable_;
     SeqAcqProps sap_;
     HCAFLIMPluginFrame parent_;
@@ -51,6 +54,7 @@ public class XYSequencing extends javax.swing.JPanel {
     XYZMotionInterface xyzmi_;
     public boolean sendEmailBoolean=false;
     String emailString;
+    private VariableTest var_;
 
     /**
      * Creates new form XYSequencing
@@ -58,8 +62,13 @@ public class XYSequencing extends javax.swing.JPanel {
     public XYSequencing() {
         initComponents();
         setControlDefaults();
+        var_ = VariableTest.getInstance();
     }
 
+    public static XYSequencing getInstance() {
+        return fINSTANCE;
+    }     
+            
     private void setControlDefaults() {
 
         pmdp_ = new PlateMapDrawPanel(this);
@@ -625,14 +634,14 @@ public class XYSequencing extends javax.swing.JPanel {
         ArrayList<FOV> ringFOVs = new ArrayList<FOV>();
         FOV fov = new FOV(wellString, pp_, 0);
         
-    //  Get all values and estimate the stepsize
-        double[] centrexy = {fov.getX(), fov.getY()};
+    //  Get all values (master offset, center of FOV, radius of ring, noFOV) and estimate the stepsize
+        double[] centrexy = {fov.getX()+var_.xOffset, fov.getY()+var_.yOffset};
         double stepSize = (double) (2*Math.PI)/noFOV;
         double ringRadius=Double.parseDouble(ringRadiusField.getText());
      
 
         for (int j = 0; j < noFOV; j++) {
-            // doing a circle for every j
+            // doing a circle step for every j
             double xRing=Math.round(Math.cos(stepSize*j)*ringRadius);
             double yRing=Math.round(Math.sin(stepSize*j)*ringRadius);
             double xt= centrexy[0]+xRing;
@@ -642,16 +651,9 @@ public class XYSequencing extends javax.swing.JPanel {
             // add to FOV
             fov = new FOV(centrexyNew[0], centrexyNew[1], 0,
                     wellString, pp_);
-            if (fov.isValid()) {
-                    ringFOVs.add(fov);
-                } else {
-                System.out.println("not valid");
-            }
             
-            
+            ringFOVs.add(fov);
         }
-            
-        
         System.out.println("ringFOVs = " + ringFOVs);
         return ringFOVs;
     }

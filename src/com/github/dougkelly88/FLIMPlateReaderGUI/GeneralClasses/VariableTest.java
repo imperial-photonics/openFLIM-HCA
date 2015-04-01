@@ -65,6 +65,8 @@ public class VariableTest {
     public double laserIntensity=0;
     public int shutterResponse=0;
     public boolean safetyOff=false;
+    public double xOffset=0;
+    public double yOffset=0;
 
   // PRIVATE
 
@@ -130,6 +132,8 @@ public class VariableTest {
         writer.println("Threshold analog input A1: "+th2+";");
         writer.println("Laser intensity: "+laserIntensity+";");
         writer.println("Shutter response: "+shutterResponse+";");
+        writer.println("xOffset ring acquisition: "+xOffset+";");
+        writer.println("yOffset ring acquisition: "+yOffset+";");
         writer.println();
         writer.close();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {

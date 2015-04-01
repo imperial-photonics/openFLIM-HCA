@@ -6,23 +6,29 @@
 package ProSettingsGUI;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing;
 
 /**
  *
  * @author Frederik
  */
 public class ProSettingsPanel extends javax.swing.JPanel {
+    
     private VariableTest var_;
     private Arduino arduino_;
+    private XYSequencing xYSeq_;
+    
+    
     /**
      * Creates new form ProSettingsGUI
      */
+    
     public ProSettingsPanel() {
         initComponents();
         var_ = VariableTest.getInstance();
         arduino_ = Arduino.getInstance();
+        xYSeq_ = XYSequencing.getInstance();
     }
 
     /**
@@ -48,6 +54,12 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         warningPanel = new javax.swing.JPanel();
         importantInfo = new javax.swing.JScrollPane();
         warningTextArea = new javax.swing.JTextArea();
+        jPanel1 = new javax.swing.JPanel();
+        xOffsetRingField = new javax.swing.JTextField();
+        xOffsetRingLabel = new javax.swing.JLabel();
+        yOffsetRingField = new javax.swing.JTextField();
+        yOffsetRingLabel = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         ArduinoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Arduino"));
 
@@ -89,10 +101,10 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                 .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ArduinoPanelLayout.createSequentialGroup()
                         .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(shutterResponseField)
                             .addComponent(thresholdA0Field, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
                             .addComponent(thresholdA1Field)
-                            .addComponent(laserIntensityField))
+                            .addComponent(laserIntensityField)
+                            .addComponent(shutterResponseField, javax.swing.GroupLayout.Alignment.LEADING))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(ArduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(ArduinoPanelLayout.createSequentialGroup()
@@ -162,12 +174,71 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
+        xOffsetRingField.setText("0");
+        xOffsetRingField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xOffsetRingFieldActionPerformed(evt);
+            }
+        });
+
+        xOffsetRingLabel.setText("xOffset for centration of ring acquisition");
+
+        yOffsetRingField.setText("0");
+        yOffsetRingField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yOffsetRingFieldActionPerformed(evt);
+            }
+        });
+
+        yOffsetRingLabel.setText("yOffset for centration of ring acquisition");
+
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(xOffsetRingField, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+                    .addComponent(yOffsetRingField))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(xOffsetRingLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1))
+                    .addComponent(yOffsetRingLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(xOffsetRingField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(xOffsetRingLabel)
+                    .addComponent(jButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(yOffsetRingField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(yOffsetRingLabel))
+                .addContainerGap(64, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(ArduinoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(warningPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -175,10 +246,13 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                 .addComponent(warningPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ArduinoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(235, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(118, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    
     private void updateLaserIntensityButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateLaserIntensityButtonActionPerformed
         double intensity=arduino_.getLaserIntensity();
         intensity = Math.round(100.0 * intensity) / 100.0;
@@ -186,7 +260,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         laserIntensityField.setText(intensityy);
         var_.th2=Double.parseDouble(thresholdA1Field.getText());
         var_.th1=Double.parseDouble(thresholdA0Field.getText());
-        var_.shutterResponse=Integer.parseInt(thresholdA0Field.getText());
+        var_.shutterResponse=Integer.parseInt(shutterResponseField.getText());
     }//GEN-LAST:event_updateLaserIntensityButtonActionPerformed
 
     private void enableLightCheckButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enableLightCheckButtonActionPerformed
@@ -197,15 +271,37 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_enableLightCheckButtonActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String test=xOffsetRingField.getText();
+        System.out.println(test);
+     //   int xOff;
+      //  xOff= new Integer(xOffsetRingField.getText());
+        double xOffsetRing=Double.parseDouble(xOffsetRingField.getText( ));
+        System.out.println(xOffsetRing);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void xOffsetRingFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xOffsetRingFieldActionPerformed
+        double xOffsetRing=Double.parseDouble(xOffsetRingField.getText( ));
+        var_.xOffset=xOffsetRing;
+    }//GEN-LAST:event_xOffsetRingFieldActionPerformed
+
+    private void yOffsetRingFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yOffsetRingFieldActionPerformed
+        double yOffsetRing=Double.parseDouble(yOffsetRingField.getText( ));
+        var_.yOffset=yOffsetRing;
+    }//GEN-LAST:event_yOffsetRingFieldActionPerformed
+
     
     public void updatePanel(){
        // do something when ProSettingsPanel is selected
     }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ArduinoPanel;
     private javax.swing.JRadioButton enableLightCheckButton;
     private javax.swing.JScrollPane importantInfo;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField laserIntensityField;
     private javax.swing.JLabel laserIntensityLabel;
     private javax.swing.JTextField shutterResponseField;
@@ -217,5 +313,9 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JButton updateLaserIntensityButton;
     private javax.swing.JPanel warningPanel;
     private javax.swing.JTextArea warningTextArea;
+    private javax.swing.JTextField xOffsetRingField;
+    private javax.swing.JLabel xOffsetRingLabel;
+    private javax.swing.JTextField yOffsetRingField;
+    private javax.swing.JLabel yOffsetRingLabel;
     // End of variables declaration//GEN-END:variables
 }
