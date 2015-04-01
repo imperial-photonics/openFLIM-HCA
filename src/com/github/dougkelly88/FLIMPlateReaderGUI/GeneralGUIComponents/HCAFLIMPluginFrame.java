@@ -78,7 +78,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  * @author dk1109
  */
 public class HCAFLIMPluginFrame extends javax.swing.JFrame {
-
+    
     public CMMCore core_;
     static HCAFLIMPluginFrame frame_;
     private SeqAcqProps sap_;
@@ -157,6 +157,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
+        
         progressBar_ = new ProgressBar();
         progressBarPanel.setLayout(new BorderLayout());
         progressBarPanel.add(progressBar_, BorderLayout.SOUTH);
@@ -665,8 +666,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(frameScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1378, Short.MAX_VALUE)
+                .addGap(84, 84, 84)
+                .addComponent(frameScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1306, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1337,9 +1338,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         int n = JOptionPane.showConfirmDialog(frame_,
                 "Quit: are you sure?", "Quit", JOptionPane.YES_NO_OPTION);
         if (n == JOptionPane.YES_OPTION) {
+            arduino_.setDigitalOutLow();
             dispose();
         }
-
     }
 
     private String test(String dev, String prop) {
