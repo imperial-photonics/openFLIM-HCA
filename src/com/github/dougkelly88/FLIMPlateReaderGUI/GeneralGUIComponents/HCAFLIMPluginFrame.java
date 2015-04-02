@@ -320,6 +320,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         stopSequenceButton = new javax.swing.JToggleButton();
         experimentNameField = new javax.swing.JTextField();
         experimentNameText = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jMenuBar2 = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         loadPlateConfigMenu = new javax.swing.JMenuItem();
@@ -439,6 +440,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         experimentNameText.setText("Name experiment");
 
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout HCAsequenceProgressBarLayout = new javax.swing.GroupLayout(HCAsequenceProgressBar);
         HCAsequenceProgressBar.setLayout(HCAsequenceProgressBarLayout);
         HCAsequenceProgressBarLayout.setHorizontalGroup(
@@ -473,8 +481,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                                             .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
                                                 .addComponent(jLabel2)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
-                        .addGap(0, 27, Short.MAX_VALUE)))
+                                                .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         HCAsequenceProgressBarLayout.setVerticalGroup(
@@ -487,7 +497,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
                         .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(snapFLIMButton)
-                            .addComponent(experimentNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(experimentNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(snapBFButton)
@@ -514,9 +525,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             .addGroup(sequenceSetupBasePanelLayout.createSequentialGroup()
                 .addGroup(sequenceSetupBasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(sequenceSetupTabbedPane)
-                    .addGroup(sequenceSetupBasePanelLayout.createSequentialGroup()
-                        .addComponent(HCAsequenceProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(HCAsequenceProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         sequenceSetupBasePanelLayout.setVerticalGroup(
@@ -533,12 +542,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         basePanelLayout.setHorizontalGroup(
             basePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(basePanelLayout.createSequentialGroup()
-                .addComponent(FLIMPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 622, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(basePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(basePanelLayout.createSequentialGroup()
-                        .addGap(48, 48, 48)
+                        .addGap(670, 670, 670)
                         .addComponent(statusLabel))
                     .addGroup(basePanelLayout.createSequentialGroup()
+                        .addComponent(FLIMPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 622, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(sequenceSetupBasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(2003, Short.MAX_VALUE))
@@ -548,13 +557,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             .addGroup(basePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(basePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(FLIMPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 884, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(basePanelLayout.createSequentialGroup()
                         .addComponent(sequenceSetupBasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(366, 366, 366)
-                        .addComponent(statusLabel)
-                        .addGap(0, 121, Short.MAX_VALUE))
-                    .addComponent(FLIMPanel))
-                .addContainerGap())
+                        .addGap(41, 41, 41)
+                        .addComponent(statusLabel)))
+                .addContainerGap(468, Short.MAX_VALUE))
         );
 
         frameScrollPane.setViewportView(basePanel);
@@ -668,13 +676,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(frameScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1425, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 10, Short.MAX_VALUE))
+            .addComponent(frameScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1425, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(frameScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1043, Short.MAX_VALUE)
+            .addComponent(frameScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 987, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -1204,6 +1210,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             proSettingsGUI1.updatePanel();
         }
     }//GEN-LAST:event_FLIMPanelStateChanged
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        displayImage2_.showImageInIJ();
+    }//GEN-LAST:event_jButton1ActionPerformed
    
     public void changeAbortHCAsequencBoolean(){
     //abortHCAsequencBoolean=abortHCAsequencesButton.isSelected();
@@ -1324,6 +1334,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JScrollPane frameScrollPane;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuBar jMenuBar2;

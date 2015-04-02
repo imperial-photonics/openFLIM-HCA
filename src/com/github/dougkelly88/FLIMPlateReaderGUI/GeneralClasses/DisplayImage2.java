@@ -23,9 +23,20 @@ public class DisplayImage2 {
     CMMCore core_;
     private static final DisplayImage2 fINSTANCE =  new DisplayImage2();
     
-    public void showImageInIJ(){
+    public void showImageInIJ(){ 
+    /*    String imageFilePath = "C:\\Users\\Frederik\\Desktop\\08-03-2015(first time working)\\FLIMfitAnalyses\\GFP";
         Opener opener = new Opener();  
-        String imageFilePath = "somePath";
-        ImagePlus imp = opener.openImage(imageFilePath);
+        ImagePlus imp = opener.openImage(imageFilePath);  
+
+        imp.show();*/
+        Opener opener = new Opener();  
+        ImagePlus imp = opener.openImage("http://www2.unine.ch/files/content/users/merciers2/files/6-%20Lola_Bonobos_IMG_0466%20(Zanna%20Clay).JPG");  
+        imp.show();
+        
+        ImagePlus imp1 = opener.openImage("C:\\Users\\Frederik\\Desktop\\ape.JPG");
+        imp1.show();
+       
+        ImagePlus imp2 = opener.openImage("C:\\Users\\Frederik\\Desktop\\GFP.tiff");
+        imp2.show();
     }
 }
