@@ -918,17 +918,24 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
             String baseLevelPath = currentBasePathField.getText() + "/Sequenced FLIM acquisition " +
                     timeStamp;
-            for (FilterSetup fs : fss){
-                String flabel = fs.getLabel();
-
-                File f = new File(baseLevelPath + "/" + flabel);
-                try {
-                    boolean check1 = f.mkdirs();
-                } catch (Exception e){
-                    System.out.println(e.getMessage());
+            if(var_.check2){
+                for (FilterSetup fs : fss){
+                    String flabel = fs.getLabel();
+                    File f = new File(baseLevelPath + "/" + flabel);
+                    try {
+                        boolean check1 = f.mkdirs();
+                    } catch (Exception e){
+                        System.out.println(e.getMessage());
+                    }
                 }
+            } else {
+                    File f = new File(baseLevelPath);
+                    try {
+                        boolean check1 = f.mkdirs();
+                    } catch (Exception e){
+                        System.out.println(e.getMessage());
+                    }            
             }
-            
 //            for (SeqAcqSetup sas : sass){
             Double lastTime = 0.0;
             String lastFiltLabel = "";
@@ -1005,7 +1012,30 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 // do acquisition
                 String fovLabel = String.format("%05d", ind);
                 String path;
-                if(sas.getFilters().getLabel().equals("Unknown")){
+                if(var_.check2){
+                    if(sas.getFilters().getLabel().equals("Unknown")){
+                        path=baseLevelPath + "/"+ 
+                            " Well=" + sas.getFOV().getWell() +                        
+                            " X=" + sas.getFOV().getX() +
+                            " Y=" + sas.getFOV().getY() +
+                            "T=" + sas.getTimePoint().getTimeCell() + 
+                            " Filterset=" + sas.getFilters().getLabel() + 
+                            " Z=" + sas.getFOV().getZ() +
+                            " ID=" + fovLabel+
+                            " Laser intensity=" + intensity;
+                    } else{
+                        path=baseLevelPath + "/" + sas.getFilters().getLabel() + "/"+ 
+                            " Well=" + sas.getFOV().getWell() +                        
+                            " X=" + sas.getFOV().getX() +
+                            " Y=" + sas.getFOV().getY() +
+                            "T=" + sas.getTimePoint().getTimeCell() + 
+                            " Filterset=" + sas.getFilters().getLabel() + 
+                            " Z=" + sas.getFOV().getZ() +
+                            " ID=" + fovLabel+
+                            " Laser intensity=" + intensity;
+                    }
+                }else{
+                    
                     path=baseLevelPath + "/"+ 
                         " Well=" + sas.getFOV().getWell() +                        
                         " X=" + sas.getFOV().getX() +
@@ -1015,17 +1045,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         " Z=" + sas.getFOV().getZ() +
                         " ID=" + fovLabel+
                         " Laser intensity=" + intensity;
-                } else{
-                    path=baseLevelPath + "/" + sas.getFilters().getLabel() + "/"+ 
-                        " Well=" + sas.getFOV().getWell() +                        
-                        " X=" + sas.getFOV().getX() +
-                        " Y=" + sas.getFOV().getY() +
-                        "T=" + sas.getTimePoint().getTimeCell() + 
-                        " Filterset=" + sas.getFilters().getLabel() + 
-                        " Z=" + sas.getFOV().getZ() +
-                        " ID=" + fovLabel+
-                        " Laser intensity=" + intensity;
                 }
+                
                 try{
                     boolean abort=arduino_.checkSafety();
                     if(abort==true){

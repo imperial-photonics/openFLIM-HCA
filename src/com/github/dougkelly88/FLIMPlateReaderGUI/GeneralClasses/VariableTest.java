@@ -67,6 +67,7 @@ public class VariableTest {
     public boolean safetyOff=false;
     public double xOffset=0;
     public double yOffset=0;
+    public boolean check2=false;
 
   // PRIVATE
 
@@ -134,6 +135,7 @@ public class VariableTest {
         writer.println("Shutter response: "+shutterResponse+";");
         writer.println("xOffset ring acquisition: "+xOffset+";");
         writer.println("yOffset ring acquisition: "+yOffset+";");
+        writer.println("Unknown Folder enabled?: "+check2+";");
         writer.println();
         writer.close();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
