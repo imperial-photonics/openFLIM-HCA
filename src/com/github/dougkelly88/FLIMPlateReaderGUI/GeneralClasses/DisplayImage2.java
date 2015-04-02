@@ -5,10 +5,9 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import ij.ImagePlus;
+import ij.io.Opener;
 import mmcorej.CMMCore;
-import mmcorej.TaggedImage;
 import org.micromanager.MMStudio;
 
 /**
@@ -25,15 +24,8 @@ public class DisplayImage2 {
     private static final DisplayImage2 fINSTANCE =  new DisplayImage2();
     
     public void showImageInIJ(){
-        try {
-            gui_ = MMStudio.getInstance();
-            core_ = gui_.getCore();
-        //    core_.snapImage();
-            TaggedImage taggedImage = core_.getTaggedImage();
-            gui_.displayImage(taggedImage);
- 
-        } catch (Exception ex) {
-            Logger.getLogger(DisplayImage2.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        }
+        Opener opener = new Opener();  
+        String imageFilePath = "somePath";
+        ImagePlus imp = opener.openImage(imageFilePath);
     }
+}

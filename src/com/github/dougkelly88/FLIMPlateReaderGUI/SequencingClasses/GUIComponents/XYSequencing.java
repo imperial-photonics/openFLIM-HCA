@@ -5,7 +5,6 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents;
 
-import ProSettingsGUI.ProSettingsPanel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
@@ -197,15 +196,13 @@ public class XYSequencing extends javax.swing.JPanel {
         plateMapBasePanel = new javax.swing.JPanel();
         autoFOVPanel = new javax.swing.JPanel();
         autoGenerateFOVsCheck = new javax.swing.JCheckBox();
-        jLabel1 = new javax.swing.JLabel();
+        noFOVLabel = new javax.swing.JLabel();
         noFOVsField = new javax.swing.JFormattedTextField();
         FOVPatternCombo = new javax.swing.JComboBox();
         ringRadiusField = new javax.swing.JFormattedTextField();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        ringRadiusLabel = new javax.swing.JLabel();
+        groupDescLabel = new javax.swing.JLabel();
         groupDescField = new javax.swing.JTextField();
-        sendEmailCheckBox = new javax.swing.JCheckBox();
-        sendEmailField = new javax.swing.JTextField();
 
         storedXYZPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Stored XYZ positions"));
 
@@ -399,7 +396,7 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
-        jLabel1.setText("# FOVs ");
+        noFOVLabel.setText("# FOVs ");
 
         noFOVsField.setText("4");
         noFOVsField.setEnabled(false);
@@ -425,28 +422,14 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
-        jLabel2.setText("Ring radius um:");
+        ringRadiusLabel.setText("Ring radius um:");
 
-        jLabel6.setText("Group description:");
+        groupDescLabel.setText("Group description:");
 
         groupDescField.setText("Experiment");
         groupDescField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 groupDescFieldActionPerformed(evt);
-            }
-        });
-
-        sendEmailCheckBox.setText("Send email after finished to:");
-        sendEmailCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendEmailCheckBoxActionPerformed(evt);
-            }
-        });
-
-        sendEmailField.setText("f.gorlitz14@imperial.ac.uk");
-        sendEmailField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendEmailFieldActionPerformed(evt);
             }
         });
 
@@ -456,26 +439,20 @@ public class XYSequencing extends javax.swing.JPanel {
             autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(autoFOVPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sendEmailField)
+                .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(autoFOVPanelLayout.createSequentialGroup()
-                        .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(autoFOVPanelLayout.createSequentialGroup()
-                                    .addComponent(jLabel2)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(ringRadiusField, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(autoGenerateFOVsCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, autoFOVPanelLayout.createSequentialGroup()
-                                    .addComponent(jLabel1)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(noFOVsField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(FOVPatternCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel6)
-                                .addComponent(groupDescField))
-                            .addComponent(sendEmailCheckBox))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(ringRadiusLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ringRadiusField, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(autoGenerateFOVsCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, autoFOVPanelLayout.createSequentialGroup()
+                        .addComponent(noFOVLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(noFOVsField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(FOVPatternCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(groupDescLabel)
+                    .addComponent(groupDescField))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
         autoFOVPanelLayout.setVerticalGroup(
             autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -484,22 +461,18 @@ public class XYSequencing extends javax.swing.JPanel {
                 .addComponent(autoGenerateFOVsCheck)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(noFOVLabel)
                     .addComponent(noFOVsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(FOVPatternCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ringRadiusField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                    .addComponent(ringRadiusLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel6)
+                .addComponent(groupDescLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(groupDescField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addComponent(sendEmailCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sendEmailField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -538,7 +511,7 @@ public class XYSequencing extends javax.swing.JPanel {
         boolean autoFOV = autoGenerateFOVsCheck.isSelected();
         noFOVsField.setEnabled(autoFOV);
         FOVPatternCombo.setEnabled(autoFOV);
-        ringRadiusField.setEnabled(autoFOV & (FOVPatternCombo.getSelectedIndex() == 1));
+        ringRadiusField.setEnabled(autoFOV);
         if (autoFOV) {
             generateFOVs();
         }
@@ -663,11 +636,11 @@ public class XYSequencing extends javax.swing.JPanel {
     }//GEN-LAST:event_noFOVsFieldActionPerformed
 
     private void FOVPatternComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FOVPatternComboActionPerformed
-        // TODO add your handling code here:
+        generateFOVs();
     }//GEN-LAST:event_FOVPatternComboActionPerformed
 
     private void ringRadiusFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ringRadiusFieldActionPerformed
-        // TODO add your handling code here:
+        generateFOVs();
     }//GEN-LAST:event_ringRadiusFieldActionPerformed
 
     private void quickPFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quickPFButtonActionPerformed
@@ -835,54 +808,6 @@ public class XYSequencing extends javax.swing.JPanel {
         doZStackGeneration(getZStackParams());
     }//GEN-LAST:event_clearZButtonActionPerformed
 
-    private void sendEmailCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendEmailCheckBoxActionPerformed
-      if(sendEmailCheckBox.isSelected()){
-           sendEmailBoolean=true;
-       } else {
-           sendEmailBoolean=false;
-       }
-    }//GEN-LAST:event_sendEmailCheckBoxActionPerformed
-
-    private void sendEmailFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendEmailFieldActionPerformed
-        emailString=sendEmailField.getText();
-    }//GEN-LAST:event_sendEmailFieldActionPerformed
-
-    public void sendEmail(){
- /*       final String username = "platereaderOracle@hotmail.com";
-        final String password = "Platereader1!";
-        emailString=sendEmailField.getText();
-        Properties props = new Properties();
-        props.setProperty("mail.transport.protocol", "smtp");
-        props.setProperty("mail.host", "smtp.live.com");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.auth", "true");
-        Session session;
-        session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected  javax.mail.PasswordAuthentication getPasswordAuthentication() {
-                        return new javax.mail.PasswordAuthentication(username, password);
-                    }
-                });
-        try {
-            
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("platereaderOracle@hotmail.com"));
-            message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse("f.goerlitz@gmx.net"));
-            message.setSubject("Platereader finished!");
-            message.setText("Dear Mail Crawler,"
-                    + "\n\n No spam to my email, please!");
-            
-            Transport.send(message);
-            
-            System.out.println("Done");
-            
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
-    
-     */   
-    }
     
     public void setPlateProperties(PlateProperties pp) {
         pp_ = pp;
@@ -940,20 +865,18 @@ public class XYSequencing extends javax.swing.JPanel {
     private javax.swing.JPanel fovTablePanel;
     private javax.swing.JButton genZStackButton;
     private javax.swing.JTextField groupDescField;
+    private javax.swing.JLabel groupDescLabel;
     private javax.swing.JFormattedTextField intensityThresoldField;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel noFOVLabel;
     private javax.swing.JFormattedTextField noFOVsField;
     private javax.swing.JPanel plateMapBasePanel;
     private javax.swing.JPanel prefindPanel;
     private javax.swing.JButton quickPFButton;
     private javax.swing.JFormattedTextField ringRadiusField;
-    private javax.swing.JCheckBox sendEmailCheckBox;
-    private javax.swing.JTextField sendEmailField;
+    private javax.swing.JLabel ringRadiusLabel;
     private javax.swing.JButton storeXYZButton;
     private javax.swing.JPanel storedXYZPanel;
     private javax.swing.JComboBox zModeCombo;
