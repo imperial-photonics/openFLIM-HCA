@@ -275,6 +275,11 @@ public class FLIMPanel extends javax.swing.JPanel {
         });
 
         findMaxPointMaxField.setText("8000");
+        findMaxPointMaxField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                findMaxPointMaxFieldActionPerformed(evt);
+            }
+        });
 
         limitsLabel1.setText("\"Find maxpoint\" limits (ps)");
 
@@ -740,7 +745,8 @@ public class FLIMPanel extends javax.swing.JPanel {
             }    
         int findMaxPointMin=(int) Double.parseDouble(findMaxPointMinField.getText());
         int findMaxPointMax=(int) Double.parseDouble(findMaxPointMaxField.getText());
-        
+        fm_.xMax=findMaxPointMax;
+        fm_.xMin=findMaxPointMin;
         int delayResolution=Integer.parseInt(maxpointResolutionField.getText());
             ArrayList<Double> meanValues= new ArrayList<Double>();
             ArrayList<Integer> delays = new ArrayList<Integer>();
@@ -940,6 +946,10 @@ public class FLIMPanel extends javax.swing.JPanel {
     private void findMaxPointMinFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findMaxPointMinFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_findMaxPointMinFieldActionPerformed
+
+    private void findMaxPointMaxFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findMaxPointMaxFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_findMaxPointMaxFieldActionPerformed
 
     public void setDelayComboBox(){
         String file1 = null;

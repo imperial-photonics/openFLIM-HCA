@@ -47,6 +47,8 @@ public class FindMaxpoint {
     private double lifetime_ = 0;
     private ArrayList<Integer> delays_;
     private int maxpointDelay_ = 1000;
+    public int xMin=0;
+    public int xMax=16666;
 //    private XYDataset dataset_;
 
     public FindMaxpoint(){
@@ -146,7 +148,7 @@ public class FindMaxpoint {
         yaxis1.setRange(0,5000);
         yaxis2.setRange(-1,1);
         yaxis2.setTickLabelsVisible(false);
-        xaxis.setRange(0,16666);
+        xaxis.setRange(xMin,xMax);
 
         // deal with visuals
 

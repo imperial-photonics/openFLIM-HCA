@@ -331,6 +331,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="8000"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="findMaxPointMaxFieldActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="limitsLabel1">
               <Properties>
