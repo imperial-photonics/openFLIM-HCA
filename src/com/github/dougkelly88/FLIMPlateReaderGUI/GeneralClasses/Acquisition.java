@@ -76,7 +76,6 @@ public class Acquisition {
                 for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
                     core_.snapImage();
                     Object img = core_.getImage();
-//                    DisplayImage_.display(img);
                     // this bit c.f. FrameAverager
                     if (core_.getBytesPerPixel() == 2){
                         short[] pixS = (short[]) img;

@@ -1061,13 +1061,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                     arduino_.setDigitalOutHigh();
                     wait(var_.shutterResponse);
-                    
+                    displayImage2_.showImageInIJ(path);
                 }
                 catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
                 
                 acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
+                
             //    saveSequencingTablesForDebugging(path);
                 
                 // shutter laser
@@ -1076,6 +1077,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     arduino_.setDigitalOutLow();
                     lightPathControls1.setLaserToggleFalse();
                     lightPathControls1.setLaserToggleText("Turn laser ON");
+                    displayImage2_.showImageInIJ(path);
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
@@ -1212,7 +1214,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_FLIMPanelStateChanged
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        displayImage2_.showImageInIJ();
+      //  displayImage2_.showImageInIJ();
     }//GEN-LAST:event_jButton1ActionPerformed
    
     public void changeAbortHCAsequencBoolean(){

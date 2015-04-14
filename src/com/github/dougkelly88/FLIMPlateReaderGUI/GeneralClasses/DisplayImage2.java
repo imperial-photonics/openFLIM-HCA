@@ -5,9 +5,10 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
+import ij.IJ;
 import ij.ImagePlus;
+import ij.WindowManager;
 import ij.io.Opener;
-import static ij.plugin.Commands.closeAll;
 import mmcorej.CMMCore;
 import org.micromanager.MMStudio;
 
@@ -23,18 +24,22 @@ public class DisplayImage2 {
     MMStudio gui_;
     CMMCore core_;
     private static final DisplayImage2 fINSTANCE =  new DisplayImage2();
+    ImagePlus imp2 = null;
     
-    public void showImageInIJ(){ 
-    /*    String imageFilePath = "C:\\Users\\Frederik\\Desktop\\08-03-2015(first time working)\\FLIMfitAnalyses\\GFP";
-        Opener opener = new Opener();  
-        ImagePlus imp = opener.openImage(imageFilePath);  
-
-        imp.show();*/
+    public void showImageInIJ(String path){ 
+        path=path+".ome.tiff.ome";
         Opener opener = new Opener();
-        ImagePlus imp1 = opener.openImage("C:\\Users\\Frederik\\Desktop\\ape.JPG");
+     /*   ImagePlus imp1 = opener.openImage("C:\\Users\\Frederik\\Desktop\\ape.JPG");
         imp1.show();
-        imp1.killStack();
-        ImagePlus imp2 = opener.openImage("C:\\Users\\Frederik\\Desktop\\GFP.tiff");
+        imp1.hide();*/
+        imp2 = opener.openImage(path);
+        IJ.run(imp2, "Enhance Contrast", "saturated=1 normalize");
+        WindowManager.setTempCurrentImage(imp2);
+        IJ.run("Fire");
         imp2.show();
+    }
+    
+    public void hideImageInIJ(){
+        imp2.hide();
     }
 }
