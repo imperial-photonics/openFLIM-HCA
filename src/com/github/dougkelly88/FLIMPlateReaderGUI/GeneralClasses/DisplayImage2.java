@@ -7,6 +7,7 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
 import ij.ImagePlus;
 import ij.io.Opener;
+import static ij.plugin.Commands.closeAll;
 import mmcorej.CMMCore;
 import org.micromanager.MMStudio;
 
@@ -29,13 +30,10 @@ public class DisplayImage2 {
         ImagePlus imp = opener.openImage(imageFilePath);  
 
         imp.show();*/
-        Opener opener = new Opener();  
-        ImagePlus imp = opener.openImage("http://www2.unine.ch/files/content/users/merciers2/files/6-%20Lola_Bonobos_IMG_0466%20(Zanna%20Clay).JPG");  
-        imp.show();
-        
+        Opener opener = new Opener();
         ImagePlus imp1 = opener.openImage("C:\\Users\\Frederik\\Desktop\\ape.JPG");
         imp1.show();
-       
+        imp1.killStack();
         ImagePlus imp2 = opener.openImage("C:\\Users\\Frederik\\Desktop\\GFP.tiff");
         imp2.show();
     }

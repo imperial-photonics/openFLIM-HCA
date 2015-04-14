@@ -7,6 +7,7 @@
 /* 
 AO= incubation light photodiode
 A1= room light photodiode
+A2= mercury burner vs. light path microswitch
 A5= laser intensity photodiode
 D8=shutter
 D9=shutter
@@ -84,7 +85,13 @@ public class Arduino {
     
     public void setDigitalOutHigh() {
         try {
-            core_.setProperty("Arduino-Shutter", "OnOff", "1");
+            
+            if(core_.getProperty("OlympusHub", "SidePort")=="SidePort"){
+                core_.setProperty("Arduino-Shutter", "OnOff", "1");
+            }
+            else{
+                popUpwindow("Please change to the side port path if you are using the laser!", "Ocular path choosen.");
+            }
         } catch (Exception ex) {
             System.out.println("Error: Class-Arduino; setDigitalOutHigh");
         }
@@ -138,63 +145,29 @@ public class Arduino {
        // reading the input  values from Adruino AO and A1. If they are low under 0.5. Then nothing is happening. If they
        // are high. Message is popping up and is telling reduce light.
         if (var_.safetyOff==false){
-            boolean check=false;
+            double value0=-1;
             double value1=-1;
             double value2=-1;
-            value1=getInputValue(0);
-            value2=getInputValue(1);
-            if (value1==-1){
-                value1=0;
+            value0=getInputValue(0);
+            value1=getInputValue(1);
+            value2=getInputValue(2);
+            if (value0==-1){
                 System.out.println("No value detected on Arduino input 0. Go on in unsafe mode. Be aware this can damage the HRI.");
-            }
-            if (value2==-1){
-                value2=0;
+            } else if (value1==-1){
                 System.out.println("No value detected on Arduino input 1. Go on in unsafe mode. Be aware this can damage the HRI.");
-            }    
-            Object[] options = {"Try again.",
-                        "Cancel"};
-            while(check==false){
-                if(value1>var_.th1&&value2<var_.th2){
-                    int n = JOptionPane.showOptionDialog(frame,
-                    "Incubation light chamber is on. This can damage the HRI. Please turn it off to start the measurement!",
-                        "Incubation light alarm",
-                    JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.WARNING_MESSAGE,
-                    null,
-                    options,
-                    options[1]);
-                    if(n==1){
-                      check=true;
-                    }
-                } else if(value1<var_.th1&&value2>var_.th2){
-                    int n = JOptionPane.showOptionDialog(frame,
-                    "Room light is on. Please turn it off to start the measurement!",
-                    "Room light alarm",
-                    JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.WARNING_MESSAGE,
-                    null,
-                    options,
-                    options[1]);
-                    if(n==1){
-                        check=true;
-                    }
-                } else if(value1>var_.th1&&value2>var_.th2){
-                    int n = JOptionPane.showOptionDialog(frame,
-                    "Room light and incubation chamber light is on. Please turn it off to start the measurement.",
-                    "Light alarm",
-                    JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.WARNING_MESSAGE,
-                    null,
-                    options,
-                    options[1]);
-                    if(n==1){
-                        check=true;
-                    }
-                } else if (value1<var_.th1&&value2<var_.th2){
-                    check=true; 
-                    return false;
-                }
-                }
+            } else if(value0>var_.th1&&value1<var_.th2){
+                popUpwindow("Incubation light chamber is on. This can damage the HRI. Please turn it off to start the measurement!", "Incubation light alarm");
+            } else if(value0<var_.th1&&value1>var_.th2){
+                popUpwindow("Room light is on. Please turn it off to start the measurement!", "Room light alarm");
+            } else if(value0>var_.th1&&value1>var_.th2){
+                popUpwindow("Room light and incubation chamber light is on. Please turn it off to start the measurement.", "Light alarm");
+            } else if(value2<1000){
+               popUpwindow("Mercury burner path is still selected, please change to laser excitation path!", "Mercury burner path chosen."); 
+            }
+            else if (value0<var_.th1&&value1<var_.th2){
+                return false;
+            } 
+                
             return true;
         }else{
         return false;
@@ -205,6 +178,20 @@ public class Arduino {
         double value=getInputValue(5)*20;
         value = Math.round(100.0 * value) / 100.0;
         return value;
+    }
+    
+    public void popUpwindow(String text, String header){
+        Object[] options = {"Nope",
+                        "Ok, I will check it!"};
+        int n = JOptionPane.showOptionDialog(frame,
+            text,
+            header,
+            JOptionPane.YES_NO_CANCEL_OPTION,
+            JOptionPane.WARNING_MESSAGE,
+            null,
+            options,
+            options[1]
+        );
     }
     
 }
