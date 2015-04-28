@@ -64,7 +64,7 @@ public class VariableTest {
     public double th2=0.5;
     public double laserIntensity=0;
     public int shutterResponse=0;
-    public boolean safetyOff=false;
+    public boolean safetyOff=true;
     public double xOffset=0;
     public double yOffset=0;
     public boolean check2=false;

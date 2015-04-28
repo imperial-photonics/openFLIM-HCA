@@ -1061,7 +1061,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                     arduino_.setDigitalOutHigh();
                     wait(var_.shutterResponse);
-                    displayImage2_.showImageInIJ(path);
+                    displayImage2_.hideImageInIJ();
                 }
                 catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -1214,7 +1214,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_FLIMPanelStateChanged
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-      //  displayImage2_.showImageInIJ();
+        displayImage2_.showImageInIJ1();
     }//GEN-LAST:event_jButton1ActionPerformed
    
     public void changeAbortHCAsequencBoolean(){
