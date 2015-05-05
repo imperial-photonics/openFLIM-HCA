@@ -46,7 +46,7 @@ public class XYSequencing extends javax.swing.JPanel {
     private static final XYSequencing fINSTANCE =  new XYSequencing();
     JTable fovTable_;
     SeqAcqProps sap_;
-    HCAFLIMPluginFrame parent_;
+    public HCAFLIMPluginFrame parent_;
     final static String um = "(" + "\u00B5" + "m)";
     boolean zAsOffset_ = true;
     double[] zStackParams = {0.0, 0.0, 1.0};

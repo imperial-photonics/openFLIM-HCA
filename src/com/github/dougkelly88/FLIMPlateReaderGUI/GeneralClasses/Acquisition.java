@@ -6,6 +6,11 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.FComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.SeqAcqSetupChainedComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.TComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.WellComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ZComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FilterSetup;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.SeqAcqSetup;
@@ -26,8 +31,15 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.NonNegativeInteger;
 import java.io.IOException;
 import com.quirkware.guid.PlatformIndependentGuidGen;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
+import mmcorej.DeviceType;
 import mmcorej.TaggedImage;
 import org.micromanager.api.ImageCache;
 
@@ -42,14 +54,93 @@ public class Acquisition {
     private HCAFLIMPluginFrame frame_;
     public boolean bleechingComp=false;
     
-
-
     public Acquisition() {
         gui_ = MMStudio.getInstance();
         core_ = gui_.getCore();
         frame_= HCAFLIMPluginFrame.getInstance();
     }
 
+    public void snapSPWImage(ArrayList<Integer> delays, SeqAcqSetup sas, int series, boolean simulate){    
+        try {
+                if (gui_.isLiveModeOn() | gui_.isAcquisitionRunning())
+                {
+                    gui_.enableLiveMode(false);
+                    gui_.closeAllAcquisitions();
+                }
+                
+                ImageWriter writer  = frame_.SPWWriter_;
+                
+                if (null != writer) 
+                {
+                    if (series != writer.getSeries())  
+                    {
+                        try {writer.setSeries(series);} catch (FormatException e) {System.out.println(e.getMessage());}
+                    }            
+
+                    int W = (int)core_.getImageWidth();
+                    int H = (int)core_.getImageHeight();
+                    long dim = W*H;
+                    
+                    for (Integer delay : delays) 
+                    {                                                
+                        if (simulate) {
+                            //////////////////////// simulated "image"                                                
+                            double tau = 5000;                        
+                            short[] accImg = new short[(int)dim];                        
+                            //for(int k=0;k<dim;k++) accImg[k] = (short)(1000*Math.exp(-delay/tau));                        
+                            for(int k=0;k<dim;k++)
+                            {
+                                // draw circle in the centre of the image
+                                double y = Math.floor(k/W) + 1, x = k - W*Math.floor(k/W), yc = H/2, xc = W/2;                            
+                                if (Math.sqrt( (x-xc)*(x-xc) + (y-yc)*(y-yc) ) <= 100)
+                                {
+                                    accImg[k] = (short)(1000*Math.exp(-delay/tau));                             
+                                }
+                            }                                                
+
+                            Exception exception = null;
+                            try 
+                            {
+                              writer.saveBytes(delays.indexOf(delay), DataTools.shortsToBytes(accImg, false));
+                            }
+                            catch (FormatException e)   {exception = e;}
+                            catch (IOException e)       {exception = e;}
+                            if (exception != null) 
+                            {
+                              System.err.println("Failed to save plane.");
+                              exception.printStackTrace();
+                            }                                                
+                            //////////////////////// simulated "image"  
+                        }
+                        else
+                        {                                                                                                 
+                            //  core_.snapImage();
+                            //  Object img = core_.getImage();
+                            int[] accImg = new int[(int)dim];
+                            for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
+                                core_.snapImage();
+                                Object img = core_.getImage();
+                                // this bit c.f. FrameAverager
+                                if (core_.getBytesPerPixel() == 2){
+                                    short[] pixS = (short[]) img;
+                                    for (int j = 0; j < dim; j++) {
+                                        accImg[j] = (int) (accImg[j] + (int) (pixS[j] & 0xffff));
+                                    }
+                                } else if (core_.getBytesPerPixel() == 1){
+                                    byte[] pixB = (byte[]) img;
+                                    for (int j = 0; j < dim; j++) {
+                                        accImg[j] = (int) (accImg[j] + (int) (pixB[j] & 0xff));
+                                    }
+                                }
+                            }
+                            // core_.snapImage();
+                            saveLayersToOMETiff(writer, accImg, delays.indexOf(delay));
+                        }
+                    }                                                                         
+                }// endif                                     
+            } catch (Exception e) {System.out.println(e.getMessage());}
+    }
+        
     public void snapFLIMImage(String path, ArrayList<Integer> delays, SeqAcqSetup sas) {
 
         try{
@@ -298,5 +389,6 @@ public class Acquisition {
     
     public void showImage(){
         //  DisplayImage_.display();
-    }
+    }       
+    
 }

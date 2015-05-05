@@ -17,8 +17,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     
     private VariableTest var_;
     private Arduino arduino_;
-    private XYSequencing xYSeq_;
-    
+    private XYSequencing xYSeq_;        
     
     /**
      * Creates new form ProSettingsGUI
@@ -62,6 +61,8 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
         dougPanel = new javax.swing.JPanel();
         unknownFolderCheckBox = new javax.swing.JCheckBox();
+        AcquisitionSavingMode_combo = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
 
         arduinoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Arduino"));
 
@@ -262,6 +263,15 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                 .addContainerGap(53, Short.MAX_VALUE))
         );
 
+        AcquisitionSavingMode_combo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "separate OME.tiff for every FOV", "single SWP OME.tiff" }));
+        AcquisitionSavingMode_combo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AcquisitionSavingMode_comboActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Acquisition saving mode");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -270,6 +280,12 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             .addComponent(warningPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(fOVPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(dougPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -281,7 +297,11 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                 .addComponent(fOVPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dougPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addContainerGap(86, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -331,19 +351,24 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_unknownFolderCheckBoxActionPerformed
 
-    
+    private void AcquisitionSavingMode_comboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AcquisitionSavingMode_comboActionPerformed
+        this.xYSeq_.parent_.AcquisitionSavingMode = AcquisitionSavingMode_combo.getSelectedItem().toString();
+    }//GEN-LAST:event_AcquisitionSavingMode_comboActionPerformed
+
     public void updatePanel(){
        // do something when ProSettingsPanel is selected
     }
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox AcquisitionSavingMode_combo;
     private javax.swing.JPanel arduinoPanel;
     private javax.swing.JPanel dougPanel;
     private javax.swing.JRadioButton enableLightCheckButton;
     private javax.swing.JPanel fOVPanel;
     private javax.swing.JScrollPane importantInfo;
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField laserIntensityField;
     private javax.swing.JLabel laserIntensityLabel;
     private javax.swing.JTextField shutterResponseField;
