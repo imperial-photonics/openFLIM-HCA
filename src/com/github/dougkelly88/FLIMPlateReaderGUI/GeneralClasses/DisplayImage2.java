@@ -27,7 +27,7 @@ public class DisplayImage2 {
     ImagePlus imp2 = null;
     
     public void showImageInIJ(String path){ 
-        path=path+".ome.tiff.ome";
+        path=path+".ome.tiff";
         Opener opener = new Opener();
      /*   ImagePlus imp1 = opener.openImage("C:\\Users\\Frederik\\Desktop\\ape.JPG");
         imp1.show();
