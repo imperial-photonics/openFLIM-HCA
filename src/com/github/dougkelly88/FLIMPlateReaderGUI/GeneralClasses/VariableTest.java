@@ -68,6 +68,7 @@ public class VariableTest {
     public double xOffset=0;
     public double yOffset=0;
     public boolean check2=false;
+    public String AcquisitionSavingMode="separate OME.tiff for every FOV"; 
 
   // PRIVATE
 
@@ -136,6 +137,7 @@ public class VariableTest {
         writer.println("xOffset ring acquisition: "+xOffset+";");
         writer.println("yOffset ring acquisition: "+yOffset+";");
         writer.println("Unknown Folder enabled?: "+check2+";");
+        writer.println("Sequenced acquisiton saving mode: "+AcquisitionSavingMode+";"); 
         writer.println();
         writer.close();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
