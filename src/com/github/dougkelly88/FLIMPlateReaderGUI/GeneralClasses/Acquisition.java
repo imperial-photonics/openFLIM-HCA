@@ -136,24 +136,6 @@ public class Acquisition {
                             // core_.snapImage();
                             saveLayersToOMETiff(writer, accImg, delays.indexOf(delay));
                             
-                        /*    short[] accImg2 = new short[(short)dim];
-                            for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
-                                core_.snapImage();
-                                Object img = core_.getImage();
-                                // this bit c.f. FrameAverager
-                                if (core_.getBytesPerPixel() == 2){
-                                    short[] pixS = (short[]) img;
-                                    for (int j = 0; j < dim; j++) {
-                                        accImg2[j] = (short) (accImg2[j] + (short) (pixS[j] & 0xffff));
-                                    }
-                                } else if (core_.getBytesPerPixel() == 1){
-                                    byte[] pixB = (byte[]) img;
-                                    for (int j = 0; j < dim; j++) {
-                                        accImg2[j] = (short) (accImg2[j] + (short) (pixB[j] & 0xff));
-                                    }
-                                }
-                            }
-                            writer.saveBytes(delays.indexOf(delay), DataTools.shortsToBytes(accImg2, false));*/
                         }
                     }                                                                         
                 }// endif                                     
