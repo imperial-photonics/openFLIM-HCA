@@ -352,7 +352,11 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_unknownFolderCheckBoxActionPerformed
 
     private void AcquisitionSavingMode_comboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AcquisitionSavingMode_comboActionPerformed
-        this.xYSeq_.parent_.AcquisitionSavingMode = AcquisitionSavingMode_combo.getSelectedItem().toString();
+
+        System.out.println(var_.AcquisitionSavingMode);
+        var_.AcquisitionSavingMode = AcquisitionSavingMode_combo.getSelectedItem().toString();
+        System.out.println(var_.AcquisitionSavingMode);
+        
     }//GEN-LAST:event_AcquisitionSavingMode_comboActionPerformed
 
     public void updatePanel(){

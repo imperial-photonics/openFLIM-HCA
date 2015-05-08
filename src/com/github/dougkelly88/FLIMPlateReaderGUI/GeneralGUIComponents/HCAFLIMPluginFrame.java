@@ -919,8 +919,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_startSequenceButtonActionPerformed
     
     public void doSequenceAcquisition() throws InterruptedException{
-        
-        if (this.AcquisitionSavingMode.equals("single SWP OME.tiff"))
+        System.out.println(var_.AcquisitionSavingMode);
+        if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff"))
         try 
         {
             this.initializeSPWWriter(FormatTools.UINT16);            
@@ -1146,7 +1146,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     System.out.println(e.getMessage());
                 }
                 
-                if (this.AcquisitionSavingMode.equals("single SWP OME.tiff"))
+                if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff"))
                     acq.snapSPWImage(sas.getFilters().getDelays(), sas, ind, false); // simulate == false
                 else
                     acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
