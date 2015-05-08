@@ -84,14 +84,17 @@ public class Arduino {
     }
     
     public void setDigitalOutHigh() {
+        
+        
         try {
-            
+            core_.setProperty("Arduino-Shutter", "OnOff", "1");
+            /*
             if(core_.getProperty("OlympusHub", "SidePort")=="SidePort"){
                 core_.setProperty("Arduino-Shutter", "OnOff", "1");
             }
             else{
                 popUpwindow("Please change to the side port path if you are using the laser!", "Ocular path choosen.");
-            }
+            }*/
         } catch (Exception ex) {
             System.out.println("Error: Class-Arduino; setDigitalOutHigh");
         }
