@@ -349,7 +349,8 @@ public class LightPathPanel extends javax.swing.JPanel {
         if (laserToggle.isSelected()) {
             laserToggle.setText("Turn laser OFF");
             try{
-                boolean abort=arduino_.checkSafety();;
+                boolean abort=arduino_.checkSafety();
+                
                 if (abort==false){
                     arduino_.setMode("shutter");
                     arduino_.setDigitalOutHigh();
@@ -357,14 +358,22 @@ public class LightPathPanel extends javax.swing.JPanel {
                 } catch (Exception ex) {
             Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+            setBy(switchPortComboBox, "LightPathPrism", "Sideport");
+            switchPortComboBox.setSelectedItem("Sideport");
+            currentLightPath_.setPortLabel((String) switchPortComboBox.getSelectedItem());
+            var_.SwitchPortComboBoxSelectedItem = (String) switchPortComboBox.getSelectedItem();
         } else {
             laserToggle.setText("Turn laser ON");
+            
             try {
                 arduino_.setDigitalOutLow();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
+            setBy(switchPortComboBox, "LightPathPrism", "eye");
+            switchPortComboBox.setSelectedItem("eye");
+            currentLightPath_.setPortLabel((String) switchPortComboBox.getSelectedItem());
+            var_.SwitchPortComboBoxSelectedItem = (String) switchPortComboBox.getSelectedItem();
         }
 
     }//GEN-LAST:event_laserToggleActionPerformed
@@ -436,6 +445,28 @@ public class LightPathPanel extends javax.swing.JPanel {
         setByLabel(switchPortComboBox, "LightPathPrism");
         currentLightPath_.setPortLabel((String) switchPortComboBox.getSelectedItem());
         var_.SwitchPortComboBoxSelectedItem = (String) switchPortComboBox.getSelectedItem();
+        if((String) switchPortComboBox.getSelectedItem()=="Sideport"){
+            laserToggle.setText("Turn laser OFF");
+            try{
+                boolean abort=arduino_.checkSafety();
+                
+                if (abort==false){
+                    arduino_.setMode("shutter");
+                    arduino_.setDigitalOutHigh();
+                }
+                } catch (Exception ex) {
+            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
+        } else {
+            laserToggle.setText("Turn laser ON");
+            
+            try {
+                arduino_.setDigitalOutLow();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }//GEN-LAST:event_switchPortComboBoxActionPerformed
 
     private void ledToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ledToggleActionPerformed
@@ -484,6 +515,15 @@ public class LightPathPanel extends javax.swing.JPanel {
             System.out.println(e.getMessage());
         }
 
+    }
+    
+    public void setBy(JComboBox combo, String device, String port) {
+        try {
+            core_.setProperty(device, "Label", port);
+        } catch (Exception ex) {
+            System.out.println("Error: LightPathPanel->setBy:");
+            System.out.println("Couldn't set property of"+ device);
+        }
     }
 
     public void setLoadedSoftwareValues() {
@@ -637,6 +677,8 @@ public class LightPathPanel extends javax.swing.JPanel {
     public void setLaserToggleText(String text){
         laserToggle.setText(text);
     }
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Filters;
