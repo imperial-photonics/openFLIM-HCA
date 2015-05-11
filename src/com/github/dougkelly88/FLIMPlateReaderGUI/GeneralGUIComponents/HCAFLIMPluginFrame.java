@@ -1140,7 +1140,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                     arduino_.setDigitalOutHigh();
                     wait(var_.shutterResponse);
-                    displayImage2_.hideImageInIJ();
+                    //displayImage2_.hideImageInIJ();
                 }
                 catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -1159,7 +1159,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     arduino_.setDigitalOutLow();
                     lightPathControls1.setLaserToggleFalse();
                     lightPathControls1.setLaserToggleText("Turn laser ON");
-                    displayImage2_.showImageInIJ(path);
+                    //displayImage2_.showImageInIJ(path);
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }

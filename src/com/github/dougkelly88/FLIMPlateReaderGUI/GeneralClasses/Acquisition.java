@@ -116,7 +116,7 @@ public class Acquisition {
                         {                                                                                                 
                             //  core_.snapImage();
                             //  Object img = core_.getImage();
-                            int[] accImg = new int[(int)dim];
+                        /*    int[] accImg = new int[(int)dim];
                             for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
                                 core_.snapImage();
                                 Object img = core_.getImage();
@@ -134,9 +134,9 @@ public class Acquisition {
                                 }
                             }
                             // core_.snapImage();
-                            saveLayersToOMETiff(writer, accImg, delays.indexOf(delay));
+                            saveLayersToOMETiff(writer, accImg, delays.indexOf(delay));*/
                             
-                        /*    short[] accImg2 = new short[(short)dim];
+                            short[] accImg2 = new short[(short)dim];
                             for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
                                 core_.snapImage();
                                 Object img = core_.getImage();
@@ -153,7 +153,8 @@ public class Acquisition {
                                     }
                                 }
                             }
-                            writer.saveBytes(delays.indexOf(delay), DataTools.shortsToBytes(accImg2, false));*/
+                            writer.saveBytes(delays.indexOf(delay), DataTools.shortsToBytes(accImg2, false));
+                           // saveLayersToOMETiff(writer, accImg2, delays.indexOf(delay));
                         }
                     }                                                                         
                 }// endif                                     
