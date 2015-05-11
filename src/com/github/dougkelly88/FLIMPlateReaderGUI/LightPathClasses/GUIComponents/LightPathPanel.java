@@ -358,10 +358,13 @@ public class LightPathPanel extends javax.swing.JPanel {
                 } catch (Exception ex) {
             Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-            setBy(switchPortComboBox, "LightPathPrism", "Sideport");
-            switchPortComboBox.setSelectedItem("Sideport");
-            currentLightPath_.setPortLabel((String) switchPortComboBox.getSelectedItem());
-            var_.SwitchPortComboBoxSelectedItem = (String) switchPortComboBox.getSelectedItem();
+            if(switchPortComboBox.getSelectedIndex()==0){
+                System.out.println("in eye if loop");
+                setBy(switchPortComboBox, "LightPathPrism", "Side Port");
+                switchPortComboBox.setSelectedItem("Side Port");
+                currentLightPath_.setPortLabel((String) switchPortComboBox.getSelectedItem());
+                var_.SwitchPortComboBoxSelectedItem = (String) switchPortComboBox.getSelectedItem();
+                }
         } else {
             laserToggle.setText("Turn laser ON");
             
@@ -370,10 +373,7 @@ public class LightPathPanel extends javax.swing.JPanel {
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-            setBy(switchPortComboBox, "LightPathPrism", "eye");
-            switchPortComboBox.setSelectedItem("eye");
-            currentLightPath_.setPortLabel((String) switchPortComboBox.getSelectedItem());
-            var_.SwitchPortComboBoxSelectedItem = (String) switchPortComboBox.getSelectedItem();
+            
         }
 
     }//GEN-LAST:event_laserToggleActionPerformed
@@ -445,28 +445,15 @@ public class LightPathPanel extends javax.swing.JPanel {
         setByLabel(switchPortComboBox, "LightPathPrism");
         currentLightPath_.setPortLabel((String) switchPortComboBox.getSelectedItem());
         var_.SwitchPortComboBoxSelectedItem = (String) switchPortComboBox.getSelectedItem();
-        if((String) switchPortComboBox.getSelectedItem()=="Sideport"){
-            laserToggle.setText("Turn laser OFF");
-            try{
-                boolean abort=arduino_.checkSafety();
-                
-                if (abort==false){
-                    arduino_.setMode("shutter");
-                    arduino_.setDigitalOutHigh();
-                }
-                } catch (Exception ex) {
-            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
-        } else {
-            laserToggle.setText("Turn laser ON");
-            
+        if(switchPortComboBox.getSelectedIndex()==0){
+           laserToggle.setText("Turn laser ON");
             try {
                 arduino_.setDigitalOutLow();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
+        
     }//GEN-LAST:event_switchPortComboBoxActionPerformed
 
     private void ledToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ledToggleActionPerformed
