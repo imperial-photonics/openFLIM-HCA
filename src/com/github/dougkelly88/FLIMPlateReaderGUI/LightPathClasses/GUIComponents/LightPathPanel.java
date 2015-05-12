@@ -530,18 +530,30 @@ public class LightPathPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_ledToggleActionPerformed
 
     private void flimCameraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flimCameraActionPerformed
+      
         try {
-            core_.setCameraDevice("Hamamatsu_DCAM");
+            if (gui_.isLiveModeOn()){
+                gui_.enableLiveMode(false);
+                core_.setCameraDevice("HamamatsuHam_DCAM");
+                gui_.enableLiveMode(true);
+            } else{
+                core_.setCameraDevice("HamamatsuHam_DCAM");
+            } 
         } catch (Exception ex) {
             System.out.println("Error: Couldn't set default camera to FLIM camera!");
         }
         
-// TODO add your handling code here:
     }//GEN-LAST:event_flimCameraActionPerformed
 
     private void bfCameraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bfCameraActionPerformed
         try {
-            core_.setCameraDevice("Flea2Cam");
+            if (gui_.isLiveModeOn()){
+                gui_.enableLiveMode(false);
+                core_.setCameraDevice("Flea2Cam");
+                gui_.enableLiveMode(true);
+            } else{
+                core_.setCameraDevice("Flea2Cam");
+            }
         } catch (Exception ex) {
             System.out.println("Error: Couldn't set default camera to bright field camera!");
         }
