@@ -359,7 +359,6 @@ public class LightPathPanel extends javax.swing.JPanel {
             Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
             if(switchPortComboBox.getSelectedIndex()==0){
-                System.out.println("in eye if loop");
                 setBy(switchPortComboBox, "LightPathPrism", "Side Port");
                 switchPortComboBox.setSelectedItem("Side Port");
                 currentLightPath_.setPortLabel((String) switchPortComboBox.getSelectedItem());
