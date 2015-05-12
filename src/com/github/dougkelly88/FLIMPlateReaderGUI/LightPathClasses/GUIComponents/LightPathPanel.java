@@ -17,7 +17,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import mmcorej.CMMCore;
-import mmcorej.DeviceType;
 import mmcorej.StrVector;
 import org.micromanager.MMStudio;
 import org.micromanager.api.events.PropertyChangedEvent;
@@ -101,6 +100,9 @@ public class LightPathPanel extends javax.swing.JPanel {
         ObjectiveLabel = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        Camera = new javax.swing.JPanel();
+        flimCamera = new javax.swing.JButton();
+        bfCamera = new javax.swing.JButton();
 
         excitationSource.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Excitation source"));
 
@@ -324,6 +326,43 @@ public class LightPathPanel extends javax.swing.JPanel {
                     .addComponent(switchPortComboBox)))
         );
 
+        Camera.setBorder(javax.swing.BorderFactory.createTitledBorder("Camera"));
+
+        flimCamera.setText("FLIM cam");
+        flimCamera.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                flimCameraActionPerformed(evt);
+            }
+        });
+
+        bfCamera.setText("brightfield cam");
+        bfCamera.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bfCameraActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout CameraLayout = new javax.swing.GroupLayout(Camera);
+        Camera.setLayout(CameraLayout);
+        CameraLayout.setHorizontalGroup(
+            CameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CameraLayout.createSequentialGroup()
+                .addGap(44, 44, 44)
+                .addComponent(flimCamera, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35)
+                .addComponent(bfCamera, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        CameraLayout.setVerticalGroup(
+            CameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CameraLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(CameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(flimCamera)
+                    .addComponent(bfCamera))
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -331,6 +370,7 @@ public class LightPathPanel extends javax.swing.JPanel {
             .addComponent(Olympus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(Filters, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(excitationSource, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Camera, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -340,7 +380,9 @@ public class LightPathPanel extends javax.swing.JPanel {
                 .addComponent(Filters, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Olympus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(87, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Camera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(89, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -487,6 +529,24 @@ public class LightPathPanel extends javax.swing.JPanel {
        
     }//GEN-LAST:event_ledToggleActionPerformed
 
+    private void flimCameraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flimCameraActionPerformed
+        try {
+            core_.setCameraDevice("Hamamatsu_DCAM");
+        } catch (Exception ex) {
+            System.out.println("Error: Couldn't set default camera to FLIM camera!");
+        }
+        
+// TODO add your handling code here:
+    }//GEN-LAST:event_flimCameraActionPerformed
+
+    private void bfCameraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bfCameraActionPerformed
+        try {
+            core_.setCameraDevice("Flea2Cam");
+        } catch (Exception ex) {
+            System.out.println("Error: Couldn't set default camera to bright field camera!");
+        }
+    }//GEN-LAST:event_bfCameraActionPerformed
+
     public void setByLabel(JComboBox combo, String device) {
         try {
             String setval = (String) combo.getSelectedItem();
@@ -544,7 +604,8 @@ public class LightPathPanel extends javax.swing.JPanel {
 
         //SwitchPort Load
         populateComboBoxes(switchPortComboBox, "LightPathPrism");
-
+        
+        
         // set defaults
         setDefaultLightPath();
 
@@ -610,6 +671,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         if (switchPortComboBox.isEnabled()) {
             switchPortComboBox.setSelectedIndex(1);
         }
+        
     }
 
     private void populateComboBoxes(JComboBox combo, String device) {
@@ -667,14 +729,17 @@ public class LightPathPanel extends javax.swing.JPanel {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel Camera;
     private javax.swing.JPanel Filters;
     private javax.swing.JLabel ObjectiveLabel;
     private javax.swing.JPanel Olympus;
+    private javax.swing.JButton bfCamera;
     private javax.swing.JComboBox dichroicComboBox;
     private javax.swing.JComboBox emissionComboBox;
     private javax.swing.JComboBox excitationComboBox;
     private javax.swing.JPanel excitationSource;
     private javax.swing.JComboBox filterCubeComboBox;
+    private javax.swing.JButton flimCamera;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
