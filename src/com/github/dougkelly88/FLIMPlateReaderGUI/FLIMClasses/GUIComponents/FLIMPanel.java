@@ -970,7 +970,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         }
             gui_.registerForEvents(this);
             core_ = gui_.getCore();
-            file1 = DelayPath+"\\HDG800Calibration41MHz_25ps_sampling.csv";
+            file1 = DelayPath+"\\HDG800Calibration41MHz_Fianium.csv";
             setDelayBox(file1, 0);
 
     }
@@ -981,7 +981,7 @@ public class FLIMPanel extends javax.swing.JPanel {
             core_.setProperty("Delay box", "Calibrated", "Yes");
             fastBoxCalibratedCheck.setSelected(true);
             if(x==0){
-                DelayBoxCalibrationComboBox.setSelectedItem("HDG800Calibration41MHz_25ps_sampling.csv");
+                DelayBoxCalibrationComboBox.setSelectedItem("HDG800Calibration41MHz_Fianium.csv");
             }
             CalibrationPathField.setText(file);
         } catch (Exception ex) {
