@@ -49,6 +49,10 @@ public class VariableTest {
     public StrVector SwitchPortComboBox;
     public String SwitchPortComboBoxSelectedItem;
     
+    //XYZPanel
+    public boolean manStageCheck;
+
+
     //FLIMPanel:
     public double mcpSlider;
     public double gatewidthSlider;
@@ -69,6 +73,8 @@ public class VariableTest {
     public double yOffset=0;
     public boolean check2=false;
     public String AcquisitionSavingMode="separate OME.tiff for every FOV"; 
+    
+    
 
   // PRIVATE
 

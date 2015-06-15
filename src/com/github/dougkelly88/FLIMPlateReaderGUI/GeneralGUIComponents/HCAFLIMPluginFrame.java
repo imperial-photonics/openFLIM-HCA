@@ -1294,7 +1294,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_FLIMPanelStateChanged
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-      //  displayImage2_.showImageInIJ();
+      System.out.print(var_.manStageCheck);
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jMenu_create_simulated_SPW_OMEtiffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu_create_simulated_SPW_OMEtiffActionPerformed
