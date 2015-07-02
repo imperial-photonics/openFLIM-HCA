@@ -83,7 +83,8 @@ public class Acquisition {
                     
                     for (Integer delay : delays) 
                     {                                                
-                        if (simulate) {
+                        if (simulate) 
+                        {
                             //////////////////////// simulated "image"                                                
                             double tau = 5000;                        
                             short[] accImg = new short[(int)dim];                        
@@ -97,7 +98,7 @@ public class Acquisition {
                                     accImg[k] = (short)(1000*Math.exp(-delay/tau));                             
                                 }
                             }                                                
-
+                            //
                             Exception exception = null;
                             try 
                             {
@@ -113,9 +114,7 @@ public class Acquisition {
                             //////////////////////// simulated "image"  
                         }
                         else
-                        {                                                                                                 
-                            //  core_.snapImage();
-                            //  Object img = core_.getImage();
+                        {                                                                                                                             
                             int[] accImg = new int[(int)dim];
                             for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
                                 core_.snapImage();
@@ -133,9 +132,19 @@ public class Acquisition {
                                     }
                                 }
                             }
-                            // core_.snapImage();
-                            saveLayersToOMETiff(writer, accImg, delays.indexOf(delay));
-                            
+                            //
+                            Exception exception = null;
+                            try 
+                            {
+                              writer.saveBytes(delays.indexOf(delay), DataTools.intsToBytes(accImg, false));
+                            }
+                            catch (FormatException e)   {exception = e;}
+                            catch (IOException e)       {exception = e;}
+                            if (exception != null) 
+                            {
+                              System.err.println("Failed to save plane.");
+                              exception.printStackTrace();
+                            }                                                
                         }
                     }                                                                         
                 }// endif                                     
