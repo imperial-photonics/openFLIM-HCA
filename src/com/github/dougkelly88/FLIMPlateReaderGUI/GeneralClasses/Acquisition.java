@@ -60,15 +60,14 @@ public class Acquisition {
         frame_= HCAFLIMPluginFrame.getInstance();
     }
 
-    public void snapSPWImage(ArrayList<Integer> delays, SeqAcqSetup sas, int series, boolean simulate){    
+    public void snapSPWImage(ImageWriter writer, ArrayList<Integer> delays, SeqAcqSetup sas, int series, boolean simulate){    
+        
         try {
                 if (gui_.isLiveModeOn() | gui_.isAcquisitionRunning())
                 {
                     gui_.enableLiveMode(false);
                     gui_.closeAllAcquisitions();
-                }
-                
-                ImageWriter writer  = frame_.SPWWriter_;
+                }                
                 
                 if (null != writer) 
                 {
@@ -150,7 +149,8 @@ public class Acquisition {
                 }// endif                                     
             } catch (Exception e) {System.out.println(e.getMessage());}
     }
-        
+    
+    
     public void snapFLIMImage(String path, ArrayList<Integer> delays, SeqAcqSetup sas) {
 
         try{
