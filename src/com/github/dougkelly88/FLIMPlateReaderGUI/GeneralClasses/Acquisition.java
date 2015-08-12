@@ -60,15 +60,14 @@ public class Acquisition {
         frame_= HCAFLIMPluginFrame.getInstance();
     }
 
-    public void snapSPWImage(ArrayList<Integer> delays, SeqAcqSetup sas, int series, boolean simulate){    
+    public void snapSPWImage(ImageWriter writer, ArrayList<Integer> delays, SeqAcqSetup sas, int series, boolean simulate){    
+        
         try {
                 if (gui_.isLiveModeOn() | gui_.isAcquisitionRunning())
                 {
                     gui_.enableLiveMode(false);
                     gui_.closeAllAcquisitions();
-                }
-                
-                ImageWriter writer  = frame_.SPWWriter_;
+                }                
                 
                 if (null != writer) 
                 {
@@ -83,7 +82,8 @@ public class Acquisition {
                     
                     for (Integer delay : delays) 
                     {                                                
-                        if (simulate) {
+                        if (simulate) 
+                        {
                             //////////////////////// simulated "image"                                                
                             double tau = 5000;                        
                             short[] accImg = new short[(int)dim];                        
@@ -97,7 +97,7 @@ public class Acquisition {
                                     accImg[k] = (short)(1000*Math.exp(-delay/tau));                             
                                 }
                             }                                                
-
+                            //
                             Exception exception = null;
                             try 
                             {
@@ -113,9 +113,7 @@ public class Acquisition {
                             //////////////////////// simulated "image"  
                         }
                         else
-                        {                                                                                                 
-                            //  core_.snapImage();
-                            //  Object img = core_.getImage();
+                        {                                                                                                                             
                             int[] accImg = new int[(int)dim];
                             for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
                                 core_.snapImage();
@@ -133,15 +131,26 @@ public class Acquisition {
                                     }
                                 }
                             }
-                            // core_.snapImage();
-                            saveLayersToOMETiff(writer, accImg, delays.indexOf(delay));
-                            
+                            //
+                            Exception exception = null;
+                            try 
+                            {
+                              writer.saveBytes(delays.indexOf(delay), DataTools.intsToBytes(accImg, false));
+                            }
+                            catch (FormatException e)   {exception = e;}
+                            catch (IOException e)       {exception = e;}
+                            if (exception != null) 
+                            {
+                              System.err.println("Failed to save plane.");
+                              exception.printStackTrace();
+                            }                                                
                         }
                     }                                                                         
                 }// endif                                     
             } catch (Exception e) {System.out.println(e.getMessage());}
     }
-        
+    
+    
     public void snapFLIMImage(String path, ArrayList<Integer> delays, SeqAcqSetup sas) {
 
         try{
