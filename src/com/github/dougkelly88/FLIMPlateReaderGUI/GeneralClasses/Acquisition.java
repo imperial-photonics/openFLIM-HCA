@@ -339,8 +339,8 @@ public class Acquisition {
 
             PositiveFloat pitch = checkPixelPitch();
 
-            m.setPixelsPhysicalSizeX(pitch, 0);
-            m.setPixelsPhysicalSizeY(pitch, 0);
+           m.setPixelsPhysicalSizeX(pitch, 0);
+           m.setPixelsPhysicalSizeY(pitch, 0);
             m.setPixelsPhysicalSizeZ(new PositiveFloat(1.0), 0);
 
             PlatformIndependentGuidGen p = PlatformIndependentGuidGen.getInstance();

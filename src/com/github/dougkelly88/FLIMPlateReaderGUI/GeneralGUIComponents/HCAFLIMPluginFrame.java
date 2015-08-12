@@ -1427,10 +1427,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             } 
         }
         catch(InterruptedException e){};
-            
+        System.out.println(this.SPWWriter_);
         try {this.SPWWriter_.close();} catch (IOException e) {System.err.println("Failed to close file writer.");}
-        this.SPWWriter_ = null;
-        System.out.println("..jMenu_save_acquisition_as_SPW_OMEtiffActionPerformed - passed successfully..");
+        //this.SPWWriter_ = null;
+        //System.out.println("..jMenu_save_acquisition_as_SPW_OMEtiffActionPerformed - passed successfully..");
     }//GEN-LAST:event_jMenu_create_simulated_SPW_OMEtiffActionPerformed
 
     private void advancedMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_advancedMenuActionPerformed
@@ -1892,6 +1892,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             java.lang.System.setProperty("javax.xml.transform.TransformerFactory", "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
                         
             SPWWriter_ = new ImageWriter();
+            System.out.println(SPWWriter_);
             //
             String GrandOMEtiffPath = currentBasePathField.getText() + filesep + "Sequenced FLIM acquisition " + timeStamp + ".OME.tiff";
             try 
@@ -1901,7 +1902,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 SPWWriter_.setCompression("LZW");                
                 ((TiffWriter)SPWWriter_.getWriter(GrandOMEtiffPath)).setBigTiff(true);                                                  
                 SPWWriter_.setId(GrandOMEtiffPath);
+                System.out.println(SPWWriter_);
             }
+            
             catch (FormatException e)   {exception = e;}        
             //catch (IOException e)       {exception = e;}
             if (exception != null) 
