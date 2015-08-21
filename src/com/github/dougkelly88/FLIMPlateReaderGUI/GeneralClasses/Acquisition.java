@@ -113,8 +113,8 @@ public class Acquisition {
                             //////////////////////// simulated "image"  
                         }
                         else
-                        {                                                                                                                             
-                            int[] accImg = new int[(int)dim];
+                        {      
+                           short[] accImg = new short[(int)dim];
                             for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
                                 core_.snapImage();
                                 Object img = core_.getImage();
@@ -122,27 +122,52 @@ public class Acquisition {
                                 if (core_.getBytesPerPixel() == 2){
                                     short[] pixS = (short[]) img;
                                     for (int j = 0; j < dim; j++) {
-                                        accImg[j] = (int) (accImg[j] + (int) (pixS[j] & 0xffff));
+                                        accImg[j] = (short) (accImg[j] + (short) (pixS[j] & 0xffff));
                                     }
-                                } else if (core_.getBytesPerPixel() == 1){
-                                    byte[] pixB = (byte[]) img;
-                                    for (int j = 0; j < dim; j++) {
-                                        accImg[j] = (int) (accImg[j] + (int) (pixB[j] & 0xff));
-                                    }
-                                }
+                                }                                 
                             }
                             //
                             Exception exception = null;
                             try 
                             {
-                              writer.saveBytes(delays.indexOf(delay), DataTools.intsToBytes(accImg, false));
+                              writer.saveBytes(delays.indexOf(delay), DataTools.shortsToBytes(accImg, false));
                             }
                             catch (FormatException e)   {exception = e;}
                             catch (IOException e)       {exception = e;}
                             if (exception != null) 
                             {
                               System.err.println("Failed to save plane.");
-                              exception.printStackTrace();
+                              exception.printStackTrace();                            
+                            
+//                            int[] accImg = new int[(int)dim];
+//                            for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
+//                                core_.snapImage();
+//                                Object img = core_.getImage();
+//                                // this bit c.f. FrameAverager
+//                                if (core_.getBytesPerPixel() == 2){
+//                                    short[] pixS = (short[]) img;
+//                                    for (int j = 0; j < dim; j++) {
+//                                        accImg[j] = (int) (accImg[j] + (int) (pixS[j] & 0xffff));
+//                                    }
+//                                } else if (core_.getBytesPerPixel() == 1){
+//                                    byte[] pixB = (byte[]) img;
+//                                    for (int j = 0; j < dim; j++) {
+//                                        accImg[j] = (int) (accImg[j] + (int) (pixB[j] & 0xff));
+//                                    }
+//                                }
+//                            }
+//                            //
+//                            Exception exception = null;
+//                            try 
+//                            {
+//                              writer.saveBytes(delays.indexOf(delay), DataTools.intsToBytes(accImg, false));
+//                            }
+//                            catch (FormatException e)   {exception = e;}
+//                            catch (IOException e)       {exception = e;}
+//                            if (exception != null) 
+//                            {
+//                              System.err.println("Failed to save plane.");
+//                              exception.printStackTrace();
                             }                                                
                         }
                     }                                                                         
