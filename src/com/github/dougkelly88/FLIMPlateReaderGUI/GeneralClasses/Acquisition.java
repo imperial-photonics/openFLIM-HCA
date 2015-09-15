@@ -114,7 +114,8 @@ public class Acquisition {
                             //////////////////////// simulated "image"  
                         }
                         else
-                        {                                                                                                                             
+                        {    
+                            core_.setProperty("Delay box", "Delay (ps)", delay);
                             Exception exception = null;
                             try 
                             {                            
