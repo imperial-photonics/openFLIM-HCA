@@ -8,10 +8,8 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.XYZClasses.GUIComponents;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -37,7 +35,7 @@ public class WellMapDrawPanel extends JPanel {
         FOV drawFOV_;
         int r_ = 127;
         String currentWell_ = "C4";
-        String wellShape_ = "Square";
+        String wellShape_ = "Circle";
         double wellSizeUm = 6500;
         boolean enabled_ = false;   // start up disabled, enable upon loading plate stuff. 
         PlateProperties pp_ = new PlateProperties();

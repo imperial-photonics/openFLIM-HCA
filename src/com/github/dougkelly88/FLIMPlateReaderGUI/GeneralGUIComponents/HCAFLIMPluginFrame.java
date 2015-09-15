@@ -924,7 +924,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff"))
         try 
         {
-            SPWWriter = this.createSPWWriter(FormatTools.UINT16);            
+            if (core_.getBytesPerPixel() == 2)
+                SPWWriter = this.createSPWWriter(FormatTools.UINT16);            
+            else if (core_.getBytesPerPixel() == 1)
+                SPWWriter = this.createSPWWriter(FormatTools.UINT8);            
+            //
             System.out.println(SPWWriter.toString());
         }
         catch (Exception e) {System.out.println(e.getMessage());}
