@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
+import mdbtools.dbengine.functions.Length;
 import mmcorej.DeviceType;
 import mmcorej.TaggedImage;
 import org.micromanager.api.ImageCache;
