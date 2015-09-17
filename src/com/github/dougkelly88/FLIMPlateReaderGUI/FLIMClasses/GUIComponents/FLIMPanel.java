@@ -723,6 +723,11 @@ public class FLIMPanel extends javax.swing.JPanel {
 
     private void maxpointResolutionFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxpointResolutionFieldActionPerformed
         int num = Integer.parseInt(maxpointResolutionField.getText());
+        num=num/25*25;
+        if(num<25){
+        num=25;
+        }
+        maxpointResolutionField.setText(Integer.toString(num));
         fm_.setResolution(num);
     }//GEN-LAST:event_maxpointResolutionFieldActionPerformed
 
@@ -1161,6 +1166,7 @@ public class FLIMPanel extends javax.swing.JPanel {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 fastDelaySlider_.setValue(tableModel_.validateData(fastDelaySlider_.getValue().intValue()));
                 fastDelaySliderPropertyChange(evt);
+                
             }
         });
         

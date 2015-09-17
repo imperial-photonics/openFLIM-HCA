@@ -13,7 +13,6 @@ import static java.lang.Math.round;
 import java.util.ArrayList;
 import java.util.Collections;
 import static java.util.Collections.reverse;
-import java.util.function.UnaryOperator;
 import javax.swing.table.AbstractTableModel;
 
 
