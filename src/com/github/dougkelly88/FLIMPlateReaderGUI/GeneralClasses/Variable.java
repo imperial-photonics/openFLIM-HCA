@@ -72,14 +72,10 @@ public class Variable {
     public double xOffset=0;
     public double yOffset=0;
     public boolean check2=false;
-    public String AcquisitionSavingMode="separate OME.tiff for every FOV"; 
-<<<<<<< HEAD:src/com/github/dougkelly88/FLIMPlateReaderGUI/GeneralClasses/Variable.java
+    public String AcquisitionSavingMode="separate OME.tiff for every FOV";
+    
     public String autofocusWhich;
     public String motorizedMicroscopeTabelWhich;
-=======
-    
-    
->>>>>>> a0ec751d34410abf1de1f637ecf1c0b1f3a484a1:src/com/github/dougkelly88/FLIMPlateReaderGUI/GeneralClasses/VariableTest.java
 
   // PRIVATE
 

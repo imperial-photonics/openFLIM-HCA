@@ -6,11 +6,7 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
-<<<<<<< HEAD
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
-=======
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
->>>>>>> a0ec751d34410abf1de1f637ecf1c0b1f3a484a1
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import java.awt.geom.AffineTransform;
@@ -35,11 +31,7 @@ public final class XYZMotionInterface {
     Point2D.Double[] xpltWellCentres_ = new Point2D.Double[3];
     AffineTransform transform_;
     HCAFLIMPluginFrame parent_;
-<<<<<<< HEAD
     private Variable var_;
-=======
-    private VariableTest var_;
->>>>>>> a0ec751d34410abf1de1f637ecf1c0b1f3a484a1
 
     //TODO: implement safety checks for objective fouling. 
     //TODO: deal with objective focal shifts
@@ -49,7 +41,7 @@ public final class XYZMotionInterface {
         parent_ = parent;
         pp_ = parent.pp_;
         core_ = parent.core_;
-        var_ = VariableTest.getInstance();
+        var_ = Variable.getInstance();
         
         xystage_ = core_.getXYStageDevice();
         zstage_ = core_.getFocusDevice();
