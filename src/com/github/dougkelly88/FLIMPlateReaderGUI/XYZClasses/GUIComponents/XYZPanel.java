@@ -582,8 +582,8 @@ public class XYZPanel extends javax.swing.JPanel {
 
     @SuppressWarnings("empty-statement")
     private void afNowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_afNowButtonActionPerformed
-        // Is checking if objective is suitable for autofocus
-      
+        
+        // checking if objective is suitable for autofocus
         if(flag){
             String[] allObj = afObj.toArray();
             List<String> list = new ArrayList<String>();
@@ -613,6 +613,9 @@ public class XYZPanel extends javax.swing.JPanel {
             Double fO=xyzmi_.customAutofocus(Double.parseDouble(afOffsetField.getText()));
             focusOffsetField.setText(Double.toString(fO));
         }
+        
+        // checking if manual focus is selected and set back
+        xyzmi_.enableManualZControls(manUscopeCheck.isSelected());
     }//GEN-LAST:event_afNowButtonActionPerformed
 
     private void afObjectiveComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_afObjectiveComboActionPerformed
