@@ -6,11 +6,6 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
-import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.FComparator;
-import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.SeqAcqSetupChainedComparator;
-import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.TComparator;
-import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.WellComparator;
-import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ZComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FilterSetup;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.SeqAcqSetup;
@@ -31,16 +26,8 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.NonNegativeInteger;
 import java.io.IOException;
 import com.quirkware.guid.PlatformIndependentGuidGen;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
-import mdbtools.dbengine.functions.Length;
-import mmcorej.DeviceType;
 import mmcorej.TaggedImage;
 import org.micromanager.api.ImageCache;
 
