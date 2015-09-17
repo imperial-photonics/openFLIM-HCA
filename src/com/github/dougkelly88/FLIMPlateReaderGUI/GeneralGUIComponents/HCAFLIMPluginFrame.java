@@ -1197,7 +1197,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         {
             try {SPWWriter.close();} catch (IOException e) {System.err.println("Failed to close file SPWWriter.");}
         }
-                
+        
+        try {
+            core_.setProperty("Delay box", "Delay (ps)", var_.fastDelaySlider);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }        
         // Send Email after finishing acquisition!
      /*   if(xYSequencing1.sendEmailBoolean){
             xYSequencing1.sendEmail();
