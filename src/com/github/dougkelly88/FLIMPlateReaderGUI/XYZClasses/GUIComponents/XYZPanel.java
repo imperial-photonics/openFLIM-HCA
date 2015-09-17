@@ -66,6 +66,7 @@ public class XYZPanel extends javax.swing.JPanel {
         stepSizeLabel.setText("Step size " + um);
         zStepSizeLabel.setText("Step size " + um);
         afOffsetLabel.setText("AF offset "+ um);
+        afInSequence.setSelected(true);
     }
 
     /**
