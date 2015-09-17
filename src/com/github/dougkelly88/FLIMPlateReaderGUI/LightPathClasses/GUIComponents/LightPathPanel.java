@@ -7,7 +7,7 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.SliderControl;
 import com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.Classes.CurrentLightPath;
@@ -31,7 +31,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     CMMCore core_;
     PropertyChangedEvent event_;
     private SeqAcqProps sap_;
-    private VariableTest var_;
+    private Variable var_;
     HCAFLIMPluginFrame parent_;
     SliderControl powerSlider_;
     CurrentLightPath currentLightPath_;
@@ -54,7 +54,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         initComponents();
         gui_ = MMStudio.getInstance();
         sap_ = SeqAcqProps.getInstance();
-        var_ = VariableTest.getInstance();
+        var_ = Variable.getInstance();
         arduino_ = Arduino.getInstance();
         xYZPanel_ = XYZPanel.getInstance();
         try {

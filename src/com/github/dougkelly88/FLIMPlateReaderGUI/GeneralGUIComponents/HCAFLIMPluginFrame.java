@@ -11,7 +11,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.DisplayImage2;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.snapFlimImageThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZMotionInterface;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.AcqOrderTableModel;
@@ -99,7 +99,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public CMMCore core_;
     static HCAFLIMPluginFrame frame_;
     private SeqAcqProps sap_;
-    private VariableTest var_;
+    private Variable var_;
     public PlateProperties pp_;
     public XYZMotionInterface xyzmi_;
     public AcqOrderTableModel tableModel_;
@@ -156,7 +156,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         pp_ = new PlateProperties();
         currentFOV_ = new FOV("C4", pp_, 1000);
 
-        var_ = VariableTest.getInstance();
+        var_ = Variable.getInstance();
         currentBasePathField.setText(var_.basepath);
         
 

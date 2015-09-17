@@ -6,7 +6,7 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.google.common.io.Files;
 import java.awt.Component;
 import java.io.BufferedInputStream;
@@ -40,7 +40,7 @@ public class SaveData extends javax.swing.JPanel {
     CMMCore core_;
     PropertyChangedEvent event_;
     private SeqAcqProps sap_;
-    private VariableTest var_;
+    private Variable var_;
     String path=null;
     /**
      * Creates new form SaveData
@@ -49,7 +49,7 @@ public class SaveData extends javax.swing.JPanel {
         initComponents();
         gui_ = MMStudio.getInstance();
         sap_ = SeqAcqProps.getInstance();
-        var_ = VariableTest.getInstance();
+        var_ = Variable.getInstance();
         try{
         gui_.registerForEvents(this);
         core_ = gui_.getCore();

@@ -22,7 +22,7 @@ import mmcorej.StrVector;
  *
  * @author Frederik
  */
-public class VariableTest {
+public class Variable {
 // All variables define here:
     //Test variables:
     public AtomicInteger value = new AtomicInteger(10);
@@ -69,13 +69,15 @@ public class VariableTest {
     public double yOffset=0;
     public boolean check2=false;
     public String AcquisitionSavingMode="separate OME.tiff for every FOV"; 
+    public String autofocusWhich;
+    public String motorizedMicroscopeTabelWhich;
 
   // PRIVATE
 
   /**
   * Single instance created upon class loading.
   */
-  private static final VariableTest fINSTANCE =  new VariableTest();
+  private static final Variable fINSTANCE =  new Variable();
   /**
   * Private constructor prevents construction outside this class.
   */
@@ -138,6 +140,8 @@ public class VariableTest {
         writer.println("yOffset ring acquisition: "+yOffset+";");
         writer.println("Unknown Folder enabled?: "+check2+";");
         writer.println("Sequenced acquisiton saving mode: "+AcquisitionSavingMode+";"); 
+        writer.println("Autofocus: "+autofocusWhich+";"); 
+        writer.println("Motorized microscope table: "+motorizedMicroscopeTabelWhich+";");
         writer.println();
         writer.close();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
@@ -150,7 +154,7 @@ public class VariableTest {
   }
   
   
-  public static VariableTest getInstance() {
+  public static Variable getInstance() {
       
       return fINSTANCE;
   }    

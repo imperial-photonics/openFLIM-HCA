@@ -7,7 +7,7 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponent
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZMotionInterface;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
@@ -53,7 +53,7 @@ public class XYSequencing extends javax.swing.JPanel {
     XYZMotionInterface xyzmi_;
     public boolean sendEmailBoolean=false;
     String emailString;
-    private VariableTest var_;
+    private Variable var_;
 
     /**
      * Creates new form XYSequencing
@@ -61,7 +61,7 @@ public class XYSequencing extends javax.swing.JPanel {
     public XYSequencing() {
         initComponents();
         setControlDefaults();
-        var_ = VariableTest.getInstance();
+        var_ = Variable.getInstance();
     }
 
     public static XYSequencing getInstance() {

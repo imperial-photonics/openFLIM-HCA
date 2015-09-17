@@ -32,7 +32,7 @@ public class Arduino {
     private static HCAFLIMPluginFrame frame;
     double th1=0.5;
     double th2=0.5;
-    private VariableTest var_;
+    private Variable var_;
     
     public static Arduino getInstance() {
        return fINSTANCE;
@@ -47,7 +47,7 @@ public class Arduino {
             System.out.println("Error: Arduino initalization unsure!");
         }
     frame = (HCAFLIMPluginFrame) frame_;
-    var_ = VariableTest.getInstance();
+    var_ = Variable.getInstance();
     }
     
     public void initializeArduino() {

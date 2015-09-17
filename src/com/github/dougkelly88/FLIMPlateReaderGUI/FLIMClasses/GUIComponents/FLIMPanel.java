@@ -10,7 +10,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.Classes.DelayTableM
 import com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.Classes.FindMaxpoint;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.SliderControl;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.google.common.eventbus.Subscribe;
 import java.awt.BorderLayout;
@@ -58,7 +58,7 @@ public class FLIMPanel extends javax.swing.JPanel {
     FindMaxpoint fm_;
     ChartPanel chartPanel_;
     private SeqAcqProps sap_;
-    private VariableTest var_;
+    private Variable var_;
     private Object parent_;
     Object calibrationDelayBox;
     String DelayPath;
@@ -83,7 +83,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         
         gui_ = MMStudio.getInstance();
         sap_ = SeqAcqProps.getInstance().setUseScanFLIM(false);
-        var_= VariableTest.getInstance();
+        var_= Variable.getInstance();
         
         try {
             core_.setProperty("Delay box", "Calibrated", "Yes");

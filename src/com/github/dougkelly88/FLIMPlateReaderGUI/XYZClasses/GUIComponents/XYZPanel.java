@@ -8,7 +8,7 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.XYZClasses.GUIComponents;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZMotionInterface;
 import com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents.LightPathPanel;
@@ -47,7 +47,7 @@ public class XYZPanel extends javax.swing.JPanel {
     private CMMCore core_;
     private static final XYZPanel fINSTANCE =  new XYZPanel();
     private LightPathPanel lightPathPanel_;
-    private VariableTest var_;
+    private Variable var_;
     private StrVector afObj;
     private ArrayList<String> installedObj;
     private boolean flag=true;
@@ -60,7 +60,7 @@ public class XYZPanel extends javax.swing.JPanel {
     public XYZPanel() {
         initComponents();
         setControlDefaults();
-        var_ = VariableTest.getInstance();
+        var_ = Variable.getInstance();
         lightPathPanel_= LightPathPanel.getInstance();
         // add micro symbols
         stepSizeLabel.setText("Step size " + um);
@@ -580,6 +580,7 @@ public class XYZPanel extends javax.swing.JPanel {
     @SuppressWarnings("empty-statement")
     private void afNowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_afNowButtonActionPerformed
         // Is checking if objective is suitable for autofocus
+      
         if(flag){
             String[] allObj = afObj.toArray();
             List<String> list = new ArrayList<String>();

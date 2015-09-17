@@ -6,6 +6,7 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import java.awt.geom.AffineTransform;
@@ -30,6 +31,7 @@ public final class XYZMotionInterface {
     Point2D.Double[] xpltWellCentres_ = new Point2D.Double[3];
     AffineTransform transform_;
     HCAFLIMPluginFrame parent_;
+    private Variable var_;
 
     //TODO: implement safety checks for objective fouling. 
     //TODO: deal with objective focal shifts
@@ -254,18 +256,28 @@ public final class XYZMotionInterface {
     
     public double customAutofocus(Double offset){
         Double focusOffset = null;
-        try{
-            core_.setProperty("Objective", "Use Safe Position", "0");
-            this.moveZRelative(-offset);
-            core_.setProperty("AutoFocusZDC", "MeasureOffset", "Now");
-            focusOffset = Double.parseDouble(core_.getProperty("AutoFocusZDC", "Offset"));
-        //    this.moveZAbsolute(offset + focusOffset);
-            this.moveZRelative(offset - focusOffset); // Doug
-        //    this.moveZRelative(offset);
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-        }
+        
+        if(var_.autofocusWhich.equals("ZDC Olympus")){
+            try{
+                core_.setProperty("Objective", "Use Safe Position", "0");
+                this.moveZRelative(-offset);
+                core_.setProperty("AutoFocusZDC", "MeasureOffset", "Now");
+                focusOffset = Double.parseDouble(core_.getProperty("AutoFocusZDC", "Offset"));
+            //    this.moveZAbsolute(offset + focusOffset);
+                this.moveZRelative(offset - focusOffset); // Doug
+            //    this.moveZRelative(offset);
+            } catch (Exception e){
+                System.out.println(e.getMessage());
+            }
         return focusOffset;
+        }
+        else if(var_.autofocusWhich.equals("Definite focus Zeiss")){
+            System.out.println("autofocusComboBox in ProSetting is on Definite focus Zeis. Not implemented yet! Go back to ZDC Olympus.");
+        }
+        else{
+            System.out.println("autofocusComboBox in ProSetting is seeing nothing!");
+        }   
+         return focusOffset;   
     }
     
 }
