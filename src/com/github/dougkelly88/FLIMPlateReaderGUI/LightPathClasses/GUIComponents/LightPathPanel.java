@@ -549,10 +549,10 @@ public class LightPathPanel extends javax.swing.JPanel {
         try {
             if (gui_.isLiveModeOn()){
                 gui_.enableLiveMode(false);
-                core_.setCameraDevice("Flea2Cam");
+                core_.setCameraDevice("Andor sCMOS Camera");
                 gui_.enableLiveMode(true);
             } else{
-                core_.setCameraDevice("Flea2Cam");
+                core_.setCameraDevice("Andor sCMOS Camera");
             }
         } catch (Exception ex) {
             System.out.println("Error: Couldn't set default camera to bright field camera!");

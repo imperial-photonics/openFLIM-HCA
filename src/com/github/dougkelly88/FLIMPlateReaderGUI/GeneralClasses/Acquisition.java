@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
+import mdbtools.dbengine.functions.Length;
 import mmcorej.DeviceType;
 import mmcorej.TaggedImage;
 import org.micromanager.api.ImageCache;
@@ -60,15 +61,14 @@ public class Acquisition {
         frame_= HCAFLIMPluginFrame.getInstance();
     }
 
-    public void snapSPWImage(ArrayList<Integer> delays, SeqAcqSetup sas, int series, boolean simulate){    
+    public void snapSPWImage(ImageWriter writer, ArrayList<Integer> delays, SeqAcqSetup sas, int series, boolean simulate){    
+        
         try {
                 if (gui_.isLiveModeOn() | gui_.isAcquisitionRunning())
                 {
                     gui_.enableLiveMode(false);
                     gui_.closeAllAcquisitions();
-                }
-                
-                ImageWriter writer  = frame_.SPWWriter_;
+                }                
                 
                 if (null != writer) 
                 {
@@ -83,7 +83,8 @@ public class Acquisition {
                     
                     for (Integer delay : delays) 
                     {                                                
-                        if (simulate) {
+                        if (simulate) 
+                        {
                             //////////////////////// simulated "image"                                                
                             double tau = 5000;                        
                             short[] accImg = new short[(int)dim];                        
@@ -97,7 +98,7 @@ public class Acquisition {
                                     accImg[k] = (short)(1000*Math.exp(-delay/tau));                             
                                 }
                             }                                                
-
+                            //
                             Exception exception = null;
                             try 
                             {
@@ -113,29 +114,51 @@ public class Acquisition {
                             //////////////////////// simulated "image"  
                         }
                         else
-                        {                                                                                                 
-                            //  core_.snapImage();
-                            //  Object img = core_.getImage();
-                            int[] accImg = new int[(int)dim];
-                            for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
-                                core_.snapImage();
-                                Object img = core_.getImage();
-                                // this bit c.f. FrameAverager
-                                if (core_.getBytesPerPixel() == 2){
-                                    short[] pixS = (short[]) img;
-                                    for (int j = 0; j < dim; j++) {
-                                        accImg[j] = (int) (accImg[j] + (int) (pixS[j] & 0xffff));
+                        {    
+                            core_.setProperty("Delay box", "Delay (ps)", delay);
+                            Exception exception = null;
+                            try 
+                            {                            
+                                if (core_.getBytesPerPixel() == 2) 
+                                {
+                                    short[] accImg = new short[(int)dim];
+                                    for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++)
+                                    {
+                                        core_.snapImage();
+                                        Object img = core_.getImage();
+                                        // this bit c.f. FrameAverager
+                                            short[] pixS = (short[]) img;
+                                            for (int j = 0; j < dim; j++) 
+                                            {
+                                                accImg[j] += (pixS[j] & 0xffff);
+                                            }                                
                                     }
-                                } else if (core_.getBytesPerPixel() == 1){
-                                    byte[] pixB = (byte[]) img;
-                                    for (int j = 0; j < dim; j++) {
-                                        accImg[j] = (int) (accImg[j] + (int) (pixB[j] & 0xff));
+                                    writer.saveBytes(delays.indexOf(delay), DataTools.shortsToBytes(accImg, false));
+                                }                            
+                                else if (core_.getBytesPerPixel() == 1)
+                                {
+                                    byte[] accImg = new byte[(int)dim];
+                                    for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++)
+                                    {
+                                        core_.snapImage();
+                                        Object img = core_.getImage();
+                                        // this bit c.f. FrameAverager
+                                            byte[] pixS = (byte[]) img;
+                                            for (int j = 0; j < dim; j++) 
+                                            {
+                                                accImg[j] += (pixS[j] & 0xff);
+                                            }                                
                                     }
+                                    writer.saveBytes(delays.indexOf(delay),accImg);
                                 }
-                            }
-                            // core_.snapImage();
-                            saveLayersToOMETiff(writer, accImg, delays.indexOf(delay));
-                            
+                            }                                                            
+                            catch (FormatException e)   {exception = e;}
+                            catch (IOException e)       {exception = e;}
+                            if (exception != null) 
+                            {
+                              System.err.println("Failed to save plane.");
+                              exception.printStackTrace();
+                            }                                                
                         }
                     }                                                                         
                 }// endif                                     
@@ -339,8 +362,8 @@ public class Acquisition {
 
             PositiveFloat pitch = checkPixelPitch();
 
-            m.setPixelsPhysicalSizeX(pitch, 0);
-            m.setPixelsPhysicalSizeY(pitch, 0);
+           m.setPixelsPhysicalSizeX(pitch, 0);
+           m.setPixelsPhysicalSizeY(pitch, 0);
             m.setPixelsPhysicalSizeZ(new PositiveFloat(1.0), 0);
 
             PlatformIndependentGuidGen p = PlatformIndependentGuidGen.getInstance();

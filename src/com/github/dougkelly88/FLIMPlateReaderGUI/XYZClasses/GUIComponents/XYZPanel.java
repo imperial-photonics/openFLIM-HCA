@@ -1,4 +1,4 @@
-/*
+ /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -542,6 +542,7 @@ public class XYZPanel extends javax.swing.JPanel {
 
     private void manFocusCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_manFocusCheckActionPerformed
         xyzmi_.enableManualZOnly(manFocusCheck.isSelected());
+        var_.manStageCheck=manFocusCheck.isSelected();
     }//GEN-LAST:event_manFocusCheckActionPerformed
 
     private void keyboardStageCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_keyboardStageCheckActionPerformed
@@ -565,6 +566,7 @@ public class XYZPanel extends javax.swing.JPanel {
         double currentZ = xyzmi_.getZAbsolute();
         FOV fov = new FOV(upper, pp_, currentZ);
         xyzmi_.gotoFOV(fov);
+        xyzmi_.enableManualXYControls(manStageCheck.isSelected());
     }//GEN-LAST:event_goToWellButtonActionPerformed
 
     private void zUButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zUButtonActionPerformed

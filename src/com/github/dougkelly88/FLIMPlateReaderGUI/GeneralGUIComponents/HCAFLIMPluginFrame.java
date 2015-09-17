@@ -116,7 +116,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public int singleImage;
     //
     public String AcquisitionSavingMode;
-    public ImageWriter SPWWriter_;
    
 //    public static HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -920,11 +919,17 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
     public void doSequenceAcquisition() throws InterruptedException{
         System.out.println(var_.AcquisitionSavingMode);
+        
+        ImageWriter SPWWriter = null;        
         if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff"))
         try 
         {
-            this.initializeSPWWriter(FormatTools.UINT16);            
-            System.out.println(SPWWriter_.toString());
+            if (core_.getBytesPerPixel() == 2)
+                SPWWriter = this.createSPWWriter(FormatTools.UINT16);            
+            else if (core_.getBytesPerPixel() == 1)
+                SPWWriter = this.createSPWWriter(FormatTools.UINT8);            
+            //
+            System.out.println(SPWWriter.toString());
         }
         catch (Exception e) {System.out.println(e.getMessage());}
         
@@ -1147,7 +1152,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
                 
                 if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff"))
-                    acq.snapSPWImage(sas.getFilters().getDelays(), sas, ind, false); // simulate == false
+                    acq.snapSPWImage(SPWWriter, sas.getFilters().getDelays(), sas, ind, false); // simulate == false
                 else
                     acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
                 
@@ -1188,8 +1193,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             progressBar_.setEnd("FLIM sequence");
         }
     
-        if (null != SPWWriter_) SPWWriter_ = null; // is it enough?
-        
+        if (null != SPWWriter) 
+        {
+            try {SPWWriter.close();} catch (IOException e) {System.err.println("Failed to close file SPWWriter.");}
+        }
+                
         // Send Email after finishing acquisition!
      /*   if(xYSequencing1.sendEmailBoolean){
             xYSequencing1.sendEmail();
@@ -1294,12 +1302,18 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_FLIMPanelStateChanged
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-      //  displayImage2_.showImageInIJ();
+      System.out.print(var_.manStageCheck);
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jMenu_create_simulated_SPW_OMEtiffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu_create_simulated_SPW_OMEtiffActionPerformed
-        //                 
-        try {this.initializeSPWWriter(FormatTools.UINT16);}
+        //                               
+        //try {this.initializeSPWWriter(FormatTools.UINT16);}
+        //catch (Exception e) {System.out.println(e.getMessage());}
+        
+        ImageWriter writer = null;
+        try {
+        writer = this.createSPWWriter(FormatTools.UINT16);}
         catch (Exception e) {System.out.println(e.getMessage());}
         //
         // rest of it - trying to mimic acquisition :)        
@@ -1408,7 +1422,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
                 
                 if ( null != sas.getFilters().getDelays() )
-                acq.snapSPWImage( sas.getFilters().getDelays(), sas, ind, true ); // simulate == true
+                //acq.snapSPWImage( sas.getFilters().getDelays(), sas, ind, true ); // simulate == true
+                acq.snapSPWImage(writer, sas.getFilters().getDelays(), sas, ind, true ); // simulate == true
 
                 lastTime = sas.getTimePoint().getTimeCell();
                 lastFOV = sas.getFOV();
@@ -1427,8 +1442,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         }
         catch(InterruptedException e){};
             
-        try {this.SPWWriter_.close();} catch (IOException e) {System.err.println("Failed to close file writer.");}
-        this.SPWWriter_ = null;
+        try {writer.close();} catch (IOException e) {System.err.println("Failed to close file writer.");}
         System.out.println("..jMenu_save_acquisition_as_SPW_OMEtiffActionPerformed - passed successfully..");
     }//GEN-LAST:event_jMenu_create_simulated_SPW_OMEtiffActionPerformed
 
@@ -1608,9 +1622,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         return out;
     }
     
-    public void initializeSPWWriter(int pixelType) throws Exception {
-                
-        SPWWriter_ = null;
+
+    // CREATE SPW WRITER
+    public ImageWriter createSPWWriter(int pixelType) throws Exception {
+                        
+        ImageWriter writer = new ImageWriter();
         
         ArrayList<FOV> fovs = new ArrayList<FOV>();
         ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
@@ -1890,16 +1906,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             loci.common.DebugTools.enableLogging("INFO");
             java.lang.System.setProperty("javax.xml.transform.TransformerFactory", "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
                         
-            SPWWriter_ = new ImageWriter();
             //
             String GrandOMEtiffPath = currentBasePathField.getText() + filesep + "Sequenced FLIM acquisition " + timeStamp + ".OME.tiff";
             try 
             {                
-                SPWWriter_.setWriteSequentially(true);
-                SPWWriter_.setMetadataRetrieve(meta);
-                SPWWriter_.setCompression("LZW");                
-                ((TiffWriter)SPWWriter_.getWriter(GrandOMEtiffPath)).setBigTiff(true);                                                  
-                SPWWriter_.setId(GrandOMEtiffPath);
+                writer.setWriteSequentially(true);
+                writer.setMetadataRetrieve(meta);
+                writer.setCompression("LZW");                
+                ((TiffWriter)writer.getWriter(GrandOMEtiffPath)).setBigTiff(true);                                                  
+                writer.setId(GrandOMEtiffPath);
             }
             catch (FormatException e)   {exception = e;}        
             //catch (IOException e)       {exception = e;}
@@ -1917,7 +1932,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         {
             System.err.println("Failed to populate OME-XML metadata object.");
             exception.printStackTrace();
-        }                                
+        }                            
+        return writer;
     }
-              
+    
+    
+    
 }

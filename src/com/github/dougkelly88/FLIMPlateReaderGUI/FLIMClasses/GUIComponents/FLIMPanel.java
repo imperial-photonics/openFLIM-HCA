@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem; 
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu; 
 import javax.swing.JScrollPane; 
 import javax.swing.JTable; 
@@ -832,9 +833,17 @@ public class FLIMPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_startFieldFocusLost
 
     private void populateDelaysButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_populateDelaysButtonActionPerformed
+        int incr;
+        incr = Integer.parseInt(incrementField.getText());
+        if (incr <= 0)
+        {
+            JOptionPane.showMessageDialog(null, "Increment should be larger than 0!", "Error",
+                                    JOptionPane.ERROR_MESSAGE); //send out error message 'Increment should be larger than 0!'
+            incrementField.setText("25");
+        }
+        else{
         int max;
         int min;
-        int incr;
         ArrayList<Integer> dv = new ArrayList<Integer>();
 
         // deal with case in which start and end have been entered the wrong way round...
@@ -849,14 +858,14 @@ public class FLIMPanel extends javax.swing.JPanel {
             max = Integer.parseInt(endField.getText());
             min = Integer.parseInt(startField.getText());
         }
-        incr = Integer.parseInt(incrementField.getText());
-
+        
         for (int i = min; i < max+1; i = i + incr)
         {
             dv.add(i);
         }
-
+        
         tableModel_.addWholeData(dv);
+        }
         //var_.delays=dv;
     }//GEN-LAST:event_populateDelaysButtonActionPerformed
 
