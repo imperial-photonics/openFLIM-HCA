@@ -34,6 +34,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     private Variable var_;
     HCAFLIMPluginFrame parent_;
     SliderControl powerSlider_;
+    SliderControl continuouseFW_;
     CurrentLightPath currentLightPath_;
     private Arduino arduino_;
     private XYZPanel xYZPanel_;
@@ -57,6 +58,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         var_ = Variable.getInstance();
         arduino_ = Arduino.getInstance();
         xYZPanel_ = XYZPanel.getInstance();
+        
         try {
             gui_.registerForEvents(this);
             core_ = gui_.getCore();
@@ -64,7 +66,7 @@ public class LightPathPanel extends javax.swing.JPanel {
             //gui_.showMessage("Error in FLIMPanel constructor: " + e.getMessage());
         }
         currentLightPath_ = new CurrentLightPath();
-
+        setControlDefaults();
     }
 
     /**
@@ -103,6 +105,8 @@ public class LightPathPanel extends javax.swing.JPanel {
         Camera = new javax.swing.JPanel();
         flimCamera = new javax.swing.JButton();
         bfCamera = new javax.swing.JButton();
+        ContinusouseFilterWheel = new javax.swing.JPanel();
+        continuouseFWPanel = new javax.swing.JPanel();
 
         excitationSource.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Excitation source"));
 
@@ -363,6 +367,35 @@ public class LightPathPanel extends javax.swing.JPanel {
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
+        ContinusouseFilterWheel.setBorder(javax.swing.BorderFactory.createTitledBorder("Continuouse Filter Wheel"));
+
+        javax.swing.GroupLayout continuouseFWPanelLayout = new javax.swing.GroupLayout(continuouseFWPanel);
+        continuouseFWPanel.setLayout(continuouseFWPanelLayout);
+        continuouseFWPanelLayout.setHorizontalGroup(
+            continuouseFWPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 320, Short.MAX_VALUE)
+        );
+        continuouseFWPanelLayout.setVerticalGroup(
+            continuouseFWPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 33, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout ContinusouseFilterWheelLayout = new javax.swing.GroupLayout(ContinusouseFilterWheel);
+        ContinusouseFilterWheel.setLayout(ContinusouseFilterWheelLayout);
+        ContinusouseFilterWheelLayout.setHorizontalGroup(
+            ContinusouseFilterWheelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ContinusouseFilterWheelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(continuouseFWPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        ContinusouseFilterWheelLayout.setVerticalGroup(
+            ContinusouseFilterWheelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ContinusouseFilterWheelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(continuouseFWPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -371,6 +404,7 @@ public class LightPathPanel extends javax.swing.JPanel {
             .addComponent(Filters, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(excitationSource, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(Camera, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(ContinusouseFilterWheel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -382,7 +416,9 @@ public class LightPathPanel extends javax.swing.JPanel {
                 .addComponent(Olympus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Camera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(89, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ContinusouseFilterWheel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -738,14 +774,34 @@ public class LightPathPanel extends javax.swing.JPanel {
         laserToggle.setText(text);
     }
     
+    public void setControlDefaults(){
+        var_.smPositionOld=0;
+        continuouseFW_ = new SliderControl("Laser intensity [%]",0,100,0);
+        continuouseFWPanel.setLayout(new BorderLayout());
+        continuouseFWPanel.add(continuouseFW_, BorderLayout.SOUTH);
+        continuouseFW_.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+
+            @Override
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                int currentVal=continuouseFW_.getValue().intValue();
+                continuouseFW_.setValue(currentVal);
+                arduino_.smStep();
+                
+                
+            }
+        });
+    }
+    
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Camera;
+    private javax.swing.JPanel ContinusouseFilterWheel;
     private javax.swing.JPanel Filters;
     private javax.swing.JLabel ObjectiveLabel;
     private javax.swing.JPanel Olympus;
     private javax.swing.JButton bfCamera;
+    private javax.swing.JPanel continuouseFWPanel;
     private javax.swing.JComboBox dichroicComboBox;
     private javax.swing.JComboBox emissionComboBox;
     private javax.swing.JComboBox excitationComboBox;

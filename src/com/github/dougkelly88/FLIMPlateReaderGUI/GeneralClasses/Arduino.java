@@ -7,7 +7,9 @@
 /* 
 AO= incubation light photodiode
 A1= room light photodiode
-A2= mercury burner vs. light path microswitch
+A2= stepmotor STEP
+A3= stepmotor DIRECTION
+A4= stepmotor POSITION0
 A5= laser intensity photodiode
 D8=shutter
 D9=shutter
@@ -17,6 +19,8 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
 import static com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.HCAFLIMPlugin.frame_;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import mmcorej.CMMCore;
 import org.micromanager.MMStudio;
@@ -33,6 +37,7 @@ public class Arduino {
     double th1=0.5;
     double th2=0.5;
     private Variable var_;
+    private boolean pos0=false;
     
     public static Arduino getInstance() {
        return fINSTANCE;
@@ -195,6 +200,57 @@ public class Arduino {
             options,
             options[1]
         );
+    }
+    
+    /*
+    stepper motor functions
+    A2= stepmotor STEP
+    A3= stepmotor DIRECTION
+    A4= stepmotor POSITION0
+    */
+    public void smStep(){
+        try {
+            core_.setProperty("Arduino-Input", "AnalogInput2", 1000);
+            core_.setProperty("Arduino-Input", "AnalogInput2", 0);
+        } catch (Exception ex) {
+            Logger.getLogger(Arduino.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public int smDir(int dir){
+        if(dir==0){
+            try {
+                core_.setProperty("Arduino-Input", "AnalogInput3", 0);
+            } catch (Exception ex) {
+                Logger.getLogger(Arduino.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return 0;
+        }else if(dir==1){
+            try {
+                core_.setProperty("Arduino-Input", "AnalogInput3", 1000);
+            } catch (Exception ex) {
+                Logger.getLogger(Arduino.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return 1;
+        }
+        return -1;
+    }
+    
+    public boolean smPos0(){
+        double val=-1;
+        try {
+            val=Double.parseDouble(core_.getProperty("Arduino-Input", "AnalogInput4"));
+        } catch (Exception ex) {
+            Logger.getLogger(Arduino.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if(val>=500){
+            return false;
+        } else if(val<500){
+            return true;
+        } else{
+            System.out.println("Error in Ardunio stepmotor functions (smPos0): No valid value returned from A4");
+            return false;
+        }
     }
     
 }

@@ -48,6 +48,7 @@ public class Variable {
     public String FilterCubeComboBoxSelectedItem;
     public StrVector SwitchPortComboBox;
     public String SwitchPortComboBoxSelectedItem;
+    public int smPositionOld;
     
     //XYZPanel
     public boolean manStageCheck;
