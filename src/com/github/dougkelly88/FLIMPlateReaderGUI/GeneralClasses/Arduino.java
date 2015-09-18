@@ -7,6 +7,9 @@
 /* 
 AO= incubation light photodiode
 A1= room light photodiode
+A2= stepmotor STEP
+A3= stepmotor DIRECTION
+A4= stepmotor STOP POSITION
 A5= laser intensity photodiode
 D8=shutter
 D9=shutter
@@ -219,6 +222,31 @@ public class Arduino {
         value=value.substring(0, ind);
         valInt=Integer.parseInt(value);
        return valInt; 
+    }
+    
+    public int initializeFilterWheel(){
+        // A2= STEP
+        // A3= DIRECTION
+        // A4= STOP POSITION
+        int pos0=1000;
+        // set direction
+        try {
+            core_.setProperty("Arduino-Input", "AnalogInput3",1000);
+        } catch (Exception ex) {
+            Logger.getLogger(Arduino.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        // spin until stop position
+        while(pos0>500){
+            try {
+                core_.setProperty("Arduino-Input", "AnalogInput2",1000);
+                core_.setProperty("Arduino-Input", "AnalogInput2",0);
+                pos0=(int) Double.parseDouble(core_.getProperty("Arduino-Input", "AnalogInput4"));
+            } catch (Exception ex) {
+                Logger.getLogger(Arduino.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        return 0;
     }
     
 }
