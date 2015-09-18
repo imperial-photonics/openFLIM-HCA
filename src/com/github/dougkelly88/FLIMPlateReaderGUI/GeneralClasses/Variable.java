@@ -22,7 +22,7 @@ import mmcorej.StrVector;
  *
  * @author Frederik
  */
-public class VariableTest {
+public class Variable {
 // All variables define here:
     //Test variables:
     public AtomicInteger value = new AtomicInteger(10);
@@ -49,6 +49,10 @@ public class VariableTest {
     public StrVector SwitchPortComboBox;
     public String SwitchPortComboBoxSelectedItem;
     
+    //XYZPanel
+    public boolean manStageCheck;
+
+
     //FLIMPanel:
     public double mcpSlider;
     public double gatewidthSlider;
@@ -64,14 +68,21 @@ public class VariableTest {
     public double th2=0.5;
     public double laserIntensity=0;
     public int shutterResponse=0;
-    public boolean safetyOff=false;
+    public boolean safetyOff=true;
+    public double xOffset=0;
+    public double yOffset=0;
+    public boolean check2=false;
+    public String AcquisitionSavingMode="separate OME.tiff for every FOV";
+    
+    public String autofocusWhich;
+    public String motorizedMicroscopeTabelWhich;
 
   // PRIVATE
 
   /**
   * Single instance created upon class loading.
   */
-  private static final VariableTest fINSTANCE =  new VariableTest();
+  private static final Variable fINSTANCE =  new Variable();
   /**
   * Private constructor prevents construction outside this class.
   */
@@ -130,6 +141,12 @@ public class VariableTest {
         writer.println("Threshold analog input A1: "+th2+";");
         writer.println("Laser intensity: "+laserIntensity+";");
         writer.println("Shutter response: "+shutterResponse+";");
+        writer.println("xOffset ring acquisition: "+xOffset+";");
+        writer.println("yOffset ring acquisition: "+yOffset+";");
+        writer.println("Unknown Folder enabled?: "+check2+";");
+        writer.println("Sequenced acquisiton saving mode: "+AcquisitionSavingMode+";"); 
+        writer.println("Autofocus: "+autofocusWhich+";"); 
+        writer.println("Motorized microscope table: "+motorizedMicroscopeTabelWhich+";");
         writer.println();
         writer.close();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
@@ -142,7 +159,7 @@ public class VariableTest {
   }
   
   
-  public static VariableTest getInstance() {
+  public static Variable getInstance() {
       
       return fINSTANCE;
   }    

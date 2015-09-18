@@ -7,7 +7,7 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.SliderControl;
 import com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.Classes.CurrentLightPath;
@@ -17,7 +17,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import mmcorej.CMMCore;
-import mmcorej.DeviceType;
 import mmcorej.StrVector;
 import org.micromanager.MMStudio;
 import org.micromanager.api.events.PropertyChangedEvent;
@@ -32,7 +31,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     CMMCore core_;
     PropertyChangedEvent event_;
     private SeqAcqProps sap_;
-    private VariableTest var_;
+    private Variable var_;
     HCAFLIMPluginFrame parent_;
     SliderControl powerSlider_;
     CurrentLightPath currentLightPath_;
@@ -55,7 +54,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         initComponents();
         gui_ = MMStudio.getInstance();
         sap_ = SeqAcqProps.getInstance();
-        var_ = VariableTest.getInstance();
+        var_ = Variable.getInstance();
         arduino_ = Arduino.getInstance();
         xYZPanel_ = XYZPanel.getInstance();
         try {
@@ -101,6 +100,9 @@ public class LightPathPanel extends javax.swing.JPanel {
         ObjectiveLabel = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        Camera = new javax.swing.JPanel();
+        flimCamera = new javax.swing.JButton();
+        bfCamera = new javax.swing.JButton();
 
         excitationSource.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Excitation source"));
 
@@ -115,7 +117,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         outputPowerPanel.setLayout(outputPowerPanelLayout);
         outputPowerPanelLayout.setHorizontalGroup(
             outputPowerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 275, Short.MAX_VALUE)
+            .addGap(0, 161, Short.MAX_VALUE)
         );
         outputPowerPanelLayout.setVerticalGroup(
             outputPowerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -146,9 +148,9 @@ public class LightPathPanel extends javax.swing.JPanel {
                 .addGroup(excitationSourceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(ledToggle, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
                     .addComponent(laserToggle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(82, 82, 82)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(outputPowerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(excitationSourceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(laserTemperatureLabel)
                     .addComponent(laserRepRateLabel)
@@ -163,15 +165,15 @@ public class LightPathPanel extends javax.swing.JPanel {
                     .addGroup(excitationSourceLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(excitationSourceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(outputPowerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(excitationSourceLayout.createSequentialGroup()
                                 .addComponent(laserRepRateLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(laserTemperatureLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(laserSerialNumberLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(laserRunTimeLabel))))
+                                .addComponent(laserSerialNumberLabel))
+                            .addComponent(outputPowerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(laserRunTimeLabel))
                     .addGroup(excitationSourceLayout.createSequentialGroup()
                         .addGap(33, 33, 33)
                         .addComponent(laserToggle, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -300,15 +302,15 @@ public class LightPathPanel extends javax.swing.JPanel {
                 .addGroup(OlympusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(ObjectiveLabel)
                     .addComponent(objectiveComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGap(18, 29, Short.MAX_VALUE)
                 .addGroup(OlympusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addComponent(filterCubeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGap(18, 29, Short.MAX_VALUE)
                 .addGroup(OlympusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
                     .addComponent(switchPortComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         OlympusLayout.setVerticalGroup(
             OlympusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -324,13 +326,51 @@ public class LightPathPanel extends javax.swing.JPanel {
                     .addComponent(switchPortComboBox)))
         );
 
+        Camera.setBorder(javax.swing.BorderFactory.createTitledBorder("Camera"));
+
+        flimCamera.setText("FLIM cam");
+        flimCamera.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                flimCameraActionPerformed(evt);
+            }
+        });
+
+        bfCamera.setText("brightfield cam");
+        bfCamera.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bfCameraActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout CameraLayout = new javax.swing.GroupLayout(Camera);
+        Camera.setLayout(CameraLayout);
+        CameraLayout.setHorizontalGroup(
+            CameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CameraLayout.createSequentialGroup()
+                .addGap(44, 44, 44)
+                .addComponent(flimCamera, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35)
+                .addComponent(bfCamera, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        CameraLayout.setVerticalGroup(
+            CameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CameraLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(CameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(flimCamera)
+                    .addComponent(bfCamera))
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(Olympus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(excitationSource, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(Filters, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(excitationSource, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Camera, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -339,8 +379,10 @@ public class LightPathPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Filters, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Olympus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(Olympus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(Camera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(89, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -349,23 +391,30 @@ public class LightPathPanel extends javax.swing.JPanel {
         if (laserToggle.isSelected()) {
             laserToggle.setText("Turn laser OFF");
             try{
-                boolean abort=arduino_.checkSafety();;
+                boolean abort=arduino_.checkSafety();
+                
                 if (abort==false){
+                    arduino_.setMode("shutter");
                     arduino_.setDigitalOutHigh();
                 }
                 } catch (Exception ex) {
             Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-           // core_.setProperty("FianiumSC", "LaserOn?", "On");
-            
+            if(switchPortComboBox.getSelectedIndex()==0){
+                setBy(switchPortComboBox, "LightPathPrism", "Side Port");
+                switchPortComboBox.setSelectedItem("Side Port");
+                currentLightPath_.setPortLabel((String) switchPortComboBox.getSelectedItem());
+                var_.SwitchPortComboBoxSelectedItem = (String) switchPortComboBox.getSelectedItem();
+                }
         } else {
             laserToggle.setText("Turn laser ON");
+            
             try {
                 arduino_.setDigitalOutLow();
-               // core_.setProperty("FianiumSC", "LaserOn?", "Off");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
+            
         }
 
     }//GEN-LAST:event_laserToggleActionPerformed
@@ -437,11 +486,25 @@ public class LightPathPanel extends javax.swing.JPanel {
         setByLabel(switchPortComboBox, "LightPathPrism");
         currentLightPath_.setPortLabel((String) switchPortComboBox.getSelectedItem());
         var_.SwitchPortComboBoxSelectedItem = (String) switchPortComboBox.getSelectedItem();
+        if(switchPortComboBox.getSelectedIndex()==0){
+           laserToggle.setText("Turn laser ON");
+            try {
+                arduino_.setDigitalOutLow();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        
     }//GEN-LAST:event_switchPortComboBoxActionPerformed
 
     private void ledToggleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ledToggleActionPerformed
         
         if (ledToggle.isSelected()) {
+            try {
+                core_.setProperty("LightPathPrism", "Label", (String) switchPortComboBox.getSelectedItem());
+            } catch (Exception ex) {
+                System.out.println("Not setting property for device LightPathPrism because combo hasn't yet been populated (setByLabel method)");
+            }
             arduino_.setMode("led");
             ledToggle.setText("Turn brightfield light OFF");
             try{
@@ -452,7 +515,6 @@ public class LightPathPanel extends javax.swing.JPanel {
                 } catch (Exception ex) {
             Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
-           // core_.setProperty("FianiumSC", "LaserOn?", "On");
             
         } else { 
             arduino_.setMode("shutter");
@@ -460,13 +522,42 @@ public class LightPathPanel extends javax.swing.JPanel {
             try {
                 boolean abort=arduino_.checkSafety();
                 arduino_.setDigitalOutLow();
-               // core_.setProperty("FianiumSC", "LaserOn?", "Off");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }   
        
     }//GEN-LAST:event_ledToggleActionPerformed
+
+    private void flimCameraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flimCameraActionPerformed
+      
+        try {
+            if (gui_.isLiveModeOn()){
+                gui_.enableLiveMode(false);
+                core_.setCameraDevice("HamamatsuHam_DCAM");
+                gui_.enableLiveMode(true);
+            } else{
+                core_.setCameraDevice("HamamatsuHam_DCAM");
+            } 
+        } catch (Exception ex) {
+            System.out.println("Error: Couldn't set default camera to FLIM camera!");
+        }
+        
+    }//GEN-LAST:event_flimCameraActionPerformed
+
+    private void bfCameraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bfCameraActionPerformed
+        try {
+            if (gui_.isLiveModeOn()){
+                gui_.enableLiveMode(false);
+                core_.setCameraDevice("Andor sCMOS Camera");
+                gui_.enableLiveMode(true);
+            } else{
+                core_.setCameraDevice("Andor sCMOS Camera");
+            }
+        } catch (Exception ex) {
+            System.out.println("Error: Couldn't set default camera to bright field camera!");
+        }
+    }//GEN-LAST:event_bfCameraActionPerformed
 
     public void setByLabel(JComboBox combo, String device) {
         try {
@@ -482,6 +573,15 @@ public class LightPathPanel extends javax.swing.JPanel {
             System.out.println(e.getMessage());
         }
 
+    }
+    
+    public void setBy(JComboBox combo, String device, String port) {
+        try {
+            core_.setProperty(device, "Label", port);
+        } catch (Exception ex) {
+            System.out.println("Error: LightPathPanel->setBy:");
+            System.out.println("Couldn't set property of"+ device);
+        }
     }
 
     public void setLoadedSoftwareValues() {
@@ -516,7 +616,8 @@ public class LightPathPanel extends javax.swing.JPanel {
 
         //SwitchPort Load
         populateComboBoxes(switchPortComboBox, "LightPathPrism");
-
+        
+        
         // set defaults
         setDefaultLightPath();
 
@@ -582,6 +683,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         if (switchPortComboBox.isEnabled()) {
             switchPortComboBox.setSelectedIndex(1);
         }
+        
     }
 
     private void populateComboBoxes(JComboBox combo, String device) {
@@ -627,16 +729,29 @@ public class LightPathPanel extends javax.swing.JPanel {
          // do something when LightPathPanel is selected
         objectiveComboBox.setSelectedItem(var_.ObjectiveComboBoxSelectedItem);
     }
+    
+    public void setLaserToggleFalse(){
+        laserToggle.setSelected(false);
+    }
+    
+    public void setLaserToggleText(String text){
+        laserToggle.setText(text);
+    }
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel Camera;
     private javax.swing.JPanel Filters;
     private javax.swing.JLabel ObjectiveLabel;
     private javax.swing.JPanel Olympus;
+    private javax.swing.JButton bfCamera;
     private javax.swing.JComboBox dichroicComboBox;
     private javax.swing.JComboBox emissionComboBox;
     private javax.swing.JComboBox excitationComboBox;
     private javax.swing.JPanel excitationSource;
     private javax.swing.JComboBox filterCubeComboBox;
+    private javax.swing.JButton flimCamera;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

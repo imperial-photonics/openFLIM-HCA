@@ -8,9 +8,11 @@
 
 package com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.Classes;
 
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import static java.lang.Math.round;
 import java.util.ArrayList;
+import java.util.Collections;
+import static java.util.Collections.reverse;
 import javax.swing.table.AbstractTableModel;
 
 
@@ -25,11 +27,12 @@ public class DelayTableModel extends AbstractTableModel {
     private int max_ = 16666;
     private int min_ = 0;
     private int incr_ = 25;
-    private VariableTest var_;
+    private Variable var_;
+    int datSize;
 //    private SeqAcqProps sap_;
     
     public DelayTableModel(){
-    var_= VariableTest.getInstance();
+    var_= Variable.getInstance();
     }
     
     public DelayTableModel(String[] columnNames) {
@@ -113,6 +116,24 @@ public class DelayTableModel extends AbstractTableModel {
 //        this.addEmptyRow();
     }
     
+    public void invertData(){
+        ArrayList<Integer> datta=getData();
+        Collections.reverse(datta);
+        fireTableDataChanged();
+    }
+    
+    public void bleechingComp(){
+        ArrayList<Integer> datta1=getData();
+        datSize=datta1.size();
+        reverse(datta1);
+        for(int i = 0, j = datSize-1; i < j; i++) {
+            datta1.add(i, datta1.get(j));
+            System.out.println(datta1);
+        }
+        datta1.add(datSize, datta1.get(datSize-1));
+        fireTableDataChanged();
+    }
+    
     public void clearAllData(){
         data_.clear();
         fireTableDataChanged();
@@ -175,6 +196,16 @@ public class DelayTableModel extends AbstractTableModel {
             val = round(val/incr_)*incr_;
         
         return val;
+    }
+
+    public void undoBleechingComp() {
+        ArrayList<Integer> datta1=getData();
+        int dattSize=datta1.size();
+        for(int iii=0; iii<dattSize/2; iii++){
+            datta1.remove(0);
+        }
+        reverse(datta1);
+        fireTableDataChanged();
     }
 
 

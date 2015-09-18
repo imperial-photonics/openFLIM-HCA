@@ -30,12 +30,12 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
-              <Component id="delayBoxTabbedPane" min="-2" pref="207" max="-2" attributes="0"/>
+              <Component id="delayBoxTabbedPane" min="-2" pref="278" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="FLIMToolsPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="HRIControlsPanel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="16" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -168,14 +168,14 @@
                   <Component id="maxpointGraphPanel" min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace pref="11" max="32767" attributes="0"/>
-                          <Component id="maxpointPanel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                           <Component id="autogateButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="maxpointPanel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -236,13 +236,31 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                          <Component id="limitsLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="maxpointResolutionField" min="-2" pref="49" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="maxpointButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
-                      <Component id="acquiredMaxpointField" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="findMaxPointMinField" max="32767" attributes="0"/>
+                          <Component id="maxpointResolutionField" pref="49" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="limitsLabel2" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="maxpointButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
+                              <Component id="acquiredMaxpointField" max="32767" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Component id="findMaxPointMaxField" min="-2" pref="53" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="limitsLabel3" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -257,7 +275,17 @@
                           <Component id="maxpointResolutionField" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="acquiredMaxpointField" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="findMaxPointMinField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="findMaxPointMaxField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="limitsLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="limitsLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="limitsLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="33" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -289,6 +317,37 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="N/A"/>
                 <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="findMaxPointMinField">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="0"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="findMaxPointMinFieldActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JTextField" name="findMaxPointMaxField">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="8000"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="findMaxPointMaxFieldActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="limitsLabel1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&quot;Find maxpoint&quot; limits (ps)"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="limitsLabel2">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="-"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="limitsLabel3">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="ps"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -329,11 +388,11 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="delaySeqPanel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Component id="delaySeqPanel" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" alignment="0" attributes="0">
+                          <Group type="102" attributes="0">
                               <Component id="fastBoxCalibratedCheck" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="32767" attributes="0"/>
                               <Component id="fastCurrentDelayPanel" min="-2" max="-2" attributes="0"/>
@@ -397,6 +456,7 @@
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                       <Component id="populateDelaysButton" alignment="0" max="32767" attributes="0"/>
                                       <Component id="clearDelayButton" max="32767" attributes="0"/>
@@ -416,6 +476,13 @@
                                       <Component id="startField" max="32767" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="1" attributes="0">
+                                      <Component id="invertDataCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="bleechingCompCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -442,6 +509,10 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="populateDelaysButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="invertDataCheckBox" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="bleechingCompCheckBox" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -517,7 +588,7 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="132" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="128" max="32767" attributes="0"/>
                       </Group>
                     </DimensionLayout>
                     <DimensionLayout dim="1">
@@ -527,6 +598,22 @@
                     </DimensionLayout>
                   </Layout>
                 </Container>
+                <Component class="javax.swing.JCheckBox" name="invertDataCheckBox">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Invert table"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="invertDataCheckBoxActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="bleechingCompCheckBox">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Bleeching comp."/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bleechingCompCheckBoxActionPerformed"/>
+                  </Events>
+                </Component>
               </SubComponents>
             </Container>
           </SubComponents>
@@ -558,9 +645,9 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                       <Component id="slowBoxCalibrated" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" pref="22" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" pref="56" max="32767" attributes="0"/>
                       <Component id="slowCurrentDelayPanel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="58" max="32767" attributes="0"/>
+                      <EmptySpace pref="91" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -626,7 +713,7 @@
                       <Component id="CalibrationFileLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="DelayBoxCalibrationComboBox" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="50" max="32767" attributes="0"/>
+                      <EmptySpace pref="111" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="CalibrationPathLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="CalibrationPathButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -674,6 +761,9 @@
                   <Dimension value="[500, 20]"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CalibrationPathFieldActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="CalibrationPathButton">
               <Properties>

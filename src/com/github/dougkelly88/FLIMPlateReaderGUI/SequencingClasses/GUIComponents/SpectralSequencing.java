@@ -6,7 +6,7 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FilterSetup;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FilterTableModel;
@@ -40,7 +40,7 @@ public class SpectralSequencing extends javax.swing.JPanel {
     JTable filtTable_;
     HCAFLIMPluginFrame parent_;
     SeqAcqProps sap_;
-    VariableTest var_;
+    Variable var_;
     CMMCore core_; 
     MMStudio gui_;
     int selectedRow_;

@@ -10,8 +10,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.Classes.DelayTableM
 import com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.Classes.FindMaxpoint;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.SliderControl;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.sequencingThread;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.google.common.eventbus.Subscribe;
 import java.awt.BorderLayout;
@@ -29,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem; 
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu; 
 import javax.swing.JScrollPane; 
 import javax.swing.JTable; 
@@ -59,7 +59,7 @@ public class FLIMPanel extends javax.swing.JPanel {
     FindMaxpoint fm_;
     ChartPanel chartPanel_;
     private SeqAcqProps sap_;
-    private VariableTest var_;
+    private Variable var_;
     private Object parent_;
     Object calibrationDelayBox;
     String DelayPath;
@@ -84,7 +84,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         
         gui_ = MMStudio.getInstance();
         sap_ = SeqAcqProps.getInstance().setUseScanFLIM(false);
-        var_= VariableTest.getInstance();
+        var_= Variable.getInstance();
         
         try {
             core_.setProperty("Delay box", "Calibrated", "Yes");
@@ -119,6 +119,11 @@ public class FLIMPanel extends javax.swing.JPanel {
         maxpointButton = new javax.swing.JButton();
         maxpointResolutionField = new javax.swing.JTextField();
         acquiredMaxpointField = new javax.swing.JTextField();
+        findMaxPointMinField = new javax.swing.JTextField();
+        findMaxPointMaxField = new javax.swing.JTextField();
+        limitsLabel1 = new javax.swing.JLabel();
+        limitsLabel2 = new javax.swing.JLabel();
+        limitsLabel3 = new javax.swing.JLabel();
         delayBoxTabbedPane = new javax.swing.JTabbedPane();
         fastDelayBoxPanel = new javax.swing.JPanel();
         fastBoxCalibratedCheck = new javax.swing.JCheckBox();
@@ -134,6 +139,8 @@ public class FLIMPanel extends javax.swing.JPanel {
         jLabel4 = new javax.swing.JLabel();
         startField = new javax.swing.JFormattedTextField();
         delayTablePanel = new javax.swing.JPanel();
+        invertDataCheckBox = new javax.swing.JCheckBox();
+        bleechingCompCheckBox = new javax.swing.JCheckBox();
         slowDelayBoxPanel = new javax.swing.JPanel();
         slowBoxCalibrated = new javax.swing.JCheckBox();
         slowCurrentDelayPanel = new javax.swing.JPanel();
@@ -261,19 +268,52 @@ public class FLIMPanel extends javax.swing.JPanel {
         acquiredMaxpointField.setText("N/A");
         acquiredMaxpointField.setEnabled(false);
 
+        findMaxPointMinField.setText("0");
+        findMaxPointMinField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                findMaxPointMinFieldActionPerformed(evt);
+            }
+        });
+
+        findMaxPointMaxField.setText("8000");
+        findMaxPointMaxField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                findMaxPointMaxFieldActionPerformed(evt);
+            }
+        });
+
+        limitsLabel1.setText("\"Find maxpoint\" limits (ps)");
+
+        limitsLabel2.setText("-");
+
+        limitsLabel3.setText("ps");
+
         javax.swing.GroupLayout maxpointPanelLayout = new javax.swing.GroupLayout(maxpointPanel);
         maxpointPanel.setLayout(maxpointPanelLayout);
         maxpointPanelLayout.setHorizontalGroup(
             maxpointPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(maxpointPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addGroup(maxpointPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(limitsLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(maxpointResolutionField, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(maxpointButton)
-                .addGap(13, 13, 13)
-                .addComponent(acquiredMaxpointField)
+                .addGroup(maxpointPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(findMaxPointMinField)
+                    .addComponent(maxpointResolutionField, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(limitsLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(maxpointPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(maxpointPanelLayout.createSequentialGroup()
+                        .addComponent(maxpointButton)
+                        .addGap(13, 13, 13)
+                        .addComponent(acquiredMaxpointField))
+                    .addGroup(maxpointPanelLayout.createSequentialGroup()
+                        .addComponent(findMaxPointMaxField, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(limitsLabel3)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         maxpointPanelLayout.setVerticalGroup(
@@ -285,7 +325,15 @@ public class FLIMPanel extends javax.swing.JPanel {
                     .addComponent(maxpointButton)
                     .addComponent(maxpointResolutionField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(acquiredMaxpointField, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(maxpointPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(maxpointPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(findMaxPointMinField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(findMaxPointMaxField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(limitsLabel2)
+                        .addComponent(limitsLabel3))
+                    .addComponent(limitsLabel1))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout FLIMToolsPanelLayout = new javax.swing.GroupLayout(FLIMToolsPanel);
@@ -309,13 +357,13 @@ public class FLIMPanel extends javax.swing.JPanel {
                 .addComponent(maxpointGraphPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(FLIMToolsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(FLIMToolsPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
-                        .addComponent(maxpointPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(16, 16, 16))
-                    .addGroup(FLIMToolsPanelLayout.createSequentialGroup()
                         .addGap(26, 26, 26)
                         .addComponent(autogateButton)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FLIMToolsPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(maxpointPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
 
         fastBoxCalibratedCheck.setText("Calibrated?");
@@ -420,12 +468,26 @@ public class FLIMPanel extends javax.swing.JPanel {
         delayTablePanel.setLayout(delayTablePanelLayout);
         delayTablePanelLayout.setHorizontalGroup(
             delayTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 132, Short.MAX_VALUE)
+            .addGap(0, 128, Short.MAX_VALUE)
         );
         delayTablePanelLayout.setVerticalGroup(
             delayTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
+
+        invertDataCheckBox.setText("Invert table");
+        invertDataCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                invertDataCheckBoxActionPerformed(evt);
+            }
+        });
+
+        bleechingCompCheckBox.setText("Bleeching comp.");
+        bleechingCompCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bleechingCompCheckBoxActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout delaySeqPanelLayout = new javax.swing.GroupLayout(delaySeqPanel);
         delaySeqPanel.setLayout(delaySeqPanelLayout);
@@ -437,6 +499,7 @@ public class FLIMPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(delaySeqPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(delaySeqPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(delaySeqPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(populateDelaysButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(clearDelayButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -451,7 +514,12 @@ public class FLIMPanel extends javax.swing.JPanel {
                             .addComponent(endField)
                             .addComponent(incrementField)
                             .addComponent(startField))
-                        .addGap(10, 10, 10))))
+                        .addGap(10, 10, 10))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, delaySeqPanelLayout.createSequentialGroup()
+                        .addGroup(delaySeqPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(invertDataCheckBox, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(bleechingCompCheckBox, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         delaySeqPanelLayout.setVerticalGroup(
             delaySeqPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -471,6 +539,10 @@ public class FLIMPanel extends javax.swing.JPanel {
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(populateDelaysButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(invertDataCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(bleechingCompCheckBox)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(delaySeqPanelLayout.createSequentialGroup()
                 .addComponent(delayTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -497,8 +569,8 @@ public class FLIMPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(fastDelayBoxPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(fastDelayBoxPanelLayout.createSequentialGroup()
-                        .addComponent(delaySeqPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(delaySeqPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
                     .addGroup(fastDelayBoxPanelLayout.createSequentialGroup()
                         .addComponent(fastBoxCalibratedCheck)
                         .addGap(18, 18, Short.MAX_VALUE)
@@ -544,9 +616,9 @@ public class FLIMPanel extends javax.swing.JPanel {
             .addGroup(slowDelayBoxPanelLayout.createSequentialGroup()
                 .addGap(11, 11, 11)
                 .addComponent(slowBoxCalibrated)
-                .addGap(18, 22, Short.MAX_VALUE)
+                .addGap(18, 56, Short.MAX_VALUE)
                 .addComponent(slowCurrentDelayPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(58, Short.MAX_VALUE))
+                .addContainerGap(91, Short.MAX_VALUE))
         );
 
         delayBoxTabbedPane.addTab("Slow delay box", slowDelayBoxPanel);
@@ -565,6 +637,11 @@ public class FLIMPanel extends javax.swing.JPanel {
         CalibrationPathField.setText("DelayPath");
         CalibrationPathField.setMaximumSize(new java.awt.Dimension(229, 20));
         CalibrationPathField.setPreferredSize(new java.awt.Dimension(500, 20));
+        CalibrationPathField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CalibrationPathFieldActionPerformed(evt);
+            }
+        });
 
         CalibrationPathButton.setText("Chose Path");
         CalibrationPathButton.addActionListener(new java.awt.event.ActionListener() {
@@ -596,7 +673,7 @@ public class FLIMPanel extends javax.swing.JPanel {
                 .addComponent(CalibrationFileLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(DelayBoxCalibrationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 111, Short.MAX_VALUE)
                 .addGroup(DelayBoxCalibrationFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(CalibrationPathLabel)
                     .addComponent(CalibrationPathButton))
@@ -622,12 +699,12 @@ public class FLIMPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(delayBoxTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(delayBoxTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(FLIMToolsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(HRIControlsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -646,6 +723,11 @@ public class FLIMPanel extends javax.swing.JPanel {
 
     private void maxpointResolutionFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxpointResolutionFieldActionPerformed
         int num = Integer.parseInt(maxpointResolutionField.getText());
+        num=num/25*25;
+        if(num<25){
+        num=25;
+        }
+        maxpointResolutionField.setText(Integer.toString(num));
         fm_.setResolution(num);
     }//GEN-LAST:event_maxpointResolutionFieldActionPerformed
 
@@ -667,15 +749,18 @@ public class FLIMPanel extends javax.swing.JPanel {
                 gui_.enableLiveMode(false);
                 gui_.closeAllAcquisitions();
             }    
-        
+        int findMaxPointMin=(int) Double.parseDouble(findMaxPointMinField.getText());
+        int findMaxPointMax=(int) Double.parseDouble(findMaxPointMaxField.getText());
+        fm_.xMax=findMaxPointMax;
+        fm_.xMin=findMaxPointMin;
         int delayResolution=Integer.parseInt(maxpointResolutionField.getText());
             ArrayList<Double> meanValues= new ArrayList<Double>();
             ArrayList<Integer> delays = new ArrayList<Integer>();
         int endOk=0;
             try {  
-            for(int delay=0; delay<15000; delay=delay+delayResolution){
+            for(int delay=findMaxPointMin; delay<findMaxPointMax; delay=delay+delayResolution){
                 if(frame.terminate){
-                   frame.setStopButtonFalse(delay, 15000, "Find max point");
+                   frame.setStopButtonFalse(delay, findMaxPointMax, "Find max point");
                    endOk=0;
                    break;
                 }
@@ -683,7 +768,7 @@ public class FLIMPanel extends javax.swing.JPanel {
                     core_.sleep(50);
                     meanValues.add(fm_.getMeanValueOfImage(core_));
                     delays.add(delay);
-                    frame.progressBar_.stepIncrement(delay, 15000);
+                    frame.progressBar_.stepIncrement(delay, findMaxPointMax);
             
                 // reset to previous delay 
                 core_.setProperty("Delay box", "Delay (ps)", fastDelaySlider_.getValue());
@@ -753,9 +838,17 @@ public class FLIMPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_startFieldFocusLost
 
     private void populateDelaysButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_populateDelaysButtonActionPerformed
+        int incr;
+        incr = Integer.parseInt(incrementField.getText());
+        if (incr <= 0)
+        {
+            JOptionPane.showMessageDialog(null, "Increment should be larger than 0!", "Error",
+                                    JOptionPane.ERROR_MESSAGE); //send out error message 'Increment should be larger than 0!'
+            incrementField.setText("25");
+        }
+        else{
         int max;
         int min;
-        int incr;
         ArrayList<Integer> dv = new ArrayList<Integer>();
 
         // deal with case in which start and end have been entered the wrong way round...
@@ -770,14 +863,14 @@ public class FLIMPanel extends javax.swing.JPanel {
             max = Integer.parseInt(endField.getText());
             min = Integer.parseInt(startField.getText());
         }
-        incr = Integer.parseInt(incrementField.getText());
-
+        
         for (int i = min; i < max+1; i = i + incr)
         {
             dv.add(i);
         }
-
+        
         tableModel_.addWholeData(dv);
+        }
         //var_.delays=dv;
     }//GEN-LAST:event_populateDelaysButtonActionPerformed
 
@@ -846,6 +939,32 @@ public class FLIMPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_fastBoxCalibratedCheckActionPerformed
 
+    private void bleechingCompCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bleechingCompCheckBoxActionPerformed
+        if(bleechingCompCheckBox.isSelected()){
+            tableModel_.bleechingComp();
+        //    System.out.println(tableModel_.bleechingComp());
+        } else {
+            tableModel_.undoBleechingComp();
+        }
+    }//GEN-LAST:event_bleechingCompCheckBoxActionPerformed
+
+    private void invertDataCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invertDataCheckBoxActionPerformed
+        tableModel_.invertData();
+        
+    }//GEN-LAST:event_invertDataCheckBoxActionPerformed
+
+    private void CalibrationPathFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CalibrationPathFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CalibrationPathFieldActionPerformed
+
+    private void findMaxPointMinFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findMaxPointMinFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_findMaxPointMinFieldActionPerformed
+
+    private void findMaxPointMaxFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findMaxPointMaxFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_findMaxPointMaxFieldActionPerformed
+
     public void setDelayComboBox(){
         String file1 = null;
         File FileCalibrationDelayBox=new File(".").getAbsoluteFile();
@@ -865,17 +984,18 @@ public class FLIMPanel extends javax.swing.JPanel {
         }
             gui_.registerForEvents(this);
             core_ = gui_.getCore();
-            file1 = DelayPath+"\\HDG800Calibration.csv";
+            file1 = DelayPath+"\\HDG800Calibration41MHz_Fianium.csv";
             setDelayBox(file1, 0);
 
     }
+    
     private void setDelayBox(String file, int x) {
         try {
             core_.setProperty("Delay box", "CalibrationPath", file);
             core_.setProperty("Delay box", "Calibrated", "Yes");
             fastBoxCalibratedCheck.setSelected(true);
             if(x==0){
-                DelayBoxCalibrationComboBox.setSelectedItem("HDG800Calibration.csv");
+                DelayBoxCalibrationComboBox.setSelectedItem("HDG800Calibration41MHz_Fianium.csv");
             }
             CalibrationPathField.setText(file);
         } catch (Exception ex) {
@@ -1046,6 +1166,7 @@ public class FLIMPanel extends javax.swing.JPanel {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 fastDelaySlider_.setValue(tableModel_.validateData(fastDelaySlider_.getValue().intValue()));
                 fastDelaySliderPropertyChange(evt);
+                
             }
         });
         
@@ -1145,6 +1266,7 @@ public class FLIMPanel extends javax.swing.JPanel {
     private javax.swing.JPanel HRIControlsPanel;
     private javax.swing.JTextField acquiredMaxpointField;
     private javax.swing.JButton autogateButton;
+    private javax.swing.JCheckBox bleechingCompCheckBox;
     private javax.swing.JButton clearDelayButton;
     private javax.swing.JTabbedPane delayBoxTabbedPane;
     private javax.swing.JPanel delaySeqPanel;
@@ -1153,13 +1275,19 @@ public class FLIMPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox fastBoxCalibratedCheck;
     private javax.swing.JPanel fastCurrentDelayPanel;
     private javax.swing.JPanel fastDelayBoxPanel;
+    private javax.swing.JTextField findMaxPointMaxField;
+    private javax.swing.JTextField findMaxPointMinField;
     private javax.swing.JPanel gatewidthPanel;
     private javax.swing.JTextField incrementField;
     private javax.swing.JCheckBox inhibitCheck;
+    private javax.swing.JCheckBox invertDataCheckBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel limitsLabel1;
+    private javax.swing.JLabel limitsLabel2;
+    private javax.swing.JLabel limitsLabel3;
     private javax.swing.JButton maxpointButton;
     private javax.swing.JPanel maxpointGraphPanel;
     private javax.swing.JPanel maxpointPanel;
