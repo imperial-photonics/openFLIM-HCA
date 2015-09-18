@@ -211,7 +211,7 @@ public class Arduino {
     public void smStep(){
         try {
             core_.setProperty("Arduino-Input", "AnalogInput2", 1000);
-            core_.setProperty("Arduino-Input", "AnalogInput2", 0);
+        //    core_.setProperty("Arduino-Input", "AnalogInput2", 0);
         } catch (Exception ex) {
             Logger.getLogger(Arduino.class.getName()).log(Level.SEVERE, null, ex);
         }

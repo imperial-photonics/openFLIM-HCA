@@ -107,6 +107,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         bfCamera = new javax.swing.JButton();
         ContinusouseFilterWheel = new javax.swing.JPanel();
         continuouseFWPanel = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
 
         excitationSource.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Excitation source"));
 
@@ -380,6 +381,13 @@ public class LightPathPanel extends javax.swing.JPanel {
             .addGap(0, 33, Short.MAX_VALUE)
         );
 
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout ContinusouseFilterWheelLayout = new javax.swing.GroupLayout(ContinusouseFilterWheel);
         ContinusouseFilterWheel.setLayout(ContinusouseFilterWheelLayout);
         ContinusouseFilterWheelLayout.setHorizontalGroup(
@@ -387,13 +395,18 @@ public class LightPathPanel extends javax.swing.JPanel {
             .addGroup(ContinusouseFilterWheelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(continuouseFWPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(25, 25, 25))
         );
         ContinusouseFilterWheelLayout.setVerticalGroup(
             ContinusouseFilterWheelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ContinusouseFilterWheelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(continuouseFWPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContinusouseFilterWheelLayout.createSequentialGroup()
+                .addComponent(jButton1)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -594,6 +607,10 @@ public class LightPathPanel extends javax.swing.JPanel {
             System.out.println("Error: Couldn't set default camera to bright field camera!");
         }
     }//GEN-LAST:event_bfCameraActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        arduino_.smStep();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     public void setByLabel(JComboBox combo, String device) {
         try {
@@ -808,6 +825,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     private javax.swing.JPanel excitationSource;
     private javax.swing.JComboBox filterCubeComboBox;
     private javax.swing.JButton flimCamera;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
