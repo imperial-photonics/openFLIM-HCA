@@ -7,6 +7,7 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
 import static com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.HCAFLIMPlugin.frame_;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mmcorej.CMMCore;
@@ -81,6 +82,7 @@ public class ArduinoStepperMotor {
         }
         System.out.println("Set Arduino stepRight");
     }
+    
     public void stepLeft(){
         /* one step in "right" direction
         first digital outputs (DO) set to high (activate motor)
@@ -91,18 +93,21 @@ public class ArduinoStepperMotor {
         try {
             core_.setProperty("ArduinoSM-Shutter", "OnOff", "1");
             core_.setProperty("ArduinoSM-Switch", "State", "1");
+            TimeUnit.SECONDS.sleep((long) 1);
             core_.setProperty("ArduinoSM-Switch", "State", "7");
+            TimeUnit.SECONDS.sleep((long) 1);
             core_.setProperty("ArduinoSM-Shutter", "OnOff", "0");
         } catch (Exception ex) {
             Logger.getLogger(Arduino.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("Set Arduino stepLeft");
     }
+    
     public void turnRight(){
         try {
             core_.setProperty("ArduinoSM-Shutter", "OnOff", "1");
             for(int i=0; i<100; i++)
-            {          
+            {   
                 core_.setProperty("ArduinoSM-Switch", "State", "3");
                 core_.setProperty("ArduinoSM-Switch", "State", "7");
                 core_.setProperty("ArduinoSM-Switch", "State", "3");
@@ -110,14 +115,8 @@ public class ArduinoStepperMotor {
                 core_.setProperty("ArduinoSM-Switch", "State", "3");
                 core_.setProperty("ArduinoSM-Switch", "State", "7");
                 core_.setProperty("ArduinoSM-Switch", "State", "3");
-                core_.setProperty("ArduinoSM-Switch", "State", "7");
-                core_.setProperty("ArduinoSM-Switch", "State", "3");
-                core_.setProperty("ArduinoSM-Switch", "State", "7");
-                core_.setProperty("ArduinoSM-Switch", "State", "3");
-                core_.setProperty("ArduinoSM-Switch", "State", "7");
-                System.out.println("i ist "+i);
             }
-            core_.setProperty("ArduinoSM-Shutter", "OnOff", "0");
+            
             } catch (Exception ex) {
                 Logger.getLogger(ArduinoStepperMotor.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -125,11 +124,24 @@ public class ArduinoStepperMotor {
     }
     
     public void turnLeft(){
-        for(int i=0; i<100; i++)
-        {
-            stepLeft();
-            System.out.println("i ist "+i);
-        }
+        try {
+            core_.setProperty("ArduinoSM-Switch", "State", "7");
+            
+            for(int i=0; i<50; i++)
+            {
+            
+                core_.setProperty("ArduinoSM-Shutter", "OnOff", "1");
+                
+                TimeUnit.MILLISECONDS.sleep(100);
+                core_.setProperty("ArduinoSM-Shutter", "OnOff", "0");
+                TimeUnit.MILLISECONDS.sleep(100);
+                System.out.println("i ist "+i);
+            }
+            
+            } catch (Exception ex) {
+                Logger.getLogger(ArduinoStepperMotor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
     }
     
 }

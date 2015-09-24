@@ -659,11 +659,11 @@ public class LightPathPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_sleepButtonActionPerformed
 
     private void stepLeftButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepLeftButtonActionPerformed
-        arduinoSM_.turnLeft();
+        arduinoSM_.stepLeft();
     }//GEN-LAST:event_stepLeftButtonActionPerformed
 
     private void steprightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_steprightButtonActionPerformed
-        arduinoSM_.turnRight();
+        arduinoSM_.turnLeft();
     }//GEN-LAST:event_steprightButtonActionPerformed
 
     public void setByLabel(JComboBox combo, String device) {
