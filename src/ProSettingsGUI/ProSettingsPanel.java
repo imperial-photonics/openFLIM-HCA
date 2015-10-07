@@ -5,9 +5,9 @@
  */
 package ProSettingsGUI;
 
-import GeneralClasses.Arduino;
-import GeneralClasses.Variable;
-import SequencingClasses.GUIComponents.XYSequencing;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing;
 
 /**
  *
