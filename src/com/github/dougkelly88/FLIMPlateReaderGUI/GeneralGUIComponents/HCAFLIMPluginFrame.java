@@ -921,7 +921,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         System.out.println(var_.AcquisitionSavingMode);
         
         ImageWriter SPWWriter = null;        
-        if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff"))
+        if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )
         try 
         {
             if (core_.getBytesPerPixel() == 2)
@@ -1151,9 +1151,18 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     System.out.println(e.getMessage());
                 }
                 
-                if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff"))
-                    acq.snapSPWImage(SPWWriter, sas.getFilters().getDelays(), sas, ind, false); // simulate == false
-                else
+                try
+                {
+                    if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )
+                        acq.snapSPWImage(SPWWriter, sas.getFilters().getDelays(), sas, ind, false); // simulate == false
+                }
+                catch(Exception e) 
+                {
+                    System.out.println(e.getMessage());
+                    if (null != SPWWriter) SPWWriter = null;
+                }
+                                                        
+                if (var_.AcquisitionSavingMode.equals("separate OME.tiff for every FOV") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )                
                     acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
                 
                 // saveSequencingTablesForDebugging(path);
