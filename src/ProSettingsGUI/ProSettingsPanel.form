@@ -22,8 +22,8 @@
           <Component id="dougPanel" alignment="0" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="AcquisitionSavingMode_combo" min="-2" pref="196" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="AcquisitionSavingMode_combo" min="-2" pref="206" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jLabel1" min="-2" pref="149" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -47,7 +47,7 @@
                   <Component id="AcquisitionSavingMode_combo" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="112" max="32767" attributes="0"/>
+              <EmptySpace pref="146" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -379,9 +379,10 @@
     <Component class="javax.swing.JComboBox" name="AcquisitionSavingMode_combo">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="2">
+          <StringArray count="3">
             <StringItem index="0" value="separate OME.tiff for every FOV"/>
             <StringItem index="1" value="single SWP OME.tiff"/>
+            <StringItem index="2" value="single SWP OME.tiff with per FOV backup"/>
           </StringArray>
         </Property>
       </Properties>
@@ -402,9 +403,6 @@
           </Border>
         </Property>
       </Properties>
-      <AccessibilityProperties>
-        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Hardware"/>
-      </AccessibilityProperties>
 
       <Layout>
         <DimensionLayout dim="0">
