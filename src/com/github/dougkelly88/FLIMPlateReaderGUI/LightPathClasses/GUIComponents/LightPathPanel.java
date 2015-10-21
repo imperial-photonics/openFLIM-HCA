@@ -114,6 +114,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         sleepButton = new javax.swing.JButton();
         stepLeftButton = new javax.swing.JButton();
         steprightButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         excitationSource.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Excitation source"));
 
@@ -415,6 +416,13 @@ public class LightPathPanel extends javax.swing.JPanel {
             }
         });
 
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout ContinusouseFilterWheelLayout = new javax.swing.GroupLayout(ContinusouseFilterWheel);
         ContinusouseFilterWheel.setLayout(ContinusouseFilterWheelLayout);
         ContinusouseFilterWheelLayout.setHorizontalGroup(
@@ -431,15 +439,17 @@ public class LightPathPanel extends javax.swing.JPanel {
                         .addComponent(stepLeftButton)))
                 .addGap(18, 18, 18)
                 .addGroup(ContinusouseFilterWheelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(wakeButton)
-                    .addComponent(sleepButton))
-                .addGap(25, 25, 25))
+                    .addGroup(ContinusouseFilterWheelLayout.createSequentialGroup()
+                        .addGroup(ContinusouseFilterWheelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(wakeButton)
+                            .addComponent(sleepButton))
+                        .addGap(25, 25, 25))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ContinusouseFilterWheelLayout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addContainerGap())))
         );
         ContinusouseFilterWheelLayout.setVerticalGroup(
             ContinusouseFilterWheelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ContinusouseFilterWheelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(continuouseFWPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(ContinusouseFilterWheelLayout.createSequentialGroup()
                 .addComponent(wakeButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -447,8 +457,13 @@ public class LightPathPanel extends javax.swing.JPanel {
                     .addComponent(sleepButton)
                     .addComponent(stepLeftButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(steprightButton)
+                .addGroup(ContinusouseFilterWheelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(steprightButton)
+                    .addComponent(jButton1))
                 .addGap(0, 21, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ContinusouseFilterWheelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(continuouseFWPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -666,6 +681,14 @@ public class LightPathPanel extends javax.swing.JPanel {
         arduinoSM_.turnLeft();
     }//GEN-LAST:event_steprightButtonActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+            core_.setProperty("SyringePump", "Liquid Dispersion?", "Go");
+        } catch (Exception ex) {
+            System.out.println("noope");
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     public void setByLabel(JComboBox combo, String device) {
         try {
             String setval = (String) combo.getSelectedItem();
@@ -878,6 +901,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     private javax.swing.JPanel excitationSource;
     private javax.swing.JComboBox filterCubeComboBox;
     private javax.swing.JButton flimCamera;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
