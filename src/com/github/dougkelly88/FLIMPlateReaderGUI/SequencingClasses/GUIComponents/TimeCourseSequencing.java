@@ -8,9 +8,12 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponent
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.SyringeTableModel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.TimePoint;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.TimeCourseTableModel;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -22,6 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.TableCellRenderer;
 import mmcorej.CMMCore;
 import org.micromanager.MMStudio;
 
@@ -33,6 +37,8 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
     
     public TimeCourseTableModel tableModel_;
     JTable timeTable_;
+    SyringeTableModel syringeTableModel_;
+    JTable syringeTable_;
     HCAFLIMPluginFrame parent_;
     SeqAcqProps sap_;
     Variable var_;
@@ -134,8 +140,171 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
                 }
             }
         });
-        
+        tableModel_ = new TimeCourseTableModel(new TimePoint(0.0, false,
+                init));
+        tableModel_.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
 
+            }
+        });
+        
+        tableModel_ = new TimeCourseTableModel(new TimePoint(0.0, false,
+                init));
+        tableModel_.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+
+            }
+        });
+        //---------------------------------------------------------------------------------------
+        syringeTableModel_ = new SyringeTableModel("Liquid Dispension Wells:",init);
+        syringeTableModel_.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+
+            }
+        });
+        syringeTable_ = new JTable();
+        syringeTable_.setModel(syringeTableModel_);
+        syringeTable_.setSurrendersFocusOnKeystroke(true);
+        syringeTable_.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+
+        JScrollPane scroller2 = new javax.swing.JScrollPane(syringeTable_);
+        syringeTable_.setPreferredScrollableViewportSize(new java.awt.Dimension(500, 300));
+        syringeTablePanel.setLayout(new BorderLayout());
+        syringeTablePanel.add(scroller2, BorderLayout.CENTER);
+        
+        final JPopupMenu popupMenu2 = new JPopupMenu();
+        JMenuItem deleteItem2 = new JMenuItem("Unselect well from liquid dispension");
+        deleteItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int r = syringeTable_.getSelectedRow();
+                syringeTableModel_.removeRow(r);
+            }
+        });
+        JMenuItem addItem2 = new JMenuItem("Add well to liquid dispension");
+        addItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int r = syringeTable_.getSelectedRow();
+                syringeTableModel_.insertRow(r+1, "Z0");
+            }
+        });
+        
+        
+        popupMenu2.add(addItem2);
+        popupMenu2.add(deleteItem2);
+    //    popupMenu.add(setDels);
+        syringeTable_.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+//                System.out.println("pressed");
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    JTable source = (JTable) e.getSource();
+                    int row = source.rowAtPoint(e.getPoint());
+                    int column = source.columnAtPoint(e.getPoint());
+
+                    if (!source.isRowSelected(row)) {
+                        source.changeSelection(row, column, false, false);
+                    }
+
+                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
+        /*syringeTableModel_ = new TimeCourseTableModel(new TimePoint(0.0, false,
+                init));
+        syringeTableModel_.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+
+            }
+        });*/
+        /*String[] colName = { "Liquid Dispersion Well(s)" };
+        syringeTableModel_ = new SyringeTableModel(colName, init);
+        syringeTableModel_.addTableModelListener(new TableModelListener() {
+           @Override
+            public void tableChanged(TableModelEvent e) {
+                System.out.println("Jup");
+                //syringeTableModel_.getData();
+                
+            }
+        });
+         syringeTable_ = new JTable(){
+             @Override
+                    public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                        Component comp = super.prepareRenderer(renderer, row, column);
+                        int modelRow = convertRowIndexToModel(row);
+                        int modelColumn = convertColumnIndexToModel(column);
+                        if (modelColumn != 0 && modelRow != 0) {
+                            comp.setBackground(Color.GREEN);
+                        }
+                        
+                        return comp;
+                    }
+         };
+         syringeTable_.setModel(syringeTableModel_);
+         syringeTable_.setSurrendersFocusOnKeystroke(true);
+         syringeTable_.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+         
+
+         JScrollPane scroller2 = new javax.swing.JScrollPane(syringeTable_);
+         syringeTable_.setPreferredScrollableViewportSize(new java.awt.Dimension(60, 100));
+         syringeTablePanel.setLayout(new BorderLayout());
+         syringeTablePanel.add(scroller, BorderLayout.CENTER);
+        
+        final JPopupMenu popupMenu2 = new JPopupMenu();
+        JMenuItem deleteItem2 = new JMenuItem("Delete Well");
+        deleteItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int r = syringeTable_.getSelectedRow();
+                syringeTableModel_.removeRow(r);
+            }            
+        });
+        JMenuItem addItem2 = new JMenuItem("Add Well");
+        addItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int r = syringeTable_.getSelectedRow();
+                syringeTableModel_.insertRow(r+1, "A0");
+            }            
+        });
+        popupMenu2.add(addItem2);
+        popupMenu2.add(deleteItem2);
+        syringeTable_.addMouseListener( new MouseAdapter()
+        {
+            public void mousePressed(MouseEvent e)
+            {
+//                System.out.println("pressed");
+            }
+
+            public void mouseReleased(MouseEvent e)
+            {
+                if (e.isPopupTrigger())
+                {
+                    JTable source = (JTable)e.getSource();
+                    int row = source.rowAtPoint( e.getPoint() );
+                    int column = source.columnAtPoint( e.getPoint() );
+
+                    if (! source.isRowSelected(row))
+                        source.changeSelection(row, column, false, false);
+
+                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
+        */
         
     }
     
@@ -200,10 +369,9 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
         timeStepField = new javax.swing.JFormattedTextField();
         timeUnitsCombo = new javax.swing.JComboBox();
         popTimeCourseButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        liquidDispensionWellsList = new javax.swing.JList();
         liquidDispensionWellsTableLable = new javax.swing.JLabel();
         liquidDispensionButton = new javax.swing.JButton();
+        syringeTablePanel = new javax.swing.JPanel();
 
         timeCourseSeqBasePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
@@ -240,13 +408,6 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
             }
         });
 
-        liquidDispensionWellsList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(liquidDispensionWellsList);
-
         liquidDispensionWellsTableLable.setText("Liquid dispension well(s):");
 
         liquidDispensionButton.setText("Update");
@@ -256,105 +417,86 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
             }
         });
 
+        syringeTablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+
+        javax.swing.GroupLayout syringeTablePanelLayout = new javax.swing.GroupLayout(syringeTablePanel);
+        syringeTablePanel.setLayout(syringeTablePanelLayout);
+        syringeTablePanelLayout.setHorizontalGroup(
+            syringeTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 65, Short.MAX_VALUE)
+        );
+        syringeTablePanelLayout.setVerticalGroup(
+            syringeTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(timeCourseSeqBasePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(noTimePointsField, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(timeStepField, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(timeUnitsCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
-                        .addComponent(popTimeCourseButton)
-                        .addGap(22, 22, 22))
+                        .addContainerGap()
+                        .addComponent(timeCourseSeqBasePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(55, 55, 55)
-                                .addComponent(liquidDispensionWellsTableLable)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(liquidDispensionButton)
-                                .addGap(24, 24, 24)))
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addGap(31, 31, 31)
+                                .addComponent(popTimeCourseButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(noTimePointsField, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(timeStepField, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(timeUnitsCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 186, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(liquidDispensionWellsTableLable, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(liquidDispensionButton, javax.swing.GroupLayout.Alignment.TRAILING))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(syringeTablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(timeCourseSeqBasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(liquidDispensionWellsTableLable)
+                        .addGap(7, 7, 7)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(liquidDispensionWellsTableLable)
+                            .addComponent(jLabel1)
+                            .addComponent(noTimePointsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(liquidDispensionButton)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(noTimePointsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(timeStepField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(timeUnitsCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(popTimeCourseButton))
-                .addContainerGap())
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(liquidDispensionButton)
+                            .addComponent(jLabel2)
+                            .addComponent(timeStepField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(timeUnitsCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(popTimeCourseButton)
+                        .addContainerGap(45, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(syringeTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
     }// </editor-fold>//GEN-END:initComponents
-/*
-    private void myinitComponents() {
-        timeCourseSeqBasePanel = new javax.swing.JPanel();
 
-        timeCourseSeqBasePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
-
-        javax.swing.GroupLayout timeCourseSeqBasePanelLayout = new javax.swing.GroupLayout(timeCourseSeqBasePanel);
-        timeCourseSeqBasePanel.setLayout(timeCourseSeqBasePanelLayout);
-        timeCourseSeqBasePanelLayout.setHorizontalGroup(timeCourseSeqBasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 623, Short.MAX_VALUE)
-        );
-        timeCourseSeqBasePanelLayout.setVerticalGroup(timeCourseSeqBasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 506, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 647, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(timeCourseSeqBasePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 533, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(timeCourseSeqBasePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
-    }*/
     private void timeUnitsComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeUnitsComboActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_timeUnitsComboActionPerformed
 
+    
     private void popTimeCourseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_popTimeCourseButtonActionPerformed
         
         int noTimePoints = Integer.parseInt(noTimePointsField.getText());
@@ -374,22 +516,18 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
     }//GEN-LAST:event_popTimeCourseButtonActionPerformed
 
     private void liquidDispensionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_liquidDispensionButtonActionPerformed
-    liquidDispensionWellsList.getComponentCount();
-    liquidDispensionWellsList.getComponents();
-    System.out.println(liquidDispensionWellsList.getComponents());
-    System.out.println(liquidDispensionWellsList.getComponentCount());
+        syringeTableModel_.getData();
     }//GEN-LAST:event_liquidDispensionButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton liquidDispensionButton;
-    private javax.swing.JList liquidDispensionWellsList;
     private javax.swing.JLabel liquidDispensionWellsTableLable;
     private javax.swing.JFormattedTextField noTimePointsField;
     private javax.swing.JButton popTimeCourseButton;
+    private javax.swing.JPanel syringeTablePanel;
     private javax.swing.JPanel timeCourseSeqBasePanel;
     private javax.swing.JFormattedTextField timeStepField;
     private javax.swing.JComboBox timeUnitsCombo;
