@@ -177,7 +177,7 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
         
         final JPopupMenu popupMenu2 = new JPopupMenu();
         JMenuItem deleteItem2 = new JMenuItem("Unselect well from liquid dispension");
-        deleteItem.addActionListener(new ActionListener() {
+        deleteItem2.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -186,7 +186,7 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
             }
         });
         JMenuItem addItem2 = new JMenuItem("Add well to liquid dispension");
-        addItem.addActionListener(new ActionListener() {
+        addItem2.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -196,8 +196,8 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
         });
         
         
-        popupMenu2.add(addItem2);
-        popupMenu2.add(deleteItem2);
+        popupMenu.add(addItem2);
+        popupMenu.add(deleteItem2);
     //    popupMenu.add(setDels);
         syringeTable_.addMouseListener(new MouseAdapter() {
             @Override
