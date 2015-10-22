@@ -114,6 +114,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public Arduino arduino_;
     public boolean terminate = false;
     public int singleImage;
+    private ArrayList<String> initLDWells = new ArrayList<String>();
     //
     public String AcquisitionSavingMode;
    
@@ -185,6 +186,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         arduino_.initializeArduino();
         
         core_.setAutoShutter(false);
+        initLDWells.add("A1");
+        initLDWells.add("B2");
+        initLDWells.add("C3");
+        initLDWells.add("D4");
+        initLDWells.add("E5");
     }
 
     public CMMCore getCore() {
@@ -1182,7 +1188,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 lastFOV = sas.getFOV();
                 lastZ = sas.getFOV().getZ();
                 lastFiltLabel = sas.getFilters().getLabel();
-                                            
+                System.out.println("Time Point: "+lastTime);
+                System.out.println("Well Measured: "+lastFOV.getWell());
+                
+                
             // RESET DELAY TO BE CONSISTENT WITH UI
             try{
                 core_.setProperty("Delay box", "Delay (ps)", fLIMPanel1.getCurrentDelay());
@@ -1264,7 +1273,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
             // so that same functions can be used, generate dummy SequencedAcquisitionSetup
             acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
-                    new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
+                    new SeqAcqSetup(currentFOV_, new TimePoint(0.0,false,initLDWells), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
             progressBar_.setEnd("Snap FLIM image");
         }
         arduino_.setDigitalOutLow();
@@ -1473,7 +1482,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             wbLoad = new HSSFWorkbook(fileInputStream1);
             xYSequencing1.tableModel_.loadFOVTableModelfromSpreadsheet();
             spectralSequencing1.tableModel_.loadFilterTableModelfromSpreadsheet();
-            timeCourseSequencing1.tableModel_.loadTimeCourseTableModelfromSpreadsheet();
+//            timeCourseSequencing1.tableModel_.loadTimeCourseTableModelfromSpreadsheet();
             fileInputStream1.close();       
     }
     

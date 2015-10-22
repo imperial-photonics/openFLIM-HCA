@@ -9,9 +9,11 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPlu
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.table.AbstractTableModel;
+import static mmcorej.PropertyType.String;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.usermodel.RichTextString;
 
 /**
  *
@@ -21,12 +23,12 @@ public class TimeCourseTableModel extends AbstractTableModel {
 
     public static final int TIME_INDEX = 0;
     public static final int LD_INDEX = 1;
-    public static final int SA_INDEX = 2;
+    public static final int LDWELLS_INDEX = 2;
     final static String ul = "(" + "\u00B5" + "l)";
 
     private ArrayList<TimePoint> data_ = new ArrayList<TimePoint>();
-    private String[] colNames_ = {"Time (s)", "Liquid dispense volume " + ul,
-        "Sound alert?"};
+    private String[] colNames_ = {"Time (s)", "Liquid dispension?",
+        "Liquid dispension Well(s)"};
 
     public TimeCourseTableModel(String[] columnNames) {
         this.colNames_ = columnNames;
@@ -66,11 +68,11 @@ public class TimeCourseTableModel extends AbstractTableModel {
                 break;
             case LD_INDEX:
 //                boolean bo=(Boolean) value;
-                f.setLDVolume((Double) value);
+                f.setLDState((Boolean) value);
                 break;
-            case SA_INDEX:
-                boolean boo = (Boolean) value;
-                f.setSAState(boo);
+            case LDWELLS_INDEX:
+                //boolean boo = (Boolean) value;
+                f.setLdWells((ArrayList<String>) value);
                 break;
 
             default:
@@ -91,9 +93,9 @@ public class TimeCourseTableModel extends AbstractTableModel {
             case TIME_INDEX:
                 return f.getTimeCell();
             case LD_INDEX:
-                return f.getLDVolume();
-            case SA_INDEX:
-                return f.getSAState();
+                return f.getLDState();
+            case LDWELLS_INDEX:
+                return f.getLdWells();
             default:
                 return f;
         }
@@ -106,7 +108,7 @@ public class TimeCourseTableModel extends AbstractTableModel {
                 return getValueAt(0, column).getClass();
             case LD_INDEX:
                 return getValueAt(0, column).getClass();
-            case SA_INDEX:
+            case LDWELLS_INDEX:
                 return getValueAt(0, column).getClass();
 //                 return getValueAt(0, column).getClass();
             default:
@@ -188,8 +190,8 @@ public class TimeCourseTableModel extends AbstractTableModel {
             HSSFCell cell01 = row0.createCell(1);
             HSSFCell cell02 = row0.createCell(2);
             cell00.setCellValue("Time (s)");
-            cell01.setCellValue("Liquid dispense volume" + ul);
-            cell02.setCellValue("Sound alert?");
+            cell01.setCellValue("Liquid dispense?");
+            cell02.setCellValue("Liquid dispension well(s)");
 
             
     // write row for row from table to sheet        
@@ -199,8 +201,8 @@ public class TimeCourseTableModel extends AbstractTableModel {
             HSSFCell cell1 = row.createCell(1);
             HSSFCell cell2 = row.createCell(2);
             cell0.setCellValue(data_.get(RowNum).getTimeCell());
-            cell1.setCellValue(data_.get(RowNum).getLDVolume());
-            cell2.setCellValue(data_.get(RowNum).getSAState());
+            cell1.setCellValue(data_.get(RowNum).getLDState());
+            cell2.setCellValue((RichTextString) data_.get(RowNum).getLdWells());
             
         }
        
@@ -209,7 +211,7 @@ public class TimeCourseTableModel extends AbstractTableModel {
         //To change body of generated methods, choose Tools | Templates.
     }
 
-    public void loadTimeCourseTableModelfromSpreadsheet() {
+    /*public void loadTimeCourseTableModelfromSpreadsheet() {
         ArrayList<TimePoint> load=new ArrayList();
         HSSFSheet worksheet = HCAFLIMPluginFrame.wbLoad.getSheet("TimeCourseSequencing");
         int RowSize=worksheet.getPhysicalNumberOfRows();
@@ -219,13 +221,13 @@ public class TimeCourseTableModel extends AbstractTableModel {
             HSSFCell cell1 = row.getCell(1);
             HSSFCell cell2 = row.getCell(2);
             
-            TimePoint fov = new TimePoint(cell0.getNumericCellValue(),cell1.getNumericCellValue(), cell2.getBooleanCellValue());
+            TimePoint fov = new TimePoint(cell0.getNumericCellValue(),cell1.getBooleanCellValue(), cell2.getRichTextStringCellValue());
             load.add(fov);
         }
         data_=load;
         fireTableDataChanged();
         
     
-    }
+    }*/
 
 }

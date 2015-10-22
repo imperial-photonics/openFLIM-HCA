@@ -39,6 +39,8 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
     CMMCore core_; 
     MMStudio gui_;
     int selectedRow_;
+    ArrayList<String> init = new ArrayList<>();
+    
     
     /**
      * Creates new form SpectralSequencing
@@ -46,9 +48,15 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
     public TimeCourseSequencing() {
         initComponents();
         setControlDefaults();
+        init.add("A1");
+        init.add("B2");
+        init.add("C3");
+        init.add("D4");
+        init.add("E5");
     }
     
     private void setControlDefaults(){
+       
         try{
             gui_ = MMStudio.getInstance();
             core_ = gui_.getCore();
@@ -62,8 +70,8 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
         
 //        tableModel_ = new FilterTableModel(new FilterSetup("GFP", "465/30",
 //                "ND 1.0","473/561","525/30",100,sap_.getDelaysArray().get(0)));
-        tableModel_ = new TimeCourseTableModel(new TimePoint(0.0, 0.0,
-                false));
+        tableModel_ = new TimeCourseTableModel(new TimePoint(0.0, false,
+                init));
         tableModel_.addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
@@ -96,8 +104,8 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int r = timeTable_.getSelectedRow();
-                tableModel_.insertRow(r+1, new TimePoint(-1.0, 0.0,
-                        false));
+                tableModel_.insertRow(r+1, new TimePoint(-1.0, false,
+                        init));
             }
         });
         
@@ -322,7 +330,7 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
         tableModel_.clearAllData();
         
         for (int ind = 0; ind < noTimePoints; ind++){
-            tableModel_.addRow(new TimePoint(ind * tStepSecs, 0.0, false));
+            tableModel_.addRow(new TimePoint(ind * tStepSecs, false, init));
         }
     }//GEN-LAST:event_popTimeCourseButtonActionPerformed
 
