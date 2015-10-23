@@ -134,26 +134,57 @@ public class SyringeTableModel extends AbstractTableModel {
     
     public String validateData(String val){
         int length=val.length();
-        String row=val.substring(1);
-        String column=null;
-        if (length==2){
-            column=val.substring(1, 2);
-        } else if (length==3){
-            column=val.substring(1, 3);
-        } else{
-            System.out.println("Error: validateData in SyringeTableModel!");
-            System.out.println("Well input invalid! Please chose as row a letter between A-H and a column between 1-12.");
-        }
-        if (length==2){
-            column=val.substring(1, 2);
-        } else if (length==3){
-            column=val.substring(1, 3);
-        } else{
-            System.out.println("Error: validateData in SyringeTableModel!");
-            System.out.println("Well input invalid! Please chose as row a letter between A-H and a column between 1-12.");
-        }
+        String row=val.substring(0,1);
+        String column="14";
         row=row.toUpperCase();
+        if(length>3||length==1){
+            noValidDataOutput();
+            val=val+"-> no valid data!";
+        } else{
+            
+            if(length==2){
+                column=val.substring(1,2);
+            } else{
+                column=val.substring(1,3);
+            }
+            try { 
+                int col=Integer.parseInt(column);
+                System.out.println("col: "+col);
+                if (col<13){
+                    val= row+column;
+                    System.out.println("correct Well");
+                } else {
+                    noValidDataOutput();
+                    val=val+"-> no valid data!";
+                    System.out.println("Well out of boundaries");
+                }
+                System.out.println("row: "+row);
+                System.out.println("column: "+column);
+                //column=String col;
+                } catch(NumberFormatException e) { 
+                    noValidDataOutput();
+                    val=val+"-> no valid data!"; 
+                }
+            
+        }
+        
         return val;
+    }
+    
+    public void noValidDataOutput(){
+        System.out.println("Error: validateData in SyringeTableModel!");
+        System.out.println("Well input invalid! Please chose as row a letter between A-H and a column between 1-12.");
+    }
+    
+    public void validateList(){
+        ArrayList<String> dl=new ArrayList<String>();
+        dl=getData();
+        String nWell=null;
+        for (String well : dl) {
+            System.out.println(well);
+            nWell=validateData(well);
+            System.out.println(nWell);
+        }
     }
 
 }

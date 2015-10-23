@@ -174,7 +174,7 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
                         if (modelColumn != 0 && modelRow != 0) {
                             comp.setBackground(Color.GREEN);
                         }
-                        
+                        //syringeTableModel_.validateData();
                         return comp;
                     }
          };
@@ -232,91 +232,7 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
                 }
             }
         });
-        /*syringeTableModel_ = new TimeCourseTableModel(new TimePoint(0.0, false,
-                init));
-        syringeTableModel_.addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-
-            }
-        });*/
-        /*String[] colName = { "Liquid Dispersion Well(s)" };
-        syringeTableModel_ = new SyringeTableModel(colName, init);
-        syringeTableModel_.addTableModelListener(new TableModelListener() {
-           @Override
-            public void tableChanged(TableModelEvent e) {
-                System.out.println("Jup");
-                //syringeTableModel_.getData();
-                
-            }
-        });
-         syringeTable_ = new JTable(){
-             @Override
-                    public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-                        Component comp = super.prepareRenderer(renderer, row, column);
-                        int modelRow = convertRowIndexToModel(row);
-                        int modelColumn = convertColumnIndexToModel(column);
-                        if (modelColumn != 0 && modelRow != 0) {
-                            comp.setBackground(Color.GREEN);
-                        }
-                        
-                        return comp;
-                    }
-         };
-         syringeTable_.setModel(syringeTableModel_);
-         syringeTable_.setSurrendersFocusOnKeystroke(true);
-         syringeTable_.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-         
-
-         JScrollPane scroller2 = new javax.swing.JScrollPane(syringeTable_);
-         syringeTable_.setPreferredScrollableViewportSize(new java.awt.Dimension(60, 100));
-         syringeTablePanel.setLayout(new BorderLayout());
-         syringeTablePanel.add(scroller, BorderLayout.CENTER);
         
-        final JPopupMenu popupMenu2 = new JPopupMenu();
-        JMenuItem deleteItem2 = new JMenuItem("Delete Well");
-        deleteItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int r = syringeTable_.getSelectedRow();
-                syringeTableModel_.removeRow(r);
-            }            
-        });
-        JMenuItem addItem2 = new JMenuItem("Add Well");
-        addItem.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int r = syringeTable_.getSelectedRow();
-                syringeTableModel_.insertRow(r+1, "A0");
-            }            
-        });
-        popupMenu2.add(addItem2);
-        popupMenu2.add(deleteItem2);
-        syringeTable_.addMouseListener( new MouseAdapter()
-        {
-            public void mousePressed(MouseEvent e)
-            {
-//                System.out.println("pressed");
-            }
-
-            public void mouseReleased(MouseEvent e)
-            {
-                if (e.isPopupTrigger())
-                {
-                    JTable source = (JTable)e.getSource();
-                    int row = source.rowAtPoint( e.getPoint() );
-                    int column = source.columnAtPoint( e.getPoint() );
-
-                    if (! source.isRowSelected(row))
-                        source.changeSelection(row, column, false, false);
-
-                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
-                }
-            }
-        });
-        */
         
     }
     
@@ -525,7 +441,9 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
     }//GEN-LAST:event_popTimeCourseButtonActionPerformed
 
     private void liquidDispensionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_liquidDispensionButtonActionPerformed
-        syringeTableModel_.getData();
+        syringeTableModel_.validateList();
+        System.out.println(syringeTableModel_.getData());
+        
     }//GEN-LAST:event_liquidDispensionButtonActionPerformed
 
 
