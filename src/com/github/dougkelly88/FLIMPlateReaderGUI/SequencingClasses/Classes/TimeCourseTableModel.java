@@ -9,7 +9,6 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPlu
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.table.AbstractTableModel;
-import static mmcorej.PropertyType.String;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;

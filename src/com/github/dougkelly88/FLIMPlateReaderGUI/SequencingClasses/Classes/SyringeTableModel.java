@@ -133,41 +133,43 @@ public class SyringeTableModel extends AbstractTableModel {
     }
     
     public String validateData(String val){
+        // check if input is between A1-H12
         int length=val.length();
-        String row=val.substring(0,1);
+        // gets rowtring row=val.substring(0,1);
         String column="14";
+        String row=val.substring(0,1);
         row=row.toUpperCase();
-        if(length>3||length==1){
-            noValidDataOutput();
-            val=val+"-> no valid data!";
-        } else{
-            
-            if(length==2){
-                column=val.substring(1,2);
+        if (row.contains("A")||row.contains("B")||row.contains("C")||row.contains("D")||row.contains("E")||row.contains("F")||row.contains("G")||row.contains("H")){
+            // kicks out every string with more than 3 items
+            if(length>3||length==1){
+                noValidDataOutput();
+                val=val+"-> no valid data!";
             } else{
-                column=val.substring(1,3);
-            }
-            try { 
-                int col=Integer.parseInt(column);
-                System.out.println("col: "+col);
-                if (col<13){
-                    val= row+column;
-                    System.out.println("correct Well");
-                } else {
-                    noValidDataOutput();
-                    val=val+"-> no valid data!";
-                    System.out.println("Well out of boundaries");
+                // check if one or two decimal, if it is a number and if it is smaller than 13
+                if(length==2){
+                    column=val.substring(1,2);
+                } else{
+                    column=val.substring(1,3);
                 }
-                System.out.println("row: "+row);
-                System.out.println("column: "+column);
-                //column=String col;
+                try { 
+                    int col=Integer.parseInt(column);
+                    System.out.println("col: "+col);
+                    if (col<13){
+                        val= row+column;
+                    } else {
+                        noValidDataOutput();
+                        val=val+"-> no valid data!";
+                    }
                 } catch(NumberFormatException e) { 
                     noValidDataOutput();
                     val=val+"-> no valid data!"; 
                 }
-            
+
+            }
+        } else {
+            noValidDataOutput();
+            val=val+"-> no valid data!"; 
         }
-        
         return val;
     }
     
@@ -181,9 +183,7 @@ public class SyringeTableModel extends AbstractTableModel {
         dl=getData();
         String nWell=null;
         for (String well : dl) {
-            System.out.println(well);
             nWell=validateData(well);
-            System.out.println(nWell);
         }
     }
 

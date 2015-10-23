@@ -208,8 +208,8 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
         });
         
         
-        popupMenu.add(addItem2);
-        popupMenu.add(deleteItem2);
+        popupMenu2.add(addItem2);
+        popupMenu2.add(deleteItem2);
     //    popupMenu.add(setDels);
         syringeTable_.addMouseListener(new MouseAdapter() {
             @Override
@@ -442,8 +442,12 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
 
     private void liquidDispensionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_liquidDispensionButtonActionPerformed
         syringeTableModel_.validateList();
-        System.out.println(syringeTableModel_.getData());
-        
+        ArrayList<TimePoint> data=tableModel_.getData();
+        for (TimePoint tp : data) {
+            System.out.println(tp);
+            tp.setLdWells(syringeTableModel_.getData());
+        }
+        tableModel_.addWholeData(data);
     }//GEN-LAST:event_liquidDispensionButtonActionPerformed
 
 
