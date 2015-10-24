@@ -153,7 +153,6 @@ public class SyringeTableModel extends AbstractTableModel {
                 }
                 try { 
                     int col=Integer.parseInt(column);
-                    System.out.println("col: "+col);
                     if (col<13){
                         val= row+column;
                     } else {

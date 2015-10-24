@@ -436,8 +436,10 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
         tableModel_.clearAllData();
         
         for (int ind = 0; ind < noTimePoints; ind++){
-            tableModel_.addRow(new TimePoint(ind * tStepSecs, false, init));
+            tableModel_.addRow(new TimePoint(ind * tStepSecs, false, syringeTableModel_.getData()));
         }
+        tableModel_.fireTableDataChanged();
+        System.out.println(tableModel_.getData());
     }//GEN-LAST:event_popTimeCourseButtonActionPerformed
 
     private void liquidDispensionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_liquidDispensionButtonActionPerformed
