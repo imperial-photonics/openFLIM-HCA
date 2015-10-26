@@ -228,7 +228,7 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
                         source.changeSelection(row, column, false, false);
                     }
 
-                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
+                    popupMenu2.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
         });
@@ -442,6 +442,10 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
         System.out.println(tableModel_.getData());
     }//GEN-LAST:event_popTimeCourseButtonActionPerformed
 
+    public void startSyringe(TimePoint tp, String Well, String FOV){
+        tableModel_.doSyringe(tp,Well,FOV);   
+    }
+    
     private void liquidDispensionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_liquidDispensionButtonActionPerformed
         syringeTableModel_.validateList();
         ArrayList<TimePoint> data=tableModel_.getData();

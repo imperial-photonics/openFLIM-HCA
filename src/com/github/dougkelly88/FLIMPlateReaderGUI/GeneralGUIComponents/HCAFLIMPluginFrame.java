@@ -1150,6 +1150,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     core_.waitForDeviceType(DeviceType.XYStageDevice);
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                     arduino_.setDigitalOutHigh();
+                    timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell(),sas.getFOV().getGroup());
                     wait(var_.shutterResponse);
                     //displayImage2_.hideImageInIJ();
                 }
@@ -1324,8 +1325,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_FLIMPanelStateChanged
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-      System.out.print(var_.manStageCheck);
-
+//      timeCourseSequencing1.startSyringe();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jMenu_create_simulated_SPW_OMEtiffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu_create_simulated_SPW_OMEtiffActionPerformed
