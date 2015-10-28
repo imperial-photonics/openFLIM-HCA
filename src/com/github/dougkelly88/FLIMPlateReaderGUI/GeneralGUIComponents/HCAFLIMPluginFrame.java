@@ -1150,7 +1150,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     core_.waitForDeviceType(DeviceType.XYStageDevice);
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                     arduino_.setDigitalOutHigh();
-                    timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell(),sas.getFOV().getGroup());
+                    timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell());
                     wait(var_.shutterResponse);
                     //displayImage2_.hideImageInIJ();
                 }

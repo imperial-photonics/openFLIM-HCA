@@ -28,7 +28,8 @@ public class TimeCourseTableModel extends AbstractTableModel {
     private ArrayList<TimePoint> data_ = new ArrayList<TimePoint>();
     private String[] colNames_ = {"Time (s)", "Liquid dispension?",
         "Liquid dispension Well(s)"};
-    private String prevWell;
+    private String prevWell="Z00";
+    private Double prevTpTimeCell= (double)-1;
 
     public TimeCourseTableModel(String[] columnNames) {
         this.colNames_ = columnNames;
@@ -212,12 +213,12 @@ public class TimeCourseTableModel extends AbstractTableModel {
         //To change body of generated methods, choose Tools | Templates.
     }
     
-    public boolean doSyringe(TimePoint tp, String Well, String FOV){
+    public boolean doSyringe(TimePoint tp, String Well){
         boolean ret=false;
-        boolean checkWell=false;
+        tp.getTimeCell();
         System.out.println("previouse Well: "+prevWell);
         System.out.println("current Well: "+Well);
-        if (prevWell.equals(Well)){
+        if (prevWell.equals(Well)&&prevTpTimeCell==tp.getTimeCell()){
             ret=false;
         } else {
             if(tp.getLDState()){
@@ -229,8 +230,9 @@ public class TimeCourseTableModel extends AbstractTableModel {
                 ret=false;
             }
             prevWell=Well;
+            prevTpTimeCell=tp.getTimeCell();
         }
-        System.out.println("Well tp and ret value: "+Well+ret+tp);
+        System.out.println("Well tp and ret value: "+Well+" "+ret+" "+tp);
         return ret;
     }
 
