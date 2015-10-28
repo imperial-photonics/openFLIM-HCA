@@ -215,10 +215,9 @@ public class TimeCourseTableModel extends AbstractTableModel {
     
     public boolean doSyringe(TimePoint tp, String Well){
         boolean ret=false;
-        tp.getTimeCell();
-        System.out.println("previouse Well: "+prevWell);
-        System.out.println("current Well: "+Well);
-        if (prevWell.equals(Well)&&prevTpTimeCell==tp.getTimeCell()){
+        TimePoint f = data_.get(2);
+        ArrayList<String> data1= f.getLdWells();
+        if (prevWell.equals(Well)&&prevTpTimeCell==tp.getTimeCell()&& !data1.contains(Well)){
             ret=false;
         } else {
             if(tp.getLDState()){
