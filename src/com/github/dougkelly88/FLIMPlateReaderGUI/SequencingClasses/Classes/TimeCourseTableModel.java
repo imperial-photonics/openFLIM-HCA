@@ -8,11 +8,15 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
+import mmcorej.CMMCore;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.micromanager.MMStudio;
 
 /**
  *
@@ -30,6 +34,8 @@ public class TimeCourseTableModel extends AbstractTableModel {
         "Liquid dispension Well(s)"};
     private String prevWell="Z00";
     private Double prevTpTimeCell= (double)-1;
+    CMMCore core_; 
+    MMStudio gui_;
 
     public TimeCourseTableModel(String[] columnNames) {
         this.colNames_ = columnNames;
@@ -216,18 +222,23 @@ public class TimeCourseTableModel extends AbstractTableModel {
     public boolean doSyringe(TimePoint tp, String Well){
         boolean ret=false;
         TimePoint f = data_.get(2);
-        boolean test=prevTpTimeCell==tp.getTimeCell();
         ArrayList<String> data1= f.getLdWells();
-        System.out.println("Data: "+data1);
-        System.out.println("prevWell+Well+PrevEquWell?: "+prevWell+" "+Well+" "+prevWell.equals(Well));
-        System.out.println("prevTP+TP+PrevEquTP?: "+prevTpTimeCell+" "+tp.getTimeCell()+" "+test);
-        System.out.println("ContainsWell?: "+!data1.contains(Well));
-        System.out.println("LDState?: "+tp.getLDState());
         if (prevWell.equals(Well) && prevTpTimeCell==tp.getTimeCell() || !data1.contains(Well)){
             ret=false;
         } else {
             if(tp.getLDState()){
                 ret=true;
+                System.out.println("Add liquid to well "+Well+" at time point "+ tp.getTimeCell());
+                /*try {
+                    core_.setProperty("SyringePump","Liquid Dispersion", "Go");
+                } catch (Exception ex) {
+                    System.out.println("Error TimeCourseTableModel doSyringe. Couldn't set property at SyringPump.");
+                }
+                try {
+                    wait(1000);
+                } catch (InterruptedException ex) {
+                    System.out.println("Error TimeCourseTableModel doSyringe. Couldn't wait untill syring finished!");
+                }*/
             } else if (tp.getLDState()==false){
                 ret=false;
             } else {
@@ -237,7 +248,6 @@ public class TimeCourseTableModel extends AbstractTableModel {
         }
         prevWell=Well;
         prevTpTimeCell=tp.getTimeCell();
-        System.out.println("Well tp and ret value: "+Well+" "+ret+" "+tp);
         return ret;
     }
 

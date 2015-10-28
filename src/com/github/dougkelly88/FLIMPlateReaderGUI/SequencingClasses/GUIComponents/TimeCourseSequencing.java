@@ -436,8 +436,9 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
         System.out.println(tableModel_.getData());
     }//GEN-LAST:event_popTimeCourseButtonActionPerformed
 
-    public void startSyringe(TimePoint tp, String Well){
-        tableModel_.doSyringe(tp,Well);   
+    public boolean startSyringe(TimePoint tp, String Well){
+        boolean ret=tableModel_.doSyringe(tp,Well);   
+        return ret;
     }
     
     private void liquidDispensionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_liquidDispensionButtonActionPerformed

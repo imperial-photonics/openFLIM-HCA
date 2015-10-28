@@ -1054,13 +1054,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 if ((!sas.getTimePoint().getTimeCell().equals(lastTime)) & (order.contains("Time course"))){
                     Double next_time = sas.getTimePoint().getTimeCell() * 1000;
                     while ((System.currentTimeMillis() - start_time) < next_time){
-                        Double timeLeft = next_time - (System.currentTimeMillis() - start_time);
-                        System.out.println("Waiting for " + timeLeft + " until next time point...");
-                        //check for flag (stop button) and abort time course wait
                         if(terminate){
                             endOk=1;
                             break;    
                         }
+                        Double timeLeft = next_time - (System.currentTimeMillis() - start_time);
+                        //System.out.println("Waiting for " + timeLeft + " until next time point...");
+                        //check for flag (stop button) and abort time course wait
+                        
                     }
                 }
                 // if FOV different, deal with it here...
@@ -1150,7 +1151,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     core_.waitForDeviceType(DeviceType.XYStageDevice);
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                     arduino_.setDigitalOutHigh();
-                    timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell());
+                    if(timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell())){
+                        core_.setProperty("SyringePump","Liquid Dispersion?", "Go");
+                        wait(1000);
+                            }
                     wait(var_.shutterResponse);
                     //displayImage2_.hideImageInIJ();
                 }
@@ -1325,7 +1329,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_FLIMPanelStateChanged
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
+        try {
+            core_.setProperty("SyringePump","Liquid Dispersion?", "Go");
+        } catch (Exception ex) {
+            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jMenu_create_simulated_SPW_OMEtiffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu_create_simulated_SPW_OMEtiffActionPerformed
