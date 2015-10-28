@@ -219,11 +219,11 @@ public class TimeCourseTableModel extends AbstractTableModel {
         boolean test=prevTpTimeCell==tp.getTimeCell();
         ArrayList<String> data1= f.getLdWells();
         System.out.println("Data: "+data1);
-        System.out.println("Well: "+Well);
-        System.out.println("PrevEquWell?: "+prevWell.equals(Well));
-        System.out.println("PrevEquTP?: "+test);
-        System.out.println("ContainsWell?: "+data1.contains(Well));
-        if (prevWell.equals(Well) && prevTpTimeCell==tp.getTimeCell() && !data1.contains(Well)){
+        System.out.println("prevWell+Well+PrevEquWell?: "+prevWell+" "+Well+" "+prevWell.equals(Well));
+        System.out.println("prevTP+TP+PrevEquTP?: "+prevTpTimeCell+" "+tp.getTimeCell()+" "+test);
+        System.out.println("ContainsWell?: "+!data1.contains(Well));
+        System.out.println("LDState?: "+tp.getLDState());
+        if (prevWell.equals(Well) && prevTpTimeCell==tp.getTimeCell() || !data1.contains(Well)){
             ret=false;
         } else {
             if(tp.getLDState()){
@@ -234,9 +234,9 @@ public class TimeCourseTableModel extends AbstractTableModel {
                 System.out.println("Error: TimeCourseTableModel doSyringe. Failure in checking liquid dispension state during time course aqcuisition!");
                 ret=false;
             }
-            prevWell=Well;
-            prevTpTimeCell=tp.getTimeCell();
         }
+        prevWell=Well;
+        prevTpTimeCell=tp.getTimeCell();
         System.out.println("Well tp and ret value: "+Well+" "+ret+" "+tp);
         return ret;
     }
