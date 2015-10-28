@@ -76,7 +76,7 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
         
 //        tableModel_ = new FilterTableModel(new FilterSetup("GFP", "465/30",
 //                "ND 1.0","473/561","525/30",100,sap_.getDelaysArray().get(0)));
-        tableModel_ = new TimeCourseTableModel(new TimePoint(0.0, false,
+        /*tableModel_ = new TimeCourseTableModel(new TimePoint(0.0, false,
                 init));
         tableModel_.addTableModelListener(new TableModelListener() {
             @Override
@@ -155,6 +155,83 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
             @Override
             public void tableChanged(TableModelEvent e) {
 
+            }
+        });*/
+        //---------------------------------------------------------------------------------------
+        tableModel_ = new TimeCourseTableModel(new TimePoint(0.0, false,
+                init));
+        tableModel_.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+
+            }
+        });
+        timeTable_ = new JTable(){
+             @Override
+                    public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                        Component comp = super.prepareRenderer(renderer, row, column);
+                        int modelRow = convertRowIndexToModel(row);
+                        int modelColumn = convertColumnIndexToModel(column);
+                        /*if (modelColumn != 0 && modelRow != 0) {
+                            comp.setBackground(Color.GREEN);
+                        }*/
+                        //syringeTableModel_.validateData();
+                        return comp;
+                    }
+         };
+        timeTable_.setModel(tableModel_);
+        timeTable_.setSurrendersFocusOnKeystroke(true);
+        timeTable_.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+
+        JScrollPane scroller = new javax.swing.JScrollPane(timeTable_);
+        timeTable_.setPreferredScrollableViewportSize(new java.awt.Dimension(500, 300));
+        timeCourseSeqBasePanel.setLayout(new BorderLayout());
+        timeCourseSeqBasePanel.add(scroller, BorderLayout.CENTER);
+        
+        final JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem deleteItem = new JMenuItem("Unselect well from liquid dispension");
+        deleteItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int r = timeTable_.getSelectedRow();
+                tableModel_.removeRow(r);
+            }
+        });
+        JMenuItem addItem = new JMenuItem("Add well to liquid dispension");
+        addItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int r = timeTable_.getSelectedRow();
+                tableModel_.insertRow(r+1, new TimePoint(-1.0, false,
+                        init));
+            }
+        });
+        
+        
+        popupMenu.add(addItem);
+        popupMenu.add(deleteItem);
+    //    popupMenu.add(setDels);
+        timeTable_.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+//                System.out.println("pressed");
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    JTable source = (JTable) e.getSource();
+                    int row = source.rowAtPoint(e.getPoint());
+                    int column2 = source.columnAtPoint(e.getPoint());
+
+                    if (!source.isRowSelected(row)) {
+                        source.changeSelection(row, column2, false, false);
+                    }
+
+                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
             }
         });
         //---------------------------------------------------------------------------------------
