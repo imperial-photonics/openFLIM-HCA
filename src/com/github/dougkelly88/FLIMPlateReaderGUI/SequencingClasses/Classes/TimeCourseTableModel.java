@@ -128,6 +128,7 @@ public class TimeCourseTableModel extends AbstractTableModel {
 
     public void insertRow(int index, TimePoint f) {
         data_.add(index, f);
+        System.out.println("new data: "+ data_);
         validateTimes();
 //        fireTableRowsInserted(data_.size() - 1, data_.size() - 1);
         fireTableRowsInserted(data_.size(), data_.size());

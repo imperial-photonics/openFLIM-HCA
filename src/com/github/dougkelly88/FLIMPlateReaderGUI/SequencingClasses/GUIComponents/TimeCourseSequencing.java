@@ -183,7 +183,7 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
         syringeTable_.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
         JScrollPane scroller2 = new javax.swing.JScrollPane(syringeTable_);
-        syringeTable_.setPreferredScrollableViewportSize(new java.awt.Dimension(500, 300));
+        syringeTable_.setPreferredScrollableViewportSize(new java.awt.Dimension(50, 30));
         syringeTablePanel.setLayout(new BorderLayout());
         syringeTablePanel.add(scroller2, BorderLayout.CENTER);
         
@@ -220,12 +220,12 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (e.isPopupTrigger()) {
-                    JTable source = (JTable) e.getSource();
-                    int row = source.rowAtPoint(e.getPoint());
-                    int column = source.columnAtPoint(e.getPoint());
+                    JTable source2 = (JTable) e.getSource();
+                    int row2 = source2.rowAtPoint(e.getPoint());
+                    int column2 = source2.columnAtPoint(e.getPoint());
 
-                    if (!source.isRowSelected(row)) {
-                        source.changeSelection(row, column, false, false);
+                    if (!source2.isRowSelected(row2)) {
+                        source2.changeSelection(row2, column2, false, false);
                     }
 
                     popupMenu2.show(e.getComponent(), e.getX(), e.getY());
