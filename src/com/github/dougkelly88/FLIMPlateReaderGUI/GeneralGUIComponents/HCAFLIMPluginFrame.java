@@ -1149,12 +1149,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         break;
                     }
                     core_.waitForDeviceType(DeviceType.XYStageDevice);
-                    core_.waitForDeviceType(DeviceType.AutoFocusDevice);
-                    arduino_.setDigitalOutHigh();
                     if(timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell())){
                         core_.setProperty("SyringePump","Liquid Dispersion?", "Go");
                         wait(1000);
                             }
+                    core_.waitForDeviceType(DeviceType.AutoFocusDevice);
+                    arduino_.setDigitalOutHigh();
                     wait(var_.shutterResponse);
                     //displayImage2_.hideImageInIJ();
                 }
