@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import static java.lang.Math.abs;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -571,7 +572,7 @@ public class XYSequencing extends javax.swing.JPanel {
         }
     }
 
-    private ArrayList<FOV> generateSpiral(int noFOV, String wellString) {
+    private ArrayList<FOV> generateSpiral1(int noFOV, String wellString) {
 
         // cover whole well in a rectangle; remove those outwith well bounds;
         // finally trim to #fov. Deals with asymmetric FOV
@@ -604,6 +605,72 @@ public class XYSequencing extends javax.swing.JPanel {
                     fovind++;
                 }
             }
+            dirind++;
+        //    System.out.print("Dirind = " + dirind + "\n");
+        }
+        // trim, a bit hacky but works
+        int currsize = spiralFOVs.size();
+        for (int j = currsize - 1; j > noFOV - 1; j--) {
+            spiralFOVs.remove(j);
+        }
+        return spiralFOVs;
+    }
+    
+    private ArrayList<FOV> generateSpiral(int noFOV, String wellString) {
+
+        // cover whole well in a rectangle; remove those outwith well bounds;
+        // finally trim to #fov. Deals with asymmetric FOV
+        ArrayList<FOV> spiralFOVs = new ArrayList<FOV>();
+        FOV fov = new FOV(wellString, pp_, 0);
+        double[] centrexy = {fov.getX(), fov.getY()};
+//        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
+        double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
+        
+        int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+        double[] dxy = new double[2];
+        int stepsInCurrentDir;
+
+        spiralFOVs.add(fov);
+        int fovind = 1;
+        int dirind = 0;
+        double nx = 1;
+        double nxCount=0;
+        double ny = 1;
+        double nyCount=0;
+        System.out.println("0 0");
+        System.out.println("centrexy[0]= "+centrexy[0]);
+        System.out.println("centrexy[1]= "+centrexy[1]);
+        while (fovind < noFOV & dirind < 100) {   // just in case we have a runaway case...
+        System.out.println(nx+" "+ny);
+            //stepsInCurrentDir = (int) Math.ceil((double) (dirind) / 2);
+            if (fovind%2==0)
+            {
+                while (nyCount<abs(ny)){
+                centrexy[1]=centrexy[1]+(ny+nyCount)*DXY[1];
+                nyCount++;
+                fovind++;
+                }
+                ny=-(abs(ny)+1);
+            }
+            else
+            {
+                while (nxCount<abs(nx)){
+                    centrexy[0]=centrexy[0]+(nx+nyCount)*DXY[0];
+                    nxCount++;
+                    fovind++;
+                }
+                nx=-(abs(nx)+1);
+            }
+            
+            System.out.println("centrexy[0]= "+centrexy[0]);
+            System.out.println("centrexy[1]= "+centrexy[1]);
+            
+                fov = new FOV(centrexy[0], centrexy[1], 0,
+                        wellString, pp_);
+                if (fov.isValid()) {
+                    spiralFOVs.add(fov);
+                }
+            
             dirind++;
         //    System.out.print("Dirind = " + dirind + "\n");
         }
