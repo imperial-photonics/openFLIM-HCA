@@ -626,9 +626,9 @@ public class XYSequencing extends javax.swing.JPanel {
 //        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
         double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
         
-        int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+        /*int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         double[] dxy = new double[2];
-        int stepsInCurrentDir;
+        int stepsInCurrentDir;*/
 
         spiralFOVs.add(fov);
         int fovind = 1;
@@ -637,18 +637,14 @@ public class XYSequencing extends javax.swing.JPanel {
         double nxCount=0;
         double ny = 1;
         double nyCount=0;
-        System.out.println("0 0");
-        System.out.println("centrexy[0]= "+centrexy[0]);
-        System.out.println("centrexy[1]= "+centrexy[1]);
         while (fovind < noFOV & dirind < 100) {   // just in case we have a runaway case...
-        System.out.println(nx+" "+ny);
             //stepsInCurrentDir = (int) Math.ceil((double) (dirind) / 2);
             if (fovind%2==0)
             {
                 while (nyCount<abs(ny)){
                 centrexy[1]=centrexy[1]+(ny+nyCount)*DXY[1];
                 nyCount++;
-                fovind++;
+                
                 }
                 ny=-(abs(ny)+1);
             }
@@ -657,16 +653,15 @@ public class XYSequencing extends javax.swing.JPanel {
                 while (nxCount<abs(nx)){
                     centrexy[0]=centrexy[0]+(nx+nyCount)*DXY[0];
                     nxCount++;
-                    fovind++;
+                    
                 }
                 nx=-(abs(nx)+1);
             }
+            fovind++;            
+            fov = new FOV(centrexy[0], centrexy[1], 0,
+                      wellString, pp_);
+            System.out.println(fov.isValid());
             
-            System.out.println("centrexy[0]= "+centrexy[0]);
-            System.out.println("centrexy[1]= "+centrexy[1]);
-            
-                fov = new FOV(centrexy[0], centrexy[1], 0,
-                        wellString, pp_);
                 if (fov.isValid()) {
                     spiralFOVs.add(fov);
                 }
