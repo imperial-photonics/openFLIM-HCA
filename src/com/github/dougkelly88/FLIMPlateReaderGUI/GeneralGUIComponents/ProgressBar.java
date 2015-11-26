@@ -35,9 +35,6 @@ public class ProgressBar extends javax.swing.JPanel {
     }
     
     public void setColor(int color){
-        float a=0;
-        float b=100;
-        float c=0;
         if(color==0){
             jProgressBar1.setForeground(Color.blue);    
         } else if(color==1){
