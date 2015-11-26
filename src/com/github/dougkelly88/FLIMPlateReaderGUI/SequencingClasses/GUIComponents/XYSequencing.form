@@ -67,15 +67,12 @@
               <Group type="102" alignment="1" attributes="0">
                   <Component id="fovTablePanel" max="32767" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="storeXYZButton" max="32767" attributes="0"/>
-                          <Component id="clearXYZButton" max="32767" attributes="0"/>
-                          <Component id="genZStackButton" max="32767" attributes="0"/>
-                          <Component id="zModeCombo" max="32767" attributes="0"/>
-                          <Component id="clearZButton" max="32767" attributes="0"/>
-                      </Group>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="storeXYZButton" max="32767" attributes="0"/>
+                      <Component id="clearXYZButton" max="32767" attributes="0"/>
+                      <Component id="genZStackButton" max="32767" attributes="0"/>
+                      <Component id="zModeCombo" max="32767" attributes="0"/>
+                      <Component id="clearZButton" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
               </Group>
@@ -100,9 +97,7 @@
                           <Component id="clearXYZButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-                  <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -168,14 +163,6 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearZButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="jButton1">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="jButton1"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
-          </Events>
-        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="prefindPanel">
@@ -185,6 +172,7 @@
             <TitledBorder title="Prefind"/>
           </Border>
         </Property>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
 
       <Layout>
@@ -249,6 +237,7 @@
         <Component class="javax.swing.JButton" name="quickPFButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Quick prefind"/>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
               <Insets value="[2, 8, 2, 8]"/>
             </Property>
@@ -260,6 +249,7 @@
         <Component class="javax.swing.JToggleButton" name="advancedPFButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Setup advanced prefind..."/>
+            <Property name="enabled" type="boolean" value="false"/>
             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
               <Insets value="[2, 4, 2, 4]"/>
             </Property>
@@ -271,21 +261,25 @@
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
             <Property name="text" type="java.lang.String" value="Intensity threshold value (DN)"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
           <Properties>
             <Property name="text" type="java.lang.String" value="Desired number of FOV/well"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel5">
           <Properties>
             <Property name="text" type="java.lang.String" value="Attempts before failing"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JFormattedTextField" name="FOVToFindField">
           <Properties>
             <Property name="text" type="java.lang.String" value="4"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="FOVToFindFieldActionPerformed"/>
@@ -294,6 +288,7 @@
         <Component class="javax.swing.JFormattedTextField" name="attemptsField">
           <Properties>
             <Property name="text" type="java.lang.String" value="4"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="attemptsFieldActionPerformed"/>
@@ -302,6 +297,7 @@
         <Component class="javax.swing.JFormattedTextField" name="intensityThresoldField">
           <Properties>
             <Property name="text" type="java.lang.String" value="1000"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="intensityThresoldFieldActionPerformed"/>

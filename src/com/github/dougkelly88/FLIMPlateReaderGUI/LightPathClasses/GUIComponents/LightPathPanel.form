@@ -487,6 +487,7 @@
             <TitledBorder title="Continuouse Filter Wheel"/>
           </Border>
         </Property>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
 
       <Layout>
@@ -547,6 +548,9 @@
       </Layout>
       <SubComponents>
         <Container class="javax.swing.JPanel" name="continuouseFWPanel">
+          <Properties>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
 
           <Layout>
             <DimensionLayout dim="0">
@@ -564,6 +568,7 @@
         <Component class="javax.swing.JButton" name="wakeButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="wake"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="wakeButtonActionPerformed"/>
@@ -572,6 +577,7 @@
         <Component class="javax.swing.JButton" name="sleepButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="sleep"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sleepButtonActionPerformed"/>
@@ -580,6 +586,7 @@
         <Component class="javax.swing.JButton" name="stepLeftButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="stepLeftt"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stepLeftButtonActionPerformed"/>
@@ -588,6 +595,7 @@
         <Component class="javax.swing.JButton" name="steprightButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="stepRight"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="steprightButtonActionPerformed"/>
@@ -596,6 +604,7 @@
         <Component class="javax.swing.JButton" name="jButton1">
           <Properties>
             <Property name="text" type="java.lang.String" value="jButton1"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>

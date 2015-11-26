@@ -186,7 +186,6 @@ public class XYSequencing extends javax.swing.JPanel {
         genZStackButton = new javax.swing.JButton();
         zModeCombo = new javax.swing.JComboBox();
         clearZButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
         prefindPanel = new javax.swing.JPanel();
         quickPFButton = new javax.swing.JButton();
         advancedPFButton = new javax.swing.JToggleButton();
@@ -255,13 +254,6 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout storedXYZPanelLayout = new javax.swing.GroupLayout(storedXYZPanel);
         storedXYZPanel.setLayout(storedXYZPanelLayout);
         storedXYZPanelLayout.setHorizontalGroup(
@@ -269,14 +261,12 @@ public class XYSequencing extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, storedXYZPanelLayout.createSequentialGroup()
                 .addComponent(fovTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
-                    .addGroup(storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(storeXYZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(clearXYZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(genZStackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(zModeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(clearZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(storeXYZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(clearXYZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(genZStackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(zModeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(clearZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(34, 34, 34))
         );
         storedXYZPanelLayout.setVerticalGroup(
@@ -296,14 +286,14 @@ public class XYSequencing extends javax.swing.JPanel {
                         .addComponent(storeXYZButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(clearXYZButton)))
-                .addGap(3, 3, 3)
-                .addComponent(jButton1)
-                .addContainerGap())
+                .addGap(37, 37, 37))
         );
 
         prefindPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Prefind"));
+        prefindPanel.setEnabled(false);
 
         quickPFButton.setText("Quick prefind");
+        quickPFButton.setEnabled(false);
         quickPFButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
         quickPFButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -312,6 +302,7 @@ public class XYSequencing extends javax.swing.JPanel {
         });
 
         advancedPFButton.setText("Setup advanced prefind...");
+        advancedPFButton.setEnabled(false);
         advancedPFButton.setMargin(new java.awt.Insets(2, 4, 2, 4));
         advancedPFButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -320,12 +311,16 @@ public class XYSequencing extends javax.swing.JPanel {
         });
 
         jLabel3.setText("Intensity threshold value (DN)");
+        jLabel3.setEnabled(false);
 
         jLabel4.setText("Desired number of FOV/well");
+        jLabel4.setEnabled(false);
 
         jLabel5.setText("Attempts before failing");
+        jLabel5.setEnabled(false);
 
         FOVToFindField.setText("4");
+        FOVToFindField.setEnabled(false);
         FOVToFindField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 FOVToFindFieldActionPerformed(evt);
@@ -333,6 +328,7 @@ public class XYSequencing extends javax.swing.JPanel {
         });
 
         attemptsField.setText("4");
+        attemptsField.setEnabled(false);
         attemptsField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 attemptsFieldActionPerformed(evt);
@@ -340,6 +336,7 @@ public class XYSequencing extends javax.swing.JPanel {
         });
 
         intensityThresoldField.setText("1000");
+        intensityThresoldField.setEnabled(false);
         intensityThresoldField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 intensityThresoldFieldActionPerformed(evt);
@@ -884,24 +881,6 @@ public class XYSequencing extends javax.swing.JPanel {
         doZStackGeneration(getZStackParams());
     }//GEN-LAST:event_clearZButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        System.out.println("getZAbsolut" + xyzmi_.getZAbsolute());
-        ArrayList<FOV> temp = tableModel_.getData();
-        ArrayList<FOV> newtemp = new ArrayList<FOV>();
-        for (FOV fov : temp){
-        System.out.println("FOV data" + fov);
-        System.out.println("Z value of fov " + fov.getZ());
-        fov.setZ(5);
-        newtemp.add(new FOV(0, 0, 6, fov.getWell(), fov.getPlateProps()));
-        System.out.println("FOV data" + fov);
-        System.out.println("Z value of fov " + fov.getZ());
-        }
-        
-        System.out.println("temp " + temp);
-        System.out.println("newtemp " + newtemp);
-        tableModel_.addWholeData(newtemp);
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     
     public void setPlateProperties(PlateProperties pp) {
         pp_ = pp;
@@ -961,7 +940,6 @@ public class XYSequencing extends javax.swing.JPanel {
     private javax.swing.JTextField groupDescField;
     private javax.swing.JLabel groupDescLabel;
     private javax.swing.JFormattedTextField intensityThresoldField;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
