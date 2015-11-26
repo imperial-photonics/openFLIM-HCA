@@ -26,6 +26,7 @@ public class ProgressBar extends javax.swing.JPanel {
         Border border = BorderFactory.createTitledBorder("Nothing in progress!");
         jProgressBar1.setBorder(border);
         jProgressBar1.repaint();
+      
         
     }
     public void setTitel(String TitelBorder){
@@ -34,10 +35,13 @@ public class ProgressBar extends javax.swing.JPanel {
     }
     
     public void setColor(int color){
+        float a=0;
+        float b=100;
+        float c=0;
         if(color==0){
             jProgressBar1.setForeground(Color.blue);    
         } else if(color==1){
-            jProgressBar1.setForeground(Color.green);
+            jProgressBar1.setForeground(new Color(0, 100,0));
         } else if(color==2){
             jProgressBar1.setForeground(Color.red);    
         }
