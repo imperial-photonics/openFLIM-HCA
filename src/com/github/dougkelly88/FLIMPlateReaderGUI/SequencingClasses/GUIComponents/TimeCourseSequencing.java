@@ -331,8 +331,10 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
         });
 
         liquidDispensionWellsTableLable.setText("Liquid dispension well(s):");
+        liquidDispensionWellsTableLable.setEnabled(false);
 
         liquidDispensionButton.setText("Update");
+        liquidDispensionButton.setEnabled(false);
         liquidDispensionButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 liquidDispensionButtonActionPerformed(evt);
@@ -340,6 +342,7 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
         });
 
         syringeTablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        syringeTablePanel.setEnabled(false);
 
         javax.swing.GroupLayout syringeTablePanelLayout = new javax.swing.GroupLayout(syringeTablePanel);
         syringeTablePanel.setLayout(syringeTablePanelLayout);
@@ -364,8 +367,7 @@ public class TimeCourseSequencing extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(31, 31, 31)
-                        .addComponent(popTimeCourseButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(popTimeCourseButton))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel1)

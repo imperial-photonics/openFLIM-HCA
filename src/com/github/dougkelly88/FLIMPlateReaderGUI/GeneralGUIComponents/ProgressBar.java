@@ -26,6 +26,7 @@ public class ProgressBar extends javax.swing.JPanel {
         Border border = BorderFactory.createTitledBorder("Nothing in progress!");
         jProgressBar1.setBorder(border);
         jProgressBar1.repaint();
+      
         
     }
     public void setTitel(String TitelBorder){
@@ -37,7 +38,7 @@ public class ProgressBar extends javax.swing.JPanel {
         if(color==0){
             jProgressBar1.setForeground(Color.blue);    
         } else if(color==1){
-            jProgressBar1.setForeground(Color.green);
+            jProgressBar1.setForeground(new Color(0, 100,0));
         } else if(color==2){
             jProgressBar1.setForeground(Color.red);    
         }
@@ -85,13 +86,15 @@ public class ProgressBar extends javax.swing.JPanel {
 
         jProgressBar1 = new javax.swing.JProgressBar();
 
+        jProgressBar1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+                .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(

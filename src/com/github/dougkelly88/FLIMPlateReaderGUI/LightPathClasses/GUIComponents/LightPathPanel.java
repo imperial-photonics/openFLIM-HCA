@@ -376,6 +376,9 @@ public class LightPathPanel extends javax.swing.JPanel {
         );
 
         ContinusouseFilterWheel.setBorder(javax.swing.BorderFactory.createTitledBorder("Continuouse Filter Wheel"));
+        ContinusouseFilterWheel.setEnabled(false);
+
+        continuouseFWPanel.setEnabled(false);
 
         javax.swing.GroupLayout continuouseFWPanelLayout = new javax.swing.GroupLayout(continuouseFWPanel);
         continuouseFWPanel.setLayout(continuouseFWPanelLayout);
@@ -389,6 +392,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         );
 
         wakeButton.setText("wake");
+        wakeButton.setEnabled(false);
         wakeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 wakeButtonActionPerformed(evt);
@@ -396,6 +400,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         });
 
         sleepButton.setText("sleep");
+        sleepButton.setEnabled(false);
         sleepButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sleepButtonActionPerformed(evt);
@@ -403,6 +408,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         });
 
         stepLeftButton.setText("stepLeftt");
+        stepLeftButton.setEnabled(false);
         stepLeftButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stepLeftButtonActionPerformed(evt);
@@ -410,6 +416,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         });
 
         steprightButton.setText("stepRight");
+        steprightButton.setEnabled(false);
         steprightButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 steprightButtonActionPerformed(evt);
@@ -417,6 +424,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         });
 
         jButton1.setText("jButton1");
+        jButton1.setEnabled(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
