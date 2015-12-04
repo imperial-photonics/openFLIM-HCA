@@ -1103,7 +1103,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                             " Well=" + sas.getFOV().getWell() +                        
                             " X=" + sas.getFOV().getX() +
                             " Y=" + sas.getFOV().getY() +
-                            "T=" + sas.getTimePoint().getTimeCell() + 
+                            " T=" + sas.getTimePoint().getTimeCell() + 
                             " Filterset=" + sas.getFilters().getLabel() + 
                             " Z=" + sas.getFOV().getZ() +
                             " ID=" + fovLabel+
@@ -1113,7 +1113,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                             " Well=" + sas.getFOV().getWell() +                        
                             " X=" + sas.getFOV().getX() +
                             " Y=" + sas.getFOV().getY() +
-                            "T=" + sas.getTimePoint().getTimeCell() + 
+                            " T=" + sas.getTimePoint().getTimeCell() + 
                             " Filterset=" + sas.getFilters().getLabel() + 
                             " Z=" + sas.getFOV().getZ() +
                             " ID=" + fovLabel+
@@ -1125,7 +1125,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         " Well=" + sas.getFOV().getWell() +                        
                         " X=" + sas.getFOV().getX() +
                         " Y=" + sas.getFOV().getY() +
-                        "T=" + sas.getTimePoint().getTimeCell() + 
+                        " T=" + sas.getTimePoint().getTimeCell() + 
                         " Filterset=" + sas.getFilters().getLabel() + 
                         " Z=" + sas.getFOV().getZ() +
                         " ID=" + fovLabel+
