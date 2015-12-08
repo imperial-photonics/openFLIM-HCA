@@ -7,6 +7,7 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comp
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.SeqAcqSetup;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import static sun.security.jca.ProviderList.newList;
 
@@ -68,25 +69,23 @@ public class SnakeOrderer {
           }
         }*/
         List<SeqAcqSetup> listOut1=new ArrayList<SeqAcqSetup>();
+        int i=0;
+        double ii=0;
         for(String wellLetter : new String[] {"A","B","C","D","E","F","G","H"}){
+            
             List<SeqAcqSetup> listOut2=new ArrayList<SeqAcqSetup>();
             for (SeqAcqSetup curFOV : listIn){
                 if (curFOV.getFOV().getWell().contains(wellLetter)){
-                    //System.out.println(curFOV.getFOV().getWell());
                     listOut2.add(curFOV);
-                }
-                //System.out.println("WellLetter: "+ wellLetter);
-                //System.out.println("ListOut2: "+ listOut2);
+                    i++;
+                    ii++;
+                }  
             }
-            listOut1.addAll(listOut2);
-            /*if (listOut2!=null){
-                //System.out.println("Nichtnull");
-                listOut1.addAll(listOut2);
-            } else {
-                //System.out.println("AberJanull");
-            }*/
+            if ( (2&1)==0 ){
+                Collections.reverse(listOut2); 
+            }
+            listOut1.addAll(listOut2);    
         }
-        //System.out.println("ListOut1: "+ listOut1);
         return listOut1;
     
     }
