@@ -17,6 +17,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZM
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.AcqOrderTableModel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.FComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.SeqAcqSetupChainedComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.SnakeOrderer;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.TComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.WellComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.XComparator;
@@ -105,7 +106,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public AcqOrderTableModel tableModel_;
     private JTable seqOrderTable_;
     public  FOV currentFOV_;
-    private DisplayImage2 displayImage2_;
+    //private DisplayImage2 displayImage2_;
+    private SnakeOrderer snakeOrderer_;
     public static HSSFWorkbook wb = new HSSFWorkbook();
     public static HSSFWorkbook wbLoad = new HSSFWorkbook();
     public Thread sequenceThread;
@@ -166,8 +168,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         xYZPanel1.setupAFParams(this);
         fLIMPanel1.setDelayComboBox();
         
-        displayImage2_ = DisplayImage2.getInstance();
-        
+        //displayImage2_ = DisplayImage2.getInstance();
+        snakeOrderer_ = SnakeOrderer.getInstance();        
         try{
             String cam = core_.getCameraDevice();
             if ("HamamatsuHam_DCAM".equals(cam)){
@@ -976,7 +978,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     }
                 }
             }
-            
             // use chained comparators to sort by multiple fields SIMULTANEOUSLY,
             // based on order determined in UI table.
             for (String str : order){
@@ -989,8 +990,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 else if (str.equals("Time course"))
                     comparators.add(new TComparator());
             }
+            System.out.println("Sass Before: "+sass);
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
+            System.out.println("Sass after sort: "+sass);
+            sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
+            System.out.println("Sass after Snake: "+sass);
             int sassSize=sass.size();
+            
             
             
             long start_time = System.currentTimeMillis();
@@ -1043,14 +1049,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 if ((!sas.getTimePoint().getTimeCell().equals(lastTime)) & (order.contains("Time course"))){
                     Double next_time = sas.getTimePoint().getTimeCell() * 1000;
                     while ((System.currentTimeMillis() - start_time) < next_time){
+                        Double timeLeft = next_time - (System.currentTimeMillis() - start_time);
+                        //System.out.println("Waiting for " + timeLeft + " until next time point...");
                         if(terminate){
                             endOk=1;
                             break;    
                         }
-                        Double timeLeft = next_time - (System.currentTimeMillis() - start_time);
-                        //System.out.println("Waiting for " + timeLeft + " until next time point...");
-                        //check for flag (stop button) and abort time course wait
-                        
                     }
                 }
                 // if FOV different, deal with it here...
