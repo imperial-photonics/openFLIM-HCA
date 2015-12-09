@@ -70,21 +70,37 @@ public class SnakeOrderer {
         }*/
         List<SeqAcqSetup> listOut1=new ArrayList<SeqAcqSetup>();
         int i=0;
-        double ii=0;
+        int k=0;
+        for(int ii = 0; ii < listIn.size(); ii++) {
+            System.out.println(listIn.get(ii).getFOV().getWell());
+        }
         for(String wellLetter : new String[] {"A","B","C","D","E","F","G","H"}){
-            
             List<SeqAcqSetup> listOut2=new ArrayList<SeqAcqSetup>();
+            k=0;
             for (SeqAcqSetup curFOV : listIn){
                 if (curFOV.getFOV().getWell().contains(wellLetter)){
-                    listOut2.add(curFOV);
-                    i++;
-                    ii++;
-                }  
+                    listOut2.add(curFOV);  
+                }
+                
             }
-            if ( (2&1)==0 ){
+            System.out.println(listOut2);
+            /*if (!listOut2.isEmpty()){
+                Collections.reverse(listOut2);
+            }*/
+            if (listOut2.isEmpty()){
+                i++;   
+            }
+            
+            if ( (i/8&1)==0 ){
                 Collections.reverse(listOut2); 
             }
+            System.out.println(listOut2);
             listOut1.addAll(listOut2);    
+        }
+        System.out.println(".........................................................................................");
+        //System.out.println(i);
+        for(int iii = 0; iii < listOut1.size(); iii++) {
+            System.out.println(listOut1.get(iii).getFOV().getWell());
         }
         return listOut1;
     
