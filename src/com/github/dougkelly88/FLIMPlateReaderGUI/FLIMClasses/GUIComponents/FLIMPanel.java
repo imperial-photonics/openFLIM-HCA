@@ -107,6 +107,9 @@ public class FLIMPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        testDialog = new javax.swing.JDialog();
+        jLabel5 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         HRIControlsPanel = new javax.swing.JPanel();
         mcpVoltagePanel = new javax.swing.JPanel();
         gatewidthPanel = new javax.swing.JPanel();
@@ -124,6 +127,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         limitsLabel1 = new javax.swing.JLabel();
         limitsLabel2 = new javax.swing.JLabel();
         limitsLabel3 = new javax.swing.JLabel();
+        changeAutogateSettingsButton = new javax.swing.JButton();
         delayBoxTabbedPane = new javax.swing.JTabbedPane();
         fastDelayBoxPanel = new javax.swing.JPanel();
         fastBoxCalibratedCheck = new javax.swing.JCheckBox();
@@ -150,6 +154,40 @@ public class FLIMPanel extends javax.swing.JPanel {
         CalibrationPathLabel = new javax.swing.JLabel();
         CalibrationPathField = new javax.swing.JTextField();
         CalibrationPathButton = new javax.swing.JButton();
+
+        testDialog.setMinimumSize(new java.awt.Dimension(400, 200));
+
+        jLabel5.setText("jLabel5");
+
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout testDialogLayout = new javax.swing.GroupLayout(testDialog.getContentPane());
+        testDialog.getContentPane().setLayout(testDialogLayout);
+        testDialogLayout.setHorizontalGroup(
+            testDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(testDialogLayout.createSequentialGroup()
+                .addGap(143, 143, 143)
+                .addComponent(jLabel5)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, testDialogLayout.createSequentialGroup()
+                .addContainerGap(182, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(145, 145, 145))
+        );
+        testDialogLayout.setVerticalGroup(
+            testDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, testDialogLayout.createSequentialGroup()
+                .addContainerGap(146, Short.MAX_VALUE)
+                .addComponent(jLabel5)
+                .addGap(33, 33, 33)
+                .addComponent(jButton1)
+                .addGap(84, 84, 84))
+        );
 
         HRIControlsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("HRI controls"));
 
@@ -336,6 +374,13 @@ public class FLIMPanel extends javax.swing.JPanel {
                 .addContainerGap(33, Short.MAX_VALUE))
         );
 
+        changeAutogateSettingsButton.setText("change autogate settings");
+        changeAutogateSettingsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                changeAutogateSettingsButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout FLIMToolsPanelLayout = new javax.swing.GroupLayout(FLIMToolsPanel);
         FLIMToolsPanel.setLayout(FLIMToolsPanelLayout);
         FLIMToolsPanelLayout.setHorizontalGroup(
@@ -347,7 +392,9 @@ public class FLIMPanel extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FLIMToolsPanelLayout.createSequentialGroup()
                         .addComponent(maxpointPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(autogateButton)))
+                        .addGroup(FLIMToolsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(autogateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(changeAutogateSettingsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         FLIMToolsPanelLayout.setVerticalGroup(
@@ -359,6 +406,8 @@ public class FLIMPanel extends javax.swing.JPanel {
                     .addGroup(FLIMToolsPanelLayout.createSequentialGroup()
                         .addGap(26, 26, 26)
                         .addComponent(autogateButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(changeAutogateSettingsButton)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FLIMToolsPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -795,7 +844,11 @@ public class FLIMPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_maxpointResolutionFieldFocusLost
 
     private void autogateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autogateButtonActionPerformed
-        tableModel_.addWholeData(fm_.genAutogates());
+        String tt=String.valueOf(5000);
+        
+        tableModel_.addWholeData(fm_.genAutogates(tt));
+                                                   
+        //tableModel_.addWholeData(fm_.genAutogates(fm_.getAcquiredMaxpointValue()));
         // test
     }//GEN-LAST:event_autogateButtonActionPerformed
 
@@ -964,6 +1017,15 @@ public class FLIMPanel extends javax.swing.JPanel {
     private void findMaxPointMaxFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findMaxPointMaxFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_findMaxPointMaxFieldActionPerformed
+
+    private void changeAutogateSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeAutogateSettingsButtonActionPerformed
+        fm_.changeAutogateSettings();
+             testDialog.setVisible(true);
+    }//GEN-LAST:event_changeAutogateSettingsButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+             testDialog.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     public void setDelayComboBox(){
         String file1 = null;
@@ -1267,6 +1329,7 @@ public class FLIMPanel extends javax.swing.JPanel {
     private javax.swing.JTextField acquiredMaxpointField;
     private javax.swing.JButton autogateButton;
     private javax.swing.JCheckBox bleechingCompCheckBox;
+    private javax.swing.JButton changeAutogateSettingsButton;
     private javax.swing.JButton clearDelayButton;
     private javax.swing.JTabbedPane delayBoxTabbedPane;
     private javax.swing.JPanel delaySeqPanel;
@@ -1281,10 +1344,12 @@ public class FLIMPanel extends javax.swing.JPanel {
     private javax.swing.JTextField incrementField;
     private javax.swing.JCheckBox inhibitCheck;
     private javax.swing.JCheckBox invertDataCheckBox;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel limitsLabel1;
     private javax.swing.JLabel limitsLabel2;
     private javax.swing.JLabel limitsLabel3;
@@ -1299,6 +1364,7 @@ public class FLIMPanel extends javax.swing.JPanel {
     private javax.swing.JPanel slowCurrentDelayPanel;
     private javax.swing.JPanel slowDelayBoxPanel;
     private javax.swing.JFormattedTextField startField;
+    private javax.swing.JDialog testDialog;
     // End of variables declaration//GEN-END:variables
 
     private Object File(String string) {

@@ -17,6 +17,9 @@ import static java.lang.Math.log;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import mmcorej.CMMCore;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -49,6 +52,10 @@ public class FindMaxpoint {
     private int maxpointDelay_ = 1000;
     public int xMin=0;
     public int xMax=16666;
+    // Autogate default values
+    int gateWidth=6000;
+    int numDelays=7;
+    int lifeTime=3400;
 //    private XYDataset dataset_;
 
     public FindMaxpoint(){
@@ -269,26 +276,34 @@ public class FindMaxpoint {
         return lifetime_;
     }
     
-    public ArrayList<Integer> genAutogates(){
-        // use dialog to get number of gates + rising edge?
-        int N = 5;
+    public ArrayList<Integer> genAutogates(String maxValueString){
         ArrayList<Integer> gates = new ArrayList<Integer>();
-        if (lifetime_ != 0){            // rising edge...
-//            gates.add(maxpointDelay_ - core_.get());  // instrument interacting fn
-            // decay
-            for (int i = 0; i < N-1; i++){
-                gates.add( maxpointDelay_ + 
-                        (int) (lifetime_* log((double) (i + 1))/log((double) 2)));
+        // get Max value of findMaxPoint
+        System.out.println(maxValueString);
+        int maxValue= Integer.parseInt(maxValueString);
+        System.out.println(maxValue);
+        // adding delay for the peak
+        int firstDelay=(int) ((double)maxValue - (double)gateWidth*3/4);
+        gates.add((int) ((double)maxValue - (double)gateWidth*3/4));
+        // adding log delays
+        for (int i = 0; i < numDelays-1; i++){
+                gates.add( maxValue + 
+                        (int) (lifeTime* log(((double) numDelays-1)/( (double) numDelays-1-i))));
             }
+        for(int ii = 0; ii < gates.size(); ii++) {
+            System.out.println(gates.get(ii));
         }
-        else{
-        // show warning dialog
-            for (int i = 0; i < N; i++){
-                gates.add(i*1000);
-            }
-        }
-        
         return gates;
+    }
+    
+    public void changeAutogateSettings(){
+        /*final JFrame frame = new JFrame();
+        JOptionPane.showMessageDialog(frame,
+        "Eggs are not supposed to be green.",
+        "A plain message",
+        JOptionPane.PLAIN_MESSAGE);*/
+        
+    
     }
     
     private Double[] findMaxIndex(ArrayList<Double> list){
