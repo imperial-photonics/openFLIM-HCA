@@ -765,19 +765,19 @@ public class FLIMPanel extends javax.swing.JPanel {
                    break;
                 }
                     core_.setProperty("Delay box", "Delay (ps)", delay);
-                    core_.sleep(50);
+                    core_.sleep(200);
                     meanValues.add(fm_.getMeanValueOfImage(core_));
                     delays.add(delay);
-                    frame.progressBar_.stepIncrement(delay, findMaxPointMax);
+                    frame.progressBar_.stepIncrement(delay-findMaxPointMin, findMaxPointMax-findMaxPointMin);
             
-                // reset to previous delay 
+                //reset to previous delay 
                 core_.setProperty("Delay box", "Delay (ps)", fastDelaySlider_.getValue());
                  endOk=1;  
             }
                 } catch (Exception ex) {
                     Logger.getLogger(FLIMPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            System.out.print(meanValues);
+            //System.out.print(meanValues);
             
             fm_.acqMaxpointData(delays, meanValues);
                     
