@@ -1277,6 +1277,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         arduino_.setDigitalOutLow();
         lightPathControls1.setLaserToggleFalse();
         lightPathControls1.setLaserToggleText("Turn laser ON");
+        
+        try {
+            core_.setProperty("Delay box", "Delay (ps)", var_.fastDelaySlider);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
     
     private void snapBFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapBFButtonActionPerformed
