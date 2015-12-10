@@ -9,7 +9,6 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.SeqAc
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import static sun.security.jca.ProviderList.newList;
 
 /**
  *
@@ -79,26 +78,25 @@ public class SnakeOrderer {
             k=0;
             for (SeqAcqSetup curFOV : listIn){
                 if (curFOV.getFOV().getWell().contains(wellLetter)){
-                    listOut2.add(curFOV);  
+                    listOut2.add(curFOV);
                 }
                 
             }
-            System.out.println(listOut2);
-            /*if (!listOut2.isEmpty()){
+            System.out.println("listOut2: "+listOut2);
+            if (!listOut2.isEmpty()){
+                i++;
+                System.out.println("list is not empty: "+i);
+            }
+            // if i even and not previouse i
+            if (  (i&1)==0 && i!=k ){
                 Collections.reverse(listOut2);
-            }*/
-            if (listOut2.isEmpty()){
-                i++;   
+                System.out.println("list reverse");
             }
-            
-            if ( (i/8&1)==0 ){
-                Collections.reverse(listOut2); 
-            }
-            System.out.println(listOut2);
-            listOut1.addAll(listOut2);    
+            listOut1.addAll(listOut2);
+            System.out.println(listOut1); 
+            k=i;
         }
-        System.out.println(".........................................................................................");
-        //System.out.println(i);
+        
         for(int iii = 0; iii < listOut1.size(); iii++) {
             System.out.println(listOut1.get(iii).getFOV().getWell());
         }
