@@ -28,32 +28,30 @@ public class SnakeOrderer {
         List<SeqAcqSetup> listOut1=new ArrayList<SeqAcqSetup>();
         int i=0;
         int k=0;
-        /*for(int ii = 0; ii < listIn.size(); ii++) {
-            System.out.println(listIn.get(ii).getFOV().getWell());
-        }*/
+        // check already sorted input list for columns 
         for(String wellLetter : new String[] {"A","B","C","D","E","F","G","H"}){
             List<SeqAcqSetup> listOut2=new ArrayList<SeqAcqSetup>();
             k=0;
+            // input list contains letter -> FOV added to seperate list (listOut2) 
             for (SeqAcqSetup curFOV : listIn){
                 if (curFOV.getFOV().getWell().contains(wellLetter)){
                     listOut2.add(curFOV);
                 }
                 
             }
+            // i gives information which colums are selected (importent if one column in between is not selected)
             if (!listOut2.isEmpty()){
                 i++;
             }
-            // if i even and not previouse i
+            // if i even and not previouse i, list is reversed
             if (  (i&1)==0 && i!=k ){
                 Collections.reverse(listOut2);
             }
+            // et voila Snake mode
             listOut1.addAll(listOut2); 
             k=i;
         }
-        
-        /*for(int iii = 0; iii < listOut1.size(); iii++) {
-            System.out.println(listOut1.get(iii).getFOV().getWell());
-        }*/
+        System.out.print("'Snake (horizontal fast axis)' as acquisition mode selected");
         return listOut1;
     
     }

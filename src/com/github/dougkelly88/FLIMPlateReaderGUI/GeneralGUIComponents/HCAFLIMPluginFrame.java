@@ -990,11 +990,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 else if (str.equals("Time course"))
                     comparators.add(new TComparator());
             }
-            System.out.println("Sass Before: "+sass);
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
-            System.out.println("Sass after sort: "+sass);
-            sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
-            System.out.println("Sass after Snake: "+sass);
+            if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
+                sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
+            } else {
+                System.out.print("'Start always by column 1 (horizontal fast axis)' as acquisition mode selected");
+            }
             int sassSize=sass.size();
             
             

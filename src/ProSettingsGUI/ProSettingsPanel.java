@@ -30,7 +30,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         xYSeq_ = XYSequencing.getInstance();
         var_.motorizedMicroscopeTabelWhich = motorizedMicroscopeTableComboBox.getSelectedItem().toString();
         var_.autofocusWhich = AutoFocusSelectComboBox.getSelectedItem().toString();
-
+        var_.acquisitionStrategy = AcquisitionStrategyComboBox.getSelectedItem().toString();
     }
 
     /**
@@ -71,6 +71,8 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         AutoFocusLabel = new javax.swing.JLabel();
         motorizedMicroscopeTableComboBox = new javax.swing.JComboBox();
         MotorizedMicroscopeTableLabel = new javax.swing.JLabel();
+        acquisitionStrategyPanel = new javax.swing.JPanel();
+        AcquisitionStrategyComboBox = new javax.swing.JComboBox();
 
         arduinoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Arduino"));
 
@@ -109,30 +111,27 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         arduinoPanelLayout.setHorizontalGroup(
             arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(arduinoPanelLayout.createSequentialGroup()
+                .addGroup(arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(thresholdA0Field, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+                    .addComponent(thresholdA1Field)
+                    .addComponent(laserIntensityField)
+                    .addComponent(shutterResponseField, javax.swing.GroupLayout.Alignment.LEADING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(laserIntensityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(arduinoPanelLayout.createSequentialGroup()
-                        .addGroup(arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(thresholdA0Field, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
-                            .addComponent(thresholdA1Field)
-                            .addComponent(laserIntensityField)
-                            .addComponent(shutterResponseField, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(arduinoPanelLayout.createSequentialGroup()
                                 .addGroup(arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(thresholdA1Label)
                                     .addComponent(thresholdA0Label, javax.swing.GroupLayout.Alignment.TRAILING))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(updateLaserIntensityButton)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(laserIntensityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(arduinoPanelLayout.createSequentialGroup()
-                                .addComponent(shutterResponseLabel)
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(arduinoPanelLayout.createSequentialGroup()
-                        .addComponent(enableLightCheckButton)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(updateLaserIntensityButton))
+                            .addComponent(shutterResponseLabel))
+                        .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(arduinoPanelLayout.createSequentialGroup()
+                .addComponent(enableLightCheckButton)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         arduinoPanelLayout.setVerticalGroup(
             arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -205,7 +204,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
 
         yOffsetRingLabel.setText("yOffset for centration of ring acquisition");
 
-        jButton1.setText("jButton1");
+        jButton1.setText("Check");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -218,26 +217,26 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fOVPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(xOffsetRingField, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
-                    .addComponent(yOffsetRingField))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(fOVPanelLayout.createSequentialGroup()
-                        .addComponent(xOffsetRingLabel)
+                        .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(xOffsetRingField, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+                            .addComponent(yOffsetRingField))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1))
-                    .addComponent(yOffsetRingLabel))
+                        .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(xOffsetRingLabel)
+                            .addComponent(yOffsetRingLabel)))
+                    .addComponent(jButton1))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         fOVPanelLayout.setVerticalGroup(
             fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fOVPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(xOffsetRingField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xOffsetRingLabel)
-                    .addComponent(jButton1))
+                    .addComponent(xOffsetRingLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(yOffsetRingField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -328,21 +327,54 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
+        acquisitionStrategyPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Acquisition Strategy"));
+
+        AcquisitionStrategyComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Start always by column 1 (horizontal fast axis)", "Start always by row 1 (vertical fast axis) NOT IMPLEMENTED", "Snake (horizontal fast axis)", "Snake (vertical fast axis) NOT IMPLEMENTED" }));
+        AcquisitionStrategyComboBox.setSelectedItem(AcquisitionStrategyComboBox);
+        AcquisitionStrategyComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AcquisitionStrategyComboBoxActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout acquisitionStrategyPanelLayout = new javax.swing.GroupLayout(acquisitionStrategyPanel);
+        acquisitionStrategyPanel.setLayout(acquisitionStrategyPanelLayout);
+        acquisitionStrategyPanelLayout.setHorizontalGroup(
+            acquisitionStrategyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(acquisitionStrategyPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(AcquisitionStrategyComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        acquisitionStrategyPanelLayout.setVerticalGroup(
+            acquisitionStrategyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(AcquisitionStrategyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(arduinoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(warningPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(fOVPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(dougPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(Hardware, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(fOVPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(arduinoPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -360,7 +392,9 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addContainerGap(106, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(84, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -422,6 +456,10 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         var_.motorizedMicroscopeTabelWhich = motorizedMicroscopeTableComboBox.getSelectedItem().toString();
     }//GEN-LAST:event_motorizedMicroscopeTableComboBoxActionPerformed
 
+    private void AcquisitionStrategyComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AcquisitionStrategyComboBoxActionPerformed
+        var_.acquisitionStrategy = AcquisitionStrategyComboBox.getSelectedItem().toString();
+    }//GEN-LAST:event_AcquisitionStrategyComboBoxActionPerformed
+
     public void updatePanel(){
        // do something when ProSettingsPanel is selected
     }
@@ -429,10 +467,12 @@ public class ProSettingsPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox AcquisitionSavingMode_combo;
+    private javax.swing.JComboBox AcquisitionStrategyComboBox;
     private javax.swing.JLabel AutoFocusLabel;
     private javax.swing.JComboBox AutoFocusSelectComboBox;
     private javax.swing.JPanel Hardware;
     private javax.swing.JLabel MotorizedMicroscopeTableLabel;
+    private javax.swing.JPanel acquisitionStrategyPanel;
     private javax.swing.JPanel arduinoPanel;
     private javax.swing.JPanel dougPanel;
     private javax.swing.JRadioButton enableLightCheckButton;
