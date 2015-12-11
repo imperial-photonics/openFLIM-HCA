@@ -1131,7 +1131,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         int num = 0;
         int min = 0;
         int max = 16666;
-        int inc  = 25;
+        int inc  = 1;
         
         try{max = Integer.parseInt(core_.getProperty("Laser", "Frequency"));}
         catch (Exception e){}
@@ -1166,7 +1166,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         try{max = Integer.parseInt(core_.getProperty("Laser", "Frequency"));}
         catch (Exception e){}
 
-        tableModel_ = new DelayTableModel(colName, (sap_.getDelaysArray()).get(0), 0, max, 25);
+        tableModel_ = new DelayTableModel(colName, (sap_.getDelaysArray()).get(0), 0, max, 1);
         tableModel_.addTableModelListener(new TableModelListener() {
            @Override
             public void tableChanged(TableModelEvent e) {
