@@ -915,8 +915,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_startSequenceButtonActionPerformed
     
     public void doSequenceAcquisition() throws InterruptedException{
-        System.out.println(var_.AcquisitionSavingMode);
-        
+             
         ImageWriter SPWWriter = null;        
         if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )
         try 
@@ -991,6 +990,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     comparators.add(new TComparator());
             }
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
+            // check which acquisition strategy is selected
             if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
                 sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
             } else {
@@ -1142,7 +1142,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     if(abort==true){
                         break;
                     }
-                    core_.waitForDeviceType(DeviceType.XYStageDevice);
+                    while (xyzmi_.isStageBusy()){
+                        System.out.println("Stage moving...");
+                    };
+                   // core_.waitForDeviceType(DeviceType.XYStageDevice);
                     /*if(timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell())){
                         core_.setProperty("SyringePump","Liquid Dispersion?", "Go");
                         wait(1000);

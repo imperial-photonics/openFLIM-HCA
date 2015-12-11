@@ -11,6 +11,8 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPlu
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mmcorej.CMMCore;
 import mmcorej.DeviceType;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -97,6 +99,16 @@ public final class XYZMotionInterface {
 
         return new FOV("A1", pp_, 0);   // replace with something that more clearly
         // indicated error?
+    }
+    
+    public boolean isStageBusy(){
+        try {
+                Point2D.Double xy = stageXYtoFOVXY(core_.getXYStagePosition(xystage_));
+                return false;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return true;
+            } 
     }
 
     public Point2D.Double fovXYtoStageXY(FOV fov) {
@@ -279,6 +291,14 @@ public final class XYZMotionInterface {
             System.out.println("autofocusComboBox in ProSetting is seeing nothing!");
         }   
          return focusOffset;   
+    }
+    
+    public void runInitializationRitual(){
+        try {
+            core_.home(xystage_);
+        } catch (Exception ex) {
+            Logger.getLogger(XYZMotionInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }
