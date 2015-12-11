@@ -107,9 +107,17 @@ public class FLIMPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        testDialog = new javax.swing.JDialog();
-        jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        autogateSettingsDialog = new javax.swing.JDialog();
+        expectedLifetimeLabel = new javax.swing.JLabel();
+        ApplyButton = new javax.swing.JButton();
+        expectedLifetimeField = new javax.swing.JTextField();
+        GateWidthLabel = new javax.swing.JLabel();
+        numberDelaysLabel = new javax.swing.JLabel();
+        laserRepRateLabel = new javax.swing.JLabel();
+        laserRepRateField = new javax.swing.JTextField();
+        numberDelaysField = new javax.swing.JTextField();
+        gateWidthField = new javax.swing.JTextField();
+        cancelButton = new javax.swing.JButton();
         HRIControlsPanel = new javax.swing.JPanel();
         mcpVoltagePanel = new javax.swing.JPanel();
         gatewidthPanel = new javax.swing.JPanel();
@@ -155,38 +163,89 @@ public class FLIMPanel extends javax.swing.JPanel {
         CalibrationPathField = new javax.swing.JTextField();
         CalibrationPathButton = new javax.swing.JButton();
 
-        testDialog.setMinimumSize(new java.awt.Dimension(400, 200));
+        autogateSettingsDialog.setMinimumSize(new java.awt.Dimension(220, 200));
 
-        jLabel5.setText("jLabel5");
+        expectedLifetimeLabel.setText("Expected lifetime [ps]:");
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        ApplyButton.setText("apply");
+        ApplyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                ApplyButtonActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout testDialogLayout = new javax.swing.GroupLayout(testDialog.getContentPane());
-        testDialog.getContentPane().setLayout(testDialogLayout);
-        testDialogLayout.setHorizontalGroup(
-            testDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(testDialogLayout.createSequentialGroup()
-                .addGap(143, 143, 143)
-                .addComponent(jLabel5)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, testDialogLayout.createSequentialGroup()
-                .addContainerGap(182, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(145, 145, 145))
+        expectedLifetimeField.setText("3400");
+
+        GateWidthLabel.setText("Gate width [ps]:");
+
+        numberDelaysLabel.setText("Number of delays:");
+
+        laserRepRateLabel.setText("Laser repetition rate [MHz]:");
+
+        laserRepRateField.setText("60");
+
+        numberDelaysField.setText("7");
+
+        gateWidthField.setText("4000");
+
+        cancelButton.setText("cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout autogateSettingsDialogLayout = new javax.swing.GroupLayout(autogateSettingsDialog.getContentPane());
+        autogateSettingsDialog.getContentPane().setLayout(autogateSettingsDialogLayout);
+        autogateSettingsDialogLayout.setHorizontalGroup(
+            autogateSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, autogateSettingsDialogLayout.createSequentialGroup()
+                .addGroup(autogateSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(autogateSettingsDialogLayout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(ApplyButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(cancelButton)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(autogateSettingsDialogLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(autogateSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(laserRepRateLabel)
+                            .addComponent(numberDelaysLabel)
+                            .addComponent(GateWidthLabel)
+                            .addComponent(expectedLifetimeLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(autogateSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(expectedLifetimeField, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
+                            .addComponent(gateWidthField)
+                            .addComponent(numberDelaysField, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(laserRepRateField, javax.swing.GroupLayout.Alignment.TRAILING))))
+                .addContainerGap())
         );
-        testDialogLayout.setVerticalGroup(
-            testDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, testDialogLayout.createSequentialGroup()
-                .addContainerGap(146, Short.MAX_VALUE)
-                .addComponent(jLabel5)
-                .addGap(33, 33, 33)
-                .addComponent(jButton1)
-                .addGap(84, 84, 84))
+        autogateSettingsDialogLayout.setVerticalGroup(
+            autogateSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(autogateSettingsDialogLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(autogateSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(expectedLifetimeLabel)
+                    .addComponent(expectedLifetimeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(autogateSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(GateWidthLabel)
+                    .addComponent(gateWidthField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(autogateSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(numberDelaysLabel)
+                    .addComponent(numberDelaysField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(autogateSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(laserRepRateLabel)
+                    .addComponent(laserRepRateField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(autogateSettingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ApplyButton)
+                    .addComponent(cancelButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         HRIControlsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("HRI controls"));
@@ -1019,13 +1078,21 @@ public class FLIMPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_findMaxPointMaxFieldActionPerformed
 
     private void changeAutogateSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeAutogateSettingsButtonActionPerformed
-        fm_.changeAutogateSettings();
-             testDialog.setVisible(true);
+        autogateSettingsDialog.setVisible(true);
     }//GEN-LAST:event_changeAutogateSettingsButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-             testDialog.dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void ApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ApplyButtonActionPerformed
+        fm_.changeLifetime(Integer.parseInt(expectedLifetimeField.getText()));
+        fm_.changeGateWidth(Integer.parseInt(gateWidthField.getText()));
+        fm_.changeNumDelays(Integer.parseInt(numberDelaysField.getText()));
+        fm_.changeRepRate(Integer.parseInt(laserRepRateField.getText()));
+        String tt=String.valueOf(5000);
+        tableModel_.addWholeData(fm_.genAutogates(tt));
+    }//GEN-LAST:event_ApplyButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+       autogateSettingsDialog.dispose(); 
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     public void setDelayComboBox(){
         String file1 = null;
@@ -1318,6 +1385,7 @@ public class FLIMPanel extends javax.swing.JPanel {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton ApplyButton;
     private javax.swing.JLabel CalibrationFileLabel;
     private javax.swing.JButton CalibrationPathButton;
     private javax.swing.JTextField CalibrationPathField;
@@ -1325,31 +1393,37 @@ public class FLIMPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox DelayBoxCalibrationComboBox;
     private javax.swing.JPanel DelayBoxCalibrationFilePanel;
     private javax.swing.JPanel FLIMToolsPanel;
+    private javax.swing.JLabel GateWidthLabel;
     private javax.swing.JPanel HRIControlsPanel;
     private javax.swing.JTextField acquiredMaxpointField;
     private javax.swing.JButton autogateButton;
+    private javax.swing.JDialog autogateSettingsDialog;
     private javax.swing.JCheckBox bleechingCompCheckBox;
+    private javax.swing.JButton cancelButton;
     private javax.swing.JButton changeAutogateSettingsButton;
     private javax.swing.JButton clearDelayButton;
     private javax.swing.JTabbedPane delayBoxTabbedPane;
     private javax.swing.JPanel delaySeqPanel;
     private javax.swing.JPanel delayTablePanel;
     private javax.swing.JTextField endField;
+    private javax.swing.JTextField expectedLifetimeField;
+    private javax.swing.JLabel expectedLifetimeLabel;
     private javax.swing.JCheckBox fastBoxCalibratedCheck;
     private javax.swing.JPanel fastCurrentDelayPanel;
     private javax.swing.JPanel fastDelayBoxPanel;
     private javax.swing.JTextField findMaxPointMaxField;
     private javax.swing.JTextField findMaxPointMinField;
+    private javax.swing.JTextField gateWidthField;
     private javax.swing.JPanel gatewidthPanel;
     private javax.swing.JTextField incrementField;
     private javax.swing.JCheckBox inhibitCheck;
     private javax.swing.JCheckBox invertDataCheckBox;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JTextField laserRepRateField;
+    private javax.swing.JLabel laserRepRateLabel;
     private javax.swing.JLabel limitsLabel1;
     private javax.swing.JLabel limitsLabel2;
     private javax.swing.JLabel limitsLabel3;
@@ -1358,13 +1432,14 @@ public class FLIMPanel extends javax.swing.JPanel {
     private javax.swing.JPanel maxpointPanel;
     private javax.swing.JTextField maxpointResolutionField;
     private javax.swing.JPanel mcpVoltagePanel;
+    private javax.swing.JTextField numberDelaysField;
+    private javax.swing.JLabel numberDelaysLabel;
     private javax.swing.JButton populateDelaysButton;
     private javax.swing.JCheckBox scanDelCheck;
     private javax.swing.JCheckBox slowBoxCalibrated;
     private javax.swing.JPanel slowCurrentDelayPanel;
     private javax.swing.JPanel slowDelayBoxPanel;
     private javax.swing.JFormattedTextField startField;
-    private javax.swing.JDialog testDialog;
     // End of variables declaration//GEN-END:variables
 
     private Object File(String string) {
