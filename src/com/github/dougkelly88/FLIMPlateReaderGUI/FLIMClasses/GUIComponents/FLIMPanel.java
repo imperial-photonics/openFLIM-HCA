@@ -903,11 +903,7 @@ public class FLIMPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_maxpointResolutionFieldFocusLost
 
     private void autogateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autogateButtonActionPerformed
-        String tt=String.valueOf(5000);
-        
-        tableModel_.addWholeData(fm_.genAutogates(tt));
-                                                   
-        //tableModel_.addWholeData(fm_.genAutogates(fm_.getAcquiredMaxpointValue()));
+        tableModel_.addWholeData(fm_.genAutogates(fm_.getAcquiredMaxpointValue()));
         // test
     }//GEN-LAST:event_autogateButtonActionPerformed
 
@@ -1086,8 +1082,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         fm_.changeGateWidth(Integer.parseInt(gateWidthField.getText()));
         fm_.changeNumDelays(Integer.parseInt(numberDelaysField.getText()));
         fm_.changeRepRate(Integer.parseInt(laserRepRateField.getText()));
-        String tt=String.valueOf(5000);
-        tableModel_.addWholeData(fm_.genAutogates(tt));
+        tableModel_.addWholeData(fm_.genAutogates(fm_.getAcquiredMaxpointValue()));
     }//GEN-LAST:event_ApplyButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed

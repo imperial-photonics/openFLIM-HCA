@@ -286,6 +286,7 @@ public class FindMaxpoint {
         double firstDelay= ((double)maxValue - (double)gateWidth*3/4);
         int delayLoop=0;
         int n=0;
+        //check if first delay is positive
         if (firstDelay>0){
             gates.add((int) firstDelay);
         } else {
@@ -296,6 +297,7 @@ public class FindMaxpoint {
         for (int i = 0; i < numDelays-1; i++){
                 delayLoop=maxValue +(int) (lifeTime* log(((double) numDelays-1)/( (double) numDelays-1-i)));
                 n=i+1;
+                // check if last delays still in rep rate
                 if ((double) delayLoop<1/(double)repRate*1000000){
                     gates.add(delayLoop);
                 } else {
