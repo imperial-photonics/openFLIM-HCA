@@ -657,8 +657,7 @@ public class XYSequencing extends javax.swing.JPanel {
             fovind++;            
             fov = new FOV(centrexy[0], centrexy[1], 0,
                       wellString, pp_);
-            System.out.println(fov.isValid());
-            
+                      
                 if (fov.isValid()) {
                     spiralFOVs.add(fov);
                 }
@@ -699,7 +698,6 @@ public class XYSequencing extends javax.swing.JPanel {
             
             ringFOVs.add(fov);
         }
-        System.out.println("ringFOVs = " + ringFOVs);
         return ringFOVs;
     }
     
