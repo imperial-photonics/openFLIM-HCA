@@ -77,6 +77,7 @@ public class Variable {
     
     public String autofocusWhich;
     public String motorizedMicroscopeTabelWhich;
+    public String acquisitionStrategy;
 
   // PRIVATE
 

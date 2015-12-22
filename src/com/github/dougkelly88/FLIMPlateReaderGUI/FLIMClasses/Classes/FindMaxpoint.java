@@ -17,6 +17,10 @@ import static java.lang.Math.log;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import mmcorej.CMMCore;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -49,6 +53,11 @@ public class FindMaxpoint {
     private int maxpointDelay_ = 1000;
     public int xMin=0;
     public int xMax=16666;
+    // Autogate default values
+    int gateWidth=4000;
+    int numDelays=7;
+    int lifeTime=3400;
+    int repRate=60;
 //    private XYDataset dataset_;
 
     public FindMaxpoint(){
@@ -269,26 +278,41 @@ public class FindMaxpoint {
         return lifetime_;
     }
     
-    public ArrayList<Integer> genAutogates(){
-        // use dialog to get number of gates + rising edge?
-        int N = 5;
+    public ArrayList<Integer> genAutogates(String maxValueString){
         ArrayList<Integer> gates = new ArrayList<Integer>();
-        if (lifetime_ != 0){            // rising edge...
-//            gates.add(maxpointDelay_ - core_.get());  // instrument interacting fn
-            // decay
-            for (int i = 0; i < N-1; i++){
-                gates.add( maxpointDelay_ + 
-                        (int) (lifetime_* log((double) (i + 1))/log((double) 2)));
-            }
+        // get Max value of findMaxPoint
+        int maxValue= Integer.parseInt(maxValueString);
+        // adding delay for the peak
+        double firstDelay= ((double)maxValue - (double)gateWidth*3/4);
+        int delayLoop=0;
+        int n=0;
+        //check if first delay is positive
+        if (firstDelay>0){
+            gates.add((int) firstDelay);
+        } else {
+            gates.add(25);
+            warningMessage("Delay before the peak is smaller or equal zero. Please check delay integrity!");
         }
-        else{
-        // show warning dialog
-            for (int i = 0; i < N; i++){
-                gates.add(i*1000);
+        // adding log delays
+        for (int i = 0; i < numDelays-1; i++){
+                delayLoop=maxValue +(int) (lifeTime* log(((double) numDelays-1)/( (double) numDelays-1-i)));
+                n=i+1;
+                // check if last delays still in rep rate
+                if ((double) delayLoop<1/(double)repRate*1000000){
+                    gates.add(delayLoop);
+                } else {
+                   warningMessage("Delay(s) are longer than the reciprocal of the laser repition rate. Could populate "+n+ " delays. Please check delay integrity!");
+                   break;
+                }
             }
-        }
-        
         return gates;
+    }
+    
+    private void warningMessage(String news){
+        JOptionPane optionPane = new JOptionPane(news,JOptionPane.WARNING_MESSAGE);
+        JDialog dialog = optionPane.createDialog("Warning!");
+        dialog.setAlwaysOnTop(true);
+        dialog.setVisible(true);
     }
     
     private Double[] findMaxIndex(ArrayList<Double> list){
@@ -305,9 +329,23 @@ public class FindMaxpoint {
         Double[] ret = {(double)maxIndex, maxVal};
         return ret;
     }
-
     
+    public void changeGateWidth(int GW){
+        gateWidth=GW;
+    }
 
+    public void changeNumDelays(int ND){
+        numDelays=ND;
+    }
+    
+    public void changeLifetime(int LT){
+        lifeTime=LT;
+    }
+    
+    public void changeRepRate(int RR){
+        repRate=RR;
+    }
+    
     public double getMeanValueOfImage(CMMCore core){
         double meanValue=-1;
 //        MMStudio gui = MMStudio.getInstance();

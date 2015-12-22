@@ -17,6 +17,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZM
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.AcqOrderTableModel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.FComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.SeqAcqSetupChainedComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.SnakeOrderer;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.TComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.WellComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.XComparator;
@@ -105,7 +106,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public AcqOrderTableModel tableModel_;
     private JTable seqOrderTable_;
     public  FOV currentFOV_;
-    private DisplayImage2 displayImage2_;
+    //private DisplayImage2 displayImage2_;
+    private SnakeOrderer snakeOrderer_;
     public static HSSFWorkbook wb = new HSSFWorkbook();
     public static HSSFWorkbook wbLoad = new HSSFWorkbook();
     public Thread sequenceThread;
@@ -166,8 +168,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         xYZPanel1.setupAFParams(this);
         fLIMPanel1.setDelayComboBox();
         
-        displayImage2_ = DisplayImage2.getInstance();
-        
+        //displayImage2_ = DisplayImage2.getInstance();
+        snakeOrderer_ = SnakeOrderer.getInstance();        
         try{
             String cam = core_.getCameraDevice();
             if ("HamamatsuHam_DCAM".equals(cam)){
@@ -913,8 +915,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_startSequenceButtonActionPerformed
     
     public void doSequenceAcquisition() throws InterruptedException{
-        System.out.println(var_.AcquisitionSavingMode);
-        
+             
         ImageWriter SPWWriter = null;        
         if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )
         try 
@@ -976,7 +977,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     }
                 }
             }
-            
             // use chained comparators to sort by multiple fields SIMULTANEOUSLY,
             // based on order determined in UI table.
             for (String str : order){
@@ -990,7 +990,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     comparators.add(new TComparator());
             }
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
+            // check which acquisition strategy is selected
+            if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
+                sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
+            } else {
+                System.out.print("'Start always by column 1 (horizontal fast axis)' as acquisition mode selected");
+            }
             int sassSize=sass.size();
+            
             
             
             long start_time = System.currentTimeMillis();
@@ -1043,14 +1050,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 if ((!sas.getTimePoint().getTimeCell().equals(lastTime)) & (order.contains("Time course"))){
                     Double next_time = sas.getTimePoint().getTimeCell() * 1000;
                     while ((System.currentTimeMillis() - start_time) < next_time){
+                        Double timeLeft = next_time - (System.currentTimeMillis() - start_time);
+                        //System.out.println("Waiting for " + timeLeft + " until next time point...");
                         if(terminate){
                             endOk=1;
                             break;    
                         }
-                        Double timeLeft = next_time - (System.currentTimeMillis() - start_time);
-                        //System.out.println("Waiting for " + timeLeft + " until next time point...");
-                        //check for flag (stop button) and abort time course wait
-                        
                     }
                 }
                 // if FOV different, deal with it here...
@@ -1137,7 +1142,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     if(abort==true){
                         break;
                     }
-                    core_.waitForDeviceType(DeviceType.XYStageDevice);
+                    while (xyzmi_.isStageBusy()){
+                        System.out.println("Stage moving...");
+                    };
+                   // core_.waitForDeviceType(DeviceType.XYStageDevice);
                     /*if(timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell())){
                         core_.setProperty("SyringePump","Liquid Dispersion?", "Go");
                         wait(1000);
@@ -1273,6 +1281,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         arduino_.setDigitalOutLow();
         lightPathControls1.setLaserToggleFalse();
         lightPathControls1.setLaserToggleText("Turn laser ON");
+        
+        try {
+            core_.setProperty("Delay box", "Delay (ps)", var_.fastDelaySlider);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
     
     private void snapBFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapBFButtonActionPerformed

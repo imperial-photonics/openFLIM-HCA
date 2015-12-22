@@ -167,7 +167,13 @@ public class Acquisition {
             IFormatWriter writer = generateWriter(path+".ome.tiff", m);
             for (Integer delay : delays) {
                 int del=delays.indexOf(delay);
+                try{
                 core_.setProperty("Delay box", "Delay (ps)", delay);
+                } catch(Exception e) {
+                    System.out.println(e.getMessage());
+                    System.out.println("Could not set delay in Delay box!");
+                
+                }
                 
 
                 // EITHER

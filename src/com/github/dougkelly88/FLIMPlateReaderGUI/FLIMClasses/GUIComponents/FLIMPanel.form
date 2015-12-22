@@ -1,6 +1,140 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+  <NonVisualComponents>
+    <Container class="javax.swing.JDialog" name="autogateSettingsDialog">
+      <Properties>
+        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[220, 200]"/>
+        </Property>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                          <Component id="ApplyButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Component id="cancelButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="laserRepRateLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="numberDelaysLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="GateWidthLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="expectedLifetimeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="expectedLifetimeField" pref="46" max="32767" attributes="0"/>
+                              <Component id="gateWidthField" max="32767" attributes="0"/>
+                              <Component id="numberDelaysField" alignment="1" max="32767" attributes="0"/>
+                              <Component id="laserRepRateField" alignment="1" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                  </Group>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="expectedLifetimeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="expectedLifetimeField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="GateWidthLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="gateWidthField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="numberDelaysLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="numberDelaysField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="laserRepRateLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="laserRepRateField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="ApplyButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cancelButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="expectedLifetimeLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Expected lifetime [ps]:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="ApplyButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="apply"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ApplyButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JTextField" name="expectedLifetimeField">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="3400"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="GateWidthLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Gate width [ps]:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="numberDelaysLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Number of delays:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="laserRepRateLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Laser repetition rate [MHz]:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="laserRepRateField">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="60"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="numberDelaysField">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="7"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="gateWidthField">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="4000"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="cancelButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="cancel"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelButtonActionPerformed"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+  </NonVisualComponents>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -154,7 +288,10 @@
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="maxpointPanel" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="autogateButton" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="autogateButton" max="32767" attributes="0"/>
+                              <Component id="changeAutogateSettingsButton" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -170,6 +307,8 @@
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                           <Component id="autogateButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="changeAutogateSettingsButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
@@ -352,6 +491,14 @@
             </Component>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JButton" name="changeAutogateSettingsButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="change autogate settings"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="changeAutogateSettingsButtonActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JTabbedPane" name="delayBoxTabbedPane">
