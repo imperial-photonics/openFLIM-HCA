@@ -119,7 +119,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private ArrayList<String> initLDWells = new ArrayList<String>();
     //
     public String AcquisitionSavingMode;
-   
+    private int lastAFposition; // Variable to store last 'good' AF position
+    
 //    public static HSSFWorkbook wb = new HSSFWorkbook();
 
     @Subscribe
@@ -166,6 +167,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         lightPathControls1.setLoadedHardwareValues();
         setupSequencingTable();
         xYZPanel1.setupAFParams(this);
+        
+        //Automatically wanted a try/catch here?
+        try {
+            // lastAFposition = Integer.parseInt(core_.getProperty("Objective", "Safe Position")); // Bottom out the default AF position
+            lastAFposition = 3000;
+        } catch (Exception ex) {
+            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
         fLIMPanel1.setDelayComboBox();
         
         //displayImage2_ = DisplayImage2.getInstance();
