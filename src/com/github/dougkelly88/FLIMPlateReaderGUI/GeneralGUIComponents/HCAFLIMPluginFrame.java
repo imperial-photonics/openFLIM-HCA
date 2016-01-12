@@ -171,9 +171,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         //Automatically wanted a try/catch here?
         try {
             lastAFposition = Double.parseDouble(core_.getProperty("Objective", "Safe Position")); // Bottom out the default AF position
-            //lastAFposition = 3000;
         } catch (Exception ex) {
-            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+            lastAFposition = 3000;            
+            // Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         fLIMPanel1.setDelayComboBox();
         
@@ -922,6 +922,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
        
         
     }//GEN-LAST:event_startSequenceButtonActionPerformed
+ 
+    public boolean checkifAFenabled(){
+        boolean AFenabled=xYZPanel1.getAFInSequence();
+        return AFenabled;
+    }
     
     public void doSequenceAcquisition() throws InterruptedException{
              
@@ -1071,9 +1076,37 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 if ( ( (!sas.getFOV().equals(lastFOV)) | (sas.getFOV().getZ() != lastZ) ) & (order.contains("XYZ")) ){
                     // TODO: this needs tweaking in order that autofocus works properly with Z stacks...
                     // Perhaps only do when XY change, and not Z?
-                    xyzmi_.gotoFOV(sas.getFOV());
-                    if (xYZPanel1.getAFInSequence())
-                        xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                    
+                    
+                    try{
+                        //If AF is enabled... 
+                        if(this.checkifAFenabled()){
+                            //Let's check if XY has changed
+                            if(sas.getFOV().equals(lastFOV)){
+                                //We're in the same XY place, so must be a z-shift - let's do a relative move
+                                //Also has the benefit of not having to care about offsets and whatnot
+                                double deltaz=sas.getFOV().getZ()-lastZ;
+                                xyzmi_.moveZRelative(deltaz);
+                            }
+                            else{
+                                //OK - xy has changed, so let's do an autofocus and make sure to add in any Z offsets
+                                //See if we can check what method is currently selected for z storage first? SENSIBLE...
+                                xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset()+sas.getFOV().getZ());
+                            }
+                            //
+                        }
+                        else{
+                            
+                        //If the autofocus is disabled, do we go to the 'safe' Z position or do nothing?
+                        }
+                                                
+                        }
+                        catch (Exception e){
+                    }
+                            
+                    //if (xYZPanel1.getAFInSequence()){
+                    //    xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                    //}
                     if(terminate){
                         endOk=1;
                         break;
