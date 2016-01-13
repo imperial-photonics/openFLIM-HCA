@@ -22,6 +22,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Compa
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.WellComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.XComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.YComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.XY_simul_Comparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ZComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel;
@@ -996,6 +997,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             for (String str : order){
                 if (str.equals("XYZ")){
                         comparators.add(new WellComparator());
+                        comparators.add(new XY_simul_Comparator());
                         comparators.add(new ZComparator());
                 }
                 else if (str.equals("Filter change"))
@@ -1012,12 +1014,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
             int sassSize=sass.size();
             
+            System.out.println("Sorting...");     
             //Added this to print out what I think is the XYZ order it's going to try things in...
-            for (int h=1; h<=sassSize; h++){
+            for (int h=0; h<sassSize; h++){
                 SeqAcqSetup CurrSAS = sass.get(h);
-                System.out.println("X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
+                System.out.println("Well="+CurrSAS.getFOV().getWell()+"    X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
             }
-            
+                System.out.println("Waiting...");            
             
             long start_time = System.currentTimeMillis();
             // TODO: modify data saving such that time courses, z can be put in a 
