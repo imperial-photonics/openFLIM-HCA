@@ -1012,6 +1012,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
             int sassSize=sass.size();
             
+            //Added this to print out what I think is the XYZ order it's going to try things in...
+            for (int h=1; h<=sassSize; h++){
+                SeqAcqSetup CurrSAS = sass.get(h);
+                System.out.println("X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
+            }
             
             
             long start_time = System.currentTimeMillis();
@@ -1700,7 +1705,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             // get all sequence parameters and put them together into an 
             // array list of objects containing all acquisition points...
             // Note that if a term is absent from the sequence setup, current
-            // values should be used instead...
+            // values should be used instead... DOES THIS MEAN REGENERATE THE SEQUENCE?
             
             List<SeqAcqSetup> sass = new ArrayList<SeqAcqSetup>();
             ArrayList<String> order = tableModel_.getData();
