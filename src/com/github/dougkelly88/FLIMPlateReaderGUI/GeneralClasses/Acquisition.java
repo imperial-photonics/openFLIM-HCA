@@ -184,7 +184,7 @@ public class Acquisition {
                 for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
                     core_.snapImage();
                     Object img = core_.getImage();
-                    // Hopefully this will show the acquired images while the acquisition goes on
+                    // Display acquired images while the acquisition goes on
                     gui_.displayImage(img);
                     // this bit c.f. FrameAverager
                     if (core_.getBytesPerPixel() == 2){

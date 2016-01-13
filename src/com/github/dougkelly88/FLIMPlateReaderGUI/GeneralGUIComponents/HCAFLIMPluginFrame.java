@@ -1195,7 +1195,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                     arduino_.setDigitalOutHigh();
                     wait(var_.shutterResponse);
-                    //displayImage2_.hideImageInIJ(); // LIVE WINDOW CLOSE - FUCKS UP
                 }
                 catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -1223,7 +1222,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     arduino_.setDigitalOutLow();
                     lightPathControls1.setLaserToggleFalse();
                     lightPathControls1.setLaserToggleText("Turn laser ON");
-                    //displayImage2_.showImageInIJ(path); // LIVE WINDOW
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
@@ -1243,7 +1241,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 System.out.println(e.getMessage());
             }
             //set progress bar one increment further
-    //99        displayImage2_.showImageInIJ();
             progressBar_.stepIncrement(ind, sass.size());
             endOk=0;            
         }
