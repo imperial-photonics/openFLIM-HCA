@@ -22,6 +22,8 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Compa
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.WellComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.XComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.YComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.RowComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ColumnComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.XY_simul_Comparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ZComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
@@ -996,8 +998,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             // based on order determined in UI table.
             for (String str : order){
                 if (str.equals("XYZ")){
-                        comparators.add(new WellComparator());
-                        comparators.add(new XY_simul_Comparator());
+                        //comparators.add(new WellComparator());
+                        comparators.add(new ColumnComparator());
+                        comparators.add(new RowComparator());
+                        //comparators.add(new XY_simul_Comparator());
                         comparators.add(new ZComparator());
                 }
                 else if (str.equals("Filter change"))
@@ -1007,18 +1011,18 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
             // check which acquisition strategy is selected
-            if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
-                sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
-            } else {
-                System.out.print("'Start always by column 1 (horizontal fast axis)' as acquisition mode selected");
-            }
+            //if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
+            //    sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
+            //} else {
+            //    System.out.print("'Start always by column 1 (horizontal fast axis)' as acquisition mode selected");
+            //}
             int sassSize=sass.size();
             
             System.out.println("Sorting...");     
             //Added this to print out what I think is the XYZ order it's going to try things in...
             for (int h=0; h<sassSize; h++){
                 SeqAcqSetup CurrSAS = sass.get(h);
-                System.out.println("Well="+CurrSAS.getFOV().getWell()+"    X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
+                System.out.println("Time="+CurrSAS.getTimePoint().getTimeCell()+"    Filt="+CurrSAS.getFilters().getLabel()+"    Well="+CurrSAS.getFOV().getWell()+"    X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
             }
                 System.out.println("Waiting...");            
             
