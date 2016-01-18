@@ -22,6 +22,9 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Compa
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.WellComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.XComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.YComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.RowComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ColumnComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.XY_simul_Comparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ZComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel;
@@ -119,7 +122,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private ArrayList<String> initLDWells = new ArrayList<String>();
     //
     public String AcquisitionSavingMode;
-   
+    private double lastAFposition; // Variable to store last 'good' AF position
+    
 //    public static HSSFWorkbook wb = new HSSFWorkbook();
 
     @Subscribe
@@ -166,6 +170,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         lightPathControls1.setLoadedHardwareValues();
         setupSequencingTable();
         xYZPanel1.setupAFParams(this);
+        
+        //Automatically wanted a try/catch here?
+        try {
+            lastAFposition = Double.parseDouble(core_.getProperty("Objective", "Safe Position")); // Bottom out the default AF position
+        } catch (Exception ex) {
+            lastAFposition = 3000;            
+            // Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
         fLIMPanel1.setDelayComboBox();
         
         //displayImage2_ = DisplayImage2.getInstance();
@@ -913,6 +925,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
        
         
     }//GEN-LAST:event_startSequenceButtonActionPerformed
+ 
+    public boolean checkifAFenabled(){
+        boolean AFenabled=xYZPanel1.getAFInSequence();
+        return AFenabled;
+    }
     
     public void doSequenceAcquisition() throws InterruptedException{
              
@@ -981,7 +998,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             // based on order determined in UI table.
             for (String str : order){
                 if (str.equals("XYZ")){
-                        comparators.add(new WellComparator());
+                        //comparators.add(new WellComparator());
+                        comparators.add(new ColumnComparator());
+                        comparators.add(new RowComparator());
+                        //comparators.add(new XY_simul_Comparator());
                         comparators.add(new ZComparator());
                 }
                 else if (str.equals("Filter change"))
@@ -991,14 +1011,20 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
             // check which acquisition strategy is selected
-            if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
-                sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
-            } else {
-                System.out.print("'Start always by column 1 (horizontal fast axis)' as acquisition mode selected");
-            }
+            //if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
+            //    sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
+            //} else {
+            //    System.out.print("'Start always by column 1 (horizontal fast axis)' as acquisition mode selected");
+            //}
             int sassSize=sass.size();
             
-            
+            System.out.println("Sorting...");     
+            //Added this to print out what I think is the XYZ order it's going to try things in...
+            for (int h=0; h<sassSize; h++){
+                SeqAcqSetup CurrSAS = sass.get(h);
+                System.out.println("Time="+CurrSAS.getTimePoint().getTimeCell()+"    Filt="+CurrSAS.getFilters().getLabel()+"    Well="+CurrSAS.getFOV().getWell()+"    X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
+            }
+                System.out.println("Waiting...");            
             
             long start_time = System.currentTimeMillis();
             // TODO: modify data saving such that time courses, z can be put in a 
@@ -1062,9 +1088,37 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 if ( ( (!sas.getFOV().equals(lastFOV)) | (sas.getFOV().getZ() != lastZ) ) & (order.contains("XYZ")) ){
                     // TODO: this needs tweaking in order that autofocus works properly with Z stacks...
                     // Perhaps only do when XY change, and not Z?
-                    xyzmi_.gotoFOV(sas.getFOV());
-                    if (xYZPanel1.getAFInSequence())
-                        xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                    
+                    
+                    try{
+                        //If AF is enabled... 
+                        if(this.checkifAFenabled()){
+                            //Let's check if XY has changed
+                            if(sas.getFOV().equals(lastFOV)){
+                                //We're in the same XY place, so must be a z-shift - let's do a relative move
+                                //Also has the benefit of not having to care about offsets and whatnot
+                                double deltaz=sas.getFOV().getZ()-lastZ;
+                                xyzmi_.moveZRelative(deltaz);
+                            }
+                            else{
+                                //OK - xy has changed, so let's do an autofocus and make sure to add in any Z offsets
+                                //See if we can check what method is currently selected for z storage first? SENSIBLE...
+                                xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset()+sas.getFOV().getZ());
+                            }
+                            //
+                        }
+                        else{
+                            
+                        //If the autofocus is disabled, do we go to the 'safe' Z position or do nothing?
+                        }
+                                                
+                        }
+                        catch (Exception e){
+                    }
+                            
+                    //if (xYZPanel1.getAFInSequence()){
+                    //    xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                    //}
                     if(terminate){
                         endOk=1;
                         break;
@@ -1153,7 +1207,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                     arduino_.setDigitalOutHigh();
                     wait(var_.shutterResponse);
-                    //displayImage2_.hideImageInIJ();
                 }
                 catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -1181,7 +1234,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     arduino_.setDigitalOutLow();
                     lightPathControls1.setLaserToggleFalse();
                     lightPathControls1.setLaserToggleText("Turn laser ON");
-                    //displayImage2_.showImageInIJ(path);
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
@@ -1201,7 +1253,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 System.out.println(e.getMessage());
             }
             //set progress bar one increment further
-    //99        displayImage2_.showImageInIJ();
             progressBar_.stepIncrement(ind, sass.size());
             endOk=0;            
         }
@@ -1661,7 +1712,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             // get all sequence parameters and put them together into an 
             // array list of objects containing all acquisition points...
             // Note that if a term is absent from the sequence setup, current
-            // values should be used instead...
+            // values should be used instead... DOES THIS MEAN REGENERATE THE SEQUENCE?
             
             List<SeqAcqSetup> sass = new ArrayList<SeqAcqSetup>();
             ArrayList<String> order = tableModel_.getData();
