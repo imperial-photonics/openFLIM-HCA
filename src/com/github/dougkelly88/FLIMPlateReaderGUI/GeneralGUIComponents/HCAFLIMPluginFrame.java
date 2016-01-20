@@ -931,6 +931,45 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         return AFenabled;
     }
     
+    public void prefind() throws InterruptedException{ // THROW is copied from doSequenceAcquisition - assume this is for Abort?
+        //MAKE A BIG SPIRAL PATTERN IN EACH WELL
+        int noofdeletedFOVs = 0;        
+        int noofacceptedFOVs_thiswell = 0;
+        int noofdeletedFOVs_thiswell = 0;        
+        //GET ABORT COUNTER MAX AND HOW MANY SEARCH ROWS TOTAL
+        int Attempts_perFOV = xYSequencing1.getNoOfAttempts();
+        int initialnoofFOVs = xYSequencing1.getSearchRowCount();
+        
+        //CLEAR EXISTING FOV TABLE SHOWN TO USER
+        xYSequencing1.tableModel_.clearAllData();
+        
+        //FOR EACH SEARCH FOV
+            //CHECK IF ABORT BUTTON PRESSED
+            //TAKE IMAGE
+            
+            //DETERMINE SUCCESS/FAILURE PER FOV - VIA IMAGEJ??? AND WHETHER TO GIVE UP YET
+            // FAKE SEARCH BY WAITING HERE
+            try {
+                for(int i=0;i<initialnoofFOVs;i++){
+                    Thread.sleep(100);                 //1000 milliseconds is one second.
+                    if(1==1){ //ALWAYS ACCEPT
+                        // ADD IT TO THE PROPER MODEL
+                        //999 for column should trigger the default case: return the fov unchanged
+                        xYSequencing1.tableModel_.addRow(xYSequencing1.searchFOVtableModel_.getFOV(i));
+                        
+                        noofacceptedFOVs_thiswell++;
+                    } else { 
+                    } 
+                    //DON'T ADD THE ROW
+                }
+                } catch(InterruptedException ex) {
+                Thread.currentThread().interrupt();               
+                }
+
+            //ADD ANY SUCCESSFUL FOV TO LIST, RESET ABORT COUNTER IF WE ARE SUCCESSFUL
+        //
+    }
+    
     public void doSequenceAcquisition() throws InterruptedException{
              
         ImageWriter SPWWriter = null;        

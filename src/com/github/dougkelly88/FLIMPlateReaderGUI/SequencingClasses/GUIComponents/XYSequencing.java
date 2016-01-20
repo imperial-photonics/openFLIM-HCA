@@ -44,6 +44,7 @@ public class XYSequencing extends javax.swing.JPanel {
     PlateProperties pp_;
     PlateMapDrawPanel pmdp_;
     public FOVTableModel tableModel_;
+    public FOVTableModel searchFOVtableModel_;
     private static final XYSequencing fINSTANCE =  new XYSequencing();
     JTable fovTable_;
     SeqAcqProps sap_;
@@ -77,6 +78,7 @@ public class XYSequencing extends javax.swing.JPanel {
         plateMapBasePanel.add(pmdp_, BorderLayout.CENTER);
 
         tableModel_ = new FOVTableModel(pp_);
+        searchFOVtableModel_ = new FOVTableModel(pp_); //Not sure if this is the best way, but try it for now.
         tableModel_.addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
@@ -290,10 +292,9 @@ public class XYSequencing extends javax.swing.JPanel {
         );
 
         prefindPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Prefind"));
-        prefindPanel.setEnabled(false);
 
         quickPFButton.setText("Quick prefind");
-        quickPFButton.setEnabled(false);
+        quickPFButton.setFocusCycleRoot(true);
         quickPFButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
         quickPFButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -311,16 +312,12 @@ public class XYSequencing extends javax.swing.JPanel {
         });
 
         jLabel3.setText("Intensity threshold value (DN)");
-        jLabel3.setEnabled(false);
 
         jLabel4.setText("Desired number of FOV/well");
-        jLabel4.setEnabled(false);
 
         jLabel5.setText("Attempts before failing");
-        jLabel5.setEnabled(false);
 
         FOVToFindField.setText("4");
-        FOVToFindField.setEnabled(false);
         FOVToFindField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 FOVToFindFieldActionPerformed(evt);
@@ -328,7 +325,6 @@ public class XYSequencing extends javax.swing.JPanel {
         });
 
         attemptsField.setText("4");
-        attemptsField.setEnabled(false);
         attemptsField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 attemptsFieldActionPerformed(evt);
@@ -336,7 +332,6 @@ public class XYSequencing extends javax.swing.JPanel {
         });
 
         intensityThresoldField.setText("1000");
-        intensityThresoldField.setEnabled(false);
         intensityThresoldField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 intensityThresoldFieldActionPerformed(evt);
@@ -568,6 +563,43 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         }
     }
+    
+    public void generatesearchFOVs(){ // Copied from generateFOVs()
+        ArrayList<FOV> searchfovs = new ArrayList<FOV>();
+        //Use the display table to 
+        ArrayList<FOV> preexisting = new ArrayList<FOV>(tableModel_.getData());
+        searchFOVtableModel_.clearAllData();
+        tableModel_.clearAllData();
+        //Clear pre-existing FOV table? Not sure yet, so comment out
+        //tableModel_.clearAllData();
+
+        for (int cols = 0; cols < pp_.getPlateColumns(); cols++) {
+            ArrayList<Boolean> temp = pmdp_.wellsSelected_.get(cols);
+            for (int rows = 0; rows < pp_.getPlateRows(); rows++) {
+                if (temp.get(rows)) {
+
+                    //Always do spiral for now...
+                    
+                    String wellString = Character.toString((char) (65 + rows)) + Integer.toString(cols + 1);
+                    //Max # of times to search = #of FOVs desired * #to try before giving up
+                    searchfovs = generateSpiral(Integer.parseInt(FOVToFindField.getText())*(Integer.parseInt(attemptsField.getText())),wellString);
+
+                    for (FOV fov : searchfovs) {
+                        //Do we need this part?
+                        if (preexisting.contains(fov)) {
+                            fov.setGroup(preexisting.get(preexisting.indexOf(fov)).getGroup());
+                        } else {
+                            fov.setGroup(groupDescField.getText());
+                        }
+
+                        searchFOVtableModel_.addRow(fov);
+                    }
+                    //Can ignore the Z stuff?
+                    //doZStackGeneration(getZStackParams());
+                }
+            }
+        }
+    }
 
     private ArrayList<FOV> generateSpiral1(int noFOV, String wellString) {
 
@@ -714,7 +746,16 @@ public class XYSequencing extends javax.swing.JPanel {
     }//GEN-LAST:event_ringRadiusFieldActionPerformed
 
     private void quickPFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quickPFButtonActionPerformed
-        // TODO add your handling code here:
+        // Generate a spiral search pattern in each well - always spiral for now?
+        generatesearchFOVs(); // does this need any other arguments?
+        // Call the search function in the parent (HCAFLIMPluginFrame())
+        try{
+            parent_.prefind();
+        }
+        catch (InterruptedException IE){          
+            System.out.println(IE);
+        }
+        System.out.println("BUTTON PRESSED");
     }//GEN-LAST:event_quickPFButtonActionPerformed
 
     private void advancedPFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_advancedPFButtonActionPerformed
@@ -854,6 +895,7 @@ public class XYSequencing extends javax.swing.JPanel {
         // deal with ZFish case (tile FOVS)
         if (( (String) FOVPatternCombo.getSelectedItem()).equals("ZFish") & autoGenerateFOVsCheck.isSelected()){
             // currently hardcode fov size for 10 x objective...
+            // adds 4 FOVs centred on current xy
             // boilerplate - tidy up!
             double fovx = 1256;
             double fovy = 920;
@@ -905,6 +947,14 @@ public class XYSequencing extends javax.swing.JPanel {
         }
         return zStackParams;
     }
+    
+    public int getNoOfAttempts(){
+        return Integer.parseInt(this.attemptsField.getText());
+    }
+    
+    public int getSearchRowCount(){
+        return searchFOVtableModel_.getRowCount();
+    }  
     
     public ArrayList<FOV> getFOVTable(){
         return tableModel_.getData();
