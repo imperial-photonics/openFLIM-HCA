@@ -1546,20 +1546,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
    
     public void doSequenceAcquisitionFred() throws InterruptedException{
-             
-        ImageWriter SPWWriter = null;        
-        if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )
-        try 
-        {
-            if (core_.getBytesPerPixel() == 2)
-                SPWWriter = this.createSPWWriter(FormatTools.UINT16);            
-            else if (core_.getBytesPerPixel() == 1)
-                SPWWriter = this.createSPWWriter(FormatTools.UINT8);            
-            //
-            System.out.println(SPWWriter.toString());
-        }
-        catch (Exception e) {System.out.println(e.getMessage());}
-        
+                    
         Acquisition acq = new Acquisition();
         ArrayList<FOV> fovs = new ArrayList<FOV>();
         ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
@@ -1598,6 +1585,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             } else {
                 fss = spectralSequencing1.getFilterTable();
             } 
+           
+            
             
             List<Comparator<SeqAcqSetup>> comparators = new ArrayList<Comparator<SeqAcqSetup>>();
             
@@ -1632,13 +1621,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             //}
             int sassSize=sass.size();
             
-            System.out.println("Sorting...");     
             //Added this to print out what I think is the XYZ order it's going to try things in...
             for (int h=0; h<sassSize; h++){
                 SeqAcqSetup CurrSAS = sass.get(h);
                 System.out.println("Time="+CurrSAS.getTimePoint().getTimeCell()+"    Filt="+CurrSAS.getFilters().getLabel()+"    Well="+CurrSAS.getFOV().getWell()+"    X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
-            }
-                System.out.println("Waiting...");            
+            }                         
             
             long start_time = System.currentTimeMillis();
             // TODO: modify data saving such that time courses, z can be put in a 
@@ -1649,6 +1636,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
             String baseLevelPath = currentBasePathField.getText() + "/Sequenced FLIM acquisition " +
                     timeStamp;
+
             if(var_.check2){
                 for (FilterSetup fs : fss){
                     String flabel = fs.getLabel();
@@ -1673,6 +1661,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             FOV lastFOV = new FOV(0, 0, 0, pp_);
             Double lastZ = 0.0;
 //            int fovSinceLastAF = 0;
+            
+            // Initialize single plate writer and plate property
+            SeqAcqSetup FirstSAS = sass.get(1);
+            String plateDesc = "Time="+FirstSAS.getTimePoint().getTimeCell()+"    Filt="+FirstSAS.getFilters().getLabel();
+            FileWriteSPW(baseLevelPath, plateDesc);
+            init();
+            
             for ( ind = 0; ind < sass.size(); ind++){
             
                 //check for flag (stop button) and abort sequence
