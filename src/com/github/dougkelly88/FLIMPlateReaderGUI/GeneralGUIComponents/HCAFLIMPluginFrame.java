@@ -932,42 +932,79 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }
     
     public void prefind() throws InterruptedException{ // THROW is copied from doSequenceAcquisition - assume this is for Abort?
-        //MAKE A BIG SPIRAL PATTERN IN EACH WELL
-        int noofdeletedFOVs = 0;        
+        // Counters for determining progress
+        int noofFOVsSinceLastSuccess = 0;
         int noofacceptedFOVs_thiswell = 0;
-        int noofdeletedFOVs_thiswell = 0;        
-        //GET ABORT COUNTER MAX AND HOW MANY SEARCH ROWS TOTAL
+        int noofattemptedFOVs_thiswell = 0;        
+        // Work out the max number of FOVs
+        // !!! NEED TO MAKE SURE THAT THIS WORKS ID TOO MANY FOVS ARE SPECIFIED! REDUCE THE #OF ATTEMPTS PERHAPS?
         int Attempts_perFOV = xYSequencing1.getNoOfAttempts();
         int initialnoofFOVs = xYSequencing1.getSearchRowCount();
-        
+        int FOVs_per_well=Attempts_perFOV*initialnoofFOVs;
+        // Declare a blank FOV to be last gone to, and use the first in the list as the one we initially want to go to;
+        FOV FOVtogoto = xYSequencing1.searchFOVtableModel_.getFOV(0);
+        FOV FOVlastgoneto = new FOV(0, 0, 0, pp_); //
+        // Autofocus how often?
+        int FOVs_since_last_AF;
+        // Add this for Abort capability
+        int endOk=0;        
         //CLEAR EXISTING FOV TABLE SHOWN TO USER
         xYSequencing1.tableModel_.clearAllData();
-        
-        //FOR EACH SEARCH FOV
-            //CHECK IF ABORT BUTTON PRESSED
-            //TAKE IMAGE
-            
-            //DETERMINE SUCCESS/FAILURE PER FOV - VIA IMAGEJ??? AND WHETHER TO GIVE UP YET
-            // FAKE SEARCH BY WAITING HERE
-            try {
-                for(int i=0;i<initialnoofFOVs;i++){
-                    Thread.sleep(100);                 //1000 milliseconds is one second.
-                    if(1==1){ //ALWAYS ACCEPT
-                        // ADD IT TO THE PROPER MODEL
-                        //999 for column should trigger the default case: return the fov unchanged
-                        xYSequencing1.tableModel_.addRow(xYSequencing1.searchFOVtableModel_.getFOV(i));
-                        
-                        noofacceptedFOVs_thiswell++;
-                    } else { 
-                    } 
-                    //DON'T ADD THE ROW
+        Acquisition acq = new Acquisition();        
+        boolean FOVaccepted=false;
+        try {
+            for(int i=0;i<initialnoofFOVs;i++){
+                // Check for abort button - presume that there's a listener event somewhere for that? Need to implement own one or make Abort general?
+                // NEED TO CHECK IF THIS IS DONE PROPERLY
+                if(terminate){
+                    endOk=1;
+                    break;
+                }  
+                // Get target XY position, go to it
+                FOVtogoto = xYSequencing1.searchFOVtableModel_.getFOV(i);
+                xyzmi_.gotoFOV(FOVtogoto); //Check if this autofocuses or does Z?
+                //Wait for XY move to finish
+                while (xyzmi_.isStageBusy()){
+                    System.out.println("Stage moving...");
+                };
+                //Autofocus if needed
+                if(FOVtogoto.getWell()!=FOVlastgoneto.getWell() || noofFOVsSinceLastSuccess==0){ 
+                    // For now, let's try autofocusing if we're in a different well to before? Or if the last FOV was successful?
+                    xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
                 }
-                } catch(InterruptedException ex) {
-                Thread.currentThread().interrupt();               
+                // Snap single image
+                acq.snapimagenow();
+                // Analyse whether we want this as a FOV
+                //core_.
+                // Increment FOV list position counter
+                noofattemptedFOVs_thiswell++;
+                // Thread.sleep(100); //Simulate finding with time in ms - (Not working? Compiled out?)                    
+                // ASSESS IF FOV IS GOOD - make an image analysis subvi?
+                
+                if(FOVaccepted==true){ //ALWAYS ACCEPT FOR NOW
+                    // Add this FOV to the normal sequence list shown on front panel
+                    xYSequencing1.tableModel_.addRow(xYSequencing1.searchFOVtableModel_.getFOV(i));
+                    noofFOVsSinceLastSuccess=0;
+                    noofacceptedFOVs_thiswell++;
+                } else { 
+                   // We didn't like this FOV
+                    noofFOVsSinceLastSuccess++;
                 }
-
-            //ADD ANY SUCCESSFUL FOV TO LIST, RESET ABORT COUNTER IF WE ARE SUCCESSFUL
-        //
+                if((noofacceptedFOVs_thiswell>=initialnoofFOVs) || (noofFOVsSinceLastSuccess>=Attempts_perFOV)){ // We have enough successful finds
+                    // Increment the loop counter just enough to move it into the start of the next well's sequence...
+                    i=i+(FOVs_per_well-noofattemptedFOVs_thiswell);
+                    // Reset the well-wise counters
+                    noofattemptedFOVs_thiswell=0;
+                    noofacceptedFOVs_thiswell=0;
+                } else {
+                    // We automatically go to the next well if we never find anything?, so don't need to do anything here...
+                }
+                // Now we can say that this was the last FOV we went to...
+                FOVlastgoneto=FOVtogoto;
+            }
+        } catch(Exception e) { // WAS InterruptedException, but complained that this would never be thrown from here?
+            Thread.currentThread().interrupt();               
+        }
     }
     
     public void doSequenceAcquisition() throws InterruptedException{
@@ -983,14 +1020,16 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             //
             System.out.println(SPWWriter.toString());
         }
-        catch (Exception e) {System.out.println(e.getMessage());}
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         
         Acquisition acq = new Acquisition();
         ArrayList<FOV> fovs = new ArrayList<FOV>();
         ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
         ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
         int endOk=0;
-        int ind=0;
+        int ind=0; // NOT USED?
         singleImage=0;
         
             // get all sequence parameters and put them together into an 
@@ -1142,6 +1181,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                             else{
                                 //OK - xy has changed, so let's do an autofocus and make sure to add in any Z offsets
                                 //See if we can check what method is currently selected for z storage first? SENSIBLE...
+                                //Have we lost the XY move here?
                                 xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset()+sas.getFOV().getZ());
                             }
                             //

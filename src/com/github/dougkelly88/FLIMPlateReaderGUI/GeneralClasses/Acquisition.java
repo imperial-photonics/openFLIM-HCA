@@ -151,7 +151,24 @@ public class Acquisition {
                 }// endif                                     
             } catch (Exception e) {System.out.println(e.getMessage());}
     }
-        
+    
+    public void snapimagenow() {
+        try{
+
+            if (gui_.isLiveModeOn() | gui_.isAcquisitionRunning()){
+                gui_.enableLiveMode(false);
+                gui_.closeAllAcquisitions();
+            }
+            // Snap an image
+            core_.snapImage();
+            Object img = core_.getImage();
+            // Display acquired image
+            gui_.displayImage(img);            
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }        
+    }
+    
     public void snapFLIMImage(String path, ArrayList<Integer> delays, SeqAcqSetup sas) {
 
         try{
@@ -218,7 +235,7 @@ public class Acquisition {
             ////
             // clean up writer when finished...
             writer.close();
-       } catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
