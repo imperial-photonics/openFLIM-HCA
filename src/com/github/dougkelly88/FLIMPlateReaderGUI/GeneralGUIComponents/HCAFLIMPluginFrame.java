@@ -5,6 +5,7 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents;
 
+import SPW.FileWriteSPW;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.sequencingThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Acquisition;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
@@ -123,6 +124,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     //
     public String AcquisitionSavingMode;
     private double lastAFposition; // Variable to store last 'good' AF position
+    private List<SeqAcqSetup> FOV;
     
 //    public static HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -1589,14 +1591,21 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             
             
             List<Comparator<SeqAcqSetup>> comparators = new ArrayList<Comparator<SeqAcqSetup>>();
-            
+            int nTP=0;
+            int nFS=0;
+            int nFOV=0;
             for (FOV fov : fovs){
+                nFOV=nFOV+1;
                 for (TimePoint tp : tps){
+                    nTP=nTP+1;
                     for (FilterSetup fs : fss){
+                        nFS=nFS+1;
                         sass.add(new SeqAcqSetup(fov, tp, fs));
                     }
                 }
             }
+            nTP=nTP/nFOV;
+            nFS=nFS/nFOV/nTP;
             // use chained comparators to sort by multiple fields SIMULTANEOUSLY,
             // based on order determined in UI table.
             for (String str : order){
@@ -1619,14 +1628,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             //} else {
             //    System.out.print("'Start always by column 1 (horizontal fast axis)' as acquisition mode selected");
             //}
-            int sassSize=sass.size();
-            
-            //Added this to print out what I think is the XYZ order it's going to try things in...
-            for (int h=0; h<sassSize; h++){
-                SeqAcqSetup CurrSAS = sass.get(h);
-                System.out.println("Time="+CurrSAS.getTimePoint().getTimeCell()+"    Filt="+CurrSAS.getFilters().getLabel()+"    Well="+CurrSAS.getFOV().getWell()+"    X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
-            }                         
-            
+            int sassSize=sass.size();     
+                            
             long start_time = System.currentTimeMillis();
             // TODO: modify data saving such that time courses, z can be put in a 
             // single OME.TIFF. DISCUSS WITH IAN!
@@ -1637,24 +1640,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             String baseLevelPath = currentBasePathField.getText() + "/Sequenced FLIM acquisition " +
                     timeStamp;
 
-            if(var_.check2){
-                for (FilterSetup fs : fss){
-                    String flabel = fs.getLabel();
-                    File f = new File(baseLevelPath + "/" + flabel);
-                    try {
-                        boolean check1 = f.mkdirs();
-                    } catch (Exception e){
-                        System.out.println(e.getMessage());
-                    }
-                }
-            } else {
-                    File f = new File(baseLevelPath);
-                    try {
-                        boolean check1 = f.mkdirs();
-                    } catch (Exception e){
-                        System.out.println(e.getMessage());
-                    }            
-            }
+            
+            
 //            for (SeqAcqSetup sas : sass){
             Double lastTime = 0.0;
             String lastFiltLabel = "";
@@ -1663,10 +1650,56 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 //            int fovSinceLastAF = 0;
             
             // Initialize single plate writer and plate property
+            
+            
+// Start Freds TRY1: Set plate file out and plate description
+//            if(sas.getFilters().getLabel().equals("Unknown")){
+//                        path=baseLevelPath + "/"+ 
+//                            " Well=" + sas.getFOV().getWell() +                        
+//                            " X=" + sas.getFOV().getX() +
+//                            " Y=" + sas.getFOV().getY() +
+//                            " T=" + sas.getTimePoint().getTimeCell() + 
+//                            " Filterset=" + sas.getFilters().getLabel() + 
+//                            " Z=" + sas.getFOV().getZ() +
+//                            " ID=" + fovLabel+
+//                            " Laser intensity=" + intensity;
+//                    } else{
+//                        path=baseLevelPath + "/" + sas.getFilters().getLabel() + "/"+ 
+//                            " Well=" + sas.getFOV().getWell() +                        
+//                            " X=" + sas.getFOV().getX() +
+//                            " Y=" + sas.getFOV().getY() +
+//                            " T=" + sas.getTimePoint().getTimeCell() + 
+//                            " Filterset=" + sas.getFilters().getLabel() + 
+//                            " Z=" + sas.getFOV().getZ() +
+//                            " ID=" + fovLabel+
+//                            " Laser intensity=" + intensity;
+//                    }
+            FileWriteSPW SPWriter = null;
+//            int fsCount =0;
+//            for (FilterSetup fs : fss ){
+//                fsCount=fsCount+1;
+//                String flabel = fs.getLabel();
+//                File f = new File(baseLevelPath + "/" + flabel);
+//                try {
+//                    boolean check1 = f.mkdirs();
+//                } catch (Exception e){
+//                    System.out.println(e.getMessage());
+//                }
+//                String fileOut = baseLevelPath + "/" + flabel;
+//                SeqAcqSetup FirstSAS = sass.get(1);
+//                String plateDesc = "Time="+FirstSAS.getTimePoint().getTimeCell()+"    Filt="+flabel;
+//                SPWriter = new FileWriteSPW(fileOut, plateDesc);
+//            }
+            //String fileOut = baseLevelPath;
+            String fileOut = baseLevelPath;
             SeqAcqSetup FirstSAS = sass.get(1);
             String plateDesc = "Time="+FirstSAS.getTimePoint().getTimeCell()+"    Filt="+FirstSAS.getFilters().getLabel();
-            FileWriteSPW(baseLevelPath, plateDesc);
-            init();
+            FileWriteSPW SPWWriter = new FileWriteSPW(fileOut, plateDesc);
+            int[][] nFovInWell=acq.getNFOV(fovs);
+//            int[][] nFovInWell = new int[nRows][nCols];
+//            boolean ok = SPWWriter.init(nFovInWell, sizeX, sizeY, sizet, sass.get(1).getFilters().getDelays());
+// End Freds TRY2 
+            
             
             for ( ind = 0; ind < sass.size(); ind++){
             
@@ -1800,40 +1833,89 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         " Laser intensity=" + intensity;
                 }
                 
-                try{
-                    boolean abort=arduino_.checkSafety();
-                    if(abort==true){
-                        break;
-                    }
-                    while (xyzmi_.isStageBusy()){
-                        System.out.println("Stage moving...");
-                    };
-                   // core_.waitForDeviceType(DeviceType.XYStageDevice);
-                    /*if(timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell())){
-                        core_.setProperty("SyringePump","Liquid Dispersion?", "Go");
-                        wait(1000);
-                            }*/
-                    core_.waitForDeviceType(DeviceType.AutoFocusDevice);
-                    arduino_.setDigitalOutHigh();
-                    wait(var_.shutterResponse);
-                }
-                catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
+        //                try{
+        //                    boolean abort=arduino_.checkSafety();
+        //                    if(abort==true){
+        //                        break;
+        //                    }
+        //                    while (xyzmi_.isStageBusy()){
+        //                        System.out.println("Stage moving...");
+        //                    };
+        //                   // core_.waitForDeviceType(DeviceType.XYStageDevice);
+        //                    /*if(timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell())){
+        //                        core_.setProperty("SyringePump","Liquid Dispersion?", "Go");
+        //                        wait(1000);
+        //                            }*/
+        //                    core_.waitForDeviceType(DeviceType.AutoFocusDevice);
+        //                    arduino_.setDigitalOutHigh();
+        //                    wait(var_.shutterResponse);
+        //                }
+        //                catch (Exception e) {
+        //                    System.out.println(e.getMessage());
+        //                }
                 
-                try
-                {
-                    if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )
-                        acq.snapSPWImage(SPWWriter, sas.getFilters().getDelays(), sas, ind, false); // simulate == false
-                }
-                catch(Exception e) 
-                {
-                    System.out.println(e.getMessage());
-                    if (null != SPWWriter) SPWWriter = null;
-                }
-                                                        
-                if (var_.AcquisitionSavingMode.equals("separate OME.tiff for every FOV") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )                
-                    acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
+                    
+                    
+// Start Freds TRY2: write image
+                    
+
+                    
+                    int sizeX = 4;
+                    int sizeY = 4;
+                    int sizet = 3;
+
+
+//                    FileWriteSPWTestHarness reader = new FileWriteSPWTestHarness();
+
+                    byte[] plane;
+                    ArrayList<String> delayList = new ArrayList<>();
+                    delayList.add("1000");
+                    delayList.add("2000");
+                    delayList.add("3000");
+
+//                    double[] exposureTimes = new double[sizet];
+//                    for (int t = 0; t < sizet; t++)  {
+//                      exposureTimes[t] = 1000.0;
+//                    }
+                    // nFOVInWell: how many FOV in this 2D array[Row][Col]
+                    // sizeX: width of image in pixel
+                    // sizeY: height of image in pixel
+                    // sizet: how many delays?
+                    // delayList: List of delays
+                    // exposureTimes: list of exposure times
+//                    boolean ok = SPWWriter.init(nFovInWell, sizeX, sizeY, sizet, sas.getFilters().getDelays());
+
+                    //alternative setup for non-FLIM data
+                    //sizet = 1;
+                    //boolean ok = SPWWriter.init(nFovInWell, sizeX, sizeY);
+
+                    
+
+                    // simulate an Abort  by not writing alll the FOVS !!
+                    
+                    boolean ok=true;
+                    if (ok)  {
+                      for (int f = 0; f< 8; f++)  { 
+                        for (int t = 0; t< sizet; t++)  {
+                          
+                        String imageDescription = " Well=" + sas.getFOV().getWell() +                        
+                        " X=" + sas.getFOV().getX() +
+                        " Y=" + sas.getFOV().getY() + 
+                        " Z=" + sas.getFOV().getZ() +
+                        " ID=" + fovLabel+
+                        " Laser intensity=" + intensity;
+                        String correctSPW=baseLevelPath;
+//                        acq.snapSPWImage(writer, sas.getFilters().getDelays(), sas, ind, true );
+//                        acq.snapFLIMImageFred(correctSPW, sas.getFilters().getDelays(), sas);
+//                        SPWWriter.export(plane, f, t, imageDescription);
+                        }
+                      }
+                      
+                    }  
+                  
+// End Freds TRY
+                
+                
                 
                 // saveSequencingTablesForDebugging(path);
                 
@@ -1872,11 +1954,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             } else {
             progressBar_.setEnd("FLIM sequence");
         }
-    
-        if (null != SPWWriter) 
-        {
-            try {SPWWriter.close();} catch (IOException e) {System.err.println("Failed to close file SPWWriter.");}
-        }
+        
+// Start Freds TRY3: close writer    
+        SPWWriter.cleanup();
+// End Freds TRY3
         
         try {
             core_.setProperty("Delay box", "Delay (ps)", var_.fastDelaySlider);

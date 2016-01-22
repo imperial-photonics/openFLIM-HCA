@@ -6,6 +6,7 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.Utilitiesclass;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FilterSetup;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.SeqAcqSetup;
@@ -26,6 +27,9 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.NonNegativeInteger;
 import java.io.IOException;
 import com.quirkware.guid.PlatformIndependentGuidGen;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
 import mmcorej.TaggedImage;
@@ -224,6 +228,7 @@ public class Acquisition {
 
     }
     
+    
     private void saveAcqToOMETiff(IFormatWriter writer, String acq, int length)
             throws Exception {
         ImageCache imgCache = gui_.getAcquisitionImageCache(acq);
@@ -403,11 +408,64 @@ public class Acquisition {
 
         // go through order arraylist and build a 2D arraylist containing all vars in appropriate order...
     }
-    
 
-    
-    public void showImage(){
-        //  DisplayImage_.display();
-    }       
+    public void getSPWInitComp(List<SeqAcqSetup> sass, int nFOV) {
+//        int W = (int)core_.getImageWidth();
+//        int H = (int)core_.getImageHeight();
+                
+        int sizeSass=sass.size();
+        for(int i=0;i<sizeSass;i++){
+            System.out.println(sass.get(i));  
+        }
+            System.out.println(sass.get(1).getFOV().getWell());
+            
+//        String[] wellList=null;
+//        System.out.println(sass.get(1).getFOV());
+//        System.out.println(sass.get(1).getFOV().getWell());
+//        System.out.println(sass.get(1).getFOV().getX());
+//        for(int ii=0;ii<sizeSass;ii++){
+//            wellList[ii]=sass.get(ii).getFOV().getWell();  
+//        }
+        
+        
+        
+        for(int iii=0;iii<sizeSass;iii++){
+            System.out.println(sass.get(iii));  
+        }
+    }
+
+    public int[][] getNFOV(List<FOV> FOV) {
+        ArrayList<String> wells = new ArrayList<>();
+        int[][] nFovInWell = new int[99][99];
+        for (FOV fov : FOV){
+            wells.add(fov.getWell());
+            }
+        for (String currentWell : wells){
+            String row=null;
+            String col=null;
+            int colInt=0;
+            int rowInt=0;
+            row=currentWell.substring(1);
+            if (currentWell.length()==2){
+                col=currentWell.substring(1, 2);
+            } else if (currentWell.length()==3){
+                col=currentWell.substring(1, 3);
+            } else {
+                System.out.println("I have no idea what the well is! Just values from A1-Z99 possible.");
+            }
+            int occurrences = Collections.frequency(wells, currentWell);
+            rowInt=Utilitiesclass.WellLetterstoNumber(currentWell);
+            colInt=Integer.parseInt(col);
+            System.out.println("CurrentWell= "+currentWell);
+            System.out.println("Row Int= "+rowInt+"Col Int= "+colInt);
+            System.out.println("nFOV= "+occurrences);
+            nFovInWell[rowInt][colInt] =occurrences;
+            
+            }
+        System.out.println(nFovInWell);
+        return nFovInWell;
+    }
+       
+          
     
 }
