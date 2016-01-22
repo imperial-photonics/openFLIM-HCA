@@ -1696,7 +1696,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             String plateDesc = "Time="+FirstSAS.getTimePoint().getTimeCell()+"    Filt="+FirstSAS.getFilters().getLabel();
             FileWriteSPW SPWWriter = new FileWriteSPW(fileOut, plateDesc);
             int[][] nFovInWell=acq.getNFOV(fovs);
-//            int[][] nFovInWell = new int[nRows][nCols];
+            int sizeX=acq.getSizeX();
+            int sizeY=acq.getSizeY();
 //            boolean ok = SPWWriter.init(nFovInWell, sizeX, sizeY, sizet, sass.get(1).getFilters().getDelays());
 // End Freds TRY2 
             
@@ -1860,8 +1861,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     
 
                     
-                    int sizeX = 4;
-                    int sizeY = 4;
+                    
                     int sizet = 3;
 
 

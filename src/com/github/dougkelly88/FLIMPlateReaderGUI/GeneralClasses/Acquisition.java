@@ -462,8 +462,17 @@ public class Acquisition {
             nFovInWell[rowInt][colInt] =occurrences;
             
             }
-        System.out.println(nFovInWell);
         return nFovInWell;
+    }
+
+    public int getSizeX() {
+        int W = (int)core_.getImageWidth();
+        return W;                    
+    }
+
+    public int getSizeY() {
+        int H = (int)core_.getImageHeight();
+        return H;
     }
        
           
