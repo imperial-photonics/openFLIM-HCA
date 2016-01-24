@@ -1861,58 +1861,33 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     
                     
 // Start Freds TRY2: write image
-                    
-
-                    
-                    
                    
-
-
-//                    FileWriteSPWTestHarness reader = new FileWriteSPWTestHarness();
-
-                    byte[] plane;
-                    ArrayList<String> delayList = new ArrayList<>();
-                    delayList.add("1000");
-                    delayList.add("2000");
-                    delayList.add("3000");
-
-//                    double[] exposureTimes = new double[sizet];
-//                    for (int t = 0; t < sizet; t++)  {
-//                      exposureTimes[t] = 1000.0;
-//                    }
-                    // nFOVInWell: how many FOV in this 2D array[Row][Col]
-                    // sizeX: width of image in pixel
-                    // sizeY: height of image in pixel
-                    // sizet: how many delays?
-                    // delayList: List of delays
-                    // exposureTimes: list of exposure times
-//                    boolean ok = SPWWriter.init(nFovInWell, sizeX, sizeY, sizet, sas.getFilters().getDelays());
-
                     //alternative setup for non-FLIM data
                     //sizet = 1;
                     //boolean ok = SPWWriter.init(nFovInWell, sizeX, sizeY);
-
-                    
 
                     // simulate an Abort  by not writing alll the FOVS !!
                     
                     
                     if (ok)  {
-                      for (int f = 0; f< 8; f++)  { 
-                        for (int t = 0; t< sizet; t++)  {
-                          
-                        String imageDescription = " Well=" + sas.getFOV().getWell() +                        
+                       String imageDescription = " Well=" + sas.getFOV().getWell() +                        
                         " X=" + sas.getFOV().getX() +
                         " Y=" + sas.getFOV().getY() + 
                         " Z=" + sas.getFOV().getZ() +
                         " ID=" + fovLabel+
-                        " Laser intensity=" + intensity;
+                        " Laser intensity=" + intensity +
+                        " Frame accumulation=" + sas.getFilters().getAccFrames();
+                       
                         String correctSPW=baseLevelPath;
 //                        acq.snapSPWImage(writer, sas.getFilters().getDelays(), sas, ind, true );
-//                        acq.snapFLIMImageFred(correctSPW, sas.getFilters().getDelays(), sas);
+                        //  ind = f ???
+                        //  delay = t ???
+                        
+                        acq.snapFLIMImageFred(SPWWriter ,sas, ind, imageDescription);
+                        
+                        
 //                        SPWWriter.export(plane, f, t, imageDescription);
-                        }
-                      }
+                       
                       
                     }  
                   

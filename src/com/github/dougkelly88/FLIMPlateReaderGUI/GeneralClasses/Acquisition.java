@@ -34,6 +34,8 @@ import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
 import mmcorej.TaggedImage;
 import org.micromanager.api.ImageCache;
+import SPW.FileWriteSPW;
+import java.math.BigInteger;
 
 /**
  *
@@ -468,7 +470,86 @@ public class Acquisition {
         return delayString;
     }
 
-          
-          
+    public void snapFLIMImageFred( FileWriteSPW SPWWriter,SeqAcqSetup sas, int ind, String imageDescription) {
+        
+        try{
+
+            if (gui_.isLiveModeOn() | gui_.isAcquisitionRunning()){
+                gui_.enableLiveMode(false);
+                gui_.closeAllAcquisitions();
+            }
+            
+            ArrayList<Integer> delays = sas.getFilters().getDelays();
+
+//            OMEXMLMetadata m = setBasicMetadata(delays, sas);
+//            IFormatWriter writer = generateWriter(path+".ome.tiff", m);
+            for (Integer delay : delays) {
+                int del=delays.indexOf(delay);
+                try{
+                core_.setProperty("Delay box", "Delay (ps)", delay);
+                } catch(Exception e) {
+                    System.out.println("Could not set delay in Delay box!");
+                
+                }
+                
+                long dim = core_.getImageWidth() * core_.getImageHeight();
+//              Object img = core_.getImage();
+                int[] accImg = new int[(int)dim];
+                short[] accImgShort = new short[(short)dim];
+                byte[] accImgByte = new byte[(byte)dim];
+                // EITHER
+//                core_.snapImage();
+
+                for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
+                    core_.snapImage();
+                    Object img = core_.getImage();
+                    // Display acquired images while the acquisition goes on
+                    gui_.displayImage(img);
+                    // this bit c.f. FrameAverager
+                    if (core_.getBytesPerPixel() == 2){
+                        short[] pixS = (short[]) img;
+                        for (int j = 0; j < dim; j++) {
+                            accImgShort[j] =  (short) (accImg[j] +  (pixS[j] & 0xffff));
+                        }
+                    } else if (core_.getBytesPerPixel() == 1){
+                        byte[] pixB = (byte[]) img;
+                        for (int j = 0; j < dim; j++) {
+                            accImgByte[j] = (byte) (accImg[j] +  (pixB[j] & 0xff));
+                        }
+                    }
+
+                }
+                
+                if (core_.getBytesPerPixel() == 2){
+                        SPWWriter.export(accImgShort, ind, delay, imageDescription);
+                        
+                    } else if (core_.getBytesPerPixel() == 1){
+                        SPWWriter.export(accImgByte, ind, delay, imageDescription);
+                    }
+                    
+                
+//                core_.snapImage();
+//                saveLayersToOMETiff(writer, accImg, delays.indexOf(delay));
+                ////
+
+                
+                // OR
+//                gui_.snapAndAddImage(acq, delays.indexOf(delay), 0, 0, 0);
+                
+                ////
+                if(frame_.singleImage==1){
+                    frame_.progressBar_.stepIncrement(del, delays.size());
+                }
+            }
+            // OR
+//            saveAcqToOMETiff(writer, acq, delays.size());
+            ////
+            // clean up writer when finished...
+//            writer.close();
+       } catch (Exception e) {
+            System.out.println(e.getMessage());
+       }
+        
+    }    
     
 }
