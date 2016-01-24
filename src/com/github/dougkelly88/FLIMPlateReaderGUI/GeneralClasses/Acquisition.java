@@ -409,31 +409,8 @@ public class Acquisition {
         // go through order arraylist and build a 2D arraylist containing all vars in appropriate order...
     }
 
-    public void getSPWInitComp(List<SeqAcqSetup> sass, int nFOV) {
-//        int W = (int)core_.getImageWidth();
-//        int H = (int)core_.getImageHeight();
-                
-        int sizeSass=sass.size();
-        for(int i=0;i<sizeSass;i++){
-            System.out.println(sass.get(i));  
-        }
-            System.out.println(sass.get(1).getFOV().getWell());
-            
-//        String[] wellList=null;
-//        System.out.println(sass.get(1).getFOV());
-//        System.out.println(sass.get(1).getFOV().getWell());
-//        System.out.println(sass.get(1).getFOV().getX());
-//        for(int ii=0;ii<sizeSass;ii++){
-//            wellList[ii]=sass.get(ii).getFOV().getWell();  
-//        }
-        
-        
-        
-        for(int iii=0;iii<sizeSass;iii++){
-            System.out.println(sass.get(iii));  
-        }
-    }
-
+    // Freds part
+    
     public int[][] getNFOV(List<FOV> FOV) {
         ArrayList<String> wells = new ArrayList<>();
         int[][] nFovInWell = new int[99][99];
@@ -456,9 +433,9 @@ public class Acquisition {
             int occurrences = Collections.frequency(wells, currentWell);
             rowInt=Utilitiesclass.WellLetterstoNumber(currentWell);
             colInt=Integer.parseInt(col);
-            System.out.println("CurrentWell= "+currentWell);
-            System.out.println("Row Int= "+rowInt+"Col Int= "+colInt);
-            System.out.println("nFOV= "+occurrences);
+//            System.out.println("CurrentWell= "+currentWell);
+//            System.out.println("Row Int= "+rowInt+"Col Int= "+colInt);
+//            System.out.println("nFOV= "+occurrences);
             nFovInWell[rowInt][colInt] =occurrences;
             
             }
@@ -474,7 +451,24 @@ public class Acquisition {
         int H = (int)core_.getImageHeight();
         return H;
     }
-       
+
+    
+    public int getSizet(ArrayList<Integer> delays) {
+        int sizet=0;
+        sizet=delays.size();
+        return sizet;
+    }
+
+    public ArrayList<String> getDelaysForSPW(ArrayList<Integer> delayInt) {
+        ArrayList<String> delayString= new ArrayList();
+        for (int myInt : delayInt) 
+            { 
+              delayString.add(String.valueOf(myInt)); 
+            }
+        return delayString;
+    }
+
+          
           
     
 }

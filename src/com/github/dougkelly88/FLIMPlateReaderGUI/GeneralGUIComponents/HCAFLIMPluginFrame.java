@@ -1698,7 +1698,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             int[][] nFovInWell=acq.getNFOV(fovs);
             int sizeX=acq.getSizeX();
             int sizeY=acq.getSizeY();
-//            boolean ok = SPWWriter.init(nFovInWell, sizeX, sizeY, sizet, sass.get(1).getFilters().getDelays());
+            int sizet=acq.getSizet(sass.get(1).getFilters().getDelays());
+            ArrayList<String> delaysForSPW=acq.getDelaysForSPW(sass.get(1).getFilters().getDelays());
+            System.out.println(delaysForSPW);
+            boolean ok = SPWWriter.init(nFovInWell, sizeX, sizeY, sizet, delaysForSPW);
 // End Freds TRY2 
             
             
@@ -1862,7 +1865,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
                     
                     
-                    int sizet = 3;
+                   
 
 
 //                    FileWriteSPWTestHarness reader = new FileWriteSPWTestHarness();
@@ -1893,7 +1896,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
                     // simulate an Abort  by not writing alll the FOVS !!
                     
-                    boolean ok=true;
+                    
                     if (ok)  {
                       for (int f = 0; f< 8; f++)  { 
                         for (int t = 0; t< sizet; t++)  {
