@@ -1604,8 +1604,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     }
                 }
             }
-            nTP=nTP/nFOV;
-            nFS=nFS/nFOV/nTP;
+//            nTP=nTP/nFOV;
+//            nFS=nFS/nFOV/nTP;
             // use chained comparators to sort by multiple fields SIMULTANEOUSLY,
             // based on order determined in UI table.
             for (String str : order){
@@ -1879,16 +1879,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         " Frame accumulation=" + sas.getFilters().getAccFrames();
                        
                         String correctSPW=baseLevelPath;
-//                        acq.snapSPWImage(writer, sas.getFilters().getDelays(), sas, ind, true );
-                        //  ind = f ???
-                        //  delay = t ???
-                        
-                        acq.snapFLIMImageFred(SPWWriter ,sas, ind, imageDescription);
-                        
-                        
-//                        SPWWriter.export(plane, f, t, imageDescription);
-                       
                       
+                        acq.snapFLIMImageFred(SPWWriter ,sas, ind, imageDescription);
+         
                     }  
                   
 // End Freds TRY

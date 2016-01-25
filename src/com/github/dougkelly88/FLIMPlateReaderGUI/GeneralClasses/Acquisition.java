@@ -415,7 +415,11 @@ public class Acquisition {
     
     public int[][] getNFOV(List<FOV> FOV) {
         ArrayList<String> wells = new ArrayList<>();
-        int[][] nFovInWell = new int[99][99];
+        int[][] nFovInWell = new int[8][12];
+        for (int i = 0; i < nFovInWell.length; i++)
+            for (int j = 0; j < nFovInWell[0].length; j++)
+                nFovInWell[i][j] = -1;
+        
         for (FOV fov : FOV){
             wells.add(fov.getWell());
             }
@@ -430,17 +434,18 @@ public class Acquisition {
             } else if (currentWell.length()==3){
                 col=currentWell.substring(1, 3);
             } else {
-                System.out.println("I have no idea what the well is! Just values from A1-Z99 possible.");
+                System.out.println("I have no idea what the well is! Just values from A1-H12 possible.");
             }
             int occurrences = Collections.frequency(wells, currentWell);
-            rowInt=Utilitiesclass.WellLetterstoNumber(currentWell);
-            colInt=Integer.parseInt(col);
+            rowInt=Utilitiesclass.WellLetterstoNumber(currentWell)-1;
+            colInt=Integer.parseInt(col)-1;
 //            System.out.println("CurrentWell= "+currentWell);
 //            System.out.println("Row Int= "+rowInt+"Col Int= "+colInt);
 //            System.out.println("nFOV= "+occurrences);
             nFovInWell[rowInt][colInt] =occurrences;
             
             }
+        
         return nFovInWell;
     }
 
