@@ -94,6 +94,24 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 import loci.formats.out.TiffWriter;
 
+// Try and import stuff for ImageJ imageprocessing capabilities
+//Cut-paste from: https://micro-manager.org/w/images/b/b6/RatiometricImaging_singleImage.bsh
+import ij.*;
+import ij.gui.*;
+//import org.micromanager.api.AcquisitionOptions;
+import ij.WindowManager;
+import java.lang.System;
+import ij.process.*;
+import ij.ImagePlus;
+import ij.plugin.*;
+import java.lang.Math;
+import java.awt.image.*;
+import ij.measure.*;
+import ij.text.*;
+import ij.plugin.filter.*;
+import org.micromanager.utils.ImageUtils;
+// End of added imageJ bits
+
 /**
  *
  * @author dk1109
@@ -101,6 +119,9 @@ import loci.formats.out.TiffWriter;
 public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
     public CMMCore core_;
+    
+    //private MMStudio gui_;
+    
     static HCAFLIMPluginFrame frame_;
     private SeqAcqProps sap_;
     private Variable var_;
@@ -123,7 +144,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     //
     public String AcquisitionSavingMode;
     private double lastAFposition; // Variable to store last 'good' AF position
-    
+    private ImageWindow currentWin = ij.WindowManager.getCurrentWindow();    
 //    public static HSSFWorkbook wb = new HSSFWorkbook();
 
     @Subscribe
@@ -942,6 +963,69 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         return AFenabled;
     }
     
+    
+    // A routine for determining whehter we want to accept a FOV - hive this off to a separate class later
+    public boolean checkprefindimg(Object img){
+        MMStudio gui_ = MMStudio.getInstance();
+        boolean accept = false;
+        
+        //gui_.displayImage(img);
+        try{
+            //Probably best not to have a new window open up each time...
+            //Should fix it to reuse the same window and just update it - eventually...
+            if(currentWin!=null){
+                //Probably should add a check that this is the right one - want to target the analysis window too?
+                currentWin.close();
+            }            
+            // Make an array of pixels from the current image in the core - should be freshly-snapped...
+            // Be sure that this isn't the last image if long integration times are order of the day?
+            byte[] pixels = (byte[])core_.getTaggedImage().pix;
+            // Image processor to target said image
+            ImageProcessor improc0 = ImageUtils.makeProcessor(core_, pixels);
+            // ImagePlus that uses the imageprocessor we just made...
+            ImagePlus plus = new ImagePlus("Prefind image", improc0);
+            // Hopefully set the current window to our target one
+            ij.WindowManager.setTempCurrentImage(plus);
+            // For simple thrsholding
+            double minthresh = 0;
+            double maxthresh = proSettingsGUI1.getPrefindThresh();
+            // Apply a simple threshold - probably want a set of cases here
+            improc0.setThreshold(minthresh, maxthresh, 1);//Think 1 = B&W LUT
+            byte[] thresholded = (byte[])improc0.getPixels();
+            long sum = 0;//
+            // Run the Process > Binary > "Make Binary" command - don't forget to divide sum by 255...
+            ij.IJ.run("Make Binary");
+            ij.IJ.run(plus, "Multiply...", "1");
+            for (int k=0;k<thresholded.length;k++){
+                sum += thresholded [k];
+            }
+            // For some reason, the binary image appears to go from -1 to 0, giving the -ve # of dark pixels... Fix this by:
+            sum = thresholded.length+sum;
+            // We now have the number of 'bright' pixels, hopefully
+            
+            //COMPARE SUM TO 
+            
+            if(sum>((proSettingsGUI1.getPercentCoverage()/100)*(thresholded.length))){
+                accept = true;
+            } else {
+                accept = false;    
+            }
+            
+            System.out.println(accept);
+            
+            //System.out.println(sum);
+            //ij.IJ.runMacro("TEST"); //Jut need the name of the macro, but also need correct image to do it on?
+            plus.show();
+            currentWin = ij.WindowManager.getCurrentWindow();
+
+        } catch (Exception e){
+             System.out.println(e.getMessage());
+        }
+        //String Macropath="C:\\Program Files\\Micro-Manager-1.4.20\\plugins\\TEST.ijm";
+
+        return accept;
+    }
+        
     public void prefind() throws InterruptedException{ // THROW is copied from doSequenceAcquisition - assume this is for Abort?
         // Counters for determining progress
         int noofFOVsSinceLastSuccess = 0;
@@ -973,18 +1057,21 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }  
                 // Get target XY position, go to it
                 FOVtogoto = xYSequencing1.searchFOVtableModel_.getFOV(i);
-                xyzmi_.gotoFOV(FOVtogoto); //Check if this autofocuses or does Z?
+                //xyzmi_.gotoFOV(FOVtogoto); //Check if this autofocuses or does Z?
                 //Wait for XY move to finish
-                while (xyzmi_.isStageBusy()){
-                    System.out.println("Stage moving...");
-                };
+              //while (xyzmi_.isStageBusy()){
+              //   System.out.println("Stage moving...");
+              //  };
                 //Autofocus if needed
                 if(FOVtogoto.getWell()!=FOVlastgoneto.getWell() || noofFOVsSinceLastSuccess==0){ 
                     // For now, let's try autofocusing if we're in a different well to before? Or if the last FOV was successful?
-                    xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                    //xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
                 }
                 // Snap single image
                 acq.snapimagenow();
+                Object img=core_.getImage();
+//                ImageProcessor ip0 = ij.IJ.getProcessor();               
+                FOVaccepted = checkprefindimg(img);
                 // Analyse whether we want this as a FOV
                 //core_.
                 // Increment FOV list position counter
@@ -1744,8 +1831,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             // Initialize single plate writer and plate property
             SeqAcqSetup FirstSAS = sass.get(1);
             String plateDesc = "Time="+FirstSAS.getTimePoint().getTimeCell()+"    Filt="+FirstSAS.getFilters().getLabel();
-            FileWriteSPW(baseLevelPath, plateDesc);
-            init();
+//            FileWriteSPW(baseLevelPath, plateDesc);
+//            init();
             
             for ( ind = 0; ind < sass.size(); ind++){
             
@@ -1900,16 +1987,16 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     System.out.println(e.getMessage());
                 }
                 
-                try
-                {
-                    if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )
-                        acq.snapSPWImage(SPWWriter, sas.getFilters().getDelays(), sas, ind, false); // simulate == false
-                }
-                catch(Exception e) 
-                {
-                    System.out.println(e.getMessage());
-                    if (null != SPWWriter) SPWWriter = null;
-                }
+//                try
+//                {
+//                    if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )
+//                        //acq.snapSPWImage(SPWWriter, sas.getFilters().getDelays(), sas, ind, false); // simulate == false
+//                }
+//                catch(Exception e) 
+//                {
+//                    System.out.println(e.getMessage());
+//                    if (null != SPWWriter) SPWWriter = null;
+//                }
                                                         
                 if (var_.AcquisitionSavingMode.equals("separate OME.tiff for every FOV") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )                
                     acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
@@ -1952,10 +2039,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             progressBar_.setEnd("FLIM sequence");
         }
     
-        if (null != SPWWriter) 
-        {
-            try {SPWWriter.close();} catch (IOException e) {System.err.println("Failed to close file SPWWriter.");}
-        }
+//        if (null != SPWWriter) 
+//        {
+//            try {SPWWriter.close();} catch (IOException e) {System.err.println("Failed to close file SPWWriter.");}
+//        }
         
         try {
             core_.setProperty("Delay box", "Delay (ps)", var_.fastDelaySlider);

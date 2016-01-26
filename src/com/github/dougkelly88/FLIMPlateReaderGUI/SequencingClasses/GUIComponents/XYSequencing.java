@@ -755,7 +755,6 @@ public class XYSequencing extends javax.swing.JPanel {
         catch (InterruptedException IE){          
             System.out.println(IE);
         }
-        System.out.println("BUTTON PRESSED");
     }//GEN-LAST:event_quickPFButtonActionPerformed
 
     private void advancedPFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_advancedPFButtonActionPerformed

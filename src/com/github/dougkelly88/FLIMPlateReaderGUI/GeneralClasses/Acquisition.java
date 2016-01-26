@@ -163,7 +163,7 @@ public class Acquisition {
             core_.snapImage();
             Object img = core_.getImage();
             // Display acquired image
-            gui_.displayImage(img);            
+            // gui_.displayImage(img);            
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }        

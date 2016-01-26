@@ -53,7 +53,7 @@ import ome.xml.model.enums.PixelType;
 import ome.xml.model.primitives.PositiveInteger;
 import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.enums.NamingConvention;
-import ome.units.quantity.Time;
+//import ome.units.quantity.Time;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Annotation;
 import ome.xml.model.Image;
