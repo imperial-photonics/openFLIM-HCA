@@ -947,17 +947,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public void doSequenceAcquisition() throws InterruptedException{
              
         ImageWriter SPWWriter = null;        
-        if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )
-        try 
-        {
-            if (core_.getBytesPerPixel() == 2)
-                SPWWriter = this.createSPWWriter(FormatTools.UINT16);            
-            else if (core_.getBytesPerPixel() == 1)
-                SPWWriter = this.createSPWWriter(FormatTools.UINT8);            
-            //
-            System.out.println(SPWWriter.toString());
-        }
-        catch (Exception e) {System.out.println(e.getMessage());}
+        
         
         Acquisition acq = new Acquisition();
         ArrayList<FOV> fovs = new ArrayList<FOV>();
@@ -1401,9 +1391,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         //catch (Exception e) {System.out.println(e.getMessage());}
         
         ImageWriter writer = null;
-        try {
-        writer = this.createSPWWriter(FormatTools.UINT16);}
-        catch (Exception e) {System.out.println(e.getMessage());}
+        
         //
         // rest of it - trying to mimic acquisition :)        
         Acquisition acq = new Acquisition();
@@ -1604,8 +1592,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     }
                 }
             }
-//            nTP=nTP/nFOV;
-//            nFS=nFS/nFOV/nTP;
+            nTP=nTP/nFOV;
+            nFS=nFS/nFOV/nTP;
             // use chained comparators to sort by multiple fields SIMULTANEOUSLY,
             // based on order determined in UI table.
             for (String str : order){
@@ -1637,7 +1625,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             // for now, just make a base folder and name files based on 
             // filterlabel, time point.  
             String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
-            String baseLevelPath = currentBasePathField.getText() + "/Sequenced FLIM acquisition " +
+            String baseLevelPath = currentBasePathField.getText() + "\\Sequenced FLIM acquisition " +
                     timeStamp;
 
             
@@ -1694,14 +1682,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             String fileOut = baseLevelPath;
             SeqAcqSetup FirstSAS = sass.get(1);
             String plateDesc = "Time="+FirstSAS.getTimePoint().getTimeCell()+"    Filt="+FirstSAS.getFilters().getLabel();
-            FileWriteSPW SPWWriter = new FileWriteSPW(fileOut, plateDesc);
+            FileWriteSPW SPWWriter = new FileWriteSPW(fileOut, plateDesc, 0);
             int[][] nFovInWell=acq.getNFOV(fovs);
             int sizeX=acq.getSizeX();
             int sizeY=acq.getSizeY();
             int sizet=acq.getSizet(sass.get(1).getFilters().getDelays());
             ArrayList<String> delaysForSPW=acq.getDelaysForSPW(sass.get(1).getFilters().getDelays());
             System.out.println(delaysForSPW);
-            boolean ok = SPWWriter.init(nFovInWell, sizeX, sizeY, sizet, delaysForSPW);
+            boolean ok = SPWWriter.init(nFovInWell, sizeX, sizeY, delaysForSPW);
 // End Freds TRY2 
             
             
@@ -2115,317 +2103,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
 
     // CREATE SPW WRITER
-    public ImageWriter createSPWWriter(int pixelType) throws Exception {
-                        
-        ImageWriter writer = new ImageWriter();
-        
-        ArrayList<FOV> fovs = new ArrayList<FOV>();
-        ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
-        ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
-
-        int ind = 0;
-        
-            // get all sequence parameters and put them together into an 
-            // array list of objects containing all acquisition points...
-            // Note that if a term is absent from the sequence setup, current
-            // values should be used instead... DOES THIS MEAN REGENERATE THE SEQUENCE?
-            
-            List<SeqAcqSetup> sass = new ArrayList<SeqAcqSetup>();
-            ArrayList<String> order = tableModel_.getData();
-            if (!order.contains("XYZ")){
-                fovs.add(xyzmi_.getCurrentFOV());
-            } else {
-                fovs = xYSequencing1.getFOVTable();
-            }
-            
-            if (!order.contains("Time course")){
-                tps.add(new TimePoint(0.0));
-            } else {
-                tps = timeCourseSequencing1.getTimeTable();
-            }
-            
-            if (!order.contains("Filter change")){
-                int intTime = 100;
-                try {
-                    intTime = (int) core_.getExposure();
-                } catch (Exception e){
-                    System.out.println(e.getMessage());
-                }
-               fss.add(new FilterSetup(lightPathControls1, intTime, fLIMPanel1));
-            } else {
-                fss = spectralSequencing1.getFilterTable();
-            } 
-            
-            List<Comparator<SeqAcqSetup>> comparators = new ArrayList<Comparator<SeqAcqSetup>>();
-            
-            for (FOV fov : fovs){
-                for (TimePoint tp : tps){
-                    for (FilterSetup fs : fss){
-                        sass.add(new SeqAcqSetup(fov, tp, fs));                        
-                    }
-                }
-            }
-                      
-            // use chained comparators to sort by multiple fields SIMULTANEOUSLY,
-            // based on order determined in UI table.
-            for (String str : order){
-                if (str.equals("XYZ")){
-                        comparators.add(new WellComparator());
-                        comparators.add(new ZComparator());
-                }
-                else if (str.equals("Filter change"))
-                    comparators.add(new FComparator());
-                else if (str.equals("Time course"))
-                    comparators.add(new TComparator());
-            }
-            Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
-                                    
-            String filesep = File.separator;            
-            
-            String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
-                              
-        int rows = this.pp_.getPlateRows();
-        int cols = this.pp_.getPlateColumns();
-                              
-        int[][] nFovInWell = new int[rows][cols];
-        for (int row = 0; row < rows; row++) {
-          for (int col = 0; col < cols; col++) {
-            nFovInWell[row][col] = 0;
-          }
-        }
     
-        ArrayList<Integer> delays = fLIMPanel1.getDelays();
-        int sizet = 1;
-        if (null != delays) sizet = delays.size();
-        
-        //Get laser intensity
-        String intensity = null;                     
-        try
-        { 
-            intensity = Double.toString(arduino_.getLaserIntensity());
-        }
-        catch (Exception e) {intensity = "Unknown";}
-        //
-        int rows_max = 0;
-        int cols_max = 0;
-        int rows_min = 1024;
-        int cols_min = 1024;
-        //
-        
-        // create metadata ini "table"
-        for ( ind = 0; ind < sass.size(); ind++)
-        {                                                                           
-            SeqAcqSetup sas = sass.get(ind);                                                          
-                                
-            String well_string = sas.getFOV().getWell().toString();
-            // column
-            int col = Integer.parseInt(well_string.substring(1));
-            // row
-            char RowChar = well_string.charAt(0);
-            String letters = "ABCDEFGH";
-            int row;
-            for(row=1; row<letters.length(); row++) if(RowChar==letters.charAt(row-1)) break;
-            //                
-            nFovInWell[row-1][col-1]++;
-            
-            if (rows_max < row) rows_max = row;
-            if (cols_max < col) cols_max = col;
-            if (rows_min > row) rows_min = row;
-            if (cols_min > col) cols_min = col;            
-        }
-                                                                    
-        Exception exception = null;
-        try {        
-            // create the OME-XML metadata storage object
-            ServiceFactory factory = new ServiceFactory();
-            OMEXMLService service = factory.getInstance(OMEXMLService.class);
-            OMEXMLMetadata meta = service.createOMEXMLMetadata();
-            //IMetadata meta = service.createOMEXMLMetadata();
-            meta.createRoot();
-
-            int plateIndex = 0;
-            int series = 0;     // count of images
-            int well = 0;
-            // 
-            meta.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
-
-            meta.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
-            meta.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
-            
-            meta.setPlateRows(new PositiveInteger(rows_max - rows_min + 1), 0);
-            meta.setPlateColumns(new PositiveInteger(cols_max - cols_min + 1), 0);                        
-            //meta.setPlateRows(new PositiveInteger(rows), 0);
-            //meta.setPlateColumns(new PositiveInteger(cols), 0);
-            
-            meta.setPlateName("First test Plate", 0);
-
-            PositiveInteger pwidth = new PositiveInteger((int)core_.getImageWidth());
-            PositiveInteger pheight = new PositiveInteger((int)core_.getImageHeight());
-            
-            for (int row = 0; row  < rows; row++) {
-              for (int column = 0; column < cols; column++) {
-                  
-                int nFOV = nFovInWell[row][column];                 
-                
-                if (0 != nFOV){                    
-                        // set up well
-                        String wellID = MetadataTools.createLSID("Well:", well);
-                        meta.setWellID(wellID, plateIndex, well);
-                        meta.setWellRow(new NonNegativeInteger(row), plateIndex, well);
-                        meta.setWellColumn(new NonNegativeInteger(column), plateIndex, well); 
-
-                        for(int fov = 0; fov < nFOV ; fov++)  {
-
-                          // Create Image NB numberng in the Name goes from 1->n not 0-> n-1
-                          //String fovLabel = String.format("%05d", series);
-                          //String imageName = rowChar + ":" + Integer.toString(column + 1) + ":FOV:" + Integer.toString(fov + 1) + " ID=" + fovLabel;
-                          //System.out.println(imageName.toString()); 
-                          //  
-                          SeqAcqSetup sas = sass.get(series);
-                          String fovLabel = String.format("%05d", series);
-                          String imageName;
-                          if(var_.check2){
-                              if(sas.getFilters().getLabel().equals("Unknown")){
-                                  imageName =
-                                      " Well=" + sas.getFOV().getWell() + 
-                                      " FOV=" + Integer.toString(fov + 1) +
-                                      " X=" + sas.getFOV().getX() +
-                                      " Y=" + sas.getFOV().getY() +
-                                      "T=" + sas.getTimePoint().getTimeCell() + 
-                                      " Filterset=" + sas.getFilters().getLabel() + 
-                                      " Z=" + sas.getFOV().getZ() +
-                                      " ID=" + fovLabel+
-                                      " Laser intensity="+intensity;
-                              } else{
-                                  imageName =
-                                      " Well=" + sas.getFOV().getWell() +                        
-                                      " FOV=" + Integer.toString(fov + 1) +                                
-                                      " X=" + sas.getFOV().getX() +
-                                      " Y=" + sas.getFOV().getY() +
-                                      "T=" + sas.getTimePoint().getTimeCell() + 
-                                      " Filterset=" + sas.getFilters().getLabel() + 
-                                      " Z=" + sas.getFOV().getZ() +
-                                      " ID=" + fovLabel+
-                                      " Laser intensity="+intensity;
-                              }
-                          }else{                    
-                                  imageName =
-                                  " Well=" + sas.getFOV().getWell() +      
-                                  " FOV=" + Integer.toString(fov + 1) +                                
-                                  " X=" + sas.getFOV().getX() +
-                                  " Y=" + sas.getFOV().getY() +
-                                  "T=" + sas.getTimePoint().getTimeCell() + 
-                                  " Filterset=" + sas.getFilters().getLabel() + 
-                                  " Z=" + sas.getFOV().getZ() +
-                                  " ID=" + fovLabel+
-                                  " Laser intensity="+intensity;}
-                          System.out.println(imageName.toString());
-
-                          String imageID = MetadataTools.createLSID("Image", well, fov);
-                          meta.setImageID(imageID, series);
-                          meta.setImageName(imageName, series);
-
-                          String pixelsID = MetadataTools.createLSID("Pixels",row, well, fov);
-                          meta.setPixelsID(pixelsID, series);
-
-                          // specify that the pixel data is stored in big-endian format
-                          // change 'TRUE' to 'FALSE' to specify little-endian format
-                          meta.setPixelsBinDataBigEndian(Boolean.TRUE,  series, 0);
-
-                          // specify that the image is stored in ZCT order
-                          meta.setPixelsDimensionOrder(DimensionOrder.XYZCT, series);
-
-                          // specify the pixel type of the image
-                          meta.setPixelsType(PixelType.fromString(FormatTools.getPixelTypeString(pixelType)), series);
-
-                          // specify the dimensions of the image
-                          meta.setPixelsSizeX(pwidth, series);
-                          meta.setPixelsSizeY(pheight, series);
-                          meta.setPixelsSizeZ(new PositiveInteger(1), series);
-                          meta.setPixelsSizeC(new PositiveInteger(1), series);
-                          meta.setPixelsSizeT(new PositiveInteger(sizet), series);
-
-                          // define each channel and specify the number of samples in the channel
-                          // the number of samples is 3 for RGB images and 1 otherwise
-                          String channelID = MetadataTools.createLSID("Channel",well, fov);
-                          meta.setChannelID(channelID, series,0 );
-                          meta.setChannelSamplesPerPixel(new PositiveInteger(1), series, 0);
-
-                          // set sample
-                          String wellSampleID = MetadataTools.createLSID("WellSample", well, fov);
-                          meta.setWellSampleID(wellSampleID,0,well,fov);
-                          // NB sampleIndex here == series ie the image No
-                          meta.setWellSampleIndex(new NonNegativeInteger(series), 0, well, fov);
-                          meta.setWellSampleImageRef(imageID, 0, well, fov);
-
-              //            if (exposureTimes != null && exposureTimes.length == sizet)  {
-              //              for (int t = 0; t < sizet; t++)  {
-              //                meta.setPlaneTheT(new NonNegativeInteger(t), series, t);
-              //                meta.setPlaneTheC(new NonNegativeInteger(0), series, t);
-              //                meta.setPlaneTheZ(new NonNegativeInteger(0), series, t);
-              //                meta.setPlaneExposureTime(exposureTimes[t], series, t);
-              //              } 
-              //            }
-
-                            // add FLIM ModuloAlongT annotation if required 
-                            if (delays != null && 1 != sizet)  
-                            {
-                                CoreMetadata modlo = new CoreMetadata();
-                                modlo.moduloT.type = loci.formats.FormatTools.LIFETIME;
-                                modlo.moduloT.unit = "ps";
-                                modlo.moduloT.typeDescription = "Gated";
-                                //
-                                modlo.moduloT.labels = new String[sizet];                                
-                                for (int i = 0; i < sizet; i++) 
-                                {
-                                    //System.out.println(delays.get(i));
-                                    modlo.moduloT.labels[i] = delays.get(i).toString();
-                                }
-                            service.addModuloAlong(meta, modlo, series);                  
-                            } //if (delays != null && 1 != sizet)                              
-                          series++;
-                        }//end of fovs (WellSamples)
-                        well++;
-                    } //if (0 != nFOV){
-                }//end of cols              
-            }//end of rows
-
-          //String dump = meta.dumpXML();
-          //System.out.println("dump = ");
-          //System.out.println(dump);
-
-            loci.common.DebugTools.enableLogging("INFO");
-            java.lang.System.setProperty("javax.xml.transform.TransformerFactory", "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
-                        
-            //
-            String GrandOMEtiffPath = currentBasePathField.getText() + filesep + "Sequenced FLIM acquisition " + timeStamp + ".OME.tiff";
-            try 
-            {                
-                writer.setWriteSequentially(true);
-                writer.setMetadataRetrieve(meta);
-                writer.setCompression("LZW");                
-                ((TiffWriter)writer.getWriter(GrandOMEtiffPath)).setBigTiff(true);                                                  
-                writer.setId(GrandOMEtiffPath);
-            }
-            catch (FormatException e)   {exception = e;}        
-            //catch (IOException e)       {exception = e;}
-            if (exception != null) 
-            {
-              System.err.println("Failed to initialize file writer.");
-              exception.printStackTrace();
-            }
-        }//end of try    
-        catch (DependencyException e)   {exception = e;}
-        catch (ServiceException e)      {exception = e;}
-        catch (EnumerationException e)  {exception = e;}
-
-        if (null != exception)
-        {
-            System.err.println("Failed to populate OME-XML metadata object.");
-            exception.printStackTrace();
-        }                            
-        return writer;
-    }
     
     
     

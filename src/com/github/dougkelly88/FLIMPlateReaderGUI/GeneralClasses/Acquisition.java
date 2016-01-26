@@ -44,7 +44,7 @@ import java.math.BigInteger;
 public class Acquisition {
     MMStudio gui_;
     CMMCore core_;
-    CoreMetadata cm;
+    //CoreMetadata cm;
     private HCAFLIMPluginFrame frame_;
     public boolean bleechingComp=false;
     
@@ -388,14 +388,15 @@ public class Acquisition {
 
             // deal FLIMfit issue loading single plane images with moduloAlongT
             if (no_delays > 2){ 
-                CoreMetadata cm = new CoreMetadata();
-
-                cm.moduloT.labels = delArrayStr;
-                cm.moduloT.unit = "ps";
-                cm.moduloT.typeDescription = "Gated";
-                cm.moduloT.type = loci.formats.FormatTools.LIFETIME;
-                serv.addModuloAlong(m, cm, 0);
-                System.out.println("did addModulo");
+                
+//                CoreMetadata cm = new CoreMetadata();
+//                
+//                cm.moduloT.labels = delArrayStr;
+//                cm.moduloT.unit = "ps";
+//                cm.moduloT.typeDescription = "Gated";
+//                cm.moduloT.type = loci.formats.FormatTools.LIFETIME;
+//                serv.addModuloAlong(m, cm, 0);
+//                System.out.println("did addModulo");
             }
 
         } catch (Exception e) {
@@ -416,9 +417,9 @@ public class Acquisition {
     public int[][] getNFOV(List<FOV> FOV) {
         ArrayList<String> wells = new ArrayList<>();
         int[][] nFovInWell = new int[8][12];
-        for (int i = 0; i < nFovInWell.length; i++)
-            for (int j = 0; j < nFovInWell[0].length; j++)
-                nFovInWell[i][j] = -1;
+//        for (int i = 0; i < nFovInWell.length; i++)
+//            for (int j = 0; j < nFovInWell[0].length; j++)
+//                nFovInWell[i][j] = -1;
         
         for (FOV fov : FOV){
             wells.add(fov.getWell());
@@ -529,7 +530,7 @@ public class Acquisition {
                         SPWWriter.export(accImgShort, ind, delay, imageDescription);
                         
                     } else if (core_.getBytesPerPixel() == 1){
-                        SPWWriter.export(accImgByte, ind, delay, imageDescription);
+                        //SPWWriter.export(accImgByte, ind, delay, imageDescription);
                     }
                     
                 
