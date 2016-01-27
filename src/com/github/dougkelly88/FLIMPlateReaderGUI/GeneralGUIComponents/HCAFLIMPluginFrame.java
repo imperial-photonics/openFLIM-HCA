@@ -1001,17 +1001,16 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
             // For some reason, the binary image appears to go from -1 to 0, giving the -ve # of dark pixels... Fix this by:
             sum = thresholded.length+sum;
-            // We now have the number of 'bright' pixels, hopefully
-            
-            //COMPARE SUM TO 
-            
+            // We now have the number of 'bright' pixels, hopefully            
+            // Compare to total ' of pixels to get %age
             if(sum>((proSettingsGUI1.getPercentCoverage()/100)*(thresholded.length))){
                 accept = true;
             } else {
                 accept = false;    
             }
             
-            System.out.println(accept);
+            //Indicate whether field was accepted or rejected (crudely for now)
+            //System.out.println(accept);
             
             //System.out.println(sum);
             //ij.IJ.runMacro("TEST"); //Jut need the name of the macro, but also need correct image to do it on?
@@ -1026,60 +1025,68 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         return accept;
     }
         
-    public void prefind() throws InterruptedException{ // THROW is copied from doSequenceAcquisition - assume this is for Abort?
+    public boolean prefind() throws InterruptedException{ // THROW is copied from doSequenceAcquisition - assume this is for Abort?
+        //Allow for testing on my laptop without the XY stage and whatnot...
+        boolean testmode = true;
+
         // Counters for determining progress
         int noofFOVsSinceLastSuccess = 0;
         int noofacceptedFOVs_thiswell = 0;
         int noofattemptedFOVs_thiswell = 0;        
+
         // Work out the max number of FOVs
         // !!! NEED TO MAKE SURE THAT THIS WORKS ID TOO MANY FOVS ARE SPECIFIED! REDUCE THE #OF ATTEMPTS PERHAPS?
         int Attempts_perFOV = xYSequencing1.getNoOfAttempts();
         int initialnoofFOVs = xYSequencing1.getSearchRowCount();
         int FOVs_per_well=Attempts_perFOV*initialnoofFOVs;
+
         // Declare a blank FOV to be last gone to, and use the first in the list as the one we initially want to go to;
         FOV FOVtogoto = xYSequencing1.searchFOVtableModel_.getFOV(0);
         FOV FOVlastgoneto = new FOV(0, 0, 0, pp_); //
+
         // Autofocus how often?
         int FOVs_since_last_AF;
-        // Add this for Abort capability
+
+        // Add this for Abort capability - not yet implemented properly!
         int endOk=0;        
-        //CLEAR EXISTING FOV TABLE SHOWN TO USER
+        
+        //Clear user-visible FOV table
         xYSequencing1.tableModel_.clearAllData();
         Acquisition acq = new Acquisition();        
         boolean FOVaccepted=false;
         try {
             for(int i=0;i<initialnoofFOVs;i++){
                 // Check for abort button - presume that there's a listener event somewhere for that? Need to implement own one or make Abort general?
-                // NEED TO CHECK IF THIS IS DONE PROPERLY
+                // NEED TO CHECK IF THIS IS DONE PROPERLY - Presumably we can just use the existing abort button?
                 if(terminate){
                     endOk=1;
                     break;
                 }  
-                // Get target XY position, go to it
+                // Get target XY position, go to it, if we're not just running tests
                 FOVtogoto = xYSequencing1.searchFOVtableModel_.getFOV(i);
-                //xyzmi_.gotoFOV(FOVtogoto); //Check if this autofocuses or does Z?
-                //Wait for XY move to finish
-              //while (xyzmi_.isStageBusy()){
-              //   System.out.println("Stage moving...");
-              //  };
-                //Autofocus if needed
-                if(FOVtogoto.getWell()!=FOVlastgoneto.getWell() || noofFOVsSinceLastSuccess==0){ 
-                    // For now, let's try autofocusing if we're in a different well to before? Or if the last FOV was successful?
-                    //xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                if(!testmode){
+                    xyzmi_.gotoFOV(FOVtogoto); // XY move only
+                    //Wait for XY move to finish
+                    while (xyzmi_.isStageBusy()){
+                       System.out.println("Stage moving...");
+                    };                    
+                    
+                    //Autofocus if needed
+                    if(FOVtogoto.getWell()!=FOVlastgoneto.getWell() || noofFOVsSinceLastSuccess==0){ 
+                        // For now, let's try autofocusing if we're in a different well to before? Or if the last FOV was successful?
+                        xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                    }
                 }
+
                 // Snap single image
                 acq.snapimagenow();
                 Object img=core_.getImage();
-//                ImageProcessor ip0 = ij.IJ.getProcessor();               
                 FOVaccepted = checkprefindimg(img);
-                // Analyse whether we want this as a FOV
-                //core_.
+                
                 // Increment FOV list position counter
                 noofattemptedFOVs_thiswell++;
-                // Thread.sleep(100); //Simulate finding with time in ms - (Not working? Compiled out?)                    
-                // ASSESS IF FOV IS GOOD - make an image analysis subvi?
                 
-                if(FOVaccepted==true){ //ALWAYS ACCEPT FOR NOW
+                if(FOVaccepted==true){
                     // Add this FOV to the normal sequence list shown on front panel
                     xYSequencing1.tableModel_.addRow(xYSequencing1.searchFOVtableModel_.getFOV(i));
                     noofFOVsSinceLastSuccess=0;
@@ -1103,31 +1110,42 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         } catch(Exception e) { // WAS InterruptedException, but complained that this would never be thrown from here?
             Thread.currentThread().interrupt();               
         }
+    return FOVaccepted;
     }
     
     public void doSequenceAcquisition() throws InterruptedException{
-             
+        if(this.checkifAFenabled()){
+            // Set the AF default position to the current Z
+            // Might want to replace this with a button that the user presses to set this? Pop up a dialogue?
+            xYZPanel1.setFixedAFDefault(xyzmi_.getZAbsolute());
+        }     
+        
+        // Avoided for now while we're on 'Mark 2' saving...
         ImageWriter SPWWriter = null;        
         if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )
-        try 
-        {
-            if (core_.getBytesPerPixel() == 2)
-                SPWWriter = this.createSPWWriter(FormatTools.UINT16);            
-            else if (core_.getBytesPerPixel() == 1)
-                SPWWriter = this.createSPWWriter(FormatTools.UINT8);            
-            //
-            System.out.println(SPWWriter.toString());
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
+            try 
+            {
+                if (core_.getBytesPerPixel() == 2)
+                    SPWWriter = this.createSPWWriter(FormatTools.UINT16);            
+                else if (core_.getBytesPerPixel() == 1)
+                    SPWWriter = this.createSPWWriter(FormatTools.UINT8);            
+                //
+                System.out.println(SPWWriter.toString());
+            }
+            catch (Exception e) {
+                System.out.println(e.getMessage());
         }
         
+        // Setup for the acquisition overall
         Acquisition acq = new Acquisition();
-        ArrayList<FOV> fovs = new ArrayList<FOV>();
-        ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
-        ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
+        ArrayList<FOV> fovs = new ArrayList<>();
+        //Replaces: ArrayList<FOV> fovs = new ArrayList<FOV>();
+        ArrayList<TimePoint> tps = new ArrayList<>();
+        //Replaces: ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
+        ArrayList<FilterSetup> fss = new ArrayList<>();
+        //Replaces: ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
         int endOk=0;
-        int ind=0; // NOT USED?
+        int ind=0; // NOT USED? Breaks stuff if deleted?
         singleImage=0;
         
             // get all sequence parameters and put them together into an 
@@ -1135,7 +1153,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             // Note that if a term is absent from the sequence setup, current
             // values should be used instead...
             
-            List<SeqAcqSetup> sass = new ArrayList<SeqAcqSetup>();
+            List<SeqAcqSetup> sass = new ArrayList<>();
+            //Replaces List<SeqAcqSetup> sass = new ArrayList<SeqAcqSetup>();
             ArrayList<String> order = tableModel_.getData();
             if (!order.contains("XYZ")){
                 fovs.add(xyzmi_.getCurrentFOV());
@@ -1200,7 +1219,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 SeqAcqSetup CurrSAS = sass.get(h);
                 System.out.println("Time="+CurrSAS.getTimePoint().getTimeCell()+"    Filt="+CurrSAS.getFilters().getLabel()+"    Well="+CurrSAS.getFOV().getWell()+"    X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
             }
-                System.out.println("Waiting...");            
+            System.out.println("Waiting...");            
             
             long start_time = System.currentTimeMillis();
             // TODO: modify data saving such that time courses, z can be put in a 
@@ -1233,7 +1252,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             Double lastTime = 0.0;
             String lastFiltLabel = "";
             FOV lastFOV = new FOV(0, 0, 0, pp_);
-            Double lastZ = 0.0;
 //            int fovSinceLastAF = 0;
             for ( ind = 0; ind < sass.size(); ind++){
             
@@ -1261,36 +1279,45 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     }
                 }
                 // if FOV different, deal with it here...
-                if ( ( (!sas.getFOV().equals(lastFOV)) | (sas.getFOV().getZ() != lastZ) ) & (order.contains("XYZ")) ){
+                if ( ( (!sas.getFOV().equals(lastFOV)) | (sas.getFOV().getZ() != lastFOV.getZ()) ) & (order.contains("XYZ")) ){
                     // TODO: this needs tweaking in order that autofocus works properly with Z stacks...
                     // Perhaps only do when XY change, and not Z?
                     
                     
                     try{
-                        //If AF is enabled... 
-                        if(this.checkifAFenabled()){
-                            //Let's check if XY has changed
-                            if(sas.getFOV().equals(lastFOV)){
-                                //We're in the same XY place, so must be a z-shift - let's do a relative move
-                                //Also has the benefit of not having to care about offsets and whatnot
-                                double deltaz=sas.getFOV().getZ()-lastZ;
-                                xyzmi_.moveZRelative(deltaz);
-                            }
-                            else{
-                                //OK - xy has changed, so let's do an autofocus and make sure to add in any Z offsets
-                                //See if we can check what method is currently selected for z storage first? SENSIBLE...
-                                //Have we lost the XY move here?
-                                xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset()+sas.getFOV().getZ());
-                            }
-                            //
+                        //Let's check if XY has changed
+                        if(sas.getFOV().equals(lastFOV)){
+                            //We're in the same XY place, so must be a z-shift - let's do a relative move
+                            //Also has the benefit of not having to care about offsets and whatnot
+                            double deltaz=sas.getFOV().getZ()-lastFOV.getZ();
+                            xyzmi_.moveZRelative(deltaz);
+                            // Indicate position desired and motion done.
+                            System.out.println("No xy move - relative Z shift is:"+deltaz+"   X:"+sas.getFOV().getX()+"   Y:"+sas.getFOV().getY()+"   Z:"+sas.getFOV().getZ());
                         }
                         else{
-                            
-                        //If the autofocus is disabled, do we go to the 'safe' Z position or do nothing?
+                            //Do the XY move...
+                            xyzmi_.gotoFOV(sas.getFOV());
+                            //Wait for stage - make this into a function for xyzmi?
+                            while (xyzmi_.isStageBusy()){
+                                System.out.println("Stage moving...");
+                            }
+                            //OK - xy has changed, so let's do an autofocus and make sure to add in any Z offsets...                            
+                            if(this.checkifAFenabled()){
+                                //If the autofocus is selected...
+                                xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset()+sas.getFOV().getZ());
+                                System.out.println("Tried real autofocus");
+                            } else {
+                                //Otherwise we just assume that the height that we had at the start of the acquisition is
+                                //the real 'zero' height for the whole plate...
+                                //Presumably the user has set the Z heights sensibly in relation to this...
+                                xyzmi_.moveZAbsolute(xYZPanel1.getFixedAFDefault()+sas.getFOV().getZ());
+                                System.out.println("Used offset instead of AF");
+                            }
+                        System.out.println("Carried out XY move,   X:"+sas.getFOV().getX()+"   Y:"+sas.getFOV().getY()+"   Z:"+sas.getFOV().getZ());
                         }
-                                                
-                        }
-                        catch (Exception e){
+                        //
+                    } catch (Exception e){
+                        System.out.println(e);
                     }
                             
                     //if (xYZPanel1.getAFInSequence()){
@@ -1375,7 +1402,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     }
                     while (xyzmi_.isStageBusy()){
                         System.out.println("Stage moving...");
-                    };
+                    }
                    // core_.waitForDeviceType(DeviceType.XYStageDevice);
                     /*if(timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell())){
                         core_.setProperty("SyringePump","Liquid Dispersion?", "Go");
@@ -1417,7 +1444,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 
                 lastTime = sas.getTimePoint().getTimeCell();
                 lastFOV = sas.getFOV();
-                lastZ = sas.getFOV().getZ();
                 lastFiltLabel = sas.getFilters().getLabel();
                 System.out.println("Time Point: "+lastTime);
                 System.out.println("Well Measured: "+lastFOV.getWell());
@@ -1646,7 +1672,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             Double lastTime = 0.0;
             String lastFiltLabel = "";
             FOV lastFOV = new FOV(0, 0, 0, pp_);
-            Double lastZ = 0.0;
 
             for ( ind = 0; ind < sass.size(); ind++){
             
@@ -1680,7 +1705,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
                 lastTime = sas.getTimePoint().getTimeCell();
                 lastFOV = sas.getFOV();
-                lastZ = sas.getFOV().getZ();
                 lastFiltLabel = sas.getFilters().getLabel();                                                        
             }
             
@@ -1825,7 +1849,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             Double lastTime = 0.0;
             String lastFiltLabel = "";
             FOV lastFOV = new FOV(0, 0, 0, pp_);
-            Double lastZ = 0.0;
 //            int fovSinceLastAF = 0;
             
             // Initialize single plate writer and plate property
@@ -1860,7 +1883,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     }
                 }
                 // if FOV different, deal with it here...
-                if ( ( (!sas.getFOV().equals(lastFOV)) | (sas.getFOV().getZ() != lastZ) ) & (order.contains("XYZ")) ){
+                if ( ( (!sas.getFOV().equals(lastFOV)) | (sas.getFOV().getZ() != lastFOV.getZ()) ) & (order.contains("XYZ")) ){
                     // TODO: this needs tweaking in order that autofocus works properly with Z stacks...
                     // Perhaps only do when XY change, and not Z?
                     
@@ -1872,7 +1895,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                             if(sas.getFOV().equals(lastFOV)){
                                 //We're in the same XY place, so must be a z-shift - let's do a relative move
                                 //Also has the benefit of not having to care about offsets and whatnot
-                                double deltaz=sas.getFOV().getZ()-lastZ;
+                                double deltaz=sas.getFOV().getZ()-lastFOV.getZ();
                                 xyzmi_.moveZRelative(deltaz);
                             }
                             else{
@@ -2015,7 +2038,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 
                 lastTime = sas.getTimePoint().getTimeCell();
                 lastFOV = sas.getFOV();
-                lastZ = sas.getFOV().getZ();
                 lastFiltLabel = sas.getFilters().getLabel();
                 System.out.println("Time Point: "+lastTime);
                 System.out.println("Well Measured: "+lastFOV.getWell());

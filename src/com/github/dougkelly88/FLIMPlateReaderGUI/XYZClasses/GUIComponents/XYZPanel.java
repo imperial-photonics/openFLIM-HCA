@@ -102,6 +102,8 @@ public class XYZPanel extends javax.swing.JPanel {
         afSearchField = new javax.swing.JFormattedTextField();
         afNowButton = new javax.swing.JButton();
         afInSequence = new javax.swing.JCheckBox();
+        fixedAFdefault = new javax.swing.JTextField();
+        jLabel_AFdefault = new javax.swing.JLabel();
         currentZPositionField = new javax.swing.JTextField();
         currentZPositionText = new javax.swing.JLabel();
         updateCurrentZPositionButton = new javax.swing.JButton();
@@ -149,7 +151,7 @@ public class XYZPanel extends javax.swing.JPanel {
                         .addComponent(stepSizeLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(stepSizeField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
         panningPanelLayout.setVerticalGroup(
             panningPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -327,6 +329,16 @@ public class XYZPanel extends javax.swing.JPanel {
             }
         });
 
+        fixedAFdefault.setEditable(false);
+        fixedAFdefault.setText("9136");
+        fixedAFdefault.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fixedAFdefaultActionPerformed(evt);
+            }
+        });
+
+        jLabel_AFdefault.setText("AF default");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -336,7 +348,7 @@ public class XYZPanel extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(afInSequence)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
                         .addComponent(afNowButton, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addGroup(jPanel1Layout.createSequentialGroup()
@@ -351,19 +363,26 @@ public class XYZPanel extends javax.swing.JPanel {
                             .addComponent(afSearchLabel)
                             .addGap(18, 18, 18)
                             .addComponent(afSearchField))))
-                .addContainerGap(131, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(fixedAFdefault, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel_AFdefault))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(afObjectiveCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(afObjectiveCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel_AFdefault, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(afOffsetLabel)
-                    .addComponent(afOffsetField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(afOffsetField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fixedAFdefault, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(afSearchField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -657,6 +676,18 @@ public class XYZPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_afInSequenceActionPerformed
 
+    private void fixedAFdefaultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixedAFdefaultActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fixedAFdefaultActionPerformed
+
+    public void setFixedAFDefault(double basepoint){
+        fixedAFdefault.setText(Double.toString(basepoint));
+    }
+    
+    public double getFixedAFDefault(){
+        return Double.parseDouble(fixedAFdefault.getText());
+    }
+    
     private void setControlDefaults(){
         
         sap_ = SeqAcqProps.getInstance();
@@ -910,11 +941,13 @@ public class XYZPanel extends javax.swing.JPanel {
     private javax.swing.JLabel afSearchLabel;
     private javax.swing.JTextField currentZPositionField;
     private javax.swing.JLabel currentZPositionText;
+    private javax.swing.JTextField fixedAFdefault;
     private javax.swing.JTextField focusOffsetField;
     private javax.swing.JLabel focusOffsetLabel;
     private javax.swing.JButton goToWellButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel_AFdefault;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JCheckBox keyboardStageCheck;
