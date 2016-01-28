@@ -1599,6 +1599,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
+        
+       
+        
     }//GEN-LAST:event_jButton1ActionPerformed
    
     public void changeAbortHCAsequencBoolean(){
