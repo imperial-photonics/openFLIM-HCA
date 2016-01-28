@@ -87,6 +87,7 @@ public class XYZPanel extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         wellField = new javax.swing.JTextField();
         goToWellButton = new javax.swing.JButton();
+        initialiseStageButton = new javax.swing.JButton();
         ZPanel = new javax.swing.JPanel();
         zPanel = new javax.swing.JPanel();
         zStepSizeLabel = new javax.swing.JLabel();
@@ -149,7 +150,7 @@ public class XYZPanel extends javax.swing.JPanel {
                         .addComponent(stepSizeLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(stepSizeField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
         panningPanelLayout.setVerticalGroup(
             panningPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -193,24 +194,35 @@ public class XYZPanel extends javax.swing.JPanel {
             }
         });
 
+        initialiseStageButton.setText("Initialization Ritual Stage");
+        initialiseStageButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                initialiseStageButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout XYPanelLayout = new javax.swing.GroupLayout(XYPanel);
         XYPanel.setLayout(XYPanelLayout);
         XYPanelLayout.setHorizontalGroup(
             XYPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(XYPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(panningPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(wellMapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, XYPanelLayout.createSequentialGroup()
+                .addGroup(XYPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(XYPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(panningPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(XYPanelLayout.createSequentialGroup()
+                        .addGap(47, 47, 47)
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addComponent(wellField, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(goToWellButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(XYPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(wellMapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(initialiseStageButton, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
-            .addGroup(XYPanelLayout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addComponent(jLabel3)
-                .addGap(18, 18, 18)
-                .addComponent(wellField, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(goToWellButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         XYPanelLayout.setVerticalGroup(
             XYPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -219,7 +231,8 @@ public class XYZPanel extends javax.swing.JPanel {
                 .addGroup(XYPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(goToWellButton)
                     .addComponent(wellField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addComponent(jLabel3)
+                    .addComponent(initialiseStageButton))
                 .addGap(18, 18, 18)
                 .addGroup(XYPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panningPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -657,6 +670,10 @@ public class XYZPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_afInSequenceActionPerformed
 
+    private void initialiseStageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_initialiseStageButtonActionPerformed
+        xyzmi_.runInitializationRitual();
+    }//GEN-LAST:event_initialiseStageButtonActionPerformed
+
     private void setControlDefaults(){
         
         sap_ = SeqAcqProps.getInstance();
@@ -913,6 +930,7 @@ public class XYZPanel extends javax.swing.JPanel {
     private javax.swing.JTextField focusOffsetField;
     private javax.swing.JLabel focusOffsetLabel;
     private javax.swing.JButton goToWellButton;
+    private javax.swing.JButton initialiseStageButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
