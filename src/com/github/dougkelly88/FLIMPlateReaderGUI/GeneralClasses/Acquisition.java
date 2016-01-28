@@ -49,110 +49,110 @@ public class Acquisition {
         frame_= HCAFLIMPluginFrame.getInstance();
     }
 
-    public void snapSPWImage(ImageWriter writer, ArrayList<Integer> delays, SeqAcqSetup sas, int series, boolean simulate){    
-        
-        try {
-                if (gui_.isLiveModeOn() | gui_.isAcquisitionRunning())
-                {
-                    gui_.enableLiveMode(false);
-                    gui_.closeAllAcquisitions();
-                }                
-                
-                if (null != writer) 
-                {
-                    if (series != writer.getSeries())  
-                    {
-                        try {writer.setSeries(series);} catch (FormatException e) {System.out.println(e.getMessage());}
-                    }            
-
-                    int W = (int)core_.getImageWidth();
-                    int H = (int)core_.getImageHeight();
-                    long dim = W*H;
-                    
-                    for (Integer delay : delays) 
-                    {                                                
-                        if (simulate) 
-                        {
-                            //////////////////////// simulated "image"                                                
-                            double tau = 5000;                        
-                            short[] accImg = new short[(int)dim];                        
-                            //for(int k=0;k<dim;k++) accImg[k] = (short)(1000*Math.exp(-delay/tau));                        
-                            for(int k=0;k<dim;k++)
-                            {
-                                // draw circle in the centre of the image
-                                double y = Math.floor(k/W) + 1, x = k - W*Math.floor(k/W), yc = H/2, xc = W/2;                            
-                                if (Math.sqrt( (x-xc)*(x-xc) + (y-yc)*(y-yc) ) <= 100)
-                                {
-                                    accImg[k] = (short)(1000*Math.exp(-delay/tau));                             
-                                }
-                            }                                                
-                            //
-                            Exception exception = null;
-                            try 
-                            {
-                              writer.saveBytes(delays.indexOf(delay), DataTools.shortsToBytes(accImg, false));
-                            }
-                            catch (FormatException e)   {exception = e;}
-                            catch (IOException e)       {exception = e;}
-                            if (exception != null) 
-                            {
-                              System.err.println("Failed to save plane.");
-                              exception.printStackTrace();
-                            }                                                
-                            //////////////////////// simulated "image"  
-                        }
-                        else
-                        {    
-                            core_.setProperty("Delay box", "Delay (ps)", delay);
-                            Exception exception = null;
-                            try 
-                            {                            
-                                if (core_.getBytesPerPixel() == 2) 
-                                {
-                                    short[] accImg = new short[(int)dim];
-                                    for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++)
-                                    {
-                                        core_.snapImage();
-                                        Object img = core_.getImage();
-                                        // this bit c.f. FrameAverager
-                                            short[] pixS = (short[]) img;
-                                            for (int j = 0; j < dim; j++) 
-                                            {
-                                                accImg[j] += (pixS[j] & 0xffff);
-                                            }                                
-                                    }
-                                    writer.saveBytes(delays.indexOf(delay), DataTools.shortsToBytes(accImg, false));
-                                }                            
-                                else if (core_.getBytesPerPixel() == 1)
-                                {
-                                    byte[] accImg = new byte[(int)dim];
-                                    for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++)
-                                    {
-                                        core_.snapImage();
-                                        Object img = core_.getImage();
-                                        // this bit c.f. FrameAverager
-                                            byte[] pixS = (byte[]) img;
-                                            for (int j = 0; j < dim; j++) 
-                                            {
-                                                accImg[j] += (pixS[j] & 0xff);
-                                            }                                
-                                    }
-                                    writer.saveBytes(delays.indexOf(delay),accImg);
-                                }
-                            }                                                            
-                            catch (FormatException e)   {exception = e;}
-                            catch (IOException e)       {exception = e;}
-                            if (exception != null) 
-                            {
-                              System.err.println("Failed to save plane.");
-                              exception.printStackTrace();
-                            }                                                
-                        }
-                    }                                                                         
-                }// endif                                     
-            } catch (Exception e) {System.out.println(e.getMessage());}
-    }
-        
+// Yuri    public void snapSPWImage(ImageWriter writer, ArrayList<Integer> delays, SeqAcqSetup sas, int series, boolean simulate){    
+//        
+//        try {
+//                if (gui_.isLiveModeOn() | gui_.isAcquisitionRunning())
+//                {
+//                    gui_.enableLiveMode(false);
+//                    gui_.closeAllAcquisitions();
+//                }                
+//                
+//                if (null != writer) 
+//                {
+//                    if (series != writer.getSeries())  
+//                    {
+//                        try {writer.setSeries(series);} catch (FormatException e) {System.out.println(e.getMessage());}
+//                    }            
+//
+//                    int W = (int)core_.getImageWidth();
+//                    int H = (int)core_.getImageHeight();
+//                    long dim = W*H;
+//                    
+//                    for (Integer delay : delays) 
+//                    {                                                
+//                        if (simulate) 
+//                        {
+//                            //////////////////////// simulated "image"                                                
+//                            double tau = 5000;                        
+//                            short[] accImg = new short[(int)dim];                        
+//                            //for(int k=0;k<dim;k++) accImg[k] = (short)(1000*Math.exp(-delay/tau));                        
+//                            for(int k=0;k<dim;k++)
+//                            {
+//                                // draw circle in the centre of the image
+//                                double y = Math.floor(k/W) + 1, x = k - W*Math.floor(k/W), yc = H/2, xc = W/2;                            
+//                                if (Math.sqrt( (x-xc)*(x-xc) + (y-yc)*(y-yc) ) <= 100)
+//                                {
+//                                    accImg[k] = (short)(1000*Math.exp(-delay/tau));                             
+//                                }
+//                            }                                                
+//                            //
+//                            Exception exception = null;
+//                            try 
+//                            {
+//                              writer.saveBytes(delays.indexOf(delay), DataTools.shortsToBytes(accImg, false));
+//                            }
+//                            catch (FormatException e)   {exception = e;}
+//                            catch (IOException e)       {exception = e;}
+//                            if (exception != null) 
+//                            {
+//                              System.err.println("Failed to save plane.");
+//                              exception.printStackTrace();
+//                            }                                                
+//                            //////////////////////// simulated "image"  
+//                        }
+//                        else
+//                        {    
+//                            core_.setProperty("Delay box", "Delay (ps)", delay);
+//                            Exception exception = null;
+//                            try 
+//                            {                            
+//                                if (core_.getBytesPerPixel() == 2) 
+//                                {
+//                                    short[] accImg = new short[(int)dim];
+//                                    for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++)
+//                                    {
+//                                        core_.snapImage();
+//                                        Object img = core_.getImage();
+//                                        // this bit c.f. FrameAverager
+//                                            short[] pixS = (short[]) img;
+//                                            for (int j = 0; j < dim; j++) 
+//                                            {
+//                                                accImg[j] += (pixS[j] & 0xffff);
+//                                            }                                
+//                                    }
+//                                    writer.saveBytes(delays.indexOf(delay), DataTools.shortsToBytes(accImg, false));
+//                                }                            
+//                                else if (core_.getBytesPerPixel() == 1)
+//                                {
+//                                    byte[] accImg = new byte[(int)dim];
+//                                    for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++)
+//                                    {
+//                                        core_.snapImage();
+//                                        Object img = core_.getImage();
+//                                        // this bit c.f. FrameAverager
+//                                            byte[] pixS = (byte[]) img;
+//                                            for (int j = 0; j < dim; j++) 
+//                                            {
+//                                                accImg[j] += (pixS[j] & 0xff);
+//                                            }                                
+//                                    }
+//                                    writer.saveBytes(delays.indexOf(delay),accImg);
+//                                }
+//                            }                                                            
+//                            catch (FormatException e)   {exception = e;}
+//                            catch (IOException e)       {exception = e;}
+//                            if (exception != null) 
+//                            {
+//                              System.err.println("Failed to save plane.");
+//                              exception.printStackTrace();
+//                            }                                                
+//                        }
+//                    }                                                                         
+//                }// endif                                     
+//            } catch (Exception e) {System.out.println(e.getMessage());}
+//    }
+//        
     public void snapFLIMImage(String path, ArrayList<Integer> delays, SeqAcqSetup sas) {
 
         try{
@@ -356,7 +356,7 @@ public class Acquisition {
             m.setPixelsSizeC(new PositiveInteger(1), 0);
             m.setPixelsSizeT(g1, 0);
 
-//            PositiveFloat pitch = checkPixelPitch();
+//Ian help            PositiveFloat pitch = checkPixelPitch();
 //            Length(Length pitch);
 //            m.setPixelsPhysicalSizeX(pitch, 0);
 //            m.setPixelsPhysicalSizeY(pitch, 0);
@@ -404,11 +404,5 @@ public class Acquisition {
 
         // go through order arraylist and build a 2D arraylist containing all vars in appropriate order...
     }
-    
-
-    
-    public void showImage(){
-        //  DisplayImage_.display();
-    }       
-    
 }
+    

@@ -933,18 +933,18 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
     public void doSequenceAcquisition() throws InterruptedException{
              
-        ImageWriter SPWWriter = null;        
-        if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )
-        try 
-        {
-            if (core_.getBytesPerPixel() == 2)
-                SPWWriter = this.createSPWWriter(FormatTools.UINT16);            
-            else if (core_.getBytesPerPixel() == 1)
-                SPWWriter = this.createSPWWriter(FormatTools.UINT8);            
-            //
-            System.out.println(SPWWriter.toString());
-        }
-        catch (Exception e) {System.out.println(e.getMessage());}
+//Yuri        ImageWriter SPWWriter = null;        
+//        if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )
+//        try 
+//        {
+//            if (core_.getBytesPerPixel() == 2)
+//                SPWWriter = this.createSPWWriter(FormatTools.UINT16);            
+//            else if (core_.getBytesPerPixel() == 1)
+//                SPWWriter = this.createSPWWriter(FormatTools.UINT8);            
+//            //
+//            System.out.println(SPWWriter.toString());
+//        }
+//        catch (Exception e) {System.out.println(e.getMessage());}
         
         Acquisition acq = new Acquisition();
         ArrayList<FOV> fovs = new ArrayList<FOV>();
@@ -1212,18 +1212,18 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     System.out.println(e.getMessage());
                 }
                 
-                try
-                {
-                    if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )
-                        acq.snapSPWImage(SPWWriter, sas.getFilters().getDelays(), sas, ind, false); // simulate == false
-                }
-                catch(Exception e) 
-                {
-                    System.out.println(e.getMessage());
-                    if (null != SPWWriter) SPWWriter = null;
-                }
-                                                        
-                if (var_.AcquisitionSavingMode.equals("separate OME.tiff for every FOV") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )                
+//Yuri                try
+//                {
+//                    if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )
+//                        acq.snapSPWImage(SPWWriter, sas.getFilters().getDelays(), sas, ind, false); // simulate == false
+//                }
+//                catch(Exception e) 
+//                {
+//                    System.out.println(e.getMessage());
+//                    if (null != SPWWriter) SPWWriter = null;
+//                }
+//                                                        
+//                if (var_.AcquisitionSavingMode.equals("separate OME.tiff for every FOV") ||  var_.AcquisitionSavingMode.equals("single SWP OME.tiff with per FOV backup") )                
                     acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
                 
                 // saveSequencingTablesForDebugging(path);
@@ -1264,10 +1264,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             progressBar_.setEnd("FLIM sequence");
         }
     
-        if (null != SPWWriter) 
-        {
-            try {SPWWriter.close();} catch (IOException e) {System.err.println("Failed to close file SPWWriter.");}
-        }
+//Yuri        if (null != SPWWriter) 
+//        {
+//            try {SPWWriter.close();} catch (IOException e) {System.err.println("Failed to close file SPWWriter.");}
+//        }
         
         try {
             core_.setProperty("Delay box", "Delay (ps)", var_.fastDelaySlider);
@@ -1499,7 +1499,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 
                 if ( null != sas.getFilters().getDelays() )
                 //acq.snapSPWImage( sas.getFilters().getDelays(), sas, ind, true ); // simulate == true
-                acq.snapSPWImage(writer, sas.getFilters().getDelays(), sas, ind, true ); // simulate == true
+//Yuri                acq.snapSPWImage(writer, sas.getFilters().getDelays(), sas, ind, true ); // simulate == true
 
                 lastTime = sas.getTimePoint().getTimeCell();
                 lastFOV = sas.getFOV();
