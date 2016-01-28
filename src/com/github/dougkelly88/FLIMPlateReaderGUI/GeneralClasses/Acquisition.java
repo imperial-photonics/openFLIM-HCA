@@ -489,41 +489,59 @@ public class Acquisition {
     private int[] binningByte(int[] accImg, int binningD) {
        // plane=accImg;
          
-        System.out.println(Arrays.toString(accImg));
+        //System.out.println(Arrays.toString(accImg));
+        accImg=new int[24];
+        Arrays.fill(accImg, 1);
+//        accImg[1]=2;
+//        accImg[0]=4;
+//        accImg[5]=45;
+//        accImg[13]=24;
+//        accImg[15]=5;
+//        accImg[17]=22;
+//        accImg[20]=3;
+//        accImg[22]=7;
+//        accImg[23]=8;
+//        accImg[24]=9;
         
-        
-        int width=(int) core_.getImageWidth();
-        int height=(int) core_.getImageHeight();
+        binningD=2;
+//        int width=(int) core_.getImageWidth();
+//        int height=(int) core_.getImageHeight();
+        int width=6;
+        int height=4;
         int[][] image=new int[width][height];
         int widthB=(int) (width/binningD);
         int heightB= (int) (height/binningD);
         int[] accImgB=new int[widthB*heightB];
-//        disImag(accImg, width, height);
-//        for (int x=0 ; x<height ; x++){
-//            for (int y=0 ; y<width ; y++){
-//                //System.out.println("LineY: "+accImg[x*y]);
-//                image[x][y]=accImg[width*x+x*y];
-//            }
+         
+        //disImag(accImg, width, height);
+        int masterCount=0;
+        for (int x=0 ; x<width ; x++){
+            for (int y=0 ; y<height ; y++){
+                //System.out.println("LineY: "+accImg[x*y]);
+                System.out.println("xValue: "+x+"   yValue: "+y+"   accImg: "+masterCount);
+                int nn=width*x+x*y;
+                image[x][y]=accImg[masterCount];
+                masterCount=masterCount+1;
+            }
+        }
+        
+        for(int masterCountB=0; masterCountB<6; masterCountB++){
+            for(int countBinX=0; countBinX<2; countBinX++){
+                for(int countBinY=0; countBinY<2; countBinY++){
+                    accImgB[masterCountB]=accImgB[masterCountB]+image[countBinX][countBinY];
+                    System.out.println("accImgB: "+masterCountB+ "    value: "+accImgB[masterCountB]);
+
+                }
+            }
+        }
+//        for (int countBinX=0; countBinX<(int) width/binningD; countBinX++){
+//            accImgB[countBinX]=image[0][0]+image[1][0]+image[2][0]+image[1][0]+image[1][1]+image[1][2]+image[2][0]+image[2][1]+image[2][2];
 //        }
         
-          int src;
-
-          for (int binnedPixel = 0; binnedPixel < (width * height); binnedPixel++) {
-            accImgB[binnedPixel] = 0;
-            System.out.println("binnedPixel: "+binnedPixel);
-            for (int y = 0; y < heightB; y++) {
-              src = (binnedPixel * heightB) + (y * width);
-              System.out.println("src: "+src);
-              for (int x = 0; x < heightB; x++) {
-                accImgB[binnedPixel] += accImg[src];
-                src++;
-              }
-            }
-          }
-        System.out.println(Arrays.toString(accImg));
-        System.out.println(Arrays.toString(image));
-        System.out.println(Arrays.deepToString(image));
-        disImag(accImgB, widthB, heightB);
+//        System.out.println(Arrays.toString(accImg));
+//        System.out.println(Arrays.toString(image));
+//        System.out.println(Arrays.deepToString(image));
+        //disImag(accImgB, widthB, heightB);
 
 //          planeb = DataTools.shortsToBytes(binnedPlaneShort, false);
         return accImg;
