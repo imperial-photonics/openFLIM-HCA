@@ -26,6 +26,10 @@ import ome.xml.model.primitives.PositiveFloat;
 import ome.xml.model.primitives.NonNegativeInteger;
 import java.io.IOException;
 import com.quirkware.guid.PlatformIndependentGuidGen;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.util.Arrays;
+import javax.swing.JFrame;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
 import mdbtools.dbengine.functions.Length;
@@ -201,7 +205,83 @@ public class Acquisition {
                     }
 
                 }
+                  
+                
+                saveLayersToOMETiff(writer, accImg, delays.indexOf(delay));
+                ////
+
+                
+                // OR
+//                gui_.snapAndAddImage(acq, delays.indexOf(delay), 0, 0, 0);
+                
+                ////
+                if(frame_.singleImage==1){
+                    frame_.progressBar_.stepIncrement(del, delays.size());
+                }
+            }
+            // OR
+//            saveAcqToOMETiff(writer, acq, delays.size());
+            ////
+            // clean up writer when finished...
+            writer.close();
+       } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+    
+    public void snapFLIMImageFred(String path, ArrayList<Integer> delays, SeqAcqSetup sas, String binning) {
+        int binningD = Integer.parseInt(binning);
+        try{
+
+            if (gui_.isLiveModeOn() | gui_.isAcquisitionRunning()){
+                gui_.enableLiveMode(false);
+                gui_.closeAllAcquisitions();
+            }
+            
+            
+            
+            OMEXMLMetadata m = setBasicMetadata(delays, sas);
+            IFormatWriter writer = generateWriter(path+".ome.tiff", m);
+            for (Integer delay : delays) {
+                int del=delays.indexOf(delay);
+                try{
+                core_.setProperty("Delay box", "Delay (ps)", delay);
+                } catch(Exception e) {
+                    System.out.println(e.getMessage());
+                    System.out.println("Could not set delay in Delay box!");
+                
+                }
+                
+
+                // EITHER
 //                core_.snapImage();
+                long dim = core_.getImageWidth() * core_.getImageHeight();
+//                Object img = core_.getImage();
+                int[] accImg = new int[(int)dim];
+                for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++){
+                    core_.snapImage();
+                    Object img = core_.getImage();
+                    // Display acquired images while the acquisition goes on
+                    gui_.displayImage(img);
+                    // this bit c.f. FrameAverager
+                    if (core_.getBytesPerPixel() == 2){
+                        short[] pixS = (short[]) img;
+                        for (int j = 0; j < dim; j++) {
+                            accImg[j] = (int) (accImg[j] + (int) (pixS[j] & 0xffff));
+                        }
+                    } else if (core_.getBytesPerPixel() == 1){
+                        byte[] pixB = (byte[]) img;
+                        for (int j = 0; j < dim; j++) {
+                            accImg[j] = (int) (accImg[j] + (int) (pixB[j] & 0xff));
+                        }
+                    }
+
+                }
+                if(binningD>1){
+                accImg=binningByte(accImg, binningD);
+                }   
+                
                 saveLayersToOMETiff(writer, accImg, delays.indexOf(delay));
                 ////
 
@@ -403,6 +483,63 @@ public class Acquisition {
         // TODO: pass an instance of a single class containing all the input vars, also some stuff regarding autofocus?
 
         // go through order arraylist and build a 2D arraylist containing all vars in appropriate order...
+    }
+    
+    
+    private int[] binningByte(int[] accImg, int binningD) {
+       // plane=accImg;
+         
+        System.out.println(Arrays.toString(accImg));
+        
+        
+        int width=(int) core_.getImageWidth();
+        int height=(int) core_.getImageHeight();
+        int[][] image=new int[width][height];
+        int widthB=(int) (width/binningD);
+        int heightB= (int) (height/binningD);
+        int[] accImgB=new int[widthB*heightB];
+//        disImag(accImg, width, height);
+//        for (int x=0 ; x<height ; x++){
+//            for (int y=0 ; y<width ; y++){
+//                //System.out.println("LineY: "+accImg[x*y]);
+//                image[x][y]=accImg[width*x+x*y];
+//            }
+//        }
+        
+          int src;
+
+          for (int binnedPixel = 0; binnedPixel < (width * height); binnedPixel++) {
+            accImgB[binnedPixel] = 0;
+            System.out.println("binnedPixel: "+binnedPixel);
+            for (int y = 0; y < heightB; y++) {
+              src = (binnedPixel * heightB) + (y * width);
+              System.out.println("src: "+src);
+              for (int x = 0; x < heightB; x++) {
+                accImgB[binnedPixel] += accImg[src];
+                src++;
+              }
+            }
+          }
+        System.out.println(Arrays.toString(accImg));
+        System.out.println(Arrays.toString(image));
+        System.out.println(Arrays.deepToString(image));
+        disImag(accImgB, widthB, heightB);
+
+//          planeb = DataTools.shortsToBytes(binnedPlaneShort, false);
+        return accImg;
+
+        }
+    
+    public void disImag(int[] accImg, int width, int height){
+        BufferedImage imageB = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        WritableRaster raster = (WritableRaster) imageB.getData();
+        raster.setPixels(0,0,width,height,accImg);
+        JFrame f = new JFrame();
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultLookAndFeelDecorated(true);
+        f.setResizable(false);
+        f.pack();
+        f.setVisible(true);
     }
 }
     

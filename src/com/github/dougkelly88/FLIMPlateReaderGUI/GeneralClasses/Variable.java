@@ -32,6 +32,8 @@ public class Variable {
     // General variables:
     public String basepath= System.getProperty("user.home");//Default basepath
     public String entireFileText;
+    public double magnification= 40;
+    public double relay=0.7;
     
     // LightPathControl variables:
     public StrVector DichroicComboBox;
@@ -254,4 +256,6 @@ public class Variable {
         
         return delaysVar; 
   }
+  
+
 }

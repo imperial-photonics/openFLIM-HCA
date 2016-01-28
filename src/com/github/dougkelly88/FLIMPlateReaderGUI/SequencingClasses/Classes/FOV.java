@@ -6,6 +6,7 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import java.awt.Point;
 import java.awt.Rectangle;
 
@@ -20,11 +21,11 @@ public class FOV implements Comparable<FOV> {
     double z_;
     double width_ = 314;
     double height_ = 230;   //40x obj, 0.7 relay
-    double magnification_ = 40;
+    
     String well_;
     String group_ = "Experiment";
     PlateProperties pp_;
-
+    private Variable var_;
     // initialise with nonsense - remove entirely?
 //    FOV(){
 //        x_ = 0;
@@ -47,6 +48,7 @@ public class FOV implements Comparable<FOV> {
         z_ = z;
         well_ = well;
         pp_ = pp;
+        var_ = Variable.getInstance();
     }
 
     /**
@@ -67,6 +69,7 @@ public class FOV implements Comparable<FOV> {
         int row = (int) Math.round((y
                 - pp.getTopLeftWellOffsetV()) / pp.getWellSpacingV()) + 1;
         well_ = Character.toString((char) (row + 64)) + col;
+        var_ = Variable.getInstance();
 
     }
 
@@ -104,6 +107,7 @@ public class FOV implements Comparable<FOV> {
                 + (letterIndex - 1) * pp.getWellSpacingV();
         z_ = z;
         pp_ = pp;
+        var_ = Variable.getInstance();
 
     }
 
@@ -128,7 +132,7 @@ public class FOV implements Comparable<FOV> {
         return well_;
     }
     
-         public String getGroup() {
+    public String getGroup() {
         return group_;
     }
 
@@ -157,11 +161,13 @@ public class FOV implements Comparable<FOV> {
     }
 
     public double getWidth_() {
-        return width_;
+        double newWidth=width_*40/var_.magnification;
+        return newWidth;
     }
 
     public double getHeight_() {
-        return height_;
+        double newheight=height_*40/var_.magnification;
+        return newheight;
     }
 
     public void setWidth_(double width_) {
@@ -171,17 +177,8 @@ public class FOV implements Comparable<FOV> {
     public void setHeight_(double height_) {
         this.height_ = height_;
     }
-    
-    public void setMagnification(double mag){
-        this.height_ = this.height_ * mag / magnification_;
-        this.width_ = this.width_ * mag / magnification_;
-        this.magnification_ = mag;
-    }
-    
-    public double getMagnification(){
-        return this.magnification_;
-    }
-    
+       
+       
     public void setGroup(String group_) {
         this.group_ = group_;
     }
