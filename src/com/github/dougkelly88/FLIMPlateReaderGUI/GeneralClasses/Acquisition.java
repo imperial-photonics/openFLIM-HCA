@@ -28,6 +28,7 @@ import java.io.IOException;
 import com.quirkware.guid.PlatformIndependentGuidGen;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
+import mdbtools.dbengine.functions.Length;
 import mmcorej.TaggedImage;
 import org.micromanager.api.ImageCache;
 
@@ -355,11 +356,11 @@ public class Acquisition {
             m.setPixelsSizeC(new PositiveInteger(1), 0);
             m.setPixelsSizeT(g1, 0);
 
-            PositiveFloat pitch = checkPixelPitch();
-
-           m.setPixelsPhysicalSizeX(pitch, 0);
-           m.setPixelsPhysicalSizeY(pitch, 0);
-            m.setPixelsPhysicalSizeZ(new PositiveFloat(1.0), 0);
+//            PositiveFloat pitch = checkPixelPitch();
+//            Length(Length pitch);
+//            m.setPixelsPhysicalSizeX(pitch, 0);
+//            m.setPixelsPhysicalSizeY(pitch, 0);
+//            m.setPixelsPhysicalSizeZ(new PositiveFloat(1.0), 0);
 
             PlatformIndependentGuidGen p = PlatformIndependentGuidGen.getInstance();
 
