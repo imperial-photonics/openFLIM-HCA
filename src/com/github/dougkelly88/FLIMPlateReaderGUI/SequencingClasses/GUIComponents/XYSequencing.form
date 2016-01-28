@@ -120,6 +120,9 @@
           </Events>
         </Component>
         <Container class="javax.swing.JPanel" name="fovTablePanel">
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fovTablePanelMouseClicked"/>
+          </Events>
 
           <Layout>
             <DimensionLayout dim="0">

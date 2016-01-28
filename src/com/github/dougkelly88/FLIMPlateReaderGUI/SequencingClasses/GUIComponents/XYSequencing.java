@@ -133,6 +133,19 @@ public class XYSequencing extends javax.swing.JPanel {
                     // later implementations?) and subtract from that of the 
                     // NEWLY SELECTED FOV. 
                     // TODO: fix for proper zAsOffset behaviour. 
+                    // Wait for move completion
+                    while (xyzmi_.isStageBusy()){
+                       System.out.println("Stage moving...");
+                    };    
+                    
+                    if(parent_.checkifAFenabled()){
+                        // If we have gone to the FOV, and have AF, do AF
+                        xyzmi_.customAutofocus(parent_.getAFOffset());
+                    } else {
+                        // If we don't have AF, go to the 'good offset position'
+                        xyzmi_.moveZAbsolute(parent_.getFixedAFDefault());
+                    }
+                    //Now do the relative shift
                     xyzmi_.moveZRelative(tableModel_.getData().get(r).getZ());
                     System.out.println("Z value"+tableModel_.getData().get(r).getZ());
                 }
@@ -221,6 +234,12 @@ public class XYSequencing extends javax.swing.JPanel {
         storeXYZButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 storeXYZButtonActionPerformed(evt);
+            }
+        });
+
+        fovTablePanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fovTablePanelMouseClicked(evt);
             }
         });
 
@@ -919,6 +938,10 @@ public class XYSequencing extends javax.swing.JPanel {
         setZStackParams(0.0,0.0,1);
         doZStackGeneration(getZStackParams());
     }//GEN-LAST:event_clearZButtonActionPerformed
+
+    private void fovTablePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fovTablePanelMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fovTablePanelMouseClicked
 
     
     public void setPlateProperties(PlateProperties pp) {

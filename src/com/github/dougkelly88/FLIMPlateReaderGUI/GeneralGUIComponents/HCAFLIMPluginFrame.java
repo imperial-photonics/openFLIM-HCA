@@ -1071,10 +1071,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 FOVtogoto = xYSequencing1.searchFOVtableModel_.getFOV(i);
                 if(!testmode){
                     xyzmi_.gotoFOV(FOVtogoto); // XY move only
-                    //Wait for XY move to finish
-                    while (xyzmi_.isStageBusy()){
-                       System.out.println("Stage moving...");
-                    };                    
+                    //Wait for XY move to finish                
                     
                     //Autofocus if needed
                     if(FOVtogoto.getWell()!=FOVlastgoneto.getWell() || noofFOVsSinceLastSuccess==0){ 
@@ -1117,6 +1114,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             Thread.currentThread().interrupt();               
         }
     return FOVaccepted;
+    }
+    
+    public double getAFOffset(){
+        return (double)xYZPanel1.getSampleAFOffset();
+    }
+    
+    public double getFixedAFDefault(){
+        return (double)xYZPanel1.getFixedAFDefault();
     }
     
     public void doSequenceAcquisition() throws InterruptedException{
