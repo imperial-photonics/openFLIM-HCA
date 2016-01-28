@@ -8,7 +8,7 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.sequencingThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Acquisition;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.DisplayImage2;
+//import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.DisplayImage2; Dunno what this one did?
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
@@ -24,7 +24,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Compa
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.YComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.RowComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ColumnComparator;
-import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.XY_simul_Comparator;
+//import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.XY_simul_Comparator;  // Replaced by Row, Column comparators
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ZComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel;
@@ -96,19 +96,19 @@ import loci.formats.out.TiffWriter;
 
 // Try and import stuff for ImageJ imageprocessing capabilities
 //Cut-paste from: https://micro-manager.org/w/images/b/b6/RatiometricImaging_singleImage.bsh
-import ij.*;
+//import ij.*; // Was unused?
 import ij.gui.*;
-//import org.micromanager.api.AcquisitionOptions;
-import ij.WindowManager;
-import java.lang.System;
+//import org.micromanager.api.AcquisitionOptions; - cannot find symbol?
+//import ij.WindowManager;
+//import java.lang.System; // Was unused?
 import ij.process.*;
 import ij.ImagePlus;
-import ij.plugin.*;
-import java.lang.Math;
-import java.awt.image.*;
-import ij.measure.*;
-import ij.text.*;
-import ij.plugin.filter.*;
+//import ij.plugin.*; // Was unused?
+//import java.lang.Math; // Was unused?
+//import java.awt.image.*; // Was unused?
+//import ij.measure.*; // Was unused?
+//import ij.text.*; // Was unused?
+//import ij.plugin.filter.*; // Was unused?
 import org.micromanager.utils.ImageUtils;
 // End of added imageJ bits
 
@@ -119,9 +119,7 @@ import org.micromanager.utils.ImageUtils;
 public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
     public CMMCore core_;
-    
-    //private MMStudio gui_;
-    
+    //private MMStudio gui_;  // Might be useful to put in at some point?
     static HCAFLIMPluginFrame frame_;
     private SeqAcqProps sap_;
     private Variable var_;
@@ -140,7 +138,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public Arduino arduino_;
     public boolean terminate = false;
     public int singleImage;
-    private ArrayList<String> initLDWells = new ArrayList<String>();
+    private ArrayList<String> initLDWells = new ArrayList<>();
+    // Replaces private ArrayList<String> initLDWells = new ArrayList<String>();
     //
     public String AcquisitionSavingMode;
     private double lastAFposition; // Variable to store last 'good' AF position
@@ -161,6 +160,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         this.setIconImage(icon.getImage());
         this.setTitle("OpenFLIM-HCA Plugin");
         core_ = core;
+        // Leaking this in constructor may lead to trouble in multithreaded situations?
+        // Can these be moved to another method? Looks like it, but can be left for another day...
         frame_ = this;
         xYZPanel1.setParent(this);
         xYSequencing1.setParent(this);
@@ -983,45 +984,47 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             // Image processor to target said image
             ImageProcessor improc0 = ImageUtils.makeProcessor(core_, pixels);
             // ImagePlus that uses the imageprocessor we just made...
-            ImagePlus plus = new ImagePlus("Prefind image", improc0);
+            ImagePlus prefind_img = new ImagePlus("Prefind image", improc0);
             // Hopefully set the current window to our target one
-            ij.WindowManager.setTempCurrentImage(plus);
+            ij.WindowManager.setTempCurrentImage(prefind_img);
             // For simple thrsholding
             double minthresh = 0;
             double maxthresh = proSettingsGUI1.getPrefindThresh();
             // Apply a simple threshold - probably want a set of cases here
-            improc0.setThreshold(minthresh, maxthresh, 1);//Think 1 = B&W LUT
+            improc0.setThreshold(minthresh, maxthresh, 1);//Think last argument being 1 => B&W LUT
             byte[] thresholded = (byte[])improc0.getPixels();
-            long sum = 0;//
+            double sum = 0;//
             // Run the Process > Binary > "Make Binary" command - don't forget to divide sum by 255...
             ij.IJ.run("Make Binary");
-            ij.IJ.run(plus, "Multiply...", "1");
+            ij.IJ.run(prefind_img, "Multiply...", "1");
             for (int k=0;k<thresholded.length;k++){
-                sum += thresholded [k];
+                // For some reason, the binary image appears to go from -1 to 0, giving the -ve # of dark pixels... Fix this by:
+                sum += (double)((thresholded [k])+1);
             }
-            // For some reason, the binary image appears to go from -1 to 0, giving the -ve # of dark pixels... Fix this by:
-            sum = thresholded.length+sum;
             // We now have the number of 'bright' pixels, hopefully            
             // Compare to total ' of pixels to get %age
-            if(sum>((proSettingsGUI1.getPercentCoverage()/100)*(thresholded.length))){
+            double fraction = sum/(double)(thresholded.length); //(double) casts to double
+            System.out.println("Pixels above threshold: "+sum+"    % coverage: "+fraction);
+            if((fraction*100)>proSettingsGUI1.getPercentCoverage()){
                 accept = true;
             } else {
-                accept = false;    
-            }
-            
+                // Starts as false by default, so just leave it as such...
+            }           
             //Indicate whether field was accepted or rejected (crudely for now)
             //System.out.println(accept);
-            
-            //System.out.println(sum);
+
             //ij.IJ.runMacro("TEST"); //Jut need the name of the macro, but also need correct image to do it on?
-            plus.show();
+            prefind_img.show();
             currentWin = ij.WindowManager.getCurrentWindow();
+            prefind_img.changes = false; // White lie to stop that whiny popup coming up after image changes from thresholding?
+            // From: http://imagej.1557.x6.nabble.com/Re-Plugin-Command-To-Close-Window-Without-quot-Save-Changes-quot-Dialog-td3683293.html
+            //prefind_img.close();
 
         } catch (Exception e){
              System.out.println(e.getMessage());
         }
         //String Macropath="C:\\Program Files\\Micro-Manager-1.4.20\\plugins\\TEST.ijm";
-
+        System.out.println(accept);
         return accept;
     }
         
@@ -1037,8 +1040,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         // Work out the max number of FOVs
         // !!! NEED TO MAKE SURE THAT THIS WORKS ID TOO MANY FOVS ARE SPECIFIED! REDUCE THE #OF ATTEMPTS PERHAPS?
         int Attempts_perFOV = xYSequencing1.getNoOfAttempts();
-        int initialnoofFOVs = xYSequencing1.getSearchRowCount();
-        int FOVs_per_well=Attempts_perFOV*initialnoofFOVs;
+        int NoOfFOVsToFind = xYSequencing1.getNoOfFOVToFind();
+        int FOVs_per_well=Attempts_perFOV*NoOfFOVsToFind;
+        
+        System.out.println("Attempts per FOV: "+Attempts_perFOV+"   Initial no of FOVs: "+NoOfFOVsToFind+"   FOVs per well: "+FOVs_per_well);
 
         // Declare a blank FOV to be last gone to, and use the first in the list as the one we initially want to go to;
         FOV FOVtogoto = xYSequencing1.searchFOVtableModel_.getFOV(0);
@@ -1055,7 +1060,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         Acquisition acq = new Acquisition();        
         boolean FOVaccepted=false;
         try {
-            for(int i=0;i<initialnoofFOVs;i++){
+            for(int i=0;i<xYSequencing1.searchFOVtableModel_.getRowCount();i++){
                 // Check for abort button - presume that there's a listener event somewhere for that? Need to implement own one or make Abort general?
                 // NEED TO CHECK IF THIS IS DONE PROPERLY - Presumably we can just use the existing abort button?
                 if(terminate){
@@ -1095,7 +1100,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                    // We didn't like this FOV
                     noofFOVsSinceLastSuccess++;
                 }
-                if((noofacceptedFOVs_thiswell>=initialnoofFOVs) || (noofFOVsSinceLastSuccess>=Attempts_perFOV)){ // We have enough successful finds
+                if((noofacceptedFOVs_thiswell>=NoOfFOVsToFind) || (noofFOVsSinceLastSuccess>=Attempts_perFOV)){ // We have enough successful finds
                     // Increment the loop counter just enough to move it into the start of the next well's sequence...
                     i=i+(FOVs_per_well-noofattemptedFOVs_thiswell);
                     // Reset the well-wise counters
@@ -1104,6 +1109,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 } else {
                     // We automatically go to the next well if we never find anything?, so don't need to do anything here...
                 }
+                // System.out.println(i); // For diagnostics
                 // Now we can say that this was the last FOV we went to...
                 FOVlastgoneto=FOVtogoto;
             }
@@ -1264,7 +1270,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 
                 // TODO: how much can these steps be parallelised?
                 // set FOV params
-                SeqAcqSetup sas = sass.get(ind);;
+                SeqAcqSetup sas = sass.get(ind);
                 // if time point changed different from last time, wait until 
                 // next time point reached...
                 if ((!sas.getTimePoint().getTimeCell().equals(lastTime)) & (order.contains("Time course"))){

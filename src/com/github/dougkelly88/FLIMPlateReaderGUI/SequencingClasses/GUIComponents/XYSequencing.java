@@ -951,6 +951,10 @@ public class XYSequencing extends javax.swing.JPanel {
         return Integer.parseInt(this.attemptsField.getText());
     }
     
+    public int getNoOfFOVToFind(){
+        return Integer.parseInt(FOVToFindField.getText());
+    }  
+        
     public int getSearchRowCount(){
         return searchFOVtableModel_.getRowCount();
     }  
