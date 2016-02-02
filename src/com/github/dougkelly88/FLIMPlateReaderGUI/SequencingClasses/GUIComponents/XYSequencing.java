@@ -629,7 +629,6 @@ public class XYSequencing extends javax.swing.JPanel {
         double[] centrexy = {fov.getX(), fov.getY()};
 //        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
         double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
-        
         int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         double[] dxy = new double[2];
         int stepsInCurrentDir;

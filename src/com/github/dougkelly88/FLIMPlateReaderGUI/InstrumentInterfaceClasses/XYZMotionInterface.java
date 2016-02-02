@@ -66,8 +66,7 @@ public final class XYZMotionInterface {
             core_.setPosition(zstage_, Double.parseDouble(core_.getProperty("Objective", "Safe Position")));
             core_.home(xystage_);
             core_.waitForDeviceType(DeviceType.XYStageDevice);
-//            gotoFOV(new FOV("C4", pp_, 1000));
-            gotoFOV(parent.currentFOV_);
+            gotoFOV(new FOV("C4", pp_, 1000));
         } catch (Exception e)
         {
             System.out.println(e.getMessage());
@@ -79,7 +78,7 @@ public final class XYZMotionInterface {
         try {
             Point2D.Double stage = fovXYtoStageXY(fov);
             core_.setXYPosition(xystage_, stage.getX(), stage.getY());
-            parent_.currentFOV_ = fov;
+            // parent_.currentFOV_ = fov;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -179,8 +178,8 @@ public final class XYZMotionInterface {
     public boolean moveXYRelative(double x, double y) {
         try {
             core_.setRelativeXYPosition(xystage_, x, y);
-            parent_.currentFOV_.setX(x);
-            parent_.currentFOV_.setY(y);
+            //parent_.currentFOV_.setX(x);
+            //parent_.currentFOV_.setY(y);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -190,7 +189,7 @@ public final class XYZMotionInterface {
     public boolean moveZRelative(double z) {
         try {
             core_.setRelativePosition(zstage_, z);
-            parent_.currentFOV_.setZ(z);
+            //parent_.currentFOV_.setZ(z);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -202,7 +201,7 @@ public final class XYZMotionInterface {
             // TODO: check within bounds?
             // TODO: calibrate to make up for lack of parfocality...
             core_.setPosition(zstage_, z);
-            parent_.currentFOV_.setZ(z);
+            //parent_.currentFOV_.setZ(z);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -229,8 +228,8 @@ public final class XYZMotionInterface {
                     core_.setProperty(xystage_, "Enable joystick?", "False");
                     double x = core_.getXPosition(xystage_);
                     double y = core_.getYPosition(xystage_);
-                    parent_.currentFOV_.setX(x);
-                    parent_.currentFOV_.setY(y);
+                    //parent_.currentFOV_.setX(x);
+                    //parent_.currentFOV_.setY(y);
                             }
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -244,7 +243,7 @@ public final class XYZMotionInterface {
                 else {
                     core_.setProperty("OlympusHub", "Control", "Computer");
                     double z = core_.getPosition(zstage_);
-                    parent_.currentFOV_.setZ(z);
+                    //parent_.currentFOV_.setZ(z);
                 }
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -259,7 +258,7 @@ public final class XYZMotionInterface {
                 else {
                     core_.setProperty("ManualFocus", "FocusWheel", "Off");
                     double z = core_.getPosition(zstage_);
-                    parent_.currentFOV_.setZ(z);
+                    //parent_.currentFOV_.setZ(z);
                 }
         } catch (Exception e){
             System.out.println(e.getMessage());

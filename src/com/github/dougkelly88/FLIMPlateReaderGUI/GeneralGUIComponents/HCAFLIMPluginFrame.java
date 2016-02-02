@@ -1540,7 +1540,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
             // so that same functions can be used, generate dummy SequencedAcquisitionSetup
             acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
-                    new SeqAcqSetup(currentFOV_, new TimePoint(0.0,false,initLDWells), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
+                    new SeqAcqSetup(xyzmi_.getCurrentFOV(), new TimePoint(0.0,false,initLDWells), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
             progressBar_.setEnd("Snap FLIM image");
         }
         arduino_.setDigitalOutLow();
