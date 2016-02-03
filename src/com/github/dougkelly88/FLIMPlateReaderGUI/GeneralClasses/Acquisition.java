@@ -29,6 +29,7 @@ import com.quirkware.guid.PlatformIndependentGuidGen;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
+import java.util.stream.IntStream;
 import javax.swing.JFrame;
 import loci.formats.FormatException;
 import loci.formats.IFormatWriter;
@@ -241,7 +242,7 @@ public class Acquisition {
             
             
             
-            OMEXMLMetadata m = setBasicMetadata(delays, sas);
+            OMEXMLMetadata m = setBasicMetadataFred(delays, sas, binningD);
             IFormatWriter writer = generateWriter(path+".ome.tiff", m);
             for (Integer delay : delays) {
                 int del=delays.indexOf(delay);
@@ -263,7 +264,7 @@ public class Acquisition {
                     core_.snapImage();
                     Object img = core_.getImage();
                     // Display acquired images while the acquisition goes on
-                    gui_.displayImage(img);
+                    //gui_.displayImage(img);
                     // this bit c.f. FrameAverager
                     if (core_.getBytesPerPixel() == 2){
                         short[] pixS = (short[]) img;
@@ -349,7 +350,7 @@ public class Acquisition {
     }
 
     private IFormatWriter generateWriter(String path, OMEXMLMetadata m)
-            throws FormatException, IOException {
+        throws FormatException, IOException {
         IFormatWriter writer = new ImageWriter().getWriter(path);
         writer.setWriteSequentially(true);
         writer.setMetadataRetrieve(m);
@@ -436,8 +437,7 @@ public class Acquisition {
             m.setPixelsSizeC(new PositiveInteger(1), 0);
             m.setPixelsSizeT(g1, 0);
 
-//Ian help            PositiveFloat pitch = checkPixelPitch();
-//            Length(Length pitch);
+//            PositiveFloat pitch = checkPixelPitch();
 //            m.setPixelsPhysicalSizeX(pitch, 0);
 //            m.setPixelsPhysicalSizeY(pitch, 0);
 //            m.setPixelsPhysicalSizeZ(new PositiveFloat(1.0), 0);
@@ -487,53 +487,49 @@ public class Acquisition {
     
     
     private int[] binningByte(int[] accImg, int binningD) {
-       // plane=accImg;
+      
          
-        //System.out.println(Arrays.toString(accImg));
-        accImg=new int[24];
-        Arrays.fill(accImg, 1);
-//        accImg[1]=2;
-//        accImg[0]=4;
-//        accImg[5]=45;
-//        accImg[13]=24;
-//        accImg[15]=5;
-//        accImg[17]=22;
-//        accImg[20]=3;
-//        accImg[22]=7;
-//        accImg[23]=8;
-//        accImg[24]=9;
-        
-        binningD=2;
-//        int width=(int) core_.getImageWidth();
-//        int height=(int) core_.getImageHeight();
-        int width=6;
-        int height=4;
+
+        accImg=new int[1000];
+//        Arrays.fill(accImg, 12);
+        for(int aa=0;aa<1000;aa++){
+            accImg[aa]=aa;
+        }
+//        
+//        binningD=2;
+        int width=(int) core_.getImageWidth();
+        int height=(int) core_.getImageHeight();
+//        int width=9;
+//        int height=1000;
+        int sizeAccImg=accImg.length;
         int[][] image=new int[width][height];
-        int widthB=(int) (width/binningD);
-        int heightB= (int) (height/binningD);
-        int[] accImgB=new int[widthB*heightB];
-         
+        double widthB= width/binningD;
+        double heightB= height/binningD;
+        int sizeAccImgB=accImg.length/binningD/binningD;
+        int[] accImgB=new int[sizeAccImgB];
+        //gui_.displayImage(accImg); 
         //disImag(accImg, width, height);
         int masterCount=0;
         for (int x=0 ; x<width ; x++){
             for (int y=0 ; y<height ; y++){
                 //System.out.println("LineY: "+accImg[x*y]);
-                System.out.println("xValue: "+x+"   yValue: "+y+"   accImg: "+masterCount);
+                //System.out.println("xValue: "+x+"   yValue: "+y+"   accImg: "+masterCount);
                 int nn=width*x+x*y;
                 image[x][y]=accImg[masterCount];
                 masterCount=masterCount+1;
             }
         }
         
-        for(int masterCountB=0; masterCountB<6; masterCountB++){
-            for(int countBinX=0; countBinX<2; countBinX++){
-                for(int countBinY=0; countBinY<2; countBinY++){
+        for(int masterCountB=0; masterCountB<sizeAccImg/binningD/binningD; masterCountB++){
+            for(int countBinX=0; countBinX<binningD; countBinX++){
+                for(int countBinY=0; countBinY<binningD; countBinY++){
                     accImgB[masterCountB]=accImgB[masterCountB]+image[countBinX][countBinY];
-                    System.out.println("accImgB: "+masterCountB+ "    value: "+accImgB[masterCountB]);
+                    //System.out.println("accImgB: "+masterCountB+ "    value: "+accImgB[masterCountB]);
 
                 }
             }
         }
+        //
 //        for (int countBinX=0; countBinX<(int) width/binningD; countBinX++){
 //            accImgB[countBinX]=image[0][0]+image[1][0]+image[2][0]+image[1][0]+image[1][1]+image[1][2]+image[2][0]+image[2][1]+image[2][2];
 //        }
@@ -541,23 +537,107 @@ public class Acquisition {
 //        System.out.println(Arrays.toString(accImg));
 //        System.out.println(Arrays.toString(image));
 //        System.out.println(Arrays.deepToString(image));
-        //disImag(accImgB, widthB, heightB);
+          //disImag(accImgB, widthB, heightB);
 
 //          planeb = DataTools.shortsToBytes(binnedPlaneShort, false);
-        return accImg;
+        System.out.println(";;;;;;;;;;;;;;;;;;;;;was war drin;;;;;;;;;;;;;;;;;;;;;; "+IntStream.of(accImg).sum());
+        System.out.println(";;;;;;;;;;;;;;;;;;;;;was ist drin;;;;;;;;;;;;;;;;;;;;;; "+IntStream.of(accImgB).sum());
+        return accImgB;
 
         }
     
-    public void disImag(int[] accImg, int width, int height){
-        BufferedImage imageB = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        WritableRaster raster = (WritableRaster) imageB.getData();
-        raster.setPixels(0,0,width,height,accImg);
-        JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setDefaultLookAndFeelDecorated(true);
-        f.setResizable(false);
-        f.pack();
-        f.setVisible(true);
+        private OMEXMLMetadata setBasicMetadataFred(ArrayList<Integer> delays, SeqAcqSetup sas,int binningD)
+            throws ServiceException {
+
+        OMEXMLServiceImpl serv = new OMEXMLServiceImpl();
+        OMEXMLMetadata m = serv.createOMEXMLMetadata();
+
+        int no_delays = delays.size();
+        // delays must be parsed as strings for metadata
+        String[] delArrayStr = new String[no_delays];
+        for (int ind = 0; ind < no_delays; ind++) {
+            delArrayStr[ind] = String.valueOf(delays.get(ind));
+        }
+
+        try {
+            m.createRoot();
+            m.setImageID("Image:0", 0);
+            m.setPixelsID("Pixels:0", 0);
+            m.setPixelsDimensionOrder(DimensionOrder.XYZCT, 0);
+            m.setChannelID("Channel:0:0", 0, 0);
+            m.setChannelSamplesPerPixel(new PositiveInteger(1), 0, 0);
+            m.setPixelsBinDataBigEndian(Boolean.FALSE, 0, 0);
+//            m.setPixelsType(PixelType.UINT8, 0);
+            m.setImageDescription(sas.toString(), 0);
+
+            long bpp = core_.getBytesPerPixel();
+
+//            if (sas.getFilters().getAccFrames() == 1){
+//                if (bpp == 1) {
+//                    m.setPixelsType(PixelType.UINT8, 0);
+//                }
+//                if (bpp == 2) {
+//                    m.setPixelsType(PixelType.UINT16, 0);
+//                }
+//            }
+//            else if (sas.getFilters().getAccFrames() > 0){ 
+                System.out.println("setting pixeltype to 32");
+                m.setPixelsType(PixelType.UINT32, 0);
+                
+//            }
+
+            PositiveInteger w1 = new PositiveInteger((int) core_.getImageWidth()/binningD);
+            PositiveInteger h1 = new PositiveInteger((int) core_.getImageHeight()/binningD);
+            PositiveInteger g1 = new PositiveInteger(no_delays);
+
+            m.setPixelsSizeX((w1), 0);
+            m.setPixelsSizeY((h1), 0);
+            m.setPixelsSizeZ(new PositiveInteger(1), 0);
+            m.setPixelsSizeC(new PositiveInteger(1), 0);
+            m.setPixelsSizeT(g1, 0);
+
+//Ian help            PositiveFloat pitch = checkPixelPitch();
+//            Length(Length pitch);
+//            m.setPixelsPhysicalSizeX(pitch, 0);
+//            m.setPixelsPhysicalSizeY(pitch, 0);
+//            m.setPixelsPhysicalSizeZ(new PositiveFloat(1.0), 0);
+
+            PlatformIndependentGuidGen p = PlatformIndependentGuidGen.getInstance();
+
+            for (int ii = 0; ii < no_delays; ii++) {
+
+                m.setUUIDFileName(delArrayStr[ii], 0, ii);
+                m.setUUIDValue(p.genNewGuid(), 0, ii);
+                m.setTiffDataPlaneCount(new NonNegativeInteger(0), 0, ii);
+                m.setTiffDataIFD(new NonNegativeInteger(0), 0, ii);
+                m.setTiffDataFirstZ(new NonNegativeInteger(0), 0, ii);
+                m.setTiffDataFirstC(new NonNegativeInteger(0), 0, ii);
+                m.setTiffDataFirstT(new NonNegativeInteger(0), 0, ii);
+                m.setPlaneTheC(new NonNegativeInteger(0), 0, ii);
+                m.setPlaneTheZ(new NonNegativeInteger(0), 0, ii);
+                m.setPlaneTheT(new NonNegativeInteger(ii), 0, ii);
+                m.setTiffDataPlaneCount(new NonNegativeInteger(ii), 0, ii);
+                System.out.println("done loop ind " + ii);
+            }
+
+            // deal FLIMfit issue loading single plane images with moduloAlongT
+            if (no_delays > 2){ 
+                CoreMetadata cm = new CoreMetadata();
+
+                cm.moduloT.labels = delArrayStr;
+                cm.moduloT.unit = "ps";
+                cm.moduloT.typeDescription = "Gated";
+                cm.moduloT.type = loci.formats.FormatTools.LIFETIME;
+                serv.addModuloAlong(m, cm, 0);
+                System.out.println("did addModulo");
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return m;
     }
+    
 }
     
