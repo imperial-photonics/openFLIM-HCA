@@ -440,11 +440,11 @@ public class Acquisition {
             m.setPixelsSizeT(g1, 0);
 
             PositiveFloat pitch = checkPixelPitch();
-            m.setPixelsPhysicalSizeX(new Length(1.0),ome.units.UNITS.MM);
-            m.setPixelsPhysicalSizeY(pitch, 0);
-           
-            m.setPnew Time(exposureTimes[t],ome.units.UNITS.S
-            m.setPixelsPhysicalSizeZ(new Length(1.0), 0);
+            double pitchD = pitch.getValue();
+            Length len = new Length(1,ome.units.UNITS.MM);
+            m.setPixelsPhysicalSizeX(new Length(pitchD,ome.units.UNITS.MM),0);
+            m.setPixelsPhysicalSizeY(new Length(pitchD,ome.units.UNITS.MM),0);
+            m.setPixelsPhysicalSizeZ(new Length(1.0,ome.units.UNITS.MM), 0);
 
             PlatformIndependentGuidGen p = PlatformIndependentGuidGen.getInstance();
 
