@@ -1099,7 +1099,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 }
 
                 // Snap single image
-                acq.snapimagenow();
+                //acq.snapimagenow(); Function not found after merch. Sunil please check!
                 Object img=core_.getImage();
                 FOVaccepted = checkprefindimg(img);
                 
