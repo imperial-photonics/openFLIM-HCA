@@ -689,6 +689,7 @@ public class XYZPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_afInSequenceActionPerformed
 
+<<<<<<< HEAD
     private void fixedAFdefaultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixedAFdefaultActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_fixedAFdefaultActionPerformed
@@ -701,10 +702,12 @@ public class XYZPanel extends javax.swing.JPanel {
         return Double.parseDouble(fixedAFdefault.getText());
     }
     
+=======
     private void initialiseStageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_initialiseStageButtonActionPerformed
         xyzmi_.runInitializationRitual();
     }//GEN-LAST:event_initialiseStageButtonActionPerformed
 
+>>>>>>> IMPERIAL_ONE/master
     private void setControlDefaults(){
         
         sap_ = SeqAcqProps.getInstance();

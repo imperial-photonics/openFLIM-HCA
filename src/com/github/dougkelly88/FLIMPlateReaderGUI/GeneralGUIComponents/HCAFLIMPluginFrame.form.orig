@@ -376,6 +376,10 @@
                                                       </Group>
                                                   </Group>
                                               </Group>
+<<<<<<< HEAD
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+=======
                                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Group type="102" attributes="0">
@@ -391,6 +395,7 @@
                                                   </Group>
                                                   <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                                               </Group>
+>>>>>>> IMPERIAL_ONE/master
                                           </Group>
                                       </Group>
                                       <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
@@ -414,8 +419,12 @@
                                       <Group type="103" groupAlignment="3" attributes="0">
                                           <Component id="snapFLIMButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="experimentNameField" alignment="3" min="-2" max="-2" attributes="0"/>
+<<<<<<< HEAD
+                                          <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+=======
                                           <Component id="softwareBinningButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="softwareBinningField" alignment="3" min="-2" max="-2" attributes="0"/>
+>>>>>>> IMPERIAL_ONE/master
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="3" attributes="0">
@@ -548,6 +557,8 @@
                         <Property name="text" type="java.lang.String" value="Name experiment"/>
                       </Properties>
                     </Component>
+<<<<<<< HEAD
+=======
                     <Component class="javax.swing.JLabel" name="softwareBinningButton">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Software Binning: "/>
@@ -561,6 +572,7 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="softwareBinningFieldActionPerformed"/>
                       </Events>
                     </Component>
+>>>>>>> IMPERIAL_ONE/master
                     <Component class="javax.swing.JButton" name="jButton1">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="jButton1"/>

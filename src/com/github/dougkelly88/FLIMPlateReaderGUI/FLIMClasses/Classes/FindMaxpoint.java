@@ -308,7 +308,7 @@ public class FindMaxpoint {
         return gates;
     }
     
-    private void warningMessage(String news){
+    public void warningMessage(String news){
         JOptionPane optionPane = new JOptionPane(news,JOptionPane.WARNING_MESSAGE);
         JDialog dialog = optionPane.createDialog("Warning!");
         dialog.setAlwaysOnTop(true);

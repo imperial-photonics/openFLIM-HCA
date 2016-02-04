@@ -5,6 +5,7 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents;
 
+import com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.Classes.FindMaxpoint;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.ArduinoStepperMotor;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
@@ -17,6 +18,8 @@ import java.awt.BorderLayout;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import mmcorej.CMMCore;
 import mmcorej.StrVector;
 import org.micromanager.MMStudio;
@@ -561,12 +564,29 @@ public class LightPathPanel extends javax.swing.JPanel {
         setByLabel(objectiveComboBox, "Objective");
         currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
         var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
-        double magnification = 1;
-//        if (!(objectiveComboBox.getSelectedItem() == null))
-//            magnification = getMag((String) objectiveComboBox.getSelectedItem());
-//        parent_.currentFOV_.setMagnification(magnification);
+        if ((String) objectiveComboBox.getSelectedItem()!=null){
+                setMag((String) objectiveComboBox.getSelectedItem());
+        }
     }//GEN-LAST:event_objectiveComboBoxActionPerformed
 
+    public void setMag(String magString){
+        int indX=magString.indexOf('x');
+        String newString= magString.substring(0,indX);
+        try{
+            var_.magnification=Double.parseDouble(magString.substring(0,indX));
+        }catch(Exception ex){
+            int indXX=newString.indexOf(" ");
+            try{
+            var_.magnification=Double.parseDouble(magString.substring(indXX,indX));
+            }catch(Exception exx){
+                warningMessage("Cannot identify objective label in hardware configuration file. Make sure there is only one x included"
+                        + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");
+            }
+        }
+        
+        System.out.println("Magnification changed to "+var_.magnification);
+    }
+    
     private double getMag(String desc) {
         // TODO: CHECK THIS WORKS!
         // TODO: make this more general/robust...
@@ -893,6 +913,12 @@ public class LightPathPanel extends javax.swing.JPanel {
         });
     }
     
+    public void warningMessage(String news){
+        JOptionPane optionPane = new JOptionPane(news,JOptionPane.WARNING_MESSAGE);
+        JDialog dialog = optionPane.createDialog("Warning!");
+        dialog.setAlwaysOnTop(true);
+        dialog.setVisible(true);
+    }
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
