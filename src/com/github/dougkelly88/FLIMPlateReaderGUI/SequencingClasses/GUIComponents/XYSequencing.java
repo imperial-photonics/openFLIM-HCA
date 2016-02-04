@@ -56,6 +56,7 @@ public class XYSequencing extends javax.swing.JPanel {
     public boolean sendEmailBoolean=false;
     String emailString;
     private Variable var_;
+    private ArrayList<FOV> spiralFOVs = new ArrayList<FOV>();
 
     /**
      * Creates new form XYSequencing
@@ -733,98 +734,42 @@ public class XYSequencing extends javax.swing.JPanel {
     }
     
     private ArrayList<FOV> generateSpiral(int noFOV, String wellString) {
-
+        spiralFOVs.clear();
         // cover whole well in a rectangle; remove those outwith well bounds;
         // finally trim to #fov. Deals with asymmetric FOV
-        ArrayList<FOV> spiralFOVs = new ArrayList<FOV>();
+        
         FOV fov = new FOV(wellString, pp_, 0);
         double[] centrexy = {fov.getX(), fov.getY()};
 //        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
         double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
         
-        
-        DXY[0]=1;
-        DXY[1]=1;
-        centrexy[0]=0;
-        centrexy[1]=0;
-        
-        
         /*int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         double[] dxy = new double[2];
         int stepsInCurrentDir;*/
-        
-        
-        fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);//Fred
         spiralFOVs.add(fov);
         int fovind = 1;
         int dirind = 0;
         double nx = 0;
-        double nxCount=0;
         double ny = 0;
-        double nyCount=0;
-        System.out.println("Start");
-        //System.out.println("ID: "+0+"        nx: "+nx+"    ny: "+ny);
-        System.out.println("z: "+fov.getY()+"    x: "+fov.getX());
- //       System.out.println(fov.toString());
- //       System.out.println(fov.toString());
         
+//        System.out.println("Start");
+//        System.out.println("y: "+fov.getY()+"    x: "+fov.getX()+"           ny: "+ny+"    nx: "+nx);
+// 
         while (fovind < noFOV & dirind < 100) {   // just in case we have a runaway case...
-//            if(nyCount==0){
-//                nyCount=nyCount+1; 
-//            }else if(nyCount>0){
-//                nyCount=nyCount+1;
-//            }else if(nyCount<0){
-//                nyCount=nyCount-1;
-//            }
             ny++;
             for(int iy=0;iy<ny;iy++){
-//                if(nyCount>0 & fovind<noFOV){
                 if(fovind<noFOV){
-                    //System.out.println("ID: "+fovind+"        nx: "+nx+"    ny: "+ny);
-                    mysteriousSpiralProducer(ny, nx, wellString);
+                    centrexy=mysteriousSpiralProducer(ny, nx, wellString, centrexy, spiralFOVs);
                     fovind++;
-                }
-//                } else if(nyCount<0 & fovind<noFOV){
-//                    System.out.println("ID: "+fovind+"    nxC: "+nxCount+"    nyC: "+nyCount+"        nx: "+nx+"    ny: "+ny);
-//                    fovind++;
-//                }
-//                nyCount=-nyCount;  
+                }  
             }
-//            if(nxCount==0){
-//                nxCount=nxCount+1; 
-//            }else if(nxCount>0){
-//                nxCount=nxCount+1;
-//            }else if(nxCount<0){
-//                nxCount=nxCount-1;
-//            }
             nx++;
             for(int ix=0;ix<nx;ix++){
-//                if(nxCount>0 & fovind<noFOV){
                 if(fovind<noFOV){
-                    //System.out.println("ID: "+fovind+"        nx: "+nx+"    ny: "+ny);
-                    mysteriousSpiralProducer(ny, nx, wellString);
+                    centrexy=mysteriousSpiralProducer(ny, nx, wellString, centrexy, spiralFOVs);
                     fovind++;
                 }
-//                } else if(nxCount<0 & fovind<noFOV){
-//                    System.out.println("ID: "+fovind+"    nxC: "+nxCount+"    nyC: "+nyCount+"        nx: "+nx+"    ny: "+ny);
-//                    fovind++;
-//                }
-//                nxCount=-nxCount;     
             }
-            
-//            System.out.println("ID: "+fovind+"    nx: "+nx+"    ny: "+ny);
-            
-//            fovind++;            
-//            fov = new FOV(centrexy[0], centrexy[1], 0,
-//                      wellString, pp_);
-//            
-//            
-//                      spiralFOVs.add(fov);
-//                if (fov.isValid()) {
-//                    spiralFOVs.add(fov);
-//                }
-                      
-
             dirind++;
         }
         // trim, a bit hacky but works
@@ -832,54 +777,44 @@ public class XYSequencing extends javax.swing.JPanel {
         for (int j = currsize - 1; j > noFOV - 1; j--) {
             spiralFOVs.remove(j);
         }
-        System.out.println("END");
+//        System.out.println("END");
         return spiralFOVs;
     }
     
-    private void mysteriousSpiralProducer(double ny, double nx, String wellString) {
-        ArrayList<FOV> spiralFOVs = new ArrayList<FOV>();
+    private double[] mysteriousSpiralProducer(double ny, double nx, String wellString, double[] centrexy, ArrayList<FOV> spiralFgOVs) {
         FOV fov = new FOV(wellString, pp_, 0);
-        double[] centrexy = {fov.getX(), fov.getY()};
-//        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
         double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
-        
-        DXY[0]=1;
-        DXY[1]=1;
-        centrexy[0]=0;
-        centrexy[1]=0;
-        
         if(nx==0 & ny==1){
             centrexy[1]=centrexy[1]+DXY[1];
             fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);
             spiralFOVs.add(fov);
-        } else if(nx%2==0){
-            if(ny%2==0){
+        } else if(nx==ny){
+            if(nx%2==0){
                 centrexy[0]=centrexy[0]-DXY[0];
-                centrexy[1]=centrexy[1]-DXY[1];
+                fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);
+                spiralFOVs.add(fov);
+                
+            } else {
+                centrexy[0]=centrexy[0]+DXY[0];
                 fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);
                 spiralFOVs.add(fov);
             }
-            else{
-                centrexy[0]=centrexy[0]-DXY[0];
+        } else if (nx!=ny){
+            if(ny%2==0){
+                centrexy[1]=centrexy[1]-DXY[1];
+                fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);
+                spiralFOVs.add(fov);
+                
+            } else {
                 centrexy[1]=centrexy[1]+DXY[1];
                 fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);
                 spiralFOVs.add(fov);
             }
         } else {
-            if(ny%2==0){
-                centrexy[0]=centrexy[0]+DXY[0];
-                centrexy[1]=centrexy[1]-DXY[1];
-                fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);
-                spiralFOVs.add(fov);
-            }
-            else{
-                centrexy[0]=centrexy[0]+DXY[0];
-                centrexy[1]=centrexy[1]+DXY[1];
-                fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);
-                spiralFOVs.add(fov);
-            }    
+            System.out.println("Couldn't identify Spiral operator!");
         }
-        System.out.println("y: "+fov.getY()+"    x: "+fov.getX());
+//        System.out.println("y: "+fov.getY()+"    x: "+fov.getX()+"           ny: "+ny+"    nx: "+nx);
+        return centrexy;
     }
 
     private ArrayList<FOV> generateRing(int noFOV, String wellString) {
