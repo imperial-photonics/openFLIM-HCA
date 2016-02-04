@@ -56,6 +56,7 @@ public class XYSequencing extends javax.swing.JPanel {
     public boolean sendEmailBoolean=false;
     String emailString;
     private Variable var_;
+    private ArrayList<FOV> spiralFOVs = new ArrayList<FOV>();
 
     /**
      * Creates new form XYSequencing
@@ -733,33 +734,24 @@ public class XYSequencing extends javax.swing.JPanel {
     }
     
     private ArrayList<FOV> generateSpiral(int noFOV, String wellString) {
-
+        spiralFOVs.clear();
         // cover whole well in a rectangle; remove those outwith well bounds;
         // finally trim to #fov. Deals with asymmetric FOV
-        ArrayList<FOV> spiralFOVs = new ArrayList<FOV>();
+        
         FOV fov = new FOV(wellString, pp_, 0);
         double[] centrexy = {fov.getX(), fov.getY()};
 //        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
         double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
         
-        
-        DXY[0]=1;
-        DXY[1]=1;
-        centrexy[0]=0;
-        centrexy[1]=0;
-        
-        
         /*int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         double[] dxy = new double[2];
         int stepsInCurrentDir;*/
-        
-        
-        fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);//Fred
         spiralFOVs.add(fov);
         int fovind = 1;
         int dirind = 0;
         double nx = 0;
         double ny = 0;
+        
 //        System.out.println("Start");
 //        System.out.println("y: "+fov.getY()+"    x: "+fov.getX()+"           ny: "+ny+"    nx: "+nx);
 // 
@@ -767,14 +759,14 @@ public class XYSequencing extends javax.swing.JPanel {
             ny++;
             for(int iy=0;iy<ny;iy++){
                 if(fovind<noFOV){
-                    centrexy=mysteriousSpiralProducer(ny, nx, wellString,centrexy);
+                    centrexy=mysteriousSpiralProducer(ny, nx, wellString, centrexy, spiralFOVs);
                     fovind++;
                 }  
             }
             nx++;
             for(int ix=0;ix<nx;ix++){
                 if(fovind<noFOV){
-                    centrexy=mysteriousSpiralProducer(ny, nx, wellString,centrexy);
+                    centrexy=mysteriousSpiralProducer(ny, nx, wellString, centrexy, spiralFOVs);
                     fovind++;
                 }
             }
@@ -789,8 +781,7 @@ public class XYSequencing extends javax.swing.JPanel {
         return spiralFOVs;
     }
     
-    private double[] mysteriousSpiralProducer(double ny, double nx, String wellString, double[] centrexy) {
-        ArrayList<FOV> spiralFOVs = new ArrayList<FOV>();
+    private double[] mysteriousSpiralProducer(double ny, double nx, String wellString, double[] centrexy, ArrayList<FOV> spiralFgOVs) {
         FOV fov = new FOV(wellString, pp_, 0);
         double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
         if(nx==0 & ny==1){
