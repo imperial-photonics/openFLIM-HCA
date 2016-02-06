@@ -211,6 +211,7 @@ public class XYSequencing extends javax.swing.JPanel {
         FOVToFindField = new javax.swing.JFormattedTextField();
         attemptsField = new javax.swing.JFormattedTextField();
         intensityThresoldField = new javax.swing.JFormattedTextField();
+        testPrefind = new javax.swing.JButton();
         plateMapBasePanel = new javax.swing.JPanel();
         autoFOVPanel = new javax.swing.JPanel();
         autoGenerateFOVsCheck = new javax.swing.JCheckBox();
@@ -358,29 +359,38 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
+        testPrefind.setText("Test prefind on current FOV");
+        testPrefind.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                testPrefindActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout prefindPanelLayout = new javax.swing.GroupLayout(prefindPanel);
         prefindPanel.setLayout(prefindPanelLayout);
         prefindPanelLayout.setHorizontalGroup(
             prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(prefindPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(prefindPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(intensityThresoldField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(prefindPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(FOVToFindField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(prefindPanelLayout.createSequentialGroup()
-                        .addComponent(quickPFButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(advancedPFButton))
-                    .addGroup(prefindPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(attemptsField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, prefindPanelLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(testPrefind, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(prefindPanelLayout.createSequentialGroup()
+                            .addComponent(jLabel3)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(intensityThresoldField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(prefindPanelLayout.createSequentialGroup()
+                            .addComponent(jLabel4)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(FOVToFindField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(prefindPanelLayout.createSequentialGroup()
+                            .addComponent(quickPFButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(advancedPFButton))
+                        .addGroup(prefindPanelLayout.createSequentialGroup()
+                            .addComponent(jLabel5)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(attemptsField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))))
         );
         prefindPanelLayout.setVerticalGroup(
             prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -397,6 +407,8 @@ public class XYSequencing extends javax.swing.JPanel {
                 .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(attemptsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(testPrefind)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(quickPFButton)
@@ -962,6 +974,10 @@ public class XYSequencing extends javax.swing.JPanel {
 
     }//GEN-LAST:event_genZStackButtonActionPerformed
 
+    public double getPrefindThreshold(){
+        return Double.parseDouble(intensityThresoldField.getText().toString());
+    }
+    
     private void doZStackGeneration(double[] z) {
         double startUm = z[0];
         double endUm = z[1];
@@ -1035,6 +1051,10 @@ public class XYSequencing extends javax.swing.JPanel {
     private void fovTablePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fovTablePanelMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_fovTablePanelMouseClicked
+
+    private void testPrefindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testPrefindActionPerformed
+        parent_.testPrefind();        // TODO add your handling code here:
+    }//GEN-LAST:event_testPrefindActionPerformed
 
     
     public void setPlateProperties(PlateProperties pp) {
@@ -1119,6 +1139,7 @@ public class XYSequencing extends javax.swing.JPanel {
     private javax.swing.JLabel ringRadiusLabel;
     private javax.swing.JButton storeXYZButton;
     private javax.swing.JPanel storedXYZPanel;
+    private javax.swing.JButton testPrefind;
     private javax.swing.JComboBox zModeCombo;
     // End of variables declaration//GEN-END:variables
 
