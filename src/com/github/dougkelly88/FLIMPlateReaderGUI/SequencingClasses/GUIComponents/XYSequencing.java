@@ -21,6 +21,7 @@ import java.awt.event.MouseEvent;
 import static java.lang.Math.abs;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -34,6 +35,13 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.text.NumberFormatter;
 
+// This lot are for attempts at handling filenames - to get the list of macros
+//import Java.io.*;
+import ij.io.DirectoryChooser;
+// http://stackoverflow.com/questions/31700500/using-netbeans-8-0-2-and-want-to-use-org-apache-commons-io-fileutils-how
+//import javax.swing.filechooser.FileNameExtensionFilter;
+//import org.apache.commons.io.FileUtils;
+//import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 /**
  *
@@ -212,6 +220,7 @@ public class XYSequencing extends javax.swing.JPanel {
         attemptsField = new javax.swing.JFormattedTextField();
         intensityThresoldField = new javax.swing.JFormattedTextField();
         testPrefind = new javax.swing.JButton();
+        prefindMacroname = new javax.swing.JComboBox();
         plateMapBasePanel = new javax.swing.JPanel();
         autoFOVPanel = new javax.swing.JPanel();
         autoGenerateFOVsCheck = new javax.swing.JCheckBox();
@@ -299,7 +308,7 @@ public class XYSequencing extends javax.swing.JPanel {
                 .addGroup(storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(fovTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(storedXYZPanelLayout.createSequentialGroup()
-                        .addGap(0, 3, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(zModeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(genZStackButton)
@@ -323,8 +332,7 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
-        advancedPFButton.setText("Setup advanced prefind...");
-        advancedPFButton.setEnabled(false);
+        advancedPFButton.setText("Update list of macros");
         advancedPFButton.setMargin(new java.awt.Insets(2, 4, 2, 4));
         advancedPFButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -366,31 +374,45 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
+        prefindMacroname.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        prefindMacroname.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prefindMacronameActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout prefindPanelLayout = new javax.swing.GroupLayout(prefindPanel);
         prefindPanel.setLayout(prefindPanelLayout);
         prefindPanelLayout.setHorizontalGroup(
             prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, prefindPanelLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(testPrefind, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(prefindPanelLayout.createSequentialGroup()
-                            .addComponent(jLabel3)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(intensityThresoldField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(prefindPanelLayout.createSequentialGroup()
-                            .addComponent(jLabel4)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(FOVToFindField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(prefindPanelLayout.createSequentialGroup()
-                            .addComponent(quickPFButton)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(advancedPFButton))
-                        .addGroup(prefindPanelLayout.createSequentialGroup()
-                            .addComponent(jLabel5)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(attemptsField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(prefindPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(prefindMacroname, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(prefindPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(testPrefind, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, prefindPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(prefindPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(intensityThresoldField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(prefindPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(FOVToFindField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(prefindPanelLayout.createSequentialGroup()
+                                .addComponent(quickPFButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(advancedPFButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(prefindPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(attemptsField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap())
         );
         prefindPanelLayout.setVerticalGroup(
             prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -407,9 +429,11 @@ public class XYSequencing extends javax.swing.JPanel {
                 .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(attemptsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(testPrefind)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(prefindMacroname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(quickPFButton)
                     .addComponent(advancedPFButton))
@@ -633,6 +657,11 @@ public class XYSequencing extends javax.swing.JPanel {
         }
     }
 
+    public String getSelectedAnalyser (){
+        System.out.println(prefindMacroname.getSelectedItem().toString());
+        return prefindMacroname.getSelectedItem().toString();
+    }
+        
     private ArrayList<FOV> generateSpiral1(int noFOV, String wellString) {
 
         // cover whole well in a rectangle; remove those outwith well bounds;
@@ -882,7 +911,29 @@ public class XYSequencing extends javax.swing.JPanel {
     }//GEN-LAST:event_quickPFButtonActionPerformed
 
     private void advancedPFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_advancedPFButtonActionPerformed
-        // TODO add your handling code here:
+        // Update the list of macros in the combobox nextdoor
+        
+        // http://rsb.info.nih.gov/ij/developer/api/ij/io/DirectoryChooser.html
+        String directoryName=ij.IJ.getDirectory("plugins");
+        System.out.println(directoryName);
+        // http://alvinalexander.com/java/list-files-directory-match-filename-extension-pattern
+        java.util.Collection macrofiles;
+        String [] filefilter={"ijm"};
+        java.io.File directory = new java.io.File(directoryName);
+        macrofiles = org.apache.commons.io.FileUtils.listFiles(directory, filefilter, false);
+        // Unholy hybrid of: http://stackoverflow.com/questions/3293946/the-easiest-way-to-transform-collection-to-array
+        //                 : http://stackoverflow.com/questions/1018750/how-to-convert-object-array-to-string-array-in-java
+        String[] macros = new String[macrofiles.size()];
+        
+        Object[] macrofilesarray = macrofiles.toArray(new java.io.File[macrofiles.size()]);
+        for (int i=0;i<macrofiles.size();i++){
+            // Just want the name, not the whole path...
+            java.io.File filepath = new java.io.File(macrofilesarray[i].toString());
+            macros[i] = filepath.getName();
+        }
+        // http://stackoverflow.com/questions/4620295/dynamically-change-jcombobox
+        // http://stackoverflow.com/questions/2812850/how-to-use-map-element-as-text-of-a-jcombobox/2813094#2813094
+        prefindMacroname.setModel(new javax.swing.DefaultComboBoxModel(macros));
     }//GEN-LAST:event_advancedPFButtonActionPerformed
 
     private void FOVToFindFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FOVToFindFieldActionPerformed
@@ -1056,6 +1107,10 @@ public class XYSequencing extends javax.swing.JPanel {
         parent_.testPrefind();        // TODO add your handling code here:
     }//GEN-LAST:event_testPrefindActionPerformed
 
+    private void prefindMacronameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prefindMacronameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_prefindMacronameActionPerformed
+
     
     public void setPlateProperties(PlateProperties pp) {
         pp_ = pp;
@@ -1133,6 +1188,7 @@ public class XYSequencing extends javax.swing.JPanel {
     private javax.swing.JLabel noFOVLabel;
     private javax.swing.JFormattedTextField noFOVsField;
     private javax.swing.JPanel plateMapBasePanel;
+    private javax.swing.JComboBox prefindMacroname;
     private javax.swing.JPanel prefindPanel;
     private javax.swing.JButton quickPFButton;
     private javax.swing.JFormattedTextField ringRadiusField;

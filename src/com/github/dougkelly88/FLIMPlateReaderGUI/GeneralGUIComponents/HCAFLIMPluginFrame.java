@@ -1062,8 +1062,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }
     
     public boolean testPrefind() {// throws InterruptedException{ 
-
+        //prefind_.Snapandshow(prefindImage);
         boolean result = prefind_.Analyse(prefind_.Snapandshow(prefindImage));
+        //boolean result = false;
         return result;
     }
     
@@ -1161,6 +1162,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
     public double getFixedAFDefault(){
         return (double)xYZPanel1.getFixedAFDefault();
+    }
+    
+    public String getSelectedAnalyser(){
+        return xYSequencing1.getSelectedAnalyser();
     }
     
     public void doSequenceAcquisition() throws InterruptedException{

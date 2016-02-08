@@ -86,8 +86,13 @@ public class Prefind {
     public boolean Analyse(ImagePlus input){
         // For now, default to doing a simple intensity threshold...
         //return IntensityThresh(input);
-        String macroname = "TEST";
-        return runAMacro(input, macroname);
+        
+        //Run a macro of name macroname.ijm, located in MM directory > Plugins
+        String macroname = frame_.getSelectedAnalyser();
+        //Remove the .ijm at the end of the filename
+        String[] parts = macroname.split(".ijm");
+        //Hopefully there isn't anyone putting ".ijm" in the middle of their filenames...
+        return runAMacro(input, parts[0]);
     }
     
     private boolean IntensityThresh(ImagePlus input){
