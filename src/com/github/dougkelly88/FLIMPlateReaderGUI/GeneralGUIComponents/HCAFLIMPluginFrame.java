@@ -127,7 +127,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public XYZMotionInterface xyzmi_;
     public AcqOrderTableModel tableModel_;
     private JTable seqOrderTable_;
-    public  FOV currentFOV_;
+    public  FOV globalFOVset_;
     //private DisplayImage2 displayImage2_;
     private SnakeOrderer snakeOrderer_;
     public static HSSFWorkbook wb = new HSSFWorkbook();
@@ -188,7 +188,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         sap_ = SeqAcqProps.getInstance();
         pp_ = new PlateProperties();
-        currentFOV_ = new FOV("C4", pp_, 1000);
+        globalFOVset_ = new FOV("C4", pp_, 1000);
 
         var_ = Variable.getInstance();
         currentBasePathField.setText(var_.basepath);
@@ -1819,7 +1819,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
             // so that same functions can be used, generate dummy SequencedAcquisitionSetup
             acq.snapFLIMImageFred(fullname, fLIMPanel1.getDelays(), 
-                    new SeqAcqSetup(currentFOV_, new TimePoint(0.0,false,initLDWells), new FilterSetup(lightPathControls1, exp, fLIMPanel1)), softwareBinningField.getText());
+                    new SeqAcqSetup(globalFOVset_, new TimePoint(0.0,false,initLDWells), new FilterSetup(lightPathControls1, exp, fLIMPanel1)), softwareBinningField.getText());
             progressBar_.setEnd("Snap FLIM image");
         }
         arduino_.setDigitalOutLow();

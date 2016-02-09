@@ -688,7 +688,7 @@ public class XYSequencing extends javax.swing.JPanel {
         FOV fov = new FOV(wellString, pp_, 0);
         double[] centrexy = {fov.getX(), fov.getY()};
 //        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
-        double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
+        double[] DXY = {parent_.globalFOVset_.getWidth_(), parent_.globalFOVset_.getHeight_()};
         int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         double[] dxy = new double[2];
         int stepsInCurrentDir;
@@ -731,7 +731,7 @@ public class XYSequencing extends javax.swing.JPanel {
         FOV fov = new FOV(wellString, pp_, 0);
         double[] centrexy = {fov.getX(), fov.getY()};
 //        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
-        double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
+        double[] DXY = {parent_.globalFOVset_.getWidth_(), parent_.globalFOVset_.getHeight_()};
         
         /*int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         double[] dxy = new double[2];
@@ -800,7 +800,7 @@ public class XYSequencing extends javax.swing.JPanel {
         FOV fov = new FOV(wellString, pp_, 0);
         double[] centrexy = {fov.getX(), fov.getY()};
 //        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
-        double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
+        double[] DXY = {parent_.globalFOVset_.getWidth_(), parent_.globalFOVset_.getHeight_()};
         
         /*int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         double[] dxy = new double[2];
@@ -842,7 +842,7 @@ public class XYSequencing extends javax.swing.JPanel {
     
     private double[] mysteriousSpiralProducer(double ny, double nx, String wellString, double[] centrexy, ArrayList<FOV> spiralFgOVs) {
         FOV fov = new FOV(wellString, pp_, 0);
-        double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
+        double[] DXY = {parent_.globalFOVset_.getWidth_(), parent_.globalFOVset_.getHeight_()};
         if(nx==0 & ny==1){
             centrexy[1]=centrexy[1]+DXY[1];
             fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);
