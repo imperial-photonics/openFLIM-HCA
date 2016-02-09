@@ -570,8 +570,18 @@ public class LightPathPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_objectiveComboBoxActionPerformed
 
     public void setMag(String magString){
-        int indX=magString.indexOf('x');
-        String newString= magString.substring(0,indX);
+        
+        int indX=0;
+        if(magString.contains("x")){
+            indX=magString.indexOf("x");
+        }else if(magString.contains("X")){
+            indX=magString.indexOf("X");
+        }else{
+            System.out.println("Is objective empty? Yes-> everything is fine. No-> cannot identify objective label in hardware configuration file. Make sure there is only one x included"
+                        + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");
+        }
+        String newString=null;
+        newString= magString.substring(0,indX);
         try{
             var_.magnification=Double.parseDouble(magString.substring(0,indX));
         }catch(Exception ex){
