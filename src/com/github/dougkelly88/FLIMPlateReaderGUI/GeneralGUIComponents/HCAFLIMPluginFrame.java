@@ -12,6 +12,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.snapFlimImageThread;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Prefind;
 import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZMotionInterface;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.AcqOrderTableModel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.FComparator;
@@ -137,6 +138,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public Arduino arduino_;
     public boolean terminate = false;
     public int singleImage;
+    
+    public Prefind prefind_;
+    public ImagePlus prefindImage;
+    public ImageProcessor prefindIP;
+    
     private ArrayList<String> initLDWells = new ArrayList<>();
     // Replaces private ArrayList<String> initLDWells = new ArrayList<String>();
     //
@@ -165,6 +171,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         xYZPanel1.setParent(this);
         xYSequencing1.setParent(this);
         lightPathControls1.setParent(this);
+        
         MMStudio gui_ = MMStudio.getInstance();
         gui_.registerForEvents(this);
         
@@ -220,12 +227,17 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         arduino_ = Arduino.getInstance();
         arduino_.initializeArduino();
         
+        prefind_= new Prefind(frame_);
+        
         core_.setAutoShutter(false);
         initLDWells.add("A1");
         initLDWells.add("B2");
         initLDWells.add("C3");
         initLDWells.add("D4");
         initLDWells.add("E5");
+        
+        prefindIP = ImageUtils.makeProcessor(core_);
+        prefindImage = new ImagePlus("Prefind",prefindIP);
     }
 
     public CMMCore getCore() {
@@ -982,6 +994,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         return AFenabled;
     }
     
+    public double getPrefindThreshold(){
+        return xYSequencing1.getPrefindThreshold();
+    }
+    
+    public double getPercentCoverage(){
+        return xYSequencing1.getPercentCoverage();
+    }
     
     // A routine for determining whehter we want to accept a FOV - hive this off to a separate class later
     public boolean checkprefindimg(Object img){
@@ -1045,7 +1064,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         System.out.println(accept);
         return accept;
     }
-        
+    
+    public boolean testPrefind() {// throws InterruptedException{ 
+        //prefind_.Snapandshow(prefindImage);
+        boolean result = prefind_.Analyse(prefind_.Snapandshow(prefindImage));
+        //boolean result = false;
+        return result;
+    }
+    
     public boolean prefind() throws InterruptedException{ // THROW is copied from doSequenceAcquisition - assume this is for Abort?
         //Allow for testing on my laptop without the XY stage and whatnot...
         boolean testmode = true;
@@ -1140,6 +1166,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
     public double getFixedAFDefault(){
         return (double)xYZPanel1.getFixedAFDefault();
+    }
+    
+    public String getSelectedAnalyser(){
+        return xYSequencing1.getSelectedAnalyser();
     }
     
     public void doSequenceAcquisition() throws InterruptedException{

@@ -64,7 +64,7 @@ public final class XYZMotionInterface {
         
         try{
             core_.setPosition(zstage_, Double.parseDouble(core_.getProperty("Objective", "Safe Position")));
-            core_.home(xystage_);
+            //core_.home(xystage_);
             core_.waitForDeviceType(DeviceType.XYStageDevice);
             gotoFOV(new FOV("C4", pp_, 1000));
         } catch (Exception e)
