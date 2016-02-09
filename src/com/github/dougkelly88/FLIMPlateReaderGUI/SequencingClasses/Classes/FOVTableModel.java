@@ -65,6 +65,11 @@ public class FOVTableModel extends AbstractTableModel {
                 return fov;
         }
     }
+    
+    public FOV getFOV(int row){
+        FOV fov = data_.get(row);
+        return fov;
+    }
 
     @Override
     public Class getColumnClass(int column) {

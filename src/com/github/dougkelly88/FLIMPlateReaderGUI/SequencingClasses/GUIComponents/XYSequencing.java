@@ -44,6 +44,7 @@ public class XYSequencing extends javax.swing.JPanel {
     PlateProperties pp_;
     PlateMapDrawPanel pmdp_;
     public FOVTableModel tableModel_;
+    public FOVTableModel searchFOVtableModel_;
     private static final XYSequencing fINSTANCE =  new XYSequencing();
     JTable fovTable_;
     SeqAcqProps sap_;
@@ -55,6 +56,7 @@ public class XYSequencing extends javax.swing.JPanel {
     public boolean sendEmailBoolean=false;
     String emailString;
     private Variable var_;
+    private ArrayList<FOV> spiralFOVs = new ArrayList<FOV>();
 
     /**
      * Creates new form XYSequencing
@@ -77,6 +79,7 @@ public class XYSequencing extends javax.swing.JPanel {
         plateMapBasePanel.add(pmdp_, BorderLayout.CENTER);
 
         tableModel_ = new FOVTableModel(pp_);
+        searchFOVtableModel_ = new FOVTableModel(pp_); //Not sure if this is the best way, but try it for now.
         tableModel_.addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
@@ -131,6 +134,19 @@ public class XYSequencing extends javax.swing.JPanel {
                     // later implementations?) and subtract from that of the 
                     // NEWLY SELECTED FOV. 
                     // TODO: fix for proper zAsOffset behaviour. 
+                    // Wait for move completion
+                    while (xyzmi_.isStageBusy()){
+                       System.out.println("Stage moving...");
+                    };    
+                    
+                    if(parent_.checkifAFenabled()){
+                        // If we have gone to the FOV, and have AF, do AF
+                        xyzmi_.customAutofocus(parent_.getAFOffset());
+                    } else {
+                        // If we don't have AF, go to the 'good offset position'
+                        xyzmi_.moveZAbsolute(parent_.getFixedAFDefault());
+                    }
+                    //Now do the relative shift
                     xyzmi_.moveZRelative(tableModel_.getData().get(r).getZ());
                     System.out.println("Z value"+tableModel_.getData().get(r).getZ());
                 }
@@ -221,6 +237,12 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
+        fovTablePanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fovTablePanelMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout fovTablePanelLayout = new javax.swing.GroupLayout(fovTablePanel);
         fovTablePanel.setLayout(fovTablePanelLayout);
         fovTablePanelLayout.setHorizontalGroup(
@@ -279,10 +301,9 @@ public class XYSequencing extends javax.swing.JPanel {
         );
 
         prefindPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Prefind"));
-        prefindPanel.setEnabled(false);
 
         quickPFButton.setText("Quick prefind");
-        quickPFButton.setEnabled(false);
+        quickPFButton.setFocusCycleRoot(true);
         quickPFButton.setMargin(new java.awt.Insets(2, 8, 2, 8));
         quickPFButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -300,16 +321,12 @@ public class XYSequencing extends javax.swing.JPanel {
         });
 
         jLabel3.setText("Intensity threshold value (DN)");
-        jLabel3.setEnabled(false);
 
         jLabel4.setText("Desired number of FOV/well");
-        jLabel4.setEnabled(false);
 
         jLabel5.setText("Attempts before failing");
-        jLabel5.setEnabled(false);
 
         FOVToFindField.setText("4");
-        FOVToFindField.setEnabled(false);
         FOVToFindField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 FOVToFindFieldActionPerformed(evt);
@@ -317,7 +334,6 @@ public class XYSequencing extends javax.swing.JPanel {
         });
 
         attemptsField.setText("4");
-        attemptsField.setEnabled(false);
         attemptsField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 attemptsFieldActionPerformed(evt);
@@ -325,7 +341,6 @@ public class XYSequencing extends javax.swing.JPanel {
         });
 
         intensityThresoldField.setText("1000");
-        intensityThresoldField.setEnabled(false);
         intensityThresoldField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 intensityThresoldFieldActionPerformed(evt);
@@ -557,6 +572,43 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         }
     }
+    
+    public void generatesearchFOVs(){ // Copied from generateFOVs()
+        ArrayList<FOV> searchfovs = new ArrayList<FOV>();
+        //Use the display table to 
+        ArrayList<FOV> preexisting = new ArrayList<FOV>(tableModel_.getData());
+        searchFOVtableModel_.clearAllData();
+        tableModel_.clearAllData();
+        //Clear pre-existing FOV table? Not sure yet, so comment out
+        //tableModel_.clearAllData();
+
+        for (int cols = 0; cols < pp_.getPlateColumns(); cols++) {
+            ArrayList<Boolean> temp = pmdp_.wellsSelected_.get(cols);
+            for (int rows = 0; rows < pp_.getPlateRows(); rows++) {
+                if (temp.get(rows)) {
+
+                    //Always do spiral for now...
+                    
+                    String wellString = Character.toString((char) (65 + rows)) + Integer.toString(cols + 1);
+                    //Max # of times to search = #of FOVs desired * #to try before giving up
+                    searchfovs = generateSpiral(Integer.parseInt(FOVToFindField.getText())*(Integer.parseInt(attemptsField.getText())),wellString);
+
+                    for (FOV fov : searchfovs) {
+                        //Do we need this part?
+                        if (preexisting.contains(fov)) {
+                            fov.setGroup(preexisting.get(preexisting.indexOf(fov)).getGroup());
+                        } else {
+                            fov.setGroup(groupDescField.getText());
+                        }
+
+                        searchFOVtableModel_.addRow(fov);
+                    }
+                    //Can ignore the Z stuff?
+                    //doZStackGeneration(getZStackParams());
+                }
+            }
+        }
+    }
 
     private ArrayList<FOV> generateSpiral1(int noFOV, String wellString) {
 
@@ -567,7 +619,6 @@ public class XYSequencing extends javax.swing.JPanel {
         double[] centrexy = {fov.getX(), fov.getY()};
 //        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
         double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
-        
         int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         double[] dxy = new double[2];
         int stepsInCurrentDir;
@@ -602,7 +653,7 @@ public class XYSequencing extends javax.swing.JPanel {
         return spiralFOVs;
     }
     
-    private ArrayList<FOV> generateSpiral(int noFOV, String wellString) {
+    private ArrayList<FOV> generateSpiral11(int noFOV, String wellString) {
 
         // cover whole well in a rectangle; remove those outwith well bounds;
         // finally trim to #fov. Deals with asymmetric FOV
@@ -615,7 +666,7 @@ public class XYSequencing extends javax.swing.JPanel {
         /*int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         double[] dxy = new double[2];
         int stepsInCurrentDir;*/
-
+        
         spiralFOVs.add(fov);
         int fovind = 1;
         int dirind = 0;
@@ -623,11 +674,14 @@ public class XYSequencing extends javax.swing.JPanel {
         double nxCount=0;
         double ny = 1;
         double nyCount=0;
+
+        
         while (fovind < noFOV & dirind < 100) {   // just in case we have a runaway case...
             //stepsInCurrentDir = (int) Math.ceil((double) (dirind) / 2);
             if (fovind%2==0)
             {
-                while (nyCount<abs(ny)){
+            
+              while (nyCount<abs(ny)){
                 centrexy[1]=centrexy[1]+(ny+nyCount)*DXY[1];
                 nyCount++;
                 
@@ -636,6 +690,7 @@ public class XYSequencing extends javax.swing.JPanel {
             }
             else
             {
+ 
                 while (nxCount<abs(nx)){
                     centrexy[0]=centrexy[0]+(nx+nyCount)*DXY[0];
                     nxCount++;
@@ -643,14 +698,19 @@ public class XYSequencing extends javax.swing.JPanel {
                 }
                 nx=-(abs(nx)+1);
             }
+            
             fovind++;            
             fov = new FOV(centrexy[0], centrexy[1], 0,
                       wellString, pp_);
+            
+            
                       
                 if (fov.isValid()) {
                     spiralFOVs.add(fov);
                 }
-            
+                      
+                      
+            System.out.println(fov.toString());
             dirind++;
         //    System.out.print("Dirind = " + dirind + "\n");
         }
@@ -660,6 +720,90 @@ public class XYSequencing extends javax.swing.JPanel {
             spiralFOVs.remove(j);
         }
         return spiralFOVs;
+    }
+    
+    private ArrayList<FOV> generateSpiral(int noFOV, String wellString) {
+        spiralFOVs.clear();
+        // cover whole well in a rectangle; remove those outwith well bounds;
+        // finally trim to #fov. Deals with asymmetric FOV
+        
+        FOV fov = new FOV(wellString, pp_, 0);
+        double[] centrexy = {fov.getX(), fov.getY()};
+//        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
+        double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
+        
+        /*int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+        double[] dxy = new double[2];
+        int stepsInCurrentDir;*/
+        spiralFOVs.add(fov);
+        int fovind = 1;
+        int dirind = 0;
+        double nx = 0;
+        double ny = 0;
+        
+//        System.out.println("Start");
+//        System.out.println("y: "+fov.getY()+"    x: "+fov.getX()+"           ny: "+ny+"    nx: "+nx);
+// 
+        while (fovind < noFOV & dirind < 100) {   // just in case we have a runaway case...
+            ny++;
+            for(int iy=0;iy<ny;iy++){
+                if(fovind<noFOV){
+                    centrexy=mysteriousSpiralProducer(ny, nx, wellString, centrexy, spiralFOVs);
+                    fovind++;
+                }  
+            }
+            nx++;
+            for(int ix=0;ix<nx;ix++){
+                if(fovind<noFOV){
+                    centrexy=mysteriousSpiralProducer(ny, nx, wellString, centrexy, spiralFOVs);
+                    fovind++;
+                }
+            }
+            dirind++;
+        }
+        // trim, a bit hacky but works
+        int currsize = spiralFOVs.size();
+        for (int j = currsize - 1; j > noFOV - 1; j--) {
+            spiralFOVs.remove(j);
+        }
+//        System.out.println("END");
+        return spiralFOVs;
+    }
+    
+    private double[] mysteriousSpiralProducer(double ny, double nx, String wellString, double[] centrexy, ArrayList<FOV> spiralFgOVs) {
+        FOV fov = new FOV(wellString, pp_, 0);
+        double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
+        if(nx==0 & ny==1){
+            centrexy[1]=centrexy[1]+DXY[1];
+            fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);
+            spiralFOVs.add(fov);
+        } else if(nx==ny){
+            if(nx%2==0){
+                centrexy[0]=centrexy[0]-DXY[0];
+                fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);
+                spiralFOVs.add(fov);
+                
+            } else {
+                centrexy[0]=centrexy[0]+DXY[0];
+                fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);
+                spiralFOVs.add(fov);
+            }
+        } else if (nx!=ny){
+            if(ny%2==0){
+                centrexy[1]=centrexy[1]-DXY[1];
+                fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);
+                spiralFOVs.add(fov);
+                
+            } else {
+                centrexy[1]=centrexy[1]+DXY[1];
+                fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);
+                spiralFOVs.add(fov);
+            }
+        } else {
+            System.out.println("Couldn't identify Spiral operator!");
+        }
+//        System.out.println("y: "+fov.getY()+"    x: "+fov.getX()+"           ny: "+ny+"    nx: "+nx);
+        return centrexy;
     }
 
     private ArrayList<FOV> generateRing(int noFOV, String wellString) {
@@ -703,7 +847,15 @@ public class XYSequencing extends javax.swing.JPanel {
     }//GEN-LAST:event_ringRadiusFieldActionPerformed
 
     private void quickPFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quickPFButtonActionPerformed
-        // TODO add your handling code here:
+        // Generate a spiral search pattern in each well - always spiral for now?
+        generatesearchFOVs(); // does this need any other arguments?
+        // Call the search function in the parent (HCAFLIMPluginFrame())
+        try{
+            parent_.prefind();
+        }
+        catch (InterruptedException IE){          
+            System.out.println(IE);
+        }
     }//GEN-LAST:event_quickPFButtonActionPerformed
 
     private void advancedPFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_advancedPFButtonActionPerformed
@@ -839,6 +991,7 @@ public class XYSequencing extends javax.swing.JPanel {
         // deal with ZFish case (tile FOVS)
         if (( (String) FOVPatternCombo.getSelectedItem()).equals("ZFish") & autoGenerateFOVsCheck.isSelected()){
             // currently hardcode fov size for 10 x objective...
+            // adds 4 FOVs centred on current xy
             // boilerplate - tidy up!
             double fovx = 1256;
             double fovy = 920;
@@ -863,6 +1016,10 @@ public class XYSequencing extends javax.swing.JPanel {
         setZStackParams(0.0,0.0,1);
         doZStackGeneration(getZStackParams());
     }//GEN-LAST:event_clearZButtonActionPerformed
+
+    private void fovTablePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fovTablePanelMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fovTablePanelMouseClicked
 
     
     public void setPlateProperties(PlateProperties pp) {
@@ -890,6 +1047,18 @@ public class XYSequencing extends javax.swing.JPanel {
         }
         return zStackParams;
     }
+    
+    public int getNoOfAttempts(){
+        return Integer.parseInt(this.attemptsField.getText());
+    }
+    
+    public int getNoOfFOVToFind(){
+        return Integer.parseInt(FOVToFindField.getText());
+    }  
+        
+    public int getSearchRowCount(){
+        return searchFOVtableModel_.getRowCount();
+    }  
     
     public ArrayList<FOV> getFOVTable(){
         return tableModel_.getData();
@@ -936,4 +1105,6 @@ public class XYSequencing extends javax.swing.JPanel {
     private javax.swing.JButton storeXYZButton;
     private javax.swing.JPanel storedXYZPanel;
     // End of variables declaration//GEN-END:variables
+
+    
 }

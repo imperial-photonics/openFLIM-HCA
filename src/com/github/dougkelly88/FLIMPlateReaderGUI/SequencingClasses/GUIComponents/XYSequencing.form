@@ -117,6 +117,9 @@
           </Events>
         </Component>
         <Container class="javax.swing.JPanel" name="fovTablePanel">
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fovTablePanelMouseClicked"/>
+          </Events>
 
           <Layout>
             <DimensionLayout dim="0">
@@ -156,7 +159,6 @@
             <TitledBorder title="Prefind"/>
           </Border>
         </Property>
-        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
 
       <Layout>
@@ -221,7 +223,7 @@
         <Component class="javax.swing.JButton" name="quickPFButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Quick prefind"/>
-            <Property name="enabled" type="boolean" value="false"/>
+            <Property name="focusCycleRoot" type="boolean" value="true"/>
             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
               <Insets value="[2, 8, 2, 8]"/>
             </Property>
@@ -245,25 +247,21 @@
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
             <Property name="text" type="java.lang.String" value="Intensity threshold value (DN)"/>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
           <Properties>
             <Property name="text" type="java.lang.String" value="Desired number of FOV/well"/>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel5">
           <Properties>
             <Property name="text" type="java.lang.String" value="Attempts before failing"/>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JFormattedTextField" name="FOVToFindField">
           <Properties>
             <Property name="text" type="java.lang.String" value="4"/>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="FOVToFindFieldActionPerformed"/>
@@ -272,7 +270,6 @@
         <Component class="javax.swing.JFormattedTextField" name="attemptsField">
           <Properties>
             <Property name="text" type="java.lang.String" value="4"/>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="attemptsFieldActionPerformed"/>
@@ -281,7 +278,6 @@
         <Component class="javax.swing.JFormattedTextField" name="intensityThresoldField">
           <Properties>
             <Property name="text" type="java.lang.String" value="1000"/>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="intensityThresoldFieldActionPerformed"/>

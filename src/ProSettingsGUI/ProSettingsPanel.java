@@ -62,6 +62,8 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         yOffsetRingField = new javax.swing.JTextField();
         yOffsetRingLabel = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        relayText = new javax.swing.JLabel();
+        relayField = new javax.swing.JTextField();
         dougPanel = new javax.swing.JPanel();
         unknownFolderCheckBox = new javax.swing.JCheckBox();
         AcquisitionSavingMode_combo = new javax.swing.JComboBox();
@@ -73,6 +75,10 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         MotorizedMicroscopeTableLabel = new javax.swing.JLabel();
         acquisitionStrategyPanel = new javax.swing.JPanel();
         AcquisitionStrategyComboBox = new javax.swing.JComboBox();
+        prefindthreshtest = new javax.swing.JTextField();
+        Text_for_prefind_thresh = new javax.swing.JTextField();
+        percentage_coverage = new javax.swing.JTextField();
+        pct_coverage_text = new javax.swing.JTextField();
 
         arduinoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Arduino"));
 
@@ -211,6 +217,15 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             }
         });
 
+        relayText.setText("relay between HRI and camera");
+
+        relayField.setText("0.7");
+        relayField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                relayFieldActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout fOVPanelLayout = new javax.swing.GroupLayout(fOVPanel);
         fOVPanel.setLayout(fOVPanelLayout);
         fOVPanelLayout.setHorizontalGroup(
@@ -225,14 +240,23 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(xOffsetRingLabel)
-                            .addComponent(yOffsetRingLabel)))
-                    .addComponent(jButton1))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(yOffsetRingLabel))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(fOVPanelLayout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(relayField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(relayText)
+                        .addGap(94, 94, 94))))
         );
         fOVPanelLayout.setVerticalGroup(
             fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fOVPanelLayout.createSequentialGroup()
-                .addComponent(jButton1)
+                .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(relayText)
+                    .addComponent(relayField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(xOffsetRingField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -351,6 +375,25 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             .addComponent(AcquisitionStrategyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
+        prefindthreshtest.setText("210");
+        prefindthreshtest.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prefindthreshtestActionPerformed(evt);
+            }
+        });
+
+        Text_for_prefind_thresh.setEditable(false);
+        Text_for_prefind_thresh.setText("Threshold for prefind");
+        Text_for_prefind_thresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Text_for_prefind_threshActionPerformed(evt);
+            }
+        });
+
+        percentage_coverage.setText("0.5");
+
+        pct_coverage_text.setText("% coverage needed");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -364,6 +407,14 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(fOVPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(arduinoPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(50, 50, 50)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(prefindthreshtest, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
+                            .addComponent(percentage_coverage))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(Text_for_prefind_thresh, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+                            .addComponent(pct_coverage_text))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
@@ -373,7 +424,8 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(fOVPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -382,19 +434,30 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                 .addComponent(warningPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(arduinoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(fOVPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(dougPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(3, 3, 3)
-                .addComponent(Hardware, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(84, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fOVPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dougPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(3, 3, 3)
+                        .addComponent(Hardware, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(prefindthreshtest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Text_for_prefind_thresh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(percentage_coverage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(pct_coverage_text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(101, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -460,6 +523,26 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         var_.acquisitionStrategy = AcquisitionStrategyComboBox.getSelectedItem().toString();
     }//GEN-LAST:event_AcquisitionStrategyComboBoxActionPerformed
 
+    private void prefindthreshtestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prefindthreshtestActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_prefindthreshtestActionPerformed
+
+    public double getPrefindThresh(){
+        return Double.parseDouble(this.prefindthreshtest.getText());
+    }
+    
+    private void Text_for_prefind_threshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Text_for_prefind_threshActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_Text_for_prefind_threshActionPerformed
+
+    public double getPercentCoverage(){
+        return Double.parseDouble(this.percentage_coverage.getText());
+    }
+    
+    private void relayFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relayFieldActionPerformed
+        var_.relay = Double.parseDouble(relayField.getText( ));
+    }//GEN-LAST:event_relayFieldActionPerformed
+
     public void updatePanel(){
        // do something when ProSettingsPanel is selected
     }
@@ -472,6 +555,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox AutoFocusSelectComboBox;
     private javax.swing.JPanel Hardware;
     private javax.swing.JLabel MotorizedMicroscopeTableLabel;
+    private javax.swing.JTextField Text_for_prefind_thresh;
     private javax.swing.JPanel acquisitionStrategyPanel;
     private javax.swing.JPanel arduinoPanel;
     private javax.swing.JPanel dougPanel;
@@ -483,6 +567,11 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JTextField laserIntensityField;
     private javax.swing.JLabel laserIntensityLabel;
     private javax.swing.JComboBox motorizedMicroscopeTableComboBox;
+    private javax.swing.JTextField pct_coverage_text;
+    private javax.swing.JTextField percentage_coverage;
+    private javax.swing.JTextField prefindthreshtest;
+    private javax.swing.JTextField relayField;
+    private javax.swing.JLabel relayText;
     private javax.swing.JTextField shutterResponseField;
     private javax.swing.JLabel shutterResponseLabel;
     private javax.swing.JTextField thresholdA0Field;
