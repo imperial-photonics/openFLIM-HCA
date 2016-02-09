@@ -221,6 +221,8 @@ public class XYSequencing extends javax.swing.JPanel {
         intensityThresoldField = new javax.swing.JFormattedTextField();
         testPrefind = new javax.swing.JButton();
         prefindMacroname = new javax.swing.JComboBox();
+        jLabel1 = new javax.swing.JLabel();
+        percentCoverage = new javax.swing.JTextField();
         plateMapBasePanel = new javax.swing.JPanel();
         autoFOVPanel = new javax.swing.JPanel();
         autoGenerateFOVsCheck = new javax.swing.JCheckBox();
@@ -360,7 +362,7 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
-        intensityThresoldField.setText("1000");
+        intensityThresoldField.setText("215");
         intensityThresoldField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 intensityThresoldFieldActionPerformed(evt);
@@ -381,29 +383,34 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
+        jLabel1.setText("Percentage cover");
+
+        percentCoverage.setText("2");
+        percentCoverage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                percentCoverageActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout prefindPanelLayout = new javax.swing.GroupLayout(prefindPanel);
         prefindPanel.setLayout(prefindPanelLayout);
         prefindPanelLayout.setHorizontalGroup(
             prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, prefindPanelLayout.createSequentialGroup()
-                .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(prefindPanelLayout.createSequentialGroup()
+            .addGroup(prefindPanelLayout.createSequentialGroup()
+                .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, prefindPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(prefindMacroname, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(prefindPanelLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, prefindPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(testPrefind, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, prefindPanelLayout.createSequentialGroup()
+                    .addGroup(prefindPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(prefindPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
                                 .addComponent(intensityThresoldField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(prefindPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(FOVToFindField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(prefindPanelLayout.createSequentialGroup()
                                 .addComponent(quickPFButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -411,7 +418,15 @@ public class XYSequencing extends javax.swing.JPanel {
                             .addGroup(prefindPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(attemptsField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(attemptsField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, prefindPanelLayout.createSequentialGroup()
+                                .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(18, 18, Short.MAX_VALUE)
+                                .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(percentCoverage)
+                                    .addComponent(FOVToFindField, javax.swing.GroupLayout.DEFAULT_SIZE, 59, Short.MAX_VALUE))))))
                 .addContainerGap())
         );
         prefindPanelLayout.setVerticalGroup(
@@ -421,23 +436,26 @@ public class XYSequencing extends javax.swing.JPanel {
                 .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(intensityThresoldField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(3, 3, 3)
+                .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(percentCoverage)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(FOVToFindField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(attemptsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(testPrefind)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(prefindMacroname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(prefindMacroname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(prefindPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(quickPFButton)
-                    .addComponent(advancedPFButton))
-                .addContainerGap())
+                    .addComponent(advancedPFButton)))
         );
 
         javax.swing.GroupLayout plateMapBasePanelLayout = new javax.swing.GroupLayout(plateMapBasePanel);
@@ -898,56 +916,6 @@ public class XYSequencing extends javax.swing.JPanel {
         generateFOVs();
     }//GEN-LAST:event_ringRadiusFieldActionPerformed
 
-    private void quickPFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quickPFButtonActionPerformed
-        // Generate a spiral search pattern in each well - always spiral for now?
-        generatesearchFOVs(); // does this need any other arguments?
-        // Call the search function in the parent (HCAFLIMPluginFrame())
-        try{
-            parent_.prefind();
-        }
-        catch (InterruptedException IE){          
-            System.out.println(IE);
-        }
-    }//GEN-LAST:event_quickPFButtonActionPerformed
-
-    private void advancedPFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_advancedPFButtonActionPerformed
-        // Update the list of macros in the combobox nextdoor
-        
-        // http://rsb.info.nih.gov/ij/developer/api/ij/io/DirectoryChooser.html
-        String directoryName=ij.IJ.getDirectory("plugins");
-        System.out.println(directoryName);
-        // http://alvinalexander.com/java/list-files-directory-match-filename-extension-pattern
-        java.util.Collection macrofiles;
-        String [] filefilter={"ijm"};
-        java.io.File directory = new java.io.File(directoryName);
-        macrofiles = org.apache.commons.io.FileUtils.listFiles(directory, filefilter, false);
-        // Unholy hybrid of: http://stackoverflow.com/questions/3293946/the-easiest-way-to-transform-collection-to-array
-        //                 : http://stackoverflow.com/questions/1018750/how-to-convert-object-array-to-string-array-in-java
-        String[] macros = new String[macrofiles.size()];
-        
-        Object[] macrofilesarray = macrofiles.toArray(new java.io.File[macrofiles.size()]);
-        for (int i=0;i<macrofiles.size();i++){
-            // Just want the name, not the whole path...
-            java.io.File filepath = new java.io.File(macrofilesarray[i].toString());
-            macros[i] = filepath.getName();
-        }
-        // http://stackoverflow.com/questions/4620295/dynamically-change-jcombobox
-        // http://stackoverflow.com/questions/2812850/how-to-use-map-element-as-text-of-a-jcombobox/2813094#2813094
-        prefindMacroname.setModel(new javax.swing.DefaultComboBoxModel(macros));
-    }//GEN-LAST:event_advancedPFButtonActionPerformed
-
-    private void FOVToFindFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FOVToFindFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_FOVToFindFieldActionPerformed
-
-    private void attemptsFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attemptsFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_attemptsFieldActionPerformed
-
-    private void intensityThresoldFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_intensityThresoldFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_intensityThresoldFieldActionPerformed
-
     private void clearXYZButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearXYZButtonActionPerformed
         tableModel_.clearAllData();
         pmdp_.clearAllWells();
@@ -1029,6 +997,10 @@ public class XYSequencing extends javax.swing.JPanel {
         return Double.parseDouble(intensityThresoldField.getText().toString());
     }
     
+    public double getPercentCoverage(){
+        return Double.parseDouble(percentCoverage.getText().toString());
+    }
+    
     private void doZStackGeneration(double[] z) {
         double startUm = z[0];
         double endUm = z[1];
@@ -1103,13 +1075,67 @@ public class XYSequencing extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_fovTablePanelMouseClicked
 
+    private void prefindMacronameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prefindMacronameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_prefindMacronameActionPerformed
+
     private void testPrefindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testPrefindActionPerformed
         parent_.testPrefind();        // TODO add your handling code here:
     }//GEN-LAST:event_testPrefindActionPerformed
 
-    private void prefindMacronameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prefindMacronameActionPerformed
+    private void intensityThresoldFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_intensityThresoldFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_prefindMacronameActionPerformed
+    }//GEN-LAST:event_intensityThresoldFieldActionPerformed
+
+    private void attemptsFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attemptsFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_attemptsFieldActionPerformed
+
+    private void FOVToFindFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FOVToFindFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FOVToFindFieldActionPerformed
+
+    private void advancedPFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_advancedPFButtonActionPerformed
+        // Update the list of macros in the combobox nextdoor
+
+        // http://rsb.info.nih.gov/ij/developer/api/ij/io/DirectoryChooser.html
+        String directoryName=ij.IJ.getDirectory("plugins");
+        System.out.println(directoryName);
+        // http://alvinalexander.com/java/list-files-directory-match-filename-extension-pattern
+        java.util.Collection macrofiles;
+        String [] filefilter={"ijm"};
+        java.io.File directory = new java.io.File(directoryName);
+        macrofiles = org.apache.commons.io.FileUtils.listFiles(directory, filefilter, false);
+        // Unholy hybrid of: http://stackoverflow.com/questions/3293946/the-easiest-way-to-transform-collection-to-array
+        //                 : http://stackoverflow.com/questions/1018750/how-to-convert-object-array-to-string-array-in-java
+        String[] macros = new String[macrofiles.size()];
+
+        Object[] macrofilesarray = macrofiles.toArray(new java.io.File[macrofiles.size()]);
+        for (int i=0;i<macrofiles.size();i++){
+            // Just want the name, not the whole path...
+            java.io.File filepath = new java.io.File(macrofilesarray[i].toString());
+            macros[i] = filepath.getName();
+        }
+        // http://stackoverflow.com/questions/4620295/dynamically-change-jcombobox
+        // http://stackoverflow.com/questions/2812850/how-to-use-map-element-as-text-of-a-jcombobox/2813094#2813094
+        prefindMacroname.setModel(new javax.swing.DefaultComboBoxModel(macros));
+    }//GEN-LAST:event_advancedPFButtonActionPerformed
+
+    private void quickPFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quickPFButtonActionPerformed
+        // Generate a spiral search pattern in each well - always spiral for now?
+        generatesearchFOVs(); // does this need any other arguments?
+        // Call the search function in the parent (HCAFLIMPluginFrame())
+        try{
+            parent_.prefind();
+        }
+        catch (InterruptedException IE){
+            System.out.println(IE);
+        }
+    }//GEN-LAST:event_quickPFButtonActionPerformed
+
+    private void percentCoverageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_percentCoverageActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_percentCoverageActionPerformed
 
     
     public void setPlateProperties(PlateProperties pp) {
@@ -1182,11 +1208,13 @@ public class XYSequencing extends javax.swing.JPanel {
     private javax.swing.JTextField groupDescField;
     private javax.swing.JLabel groupDescLabel;
     private javax.swing.JFormattedTextField intensityThresoldField;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel noFOVLabel;
     private javax.swing.JFormattedTextField noFOVsField;
+    private javax.swing.JTextField percentCoverage;
     private javax.swing.JPanel plateMapBasePanel;
     private javax.swing.JComboBox prefindMacroname;
     private javax.swing.JPanel prefindPanel;

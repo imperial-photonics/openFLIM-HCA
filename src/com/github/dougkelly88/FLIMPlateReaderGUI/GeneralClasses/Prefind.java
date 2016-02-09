@@ -106,8 +106,16 @@ public class Prefind {
     }
     
     private boolean runAMacro(ImagePlus input, String macroname){
-        IJ.run(input, macroname, null);
-        return false;
+        String Parameterstring = "Threshold="+frame_.getPrefindThreshold(); //ADD IN GETPERCENTCOVERAGE
+        IJ.run(input, macroname, Parameterstring);
+        System.out.println(input.getTitle());
+        boolean judgement = false;
+        if(input.getTitle()=="Accept"){
+            judgement = true;
+        } else {
+        }
+        input.setTitle("Prefind");
+        return judgement;
     }
 }
 
