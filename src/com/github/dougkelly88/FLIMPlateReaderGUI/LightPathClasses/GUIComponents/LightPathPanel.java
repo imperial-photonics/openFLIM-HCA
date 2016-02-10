@@ -582,10 +582,18 @@ public class LightPathPanel extends javax.swing.JPanel {
         }
         String newString=null;
         newString= magString.substring(0,indX);
+        int indXX=0;
         try{
             var_.magnification=Double.parseDouble(magString.substring(0,indX));
         }catch(Exception ex){
-            int indXX=newString.indexOf(" ");
+            if(newString.contains(" ")){
+                indXX=newString.indexOf(" ");
+            }else if(magString.contains("XO")){
+                indXX=newString.indexOf("o")+1;
+            }else{
+            System.out.println("Is objective empty? Yes-> everything is fine. No-> cannot identify objective label in hardware configuration file. Make sure there is only one x included"
+                        + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");
+            }
             try{
             var_.magnification=Double.parseDouble(magString.substring(indXX,indX));
             }catch(Exception exx){
