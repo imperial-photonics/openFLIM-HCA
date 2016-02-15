@@ -89,6 +89,7 @@ public class Prefind {
         
         //Run a macro of name macroname.ijm, located in MM directory > Plugins
         String macroname = frame_.getSelectedAnalyser();
+        //Also choose the form of the destructor? ;)
         //Remove the .ijm at the end of the filename
         String[] parts = macroname.split(".ijm");
         //Hopefully there isn't anyone putting ".ijm" in the middle of their filenames...
@@ -106,8 +107,12 @@ public class Prefind {
     }
     
     private boolean runAMacro(ImagePlus input, String macroname){
-        String Parameterstring = "Threshold="+frame_.getPrefindThreshold(); //ADD IN GETPERCENTCOVERAGE
-        IJ.run(input, macroname, Parameterstring);
+        Double pfthresh=frame_.getPrefindThreshold();
+        Double pctcover=frame_.getPercentCoverage();
+        String Parameterstring = "Threshold="+pfthresh.intValue()+"###Pctcover="+pctcover.intValue(); //ADD IN GETPERCENTCOVERAGE
+        //IJ.run(input, macroname, Parameterstring);
+        IJ.runMacroFile(macroname, Parameterstring);
+        //IJ.wait(500);
         System.out.println(input.getTitle());
         boolean judgement = false;
         if(input.getTitle()=="Accept"){
