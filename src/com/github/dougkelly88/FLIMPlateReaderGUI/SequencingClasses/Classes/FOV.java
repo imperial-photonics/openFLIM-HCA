@@ -19,8 +19,8 @@ public class FOV implements Comparable<FOV> {
     double x_;
     double y_;
     double z_;
-    double width_ = 314;
-    double height_ = 230;   //40x obj, 0.7 relay
+    double width_ = 217; // in um ffor 40x, ORCA
+    double height_ = 165;   //40x obj
     
     String well_;
     String group_ = "Experiment";
@@ -161,12 +161,12 @@ public class FOV implements Comparable<FOV> {
     }
 
     public double getWidth_() {
-        double newWidth=width_*40/var_.magnification;
+        double newWidth=(((width_*40)/var_.magnification)/var_.relay);
         return newWidth;
     }
 
     public double getHeight_() {
-        double newheight=height_*40/var_.magnification;
+        double newheight=(((height_*40)/var_.magnification)/var_.relay);
         return newheight;
     }
 
