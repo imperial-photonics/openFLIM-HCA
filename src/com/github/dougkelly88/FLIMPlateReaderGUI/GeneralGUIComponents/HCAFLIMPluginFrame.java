@@ -1074,7 +1074,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
     public boolean prefind() throws InterruptedException{ // THROW is copied from doSequenceAcquisition - assume this is for Abort?
         //Allow for testing on my laptop without the XY stage and whatnot...
-        boolean testmode = true;
+        boolean testmode = false;
+        xYZPanel1.setFixedAFDefault(xyzmi_.getZAbsolute());
 
         // Counters for determining progress
         int noofFOVsSinceLastSuccess = 0;
@@ -1089,8 +1090,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         
         System.out.println("Attempts per FOV: "+Attempts_perFOV+"   Initial no of FOVs: "+NoOfFOVsToFind+"   FOVs per well: "+FOVs_per_well);
 
-        // Declare a blank FOV to be last gone to, and use the first in the list as the one we initially want to go to;
-        FOV FOVtogoto = xYSequencing1.searchFOVtableModel_.getFOV(0);
+        // Declare a blank FOV to be last gone to;
+        FOV FOVtogoto = new FOV(0, 0, 0, pp_);// Maybe a bit dangerous to have these the same? FOVtogoto should be overwritten though
         FOV FOVlastgoneto = new FOV(0, 0, 0, pp_); //
 
         // Autofocus how often?
@@ -1120,15 +1121,20 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     //Autofocus if needed
                     if(FOVtogoto.getWell()!=FOVlastgoneto.getWell() || noofFOVsSinceLastSuccess==0){ 
                         // For now, let's try autofocusing if we're in a different well to before? Or if the last FOV was successful?
-                        xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                        if(this.checkifAFenabled()){
+                            xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                        } else {
+                            xyzmi_.moveZAbsolute(this.getFixedAFDefault());
+                        }
                     }
                 }
 
                 // Snap single image
                 //acq.snapimagenow(); Function not found after merch. Sunil please check!
-                Object img=core_.getImage();
-                FOVaccepted = checkprefindimg(img);
-                
+                //Object img=core_.getImage();
+                //FOVaccepted = checkprefindimg(img);
+                boolean result = prefind_.Analyse(prefind_.Snapandshow(prefindImage));
+                FOVaccepted=result;
                 // Increment FOV list position counter
                 noofattemptedFOVs_thiswell++;
                 

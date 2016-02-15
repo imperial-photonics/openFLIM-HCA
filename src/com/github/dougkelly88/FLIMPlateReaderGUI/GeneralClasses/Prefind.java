@@ -112,13 +112,10 @@ public class Prefind {
         String Parameterstring = "Threshold="+pfthresh.intValue()+"###Pctcover="+pctcover.intValue(); //ADD IN GETPERCENTCOVERAGE
         //IJ.run(input, macroname, Parameterstring);
         IJ.runMacroFile(macroname, Parameterstring);
-        //IJ.wait(500);
-        System.out.println(input.getTitle());
+        String feedback = (input.getTitle());
+        System.out.println(feedback);
         boolean judgement = false;
-        if(input.getTitle()=="Accept"){
-            judgement = true;
-        } else {
-        }
+        judgement = feedback.equals("Accept"); // Using == is a bad idea, especially for strings etc
         input.setTitle("Prefind");
         return judgement;
     }
