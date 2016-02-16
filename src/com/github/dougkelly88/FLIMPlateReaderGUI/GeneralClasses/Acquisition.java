@@ -104,7 +104,9 @@ public class Acquisition {
                     }
 
                 }
-                  
+                if(binningD>1){
+                accImg=binningByte(accImg, binningD);
+                }  
                 
                 saveLayersToOMETiff(writer, accImg, delays.indexOf(delay));
                 ////
@@ -129,7 +131,7 @@ public class Acquisition {
 
     }
     
-    public void snapFLIMImageFred(String path, ArrayList<Integer> delays, SeqAcqSetup sas, String binning) {
+    public void snapFLIMImage(String path, ArrayList<Integer> delays, SeqAcqSetup sas, String binning) {
         int binningD = Integer.parseInt(binning);
         try{
 
@@ -140,7 +142,7 @@ public class Acquisition {
             
             
             
-            OMEXMLMetadata m = setBasicMetadataFred(delays, sas, binningD);
+            OMEXMLMetadata m = setBasicMetadataBinning(delays, sas, binningD);
             IFormatWriter writer = generateWriter(path+".ome.tiff", m);
             for (Integer delay : delays) {
                 int del=delays.indexOf(delay);
@@ -378,13 +380,6 @@ public class Acquisition {
 
         return m;
     }
-
-    public void startHCASequence(ArrayList<FOV> fovs, ArrayList<TimePoint> tc, ArrayList<FilterSetup> filts, ArrayList<String> order) {
-        // TODO: pass an instance of a single class containing all the input vars, also some stuff regarding autofocus?
-
-        // go through order arraylist and build a 2D arraylist containing all vars in appropriate order...
-    }
-    
     
     private int[] binningByte(int[] accImg, int binningD) {
       
@@ -443,30 +438,13 @@ public class Acquisition {
         masterY=0;
         masterX=masterX+1;
         }
-//        System.out.println("accImgB: "+masterCountB+ "    value: "+accImgB[masterCountB]);
-//        System.out.println("masterX: "+masterX+ "    masterY: "+masterY+"    binningD: "+binningD);
         }
-        //
-//        for (int countBinX=0; countBinX<(int) width/binningD; countBinX++){
-//            accImgB[countBinX]=image[0][0]+image[1][0]+image[2][0]+image[1][0]+image[1][1]+image[1][2]+image[2][0]+image[2][1]+image[2][2];
-//        }
         
-//        System.out.println(Arrays.toString(accImg));
-//        System.out.println(Arrays.toString(image));
-//        System.out.println(Arrays.deepToString(image));
-          //disImag(accImgB, widthB, heightB);
-
-//          planeb = DataTools.shortsToBytes(binnedPlaneShort, false);
-//        System.out.println(";;;;;;;;;;;;;;;;;;;;;was war drin;;;;;;;;;;;;;;;;;;;;;; "+IntStream.of(accImg).sum());
-//////        gui_.displayImage(accImg);
-//        System.out.println(";;;;;;;;;;;;;;;;;;;;;was ist drin;;;;;;;;;;;;;;;;;;;;;; "+IntStream.of(accImgB).sum());
-//        System.out.println(";;;;;;;;;;;;;;;;;;;;;was verworfen;;;;;;;;;;;;;;;;;;;;;; "+ChuckedPixelSum);
-//        gui_.displayImage(accImgB);
         return accImgB;
 
         }
     
-        private OMEXMLMetadata setBasicMetadataFred(ArrayList<Integer> delays, SeqAcqSetup sas,int binningD)
+        private OMEXMLMetadata setBasicMetadataBinning(ArrayList<Integer> delays, SeqAcqSetup sas,int binningD)
             throws ServiceException {
 
         OMEXMLServiceImpl serv = new OMEXMLServiceImpl();
@@ -516,7 +494,7 @@ public class Acquisition {
             m.setPixelsSizeT(g1, 0);
 
             PositiveFloat pitch = checkPixelPitch();
-            double pitchD = pitch.getValue();
+            double pitchD = pitch.getValue()/binningD;
             Length len = new Length(1,ome.units.UNITS.MICROM);
             m.setPixelsPhysicalSizeX(new Length(pitchD,ome.units.UNITS.MICROM),0);
             m.setPixelsPhysicalSizeY(new Length(pitchD,ome.units.UNITS.MICROM),0);

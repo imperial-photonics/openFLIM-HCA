@@ -520,7 +520,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         softwareBinningButton.setText("Software Binning: ");
 
-        softwareBinningField.setText("2");
+        softwareBinningField.setText("1");
         softwareBinningField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 softwareBinningFieldActionPerformed(evt);
@@ -1818,7 +1818,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 System.out.println(e.getMessage());
             }
             // so that same functions can be used, generate dummy SequencedAcquisitionSetup
-            acq.snapFLIMImageFred(fullname, fLIMPanel1.getDelays(), 
+            acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
                     new SeqAcqSetup(globalFOVset_, new TimePoint(0.0,false,initLDWells), new FilterSetup(lightPathControls1, exp, fLIMPanel1)), softwareBinningField.getText());
             progressBar_.setEnd("Snap FLIM image");
         }
