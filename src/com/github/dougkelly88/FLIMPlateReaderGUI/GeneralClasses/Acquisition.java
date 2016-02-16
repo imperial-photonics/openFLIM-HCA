@@ -104,9 +104,7 @@ public class Acquisition {
                     }
 
                 }
-                if(binningD>1){
-                accImg=binningByte(accImg, binningD);
-                }  
+                
                 
                 saveLayersToOMETiff(writer, accImg, delays.indexOf(delay));
                 ////
