@@ -431,9 +431,9 @@ public class Acquisition {
                         accImgB[masterCountB]=accImgB[masterCountB]+image[countBinX+masterX*binningD][countBinY+masterY*binningD];
                         //System.out.println("accImgB: "+masterCountB+ "    value: "+accImgB[masterCountB]);
                     }catch (Exception e) {
-                        System.out.println(e.getMessage());
-                        System.out.println("Chucked pixel: "+masterCountB+ "    masterX: "+masterX+"    masterY: "+masterY);
-                        ChuckedPixelSum=ChuckedPixelSum+1;
+//                        System.out.println(e.getMessage());
+//                        System.out.println("Chucked pixel: "+masterCountB+ "    masterX: "+masterX+"    masterY: "+masterY);
+//                        ChuckedPixelSum=ChuckedPixelSum+1;
                         accImgB[masterCountB]=0;
                     }
                 }    
@@ -457,10 +457,10 @@ public class Acquisition {
           //disImag(accImgB, widthB, heightB);
 
 //          planeb = DataTools.shortsToBytes(binnedPlaneShort, false);
-        System.out.println(";;;;;;;;;;;;;;;;;;;;;was war drin;;;;;;;;;;;;;;;;;;;;;; "+IntStream.of(accImg).sum());
-////        gui_.displayImage(accImg);
-        System.out.println(";;;;;;;;;;;;;;;;;;;;;was ist drin;;;;;;;;;;;;;;;;;;;;;; "+IntStream.of(accImgB).sum());
-        System.out.println(";;;;;;;;;;;;;;;;;;;;;was verworfen;;;;;;;;;;;;;;;;;;;;;; "+ChuckedPixelSum);
+//        System.out.println(";;;;;;;;;;;;;;;;;;;;;was war drin;;;;;;;;;;;;;;;;;;;;;; "+IntStream.of(accImg).sum());
+//////        gui_.displayImage(accImg);
+//        System.out.println(";;;;;;;;;;;;;;;;;;;;;was ist drin;;;;;;;;;;;;;;;;;;;;;; "+IntStream.of(accImgB).sum());
+//        System.out.println(";;;;;;;;;;;;;;;;;;;;;was verworfen;;;;;;;;;;;;;;;;;;;;;; "+ChuckedPixelSum);
 //        gui_.displayImage(accImgB);
         return accImgB;
 
