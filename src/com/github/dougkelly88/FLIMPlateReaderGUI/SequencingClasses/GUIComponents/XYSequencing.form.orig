@@ -71,7 +71,6 @@
                       <Component id="storeXYZButton" max="32767" attributes="0"/>
                       <Component id="clearXYZButton" max="32767" attributes="0"/>
                       <Component id="genZStackButton" max="32767" attributes="0"/>
-                      <Component id="zModeCombo" max="32767" attributes="0"/>					  
                       <Component id="clearZButton" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
@@ -85,9 +84,13 @@
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Component id="fovTablePanel" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
+<<<<<<< HEAD
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           <Component id="zModeCombo" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
+=======
+                          <EmptySpace min="0" pref="29" max="32767" attributes="0"/>
+>>>>>>> IMPERIAL_ONE/master
                           <Component id="genZStackButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="clearZButton" min="-2" max="-2" attributes="0"/>
@@ -143,19 +146,6 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="genZStackButtonActionPerformed"/>
-          </Events>
-        </Component>
-		<Component class="javax.swing.JComboBox" name="zModeCombo">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="2">
-                <StringItem index="0" value="Z as offset"/>
-                <StringItem index="1" value="Absolute Z"/>
-              </StringArray>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="zModeComboActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="clearZButton">
