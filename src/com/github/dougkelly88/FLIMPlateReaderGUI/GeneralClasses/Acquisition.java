@@ -390,8 +390,8 @@ public class Acquisition {
       
          
 
-//        accImg=new int[64];
-////        Arrays.fill(accImg, 12);
+//        accImg=new int[9000];
+//        Arrays.fill(accImg, 12);
 //        for(int aa=0;aa<8;aa++){
 //            for(int bb=0;bb<8;bb++){
 //                accImg[aa*8+bb]=bb;
@@ -401,8 +401,8 @@ public class Acquisition {
 //        binningD=2;
         int width=(int) core_.getImageWidth();
         int height=(int) core_.getImageHeight();
-//        int width=8;
-//        int height=8;
+//        int width=9;
+//        int height=1000;
         int sizeAccImg=accImg.length;
         int[][] image=new int[width][height];
         double widthB= width/binningD;
@@ -423,12 +423,19 @@ public class Acquisition {
         }
         int masterX=0;
         int masterY=0;
+        int ChuckedPixelSum=0;
         for(int masterCountB=0; masterCountB<sizeAccImg/binningD/binningD; masterCountB++){
             for(int countBinX=0; countBinX<binningD; countBinX++){
                 for(int countBinY=0; countBinY<binningD; countBinY++){
-                    accImgB[masterCountB]=accImgB[masterCountB]+image[countBinX+masterX*binningD][countBinY+masterY*binningD];
-                    //System.out.println("accImgB: "+masterCountB+ "    value: "+accImgB[masterCountB]);
-                    
+                    try{
+                        accImgB[masterCountB]=accImgB[masterCountB]+image[countBinX+masterX*binningD][countBinY+masterY*binningD];
+                        //System.out.println("accImgB: "+masterCountB+ "    value: "+accImgB[masterCountB]);
+                    }catch (Exception e) {
+                        System.out.println(e.getMessage());
+                        System.out.println("Chucked pixel: "+masterCountB+ "    masterX: "+masterX+"    masterY: "+masterY);
+                        ChuckedPixelSum=ChuckedPixelSum+1;
+                        accImgB[masterCountB]=0;
+                    }
                 }    
             }
         masterY=masterY+1;
@@ -450,9 +457,10 @@ public class Acquisition {
           //disImag(accImgB, widthB, heightB);
 
 //          planeb = DataTools.shortsToBytes(binnedPlaneShort, false);
-//        System.out.println(";;;;;;;;;;;;;;;;;;;;;was war drin;;;;;;;;;;;;;;;;;;;;;; "+IntStream.of(accImg).sum());
+        System.out.println(";;;;;;;;;;;;;;;;;;;;;was war drin;;;;;;;;;;;;;;;;;;;;;; "+IntStream.of(accImg).sum());
 ////        gui_.displayImage(accImg);
-//        System.out.println(";;;;;;;;;;;;;;;;;;;;;was ist drin;;;;;;;;;;;;;;;;;;;;;; "+IntStream.of(accImgB).sum());
+        System.out.println(";;;;;;;;;;;;;;;;;;;;;was ist drin;;;;;;;;;;;;;;;;;;;;;; "+IntStream.of(accImgB).sum());
+        System.out.println(";;;;;;;;;;;;;;;;;;;;;was verworfen;;;;;;;;;;;;;;;;;;;;;; "+ChuckedPixelSum);
 //        gui_.displayImage(accImgB);
         return accImgB;
 
