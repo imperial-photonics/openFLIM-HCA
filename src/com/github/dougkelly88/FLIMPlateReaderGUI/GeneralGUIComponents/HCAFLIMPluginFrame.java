@@ -1305,7 +1305,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
             System.out.println("Waiting...");            
 
-if(1==0){            
+        
             long start_time = System.currentTimeMillis();
             // TODO: modify data saving such that time courses, z can be put in a 
             // single OME.TIFF. DISCUSS WITH IAN!
@@ -1548,8 +1548,7 @@ if(1==0){
         // Send Email after finishing acquisition!
      /*   if(xYSequencing1.sendEmailBoolean){
             xYSequencing1.sendEmail();
-        }*/            
-}        
+        }*/                    
     }
 
     public void setStopButtonFalse(int step, int end, String name) throws InterruptedException{
