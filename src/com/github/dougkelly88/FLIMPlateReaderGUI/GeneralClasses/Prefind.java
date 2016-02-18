@@ -53,6 +53,11 @@ public class Prefind {
     private MMStudio gui_;    
     private HCAFLIMPluginFrame frame_;
     
+    // Prefind results info
+    private boolean judgement = false;
+    private double h_pix=0;
+    private double v_pix=0;
+    
     // Maybe only need this one for a plugin filter?
     static int NO_UNDO;
     
@@ -63,6 +68,18 @@ public class Prefind {
         frame_= HCAFLIMPluginFrame.getInstance();
         ImagePlus rawImage = new ij.ImagePlus();
         ImagePlus output = new ij.ImagePlus();
+    }
+    
+    public double getHCentre(){
+        return h_pix;
+    }
+    
+    public double getVCentre(){
+        return v_pix;
+    }
+    
+    public boolean getJudgement(){
+        return judgement;
     }
     
     public boolean checkPrefindimg(){
@@ -107,15 +124,37 @@ public class Prefind {
     }
     
     private boolean runAMacro(ImagePlus input, String macroname){
+        //We're going to use ### as our split delimiter
         Double pfthresh=frame_.getPrefindThreshold();
         Double pctcover=frame_.getPercentCoverage();
         String Parameterstring = "Threshold="+pfthresh.intValue()+"###Pctcover="+pctcover.intValue(); //ADD IN GETPERCENTCOVERAGE
         //IJ.run(input, macroname, Parameterstring);
         IJ.runMacroFile(macroname, Parameterstring);
         String feedback = (input.getTitle());
+        String[] feedbackarray = feedback.split("###"); // In case we try to get other parameters back too (mostly relative pixel positions for targeting)
+        // Look up Maps for ~equivalent to dynamically named variables. For now though....
+        // Declare variables that we think might be passed back...
+        // Assume that the first thing back 
+        judgement = false;
+
+        // Read 
+        for (int i=0;i<feedbackarray.length;i++){
+            String[] thisvar=feedbackarray[i].split("=");
+            // Note: using == is a bad idea, especially for strings etc
+            if (thisvar[0].equals("Accept")){
+                judgement=true;
+            } else if (thisvar[0].equals("h_pix")){
+                h_pix=Double.parseDouble(thisvar[1]);
+            } else if (thisvar[0].equals("v_pix")){
+                v_pix=Double.parseDouble(thisvar[1]);   
+            } else {
+                System.out.println("Unknown (or no) arguments returned from the macro! FAIL!");
+                h_pix=0;
+                v_pix=0;
+            }
+        }
         System.out.println(feedback);
-        boolean judgement = false;
-        judgement = feedback.equals("Accept"); // Using == is a bad idea, especially for strings etc
+        
         input.setTitle("Prefind");
         return judgement;
     }
