@@ -71,7 +71,7 @@
                       <Component id="storeXYZButton" max="32767" attributes="0"/>
                       <Component id="clearXYZButton" max="32767" attributes="0"/>
                       <Component id="genZStackButton" max="32767" attributes="0"/>
-                      <Component id="zModeCombo" max="32767" attributes="0"/>					  
+                      <Component id="zModeCombo" max="32767" attributes="0"/>
                       <Component id="clearZButton" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
@@ -145,7 +145,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="genZStackButtonActionPerformed"/>
           </Events>
         </Component>
-		<Component class="javax.swing.JComboBox" name="zModeCombo">
+        <Component class="javax.swing.JComboBox" name="zModeCombo">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="2">

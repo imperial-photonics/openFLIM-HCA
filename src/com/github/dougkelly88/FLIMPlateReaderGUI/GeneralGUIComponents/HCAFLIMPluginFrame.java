@@ -1058,12 +1058,31 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
     public boolean testPrefind() {// throws InterruptedException{ 
         //prefind_.Snapandshow(prefindImage);
+        MMStudio gui_ = MMStudio.getInstance();
+        try{
+            if (gui_.isLiveModeOn()){
+                gui_.enableLiveMode(false);
+                gui_.closeAllAcquisitions();
+            }
+        } catch (Exception e) {
+            System.out.println("Failed stopping Live mode:   "+e);
+        }        
         boolean result = prefind_.Analyse(prefind_.Snapandshow(prefindImage));
         //boolean result = false;
         return result;
     }
     
     public boolean prefind() throws InterruptedException{ // THROW is copied from doSequenceAcquisition - assume this is for Abort?
+        progressBar_.setStart("Prefind: ");
+        MMStudio gui_ = MMStudio.getInstance();
+        try{
+            if (gui_.isLiveModeOn()){
+                gui_.enableLiveMode(false);
+                gui_.closeAllAcquisitions();
+            }
+        } catch (Exception e) {
+            System.out.println("Failed stopping Live mode:   "+e);
+        }        
         //Allow for testing on my laptop without the XY stage and whatnot...
         boolean testmode = false;
         xYZPanel1.setFixedAFDefault(xyzmi_.getZAbsolute());
@@ -1108,7 +1127,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 if(!testmode){
                     xyzmi_.gotoFOV(FOVtogoto); // XY move only
                     //Wait for XY move to finish                
-                    
+                    while (xyzmi_.isStageBusy()){
+                        System.out.println("Stage moving...");
+                    }                    
                     //Autofocus if needed
                     if(FOVtogoto.getWell()!=FOVlastgoneto.getWell() || noofFOVsSinceLastSuccess==0){ 
                         // For now, let's try autofocusing if we're in a different well to before? Or if the last FOV was successful?
@@ -1148,12 +1169,20 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     // We automatically go to the next well if we never find anything?, so don't need to do anything here...
                 }
                 // System.out.println(i); // For diagnostics
+                progressBar_.stepIncrement(i, xYSequencing1.searchFOVtableModel_.getRowCount());
+                endOk=0;  
                 // Now we can say that this was the last FOV we went to...
                 FOVlastgoneto=FOVtogoto;
             }
         } catch(Exception e) { // WAS InterruptedException, but complained that this would never be thrown from here?
             Thread.currentThread().interrupt();               
         }
+        // Set progressbar to 100% if not aborted before
+        if(endOk==1){
+                setStopButtonFalse(xYSequencing1.searchFOVtableModel_.getRowCount(), xYSequencing1.searchFOVtableModel_.getRowCount(), "FLIM sequence");
+            } else {
+            progressBar_.setEnd("FLIM sequence");
+        }        
     return FOVaccepted;
     }
     
