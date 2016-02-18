@@ -56,110 +56,6 @@ public class Acquisition {
         frame_= HCAFLIMPluginFrame.getInstance();
     }
 
-// Yuri    public void snapSPWImage(ImageWriter writer, ArrayList<Integer> delays, SeqAcqSetup sas, int series, boolean simulate){    
-//        
-//        try {
-//                if (gui_.isLiveModeOn() | gui_.isAcquisitionRunning())
-//                {
-//                    gui_.enableLiveMode(false);
-//                    gui_.closeAllAcquisitions();
-//                }                
-//                
-//                if (null != writer) 
-//                {
-//                    if (series != writer.getSeries())  
-//                    {
-//                        try {writer.setSeries(series);} catch (FormatException e) {System.out.println(e.getMessage());}
-//                    }            
-//
-//                    int W = (int)core_.getImageWidth();
-//                    int H = (int)core_.getImageHeight();
-//                    long dim = W*H;
-//                    
-//                    for (Integer delay : delays) 
-//                    {                                                
-//                        if (simulate) 
-//                        {
-//                            //////////////////////// simulated "image"                                                
-//                            double tau = 5000;                        
-//                            short[] accImg = new short[(int)dim];                        
-//                            //for(int k=0;k<dim;k++) accImg[k] = (short)(1000*Math.exp(-delay/tau));                        
-//                            for(int k=0;k<dim;k++)
-//                            {
-//                                // draw circle in the centre of the image
-//                                double y = Math.floor(k/W) + 1, x = k - W*Math.floor(k/W), yc = H/2, xc = W/2;                            
-//                                if (Math.sqrt( (x-xc)*(x-xc) + (y-yc)*(y-yc) ) <= 100)
-//                                {
-//                                    accImg[k] = (short)(1000*Math.exp(-delay/tau));                             
-//                                }
-//                            }                                                
-//                            //
-//                            Exception exception = null;
-//                            try 
-//                            {
-//                              writer.saveBytes(delays.indexOf(delay), DataTools.shortsToBytes(accImg, false));
-//                            }
-//                            catch (FormatException e)   {exception = e;}
-//                            catch (IOException e)       {exception = e;}
-//                            if (exception != null) 
-//                            {
-//                              System.err.println("Failed to save plane.");
-//                              exception.printStackTrace();
-//                            }                                                
-//                            //////////////////////// simulated "image"  
-//                        }
-//                        else
-//                        {    
-//                            core_.setProperty("Delay box", "Delay (ps)", delay);
-//                            Exception exception = null;
-//                            try 
-//                            {                            
-//                                if (core_.getBytesPerPixel() == 2) 
-//                                {
-//                                    short[] accImg = new short[(int)dim];
-//                                    for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++)
-//                                    {
-//                                        core_.snapImage();
-//                                        Object img = core_.getImage();
-//                                        // this bit c.f. FrameAverager
-//                                            short[] pixS = (short[]) img;
-//                                            for (int j = 0; j < dim; j++) 
-//                                            {
-//                                                accImg[j] += (pixS[j] & 0xffff);
-//                                            }                                
-//                                    }
-//                                    writer.saveBytes(delays.indexOf(delay), DataTools.shortsToBytes(accImg, false));
-//                                }                            
-//                                else if (core_.getBytesPerPixel() == 1)
-//                                {
-//                                    byte[] accImg = new byte[(int)dim];
-//                                    for (int fr = 0; fr < sas.getFilters().getAccFrames(); fr++)
-//                                    {
-//                                        core_.snapImage();
-//                                        Object img = core_.getImage();
-//                                        // this bit c.f. FrameAverager
-//                                            byte[] pixS = (byte[]) img;
-//                                            for (int j = 0; j < dim; j++) 
-//                                            {
-//                                                accImg[j] += (pixS[j] & 0xff);
-//                                            }                                
-//                                    }
-//                                    writer.saveBytes(delays.indexOf(delay),accImg);
-//                                }
-//                            }                                                            
-//                            catch (FormatException e)   {exception = e;}
-//                            catch (IOException e)       {exception = e;}
-//                            if (exception != null) 
-//                            {
-//                              System.err.println("Failed to save plane.");
-//                              exception.printStackTrace();
-//                            }                                                
-//                        }
-//                    }                                                                         
-//                }// endif                                     
-//            } catch (Exception e) {System.out.println(e.getMessage());}
-//    }
-//        
     public void snapFLIMImage(String path, ArrayList<Integer> delays, SeqAcqSetup sas) {
 
         try{
@@ -208,7 +104,7 @@ public class Acquisition {
                     }
 
                 }
-                  
+                
                 
                 saveLayersToOMETiff(writer, accImg, delays.indexOf(delay));
                 ////
@@ -233,7 +129,7 @@ public class Acquisition {
 
     }
     
-    public void snapFLIMImageFred(String path, ArrayList<Integer> delays, SeqAcqSetup sas, String binning) {
+    public void snapFLIMImage(String path, ArrayList<Integer> delays, SeqAcqSetup sas, String binning) {
         int binningD = Integer.parseInt(binning);
         try{
 
@@ -244,7 +140,7 @@ public class Acquisition {
             
             
             
-            OMEXMLMetadata m = setBasicMetadataFred(delays, sas, binningD);
+            OMEXMLMetadata m = setBasicMetadataBinning(delays, sas, binningD);
             IFormatWriter writer = generateWriter(path+".ome.tiff", m);
             for (Integer delay : delays) {
                 int del=delays.indexOf(delay);
@@ -441,10 +337,10 @@ public class Acquisition {
 
             PositiveFloat pitch = checkPixelPitch();
             double pitchD = pitch.getValue();
-            Length len = new Length(1,ome.units.UNITS.MM);
-            m.setPixelsPhysicalSizeX(new Length(pitchD,ome.units.UNITS.MM),0);
-            m.setPixelsPhysicalSizeY(new Length(pitchD,ome.units.UNITS.MM),0);
-            m.setPixelsPhysicalSizeZ(new Length(1.0,ome.units.UNITS.MM), 0);
+            Length len = new Length(1,ome.units.UNITS.MICROM);
+            m.setPixelsPhysicalSizeX(new Length(pitchD,ome.units.UNITS.MICROM),0);
+            m.setPixelsPhysicalSizeY(new Length(pitchD,ome.units.UNITS.MICROM),0);
+            m.setPixelsPhysicalSizeZ(new Length(1.0,ome.units.UNITS.MICROM), 0);
 
             PlatformIndependentGuidGen p = PlatformIndependentGuidGen.getInstance();
 
@@ -482,23 +378,18 @@ public class Acquisition {
 
         return m;
     }
-
-    public void startHCASequence(ArrayList<FOV> fovs, ArrayList<TimePoint> tc, ArrayList<FilterSetup> filts, ArrayList<String> order) {
-        // TODO: pass an instance of a single class containing all the input vars, also some stuff regarding autofocus?
-
-        // go through order arraylist and build a 2D arraylist containing all vars in appropriate order...
-    }
-    
     
     private int[] binningByte(int[] accImg, int binningD) {
       
          
 
-        accImg=new int[1000];
+//        accImg=new int[9000];
 //        Arrays.fill(accImg, 12);
-        for(int aa=0;aa<1000;aa++){
-            accImg[aa]=aa;
-        }
+//        for(int aa=0;aa<8;aa++){
+//            for(int bb=0;bb<8;bb++){
+//                accImg[aa*8+bb]=bb;
+//            }
+//        }
 //        
 //        binningD=2;
         int width=(int) core_.getImageWidth();
@@ -523,34 +414,35 @@ public class Acquisition {
                 masterCount=masterCount+1;
             }
         }
-        
+        int masterX=0;
+        int masterY=0;
+        int ChuckedPixelSum=0;
         for(int masterCountB=0; masterCountB<sizeAccImg/binningD/binningD; masterCountB++){
             for(int countBinX=0; countBinX<binningD; countBinX++){
                 for(int countBinY=0; countBinY<binningD; countBinY++){
-                    accImgB[masterCountB]=accImgB[masterCountB]+image[countBinX][countBinY];
-                    //System.out.println("accImgB: "+masterCountB+ "    value: "+accImgB[masterCountB]);
-
-                }
+                    try{
+                        accImgB[masterCountB]=accImgB[masterCountB]+image[countBinX+masterX*binningD][countBinY+masterY*binningD];
+                        //System.out.println("accImgB: "+masterCountB+ "    value: "+accImgB[masterCountB]);
+                    }catch (Exception e) {
+//                        System.out.println(e.getMessage());
+//                        System.out.println("Chucked pixel: "+masterCountB+ "    masterX: "+masterX+"    masterY: "+masterY);
+//                        ChuckedPixelSum=ChuckedPixelSum+1;
+                        accImgB[masterCountB]=0;
+                    }
+                }    
             }
+        masterY=masterY+1;
+        if(masterY==heightB){
+        masterY=0;
+        masterX=masterX+1;
         }
-        //
-//        for (int countBinX=0; countBinX<(int) width/binningD; countBinX++){
-//            accImgB[countBinX]=image[0][0]+image[1][0]+image[2][0]+image[1][0]+image[1][1]+image[1][2]+image[2][0]+image[2][1]+image[2][2];
-//        }
+        }
         
-//        System.out.println(Arrays.toString(accImg));
-//        System.out.println(Arrays.toString(image));
-//        System.out.println(Arrays.deepToString(image));
-          //disImag(accImgB, widthB, heightB);
-
-//          planeb = DataTools.shortsToBytes(binnedPlaneShort, false);
-        System.out.println(";;;;;;;;;;;;;;;;;;;;;was war drin;;;;;;;;;;;;;;;;;;;;;; "+IntStream.of(accImg).sum());
-        System.out.println(";;;;;;;;;;;;;;;;;;;;;was ist drin;;;;;;;;;;;;;;;;;;;;;; "+IntStream.of(accImgB).sum());
         return accImgB;
 
         }
     
-        private OMEXMLMetadata setBasicMetadataFred(ArrayList<Integer> delays, SeqAcqSetup sas,int binningD)
+        private OMEXMLMetadata setBasicMetadataBinning(ArrayList<Integer> delays, SeqAcqSetup sas,int binningD)
             throws ServiceException {
 
         OMEXMLServiceImpl serv = new OMEXMLServiceImpl();
@@ -571,7 +463,6 @@ public class Acquisition {
             m.setChannelID("Channel:0:0", 0, 0);
             m.setChannelSamplesPerPixel(new PositiveInteger(1), 0, 0);
             m.setPixelsBinDataBigEndian(Boolean.FALSE, 0, 0);
-//            m.setPixelsType(PixelType.UINT8, 0);
             m.setImageDescription(sas.toString(), 0);
 
             long bpp = core_.getBytesPerPixel();
@@ -600,11 +491,12 @@ public class Acquisition {
             m.setPixelsSizeC(new PositiveInteger(1), 0);
             m.setPixelsSizeT(g1, 0);
 
-//Ian help            PositiveFloat pitch = checkPixelPitch();
-//            Length(Length pitch);
-//            m.setPixelsPhysicalSizeX(pitch, 0);
-//            m.setPixelsPhysicalSizeY(pitch, 0);
-//            m.setPixelsPhysicalSizeZ(new PositiveFloat(1.0), 0);
+            PositiveFloat pitch = checkPixelPitch();
+            double pitchD = pitch.getValue()/binningD;
+            Length len = new Length(1,ome.units.UNITS.MICROM);
+            m.setPixelsPhysicalSizeX(new Length(pitchD,ome.units.UNITS.MICROM),0);
+            m.setPixelsPhysicalSizeY(new Length(pitchD,ome.units.UNITS.MICROM),0);
+            m.setPixelsPhysicalSizeZ(new Length(1.0,ome.units.UNITS.MICROM), 0);
 
             PlatformIndependentGuidGen p = PlatformIndependentGuidGen.getInstance();
 
