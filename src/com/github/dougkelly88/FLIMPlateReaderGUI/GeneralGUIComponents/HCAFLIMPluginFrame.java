@@ -1228,17 +1228,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             // based on order determined in UI table.
             for (String str : order){
                 if (str.equals("XYZ")){
-                         //check which acquisition strategy is selected
-                        if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
-                            sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
-                        } else {
-                            System.out.print("'Start always by column 1 (horizontal fast axis)' as acquisition mode selected");
+                         
                         //comparators.add(new WellComparator());
                         comparators.add(new ColumnComparator());
                         comparators.add(new RowComparator());
                         //comparators.add(new XY_simul_Comparator());
                         comparators.add(new ZComparator());
-                        }
+                        
                 }
                 else if (str.equals("Filter change"))
                     comparators.add(new FComparator());
@@ -1247,11 +1243,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
             // check which acquisition strategy is selected
-            //if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
-            //    sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
-            //} else {
-            //    System.out.print("'Start always by column 1 (horizontal fast axis)' as acquisition mode selected");
-            //}
+            if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
+                sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
+            } else {
+                System.out.print("'Start always by column 1 (horizontal fast axis)' as acquisition mode selected");
+            }
             int sassSize=sass.size();
             
             System.out.println("Sorting...");     
