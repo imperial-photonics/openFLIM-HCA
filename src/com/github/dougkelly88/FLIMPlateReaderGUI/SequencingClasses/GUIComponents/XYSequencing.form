@@ -383,23 +383,27 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="ringRadiusLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="ringRadiusField" min="-2" pref="53" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="ringRadiusLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="ringRadiusField" min="-2" pref="53" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="autoGenerateFOVsCheck" max="32767" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="noFOVLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="noFOVsField" min="-2" pref="43" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="FOVPatternCombo" max="32767" attributes="0"/>
+                          <Component id="groupDescLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="groupDescField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="snakeType" max="32767" attributes="0"/>
                       </Group>
-                      <Component id="autoGenerateFOVsCheck" max="32767" attributes="0"/>
-                      <Group type="102" alignment="1" attributes="0">
-                          <Component id="noFOVLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="noFOVsField" min="-2" pref="43" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="FOVPatternCombo" max="32767" attributes="0"/>
-                      <Component id="groupDescLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="groupDescField" alignment="0" max="32767" attributes="0"/>
+                      <Component id="snaketypelabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="52" max="32767" attributes="0"/>
               </Group>
@@ -426,6 +430,10 @@
                   <Component id="groupDescLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="groupDescField" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="snaketypelabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                  <Component id="snakeType" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -495,6 +503,26 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="groupDescFieldActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="snakeType">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="3">
+                <StringItem index="0" value="Horizontal snake"/>
+                <StringItem index="1" value="Vertical snake"/>
+                <StringItem index="2" value="No sorting"/>
+              </StringArray>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Type of motion pattern for stage during acquisition sequence"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="snakeTypeActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="snaketypelabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Snake type"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
