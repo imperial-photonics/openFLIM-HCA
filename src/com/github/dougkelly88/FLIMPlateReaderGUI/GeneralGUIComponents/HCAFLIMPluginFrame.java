@@ -1141,10 +1141,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     }
                 }
 
-                // Snap single image
-                //acq.snapimagenow(); Function not found after merch. Sunil please check!
-                //Object img=core_.getImage();
-                //FOVaccepted = checkprefindimg(img);
                 boolean result = prefind_.Analyse(prefind_.Snapandshow(prefindImage));
                 FOVaccepted=result;
                 // Increment FOV list position counter
@@ -1252,10 +1248,19 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             
             List<Comparator<SeqAcqSetup>> comparators = new ArrayList<Comparator<SeqAcqSetup>>();
             
+            String snaketype = "None";
+            if(xYSequencing1.getSnakeType().equals("Horizontal snake")){
+                snaketype="Horizontal";
+            } else if (xYSequencing1.getSnakeType().equals("Vertical snake")){
+                snaketype="Vertical";
+            } else {
+                // Already set to "None" otherwise
+            }
+            
             for (FOV fov : fovs){
                 for (TimePoint tp : tps){
                     for (FilterSetup fs : fss){
-                        sass.add(new SeqAcqSetup(fov, tp, fs));
+                        sass.add(new SeqAcqSetup(fov, tp, fs, snaketype));
                     }
                 }
             }
@@ -1265,8 +1270,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 if (str.equals("XYZ")){
                          
                         //comparators.add(new WellComparator());
-                        comparators.add(new ColumnComparator());
+                    if(xYSequencing1.getSnakeType().equals("Horizontal snake")){
                         comparators.add(new RowComparator());
+                        comparators.add(new ColumnComparator());                      
+                    } else if (xYSequencing1.getSnakeType().equals("Vertical snake")){
+                        comparators.add(new ColumnComparator());                        
+                        comparators.add(new RowComparator()); 
+                    } else {
+                        // No sorting in the last case
+                    }
                         //comparators.add(new XY_simul_Comparator());
                         comparators.add(new ZComparator());
                         
@@ -1278,11 +1290,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
             // check which acquisition strategy is selected
-            if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
-                sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
-            } else {
-                System.out.print("'Start always by column 1 (horizontal fast axis)' as acquisition mode selected");
-            }
+//            if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
+//                sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
+//            } else {
+//                System.out.print("'Start always by column 1 (horizontal fast axis)' as acquisition mode selected");
+//            }
             int sassSize=sass.size();
             
             System.out.println("Sorting...");     
@@ -1292,7 +1304,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 System.out.println("Time="+CurrSAS.getTimePoint().getTimeCell()+"    Filt="+CurrSAS.getFilters().getLabel()+"    Well="+CurrSAS.getFOV().getWell()+"    X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
             }
             System.out.println("Waiting...");            
-            
+
+if(1==0){            
             long start_time = System.currentTimeMillis();
             // TODO: modify data saving such that time courses, z can be put in a 
             // single OME.TIFF. DISCUSS WITH IAN!
@@ -1536,6 +1549,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
      /*   if(xYSequencing1.sendEmailBoolean){
             xYSequencing1.sendEmail();
         }*/            
+}        
     }
 
     public void setStopButtonFalse(int step, int end, String name) throws InterruptedException{

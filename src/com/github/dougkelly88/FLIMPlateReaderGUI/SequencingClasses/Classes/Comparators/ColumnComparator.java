@@ -6,6 +6,7 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.SeqAcqSetup;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.Utilitiesclass;
 import java.util.Comparator;
 
 /**
@@ -14,6 +15,8 @@ import java.util.Comparator;
  */
 public class ColumnComparator implements Comparator<SeqAcqSetup>{
 
+    private Utilitiesclass utilities_ = new Utilitiesclass();
+    
     @Override
     public int compare(SeqAcqSetup o1, SeqAcqSetup o2) {
         String w1 = o1.getFOV().getWell();
@@ -35,16 +38,15 @@ public class ColumnComparator implements Comparator<SeqAcqSetup>{
             //String col1_pad = (col1,padded_length);
             String col1_pad = Utilitiesclass.padLeadingZeros(col1, padded_length);
             String col2_pad = Utilitiesclass.padLeadingZeros(col2, padded_length);
-            if(0==o1.getSnaketype()){// Call 0 standard mode sorting...
-                return col1_pad.compareTo(col2_pad);   
+            if("None".equals(o1.getSnaketype())){
+                return 0;   
             }
-            else if(1==o1.getSnaketype()){// Call 1 H-snake
-                return col1_pad.compareTo(col2_pad);  // NO NEED TO ADD FLIP LOGIC FOR H-SNAKING IN COLS
+            else if("Vertical".equals(o1.getSnaketype())){
+                return col1_pad.compareTo(col2_pad);  
             }
-            else if(2==o1.getSnaketype()){// Call 2 V-snake
+            else if("Horizontal".equals(o1.getSnaketype())){
                 //Determine if row is 'Even'
-                int rownum = Integer.parseInt(wellref1[1]);
-                
+                int rownum = utilities_.WellLetterstoNumber(wellref1[0]);
                 if(0==rownum%2){
                     return col1_pad.compareTo(col2_pad);   
                 }

@@ -33,11 +33,10 @@ public class RowComparator implements Comparator<SeqAcqSetup>{
             String row2=wellref2[0];
             // Adding leading zeros for sort: http://stackoverflow.com/questions/4051887/how-to-format-a-java-string-with-leading-zero
             int padded_length=8; // Should be plenty for any sensibly-sized plate...          
-            //String col1_pad = (col1,padded_length);          
-            if(0==o1.getSnaketype()){// Call 0 standard mode sorting...
-                return row1.compareTo(row2);   
+            if("None".equals(o1.getSnaketype())){
+                return 0; // Think this should make it do nothing   
             }
-            else if(1==o1.getSnaketype()){// Call 1 H-snake
+            else if("Vertical".equals(o1.getSnaketype())){
                 //Determine if row is 'Even'
                 int colnum = Integer.parseInt(wellref1[1]);
                 
@@ -49,7 +48,7 @@ public class RowComparator implements Comparator<SeqAcqSetup>{
                     return row2.compareTo(row1);                       
                 }
             }
-            else if(2==o1.getSnaketype()){// Call 2 V-snake
+            else if("Horizontal".equals(o1.getSnaketype())){
                 return row1.compareTo(row2);  // NO NEED TO ADD FLIP LOGIC FOR H-SNAKING IN ROWS
             }
             else{

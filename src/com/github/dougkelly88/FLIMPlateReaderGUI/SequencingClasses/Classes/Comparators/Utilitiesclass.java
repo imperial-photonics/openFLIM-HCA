@@ -16,7 +16,7 @@ public final class Utilitiesclass {
     */  
     
     public Utilitiesclass() {
-        throw new AssertionError("Instantiation of a utility class is probably a Bad Thing");
+        //throw new AssertionError("Instantiation of a utility class is probably a Bad Thing");
     }
     
     //Declare General member variables up here
@@ -37,7 +37,7 @@ public final class Utilitiesclass {
         return subsets;
     }
     
-    public static int WellLetterstoNumber(String wellletters){
+    public int WellLetterstoNumber(String wellletters){
         String alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Double totalvalue=0.0;
         for (int i=0;i<(wellletters.length());i++){
@@ -49,7 +49,7 @@ public final class Utilitiesclass {
         return totalvalue.intValue();
      }
     
-    public static String NumbertoWellLetters(int number){
+    public String NumbertoWellLetters(int number){
         //Bit of a mess, but it should work - there's probably some more elegant method
         double num_dbl=number;
         int i=0;

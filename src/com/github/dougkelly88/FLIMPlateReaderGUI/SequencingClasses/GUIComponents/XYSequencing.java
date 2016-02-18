@@ -233,6 +233,8 @@ public class XYSequencing extends javax.swing.JPanel {
         ringRadiusLabel = new javax.swing.JLabel();
         groupDescLabel = new javax.swing.JLabel();
         groupDescField = new javax.swing.JTextField();
+        snakeType = new javax.swing.JComboBox();
+        snaketypelabel = new javax.swing.JLabel();
 
         storedXYZPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Stored XYZ positions"));
 
@@ -513,25 +515,38 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
+        snakeType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Horizontal snake", "Vertical snake", "No sorting" }));
+        snakeType.setToolTipText("Type of motion pattern for stage during acquisition sequence");
+        snakeType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                snakeTypeActionPerformed(evt);
+            }
+        });
+
+        snaketypelabel.setText("Snake type");
+
         javax.swing.GroupLayout autoFOVPanelLayout = new javax.swing.GroupLayout(autoFOVPanel);
         autoFOVPanel.setLayout(autoFOVPanelLayout);
         autoFOVPanelLayout.setHorizontalGroup(
             autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(autoFOVPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(autoFOVPanelLayout.createSequentialGroup()
-                        .addComponent(ringRadiusLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ringRadiusField, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(autoGenerateFOVsCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, autoFOVPanelLayout.createSequentialGroup()
-                        .addComponent(noFOVLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(noFOVsField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(FOVPatternCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(groupDescLabel)
-                    .addComponent(groupDescField))
+                .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(autoFOVPanelLayout.createSequentialGroup()
+                            .addComponent(ringRadiusLabel)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(ringRadiusField, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(autoGenerateFOVsCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, autoFOVPanelLayout.createSequentialGroup()
+                            .addComponent(noFOVLabel)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(noFOVsField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(FOVPatternCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(groupDescLabel)
+                        .addComponent(groupDescField)
+                        .addComponent(snakeType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(snaketypelabel))
                 .addContainerGap(52, Short.MAX_VALUE))
         );
         autoFOVPanelLayout.setVerticalGroup(
@@ -553,6 +568,10 @@ public class XYSequencing extends javax.swing.JPanel {
                 .addComponent(groupDescLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(groupDescField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(snaketypelabel)
+                .addGap(4, 4, 4)
+                .addComponent(snakeType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1137,6 +1156,13 @@ public class XYSequencing extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_percentCoverageActionPerformed
 
+    private void snakeTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snakeTypeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_snakeTypeActionPerformed
+
+    public String getSnakeType(){
+        return snakeType.getSelectedItem().toString();
+    }
     
     public void setPlateProperties(PlateProperties pp) {
         pp_ = pp;
@@ -1221,6 +1247,8 @@ public class XYSequencing extends javax.swing.JPanel {
     private javax.swing.JButton quickPFButton;
     private javax.swing.JFormattedTextField ringRadiusField;
     private javax.swing.JLabel ringRadiusLabel;
+    private javax.swing.JComboBox snakeType;
+    private javax.swing.JLabel snaketypelabel;
     private javax.swing.JButton storeXYZButton;
     private javax.swing.JPanel storedXYZPanel;
     private javax.swing.JButton testPrefind;
