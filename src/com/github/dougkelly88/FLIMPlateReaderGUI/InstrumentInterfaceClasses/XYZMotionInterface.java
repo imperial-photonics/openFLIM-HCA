@@ -101,13 +101,17 @@ public final class XYZMotionInterface {
     }
     
     public boolean isStageBusy(){
-        try {
-                Point2D.Double xy = stageXYtoFOVXY(core_.getXYStagePosition(xystage_));
-                return false;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                return true;
-            } 
+        if(!parent_.getTestmode()){
+            try {
+                    Point2D.Double xy = stageXYtoFOVXY(core_.getXYStagePosition(xystage_));
+                    return false;
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    return true;
+                } 
+        }
+        // Stage moves are instantaneous in testmode...
+        return false;
     }
 
     public Point2D.Double fovXYtoStageXY(FOV fov) {

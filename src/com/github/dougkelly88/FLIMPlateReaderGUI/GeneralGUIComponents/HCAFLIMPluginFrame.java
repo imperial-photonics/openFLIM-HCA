@@ -143,6 +143,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public ImagePlus prefindImage;
     public ImageProcessor prefindIP;
     
+    private boolean testmode;
+    
     private ArrayList<String> initLDWells = new ArrayList<>();
     // Replaces private ArrayList<String> initLDWells = new ArrayList<String>();
     //
@@ -238,10 +240,17 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         
         prefindIP = ImageUtils.makeProcessor(core_);
         prefindImage = new ImagePlus("Prefind",prefindIP);
+        
+        File testmodefile = new File("C:\\Program Files\\Micro-Manager-1.4.20\\testmode.txt");
+        testmode=testmodefile.exists();
     }
 
     public CMMCore getCore() {
         return core_;
+    }
+    
+    public boolean getTestmode(){
+        return this.testmode;
     }
     
     private void setupSequencingTable(){
@@ -1305,7 +1314,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
             System.out.println("Waiting...");            
 
-        
             long start_time = System.currentTimeMillis();
             // TODO: modify data saving such that time courses, z can be put in a 
             // single OME.TIFF. DISCUSS WITH IAN!
@@ -1548,7 +1556,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         // Send Email after finishing acquisition!
      /*   if(xYSequencing1.sendEmailBoolean){
             xYSequencing1.sendEmail();
-        }*/                    
+        }*/                            
     }
 
     public void setStopButtonFalse(int step, int end, String name) throws InterruptedException{
