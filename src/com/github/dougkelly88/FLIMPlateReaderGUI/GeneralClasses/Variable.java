@@ -34,6 +34,7 @@ public class Variable {
     public String entireFileText;
     public double magnification= 40;
     public double relay=0.7;
+    public double camerapixelsize=6.45;
     
     // LightPathControl variables:
     public StrVector DichroicComboBox;

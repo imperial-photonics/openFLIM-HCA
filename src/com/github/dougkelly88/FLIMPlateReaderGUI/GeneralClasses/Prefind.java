@@ -124,6 +124,9 @@ public class Prefind {
     }
     
     private boolean runAMacro(ImagePlus input, String macroname){
+        // Reset the target co-ordinates...
+        h_pix=0;
+        v_pix=0;
         //We're going to use ### as our split delimiter
         Double pfthresh=frame_.getPrefindThreshold();
         Double pctcover=frame_.getPercentCoverage();
@@ -151,6 +154,7 @@ public class Prefind {
                 System.out.println("Unknown (or no) arguments returned from the macro! FAIL!");
                 h_pix=0;
                 v_pix=0;
+                return false;
             }
         }
         System.out.println(feedback);

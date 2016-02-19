@@ -142,6 +142,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public Prefind prefind_;
     public ImagePlus prefindImage;
     public ImageProcessor prefindIP;
+    private double prefindHcentre;
+    private double prefindVcentre;
     
     private boolean testmode;
     
@@ -241,6 +243,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         prefindIP = ImageUtils.makeProcessor(core_);
         prefindImage = new ImagePlus("Prefind",prefindIP);
         
+        // Hopefully allow for simple diabling of things like XYZmotion and whatnot when not running on acquisition machine
         File testmodefile = new File("C:\\Program Files\\Micro-Manager-1.4.20\\testmode.txt");
         testmode=testmodefile.exists();
     }
@@ -1082,6 +1085,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }
     
     public boolean prefind() throws InterruptedException{ // THROW is copied from doSequenceAcquisition - assume this is for Abort?
+        // Reset local copy of targeted co-ords - remember these are in pixel units
+        prefindHcentre=0;
+        prefindVcentre=0;
         progressBar_.setStart("Prefind: ");
         MMStudio gui_ = MMStudio.getInstance();
         try{
@@ -1093,7 +1099,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             System.out.println("Failed stopping Live mode:   "+e);
         }        
         //Allow for testing on my laptop without the XY stage and whatnot...
-        boolean testmode = false;
+        
         xYZPanel1.setFixedAFDefault(xyzmi_.getZAbsolute());
 
         // Counters for determining progress
@@ -1155,9 +1161,25 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 // Increment FOV list position counter
                 noofattemptedFOVs_thiswell++;
                 
+                if(prefind_.getHCentre()==0&prefind_.getVCentre()==0){
+                    // Reset displacements if the macro just returns yes/no
+                    prefindHcentre = 0;
+                    prefindVcentre = 0;
+                } else {
+                    // If we have a nonzero value returned for the centre of the desired FOV, need to do some thinking to get where we should go to...
+                    prefindHcentre = prefind_.getHCentre();
+                    prefindVcentre = prefind_.getVCentre();
+                }                
+                
                 if(FOVaccepted==true){
                     // Add this FOV to the normal sequence list shown on front panel
-                    xYSequencing1.tableModel_.addRow(xYSequencing1.searchFOVtableModel_.getFOV(i));
+                    FOV modifiedFOV = xYSequencing1.searchFOVtableModel_.getFOV(i);
+                    WARNING - need to modify this to accounf for the fact that it's relative to the corner not the centre? Or edit the macro?'
+                    modifiedFOV.setX(modifiedFOV.getX()+(prefindHcentre*var_.magnification*var_.relay*var_.camerapixelsize));
+                    modifiedFOV.setY(modifiedFOV.getY()+(prefindVcentre*var_.magnification*var_.relay*var_.camerapixelsize));
+                    // Manipulate the xy position by adding the ###DISPLACEMENT
+                    
+                    xYSequencing1.tableModel_.addRow(modifiedFOV);
                     noofFOVsSinceLastSuccess=0;
                     noofacceptedFOVs_thiswell++;
                 } else { 
@@ -1188,7 +1210,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             } else {
             progressBar_.setEnd("FLIM sequence");
         }        
-    return FOVaccepted;
+        return FOVaccepted;
     }
     
     public double getAFOffset(){
