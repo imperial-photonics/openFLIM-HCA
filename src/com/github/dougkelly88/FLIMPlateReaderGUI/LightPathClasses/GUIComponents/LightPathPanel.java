@@ -111,6 +111,9 @@ public class LightPathPanel extends javax.swing.JPanel {
         Camera = new javax.swing.JPanel();
         flimCamera = new javax.swing.JButton();
         bfCamera = new javax.swing.JButton();
+        cameraPixelSize = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
         ContinusouseFilterWheel = new javax.swing.JPanel();
         continuouseFWPanel = new javax.swing.JPanel();
         wakeButton = new javax.swing.JButton();
@@ -357,6 +360,17 @@ public class LightPathPanel extends javax.swing.JPanel {
             }
         });
 
+        cameraPixelSize.setText("6.45");
+        cameraPixelSize.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cameraPixelSizeActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Camera pixel size");
+
+        jLabel8.setText("um");
+
         javax.swing.GroupLayout CameraLayout = new javax.swing.GroupLayout(Camera);
         Camera.setLayout(CameraLayout);
         CameraLayout.setHorizontalGroup(
@@ -366,15 +380,25 @@ public class LightPathPanel extends javax.swing.JPanel {
                 .addComponent(flimCamera, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35)
                 .addComponent(bfCamera, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addGroup(CameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addGroup(CameraLayout.createSequentialGroup()
+                        .addComponent(cameraPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel8)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         CameraLayout.setVerticalGroup(
             CameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CameraLayout.createSequentialGroup()
-                .addContainerGap()
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(CameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(flimCamera)
-                    .addComponent(bfCamera))
+                    .addComponent(bfCamera)
+                    .addComponent(cameraPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -697,6 +721,18 @@ public class LightPathPanel extends javax.swing.JPanel {
         
     }//GEN-LAST:event_flimCameraActionPerformed
 
+    private void setCameraPath(double camerapixelsize, boolean FLIM){
+            var_.camerapixelsize = 6.45;
+            this.cameraPixelSize.setText(Double.toString(var_.camerapixelsize));
+            if(FLIM){
+                parent_.setRelayMag(parent_.getRelayMag());
+                var_.relay=parent_.getRelayMag();
+            } else {
+                // No extra magnification from relay
+                var_.relay=1;
+            }
+    }
+    
     private void bfCameraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bfCameraActionPerformed
         try {
             if (gui_.isLiveModeOn()){
@@ -706,6 +742,8 @@ public class LightPathPanel extends javax.swing.JPanel {
             } else{
                 core_.setCameraDevice("Andor sCMOS Camera");
             }
+            var_.camerapixelsize = 6.45;
+            this.cameraPixelSize.setText(Double.toString(var_.camerapixelsize));
         } catch (Exception ex) {
             System.out.println("Error: Couldn't set default camera to bright field camera!");
         }
@@ -735,6 +773,11 @@ public class LightPathPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void cameraPixelSizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cameraPixelSizeActionPerformed
+        // TODO add your handling code here:
+        // Fire off something to reassess actual pixel size?
+    }//GEN-LAST:event_cameraPixelSizeActionPerformed
+
     public void setByLabel(JComboBox combo, String device) {
         try {
             String setval = (String) combo.getSelectedItem();
@@ -749,6 +792,10 @@ public class LightPathPanel extends javax.swing.JPanel {
             System.out.println(e.getMessage());
         }
 
+    }
+    
+    public double getCameraPixelsize(){
+        return Double.parseDouble(cameraPixelSize.toString());
     }
     
     public void setBy(JComboBox combo, String device, String port) {
@@ -946,6 +993,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     private javax.swing.JLabel ObjectiveLabel;
     private javax.swing.JPanel Olympus;
     private javax.swing.JButton bfCamera;
+    private javax.swing.JTextField cameraPixelSize;
     private javax.swing.JPanel continuouseFWPanel;
     private javax.swing.JComboBox dichroicComboBox;
     private javax.swing.JComboBox emissionComboBox;
@@ -958,8 +1006,10 @@ public class LightPathPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel laserRepRateLabel;
     private javax.swing.JLabel laserRunTimeLabel;
     private javax.swing.JLabel laserSerialNumberLabel;

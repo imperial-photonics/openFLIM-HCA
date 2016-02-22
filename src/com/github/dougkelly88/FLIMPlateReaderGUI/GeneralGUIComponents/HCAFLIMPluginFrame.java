@@ -144,6 +144,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public ImageProcessor prefindIP;
     private double prefindHcentre;
     private double prefindVcentre;
+    private double camerapixelsize;
     
     private boolean testmode;
     
@@ -242,6 +243,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         
         prefindIP = ImageUtils.makeProcessor(core_);
         prefindImage = new ImagePlus("Prefind",prefindIP);
+        // May need to work out the compensation or fix this to some value... https://valelab.ucsf.edu/~MM/doc/MMCore/html/class_c_m_m_core.html
+        // If ORCA, Zyla etc, set cam pixel size programatically for ones we have/know?
+        var_.camerapixelsize = lightPathControls1.getCameraPixelsize();
         
         // Hopefully allow for simple diabling of things like XYZmotion and whatnot when not running on acquisition machine
         File testmodefile = new File("C:\\Program Files\\Micro-Manager-1.4.20\\testmode.txt");
@@ -250,6 +254,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
     public CMMCore getCore() {
         return core_;
+    }
+    
+    public void setRelayMag(double relay_mag){
+        this.proSettingsGUI1.setRelayMag(relay_mag);
+    }
+    
+    public double getRelayMag(){
+        return this.proSettingsGUI1.getRelayMag();
     }
     
     public boolean getTestmode(){
@@ -1174,9 +1186,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 if(FOVaccepted==true){
                     // Add this FOV to the normal sequence list shown on front panel
                     FOV modifiedFOV = xYSequencing1.searchFOVtableModel_.getFOV(i);
-                    WARNING - need to modify this to accounf for the fact that it's relative to the corner not the centre? Or edit the macro?'
-                    modifiedFOV.setX(modifiedFOV.getX()+(prefindHcentre*var_.magnification*var_.relay*var_.camerapixelsize));
-                    modifiedFOV.setY(modifiedFOV.getY()+(prefindVcentre*var_.magnification*var_.relay*var_.camerapixelsize));
+                    // WARNING - need to modify this to accounf for the fact that it's relative to the corner not the centre? Or edit the macro?'
+                    double rel_Hshift = (core_.getImageHeight()/2)-prefindHcentre;
+                    double rel_Vshift = (core_.getImageWidth()/2)-prefindVcentre;
+                    modifiedFOV.setX(modifiedFOV.getX()+(rel_Hshift*var_.magnification*var_.relay*var_.camerapixelsize));
+                    modifiedFOV.setY(modifiedFOV.getY()+(rel_Vshift*var_.magnification*var_.relay*var_.camerapixelsize));
                     // Manipulate the xy position by adding the ###DISPLACEMENT
                     
                     xYSequencing1.tableModel_.addRow(modifiedFOV);
