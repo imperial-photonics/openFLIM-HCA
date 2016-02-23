@@ -257,11 +257,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }
     
     public void setRelayMag(double relay_mag){
-        this.proSettingsGUI1.setRelayMag(relay_mag);
+        //this.proSettingsGUI1.setRelayMag(relay_mag);
     }
     
     public double getRelayMag(){
-        return this.proSettingsGUI1.getRelayMag();
+        return 0.7;// this.proSettingsGUI1.getRelayMag();
     }
     
     public boolean getTestmode(){
@@ -1185,13 +1185,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 
                 if(FOVaccepted==true){
                     // Add this FOV to the normal sequence list shown on front panel
-                    FOV modifiedFOV = xYSequencing1.searchFOVtableModel_.getFOV(i);
+                    // Was: FOV modifiedFOV = xYSequencing1.searchFOVtableModel_.getFOV(i);
+                    FOV modifiedFOV = xyzmi_.getCurrentFOV();
                     // WARNING - need to modify this to accounf for the fact that it's relative to the corner not the centre? Or edit the macro?'
-                    double rel_Hshift = (core_.getImageHeight()/2)-prefindHcentre;
-                    double rel_Vshift = (core_.getImageWidth()/2)-prefindVcentre;
-                    modifiedFOV.setX(modifiedFOV.getX()+(rel_Hshift*var_.magnification*var_.relay*var_.camerapixelsize));
-                    modifiedFOV.setY(modifiedFOV.getY()+(rel_Vshift*var_.magnification*var_.relay*var_.camerapixelsize));
-                    // Manipulate the xy position by adding the ###DISPLACEMENT
+                    //double rel_Hshift = (core_.getImageHeight()/2)-prefindHcentre;
+                    //double rel_Vshift = (core_.getImageWidth()/2)-prefindVcentre;
+                    //modifiedFOV.setX(modifiedFOV.getX()+(rel_Hshift*var_.magnification*var_.relay*var_.camerapixelsize));
+                    //modifiedFOV.setY(modifiedFOV.getY()+(rel_Vshift*var_.magnification*var_.relay*var_.camerapixelsize));
+                    // Manipulate the xy position by adding the ###DISPLACEMENT - CONVERSION FACTORS?
+                    modifiedFOV.setZ(0);
                     
                     xYSequencing1.tableModel_.addRow(modifiedFOV);
                     noofFOVsSinceLastSuccess=0;

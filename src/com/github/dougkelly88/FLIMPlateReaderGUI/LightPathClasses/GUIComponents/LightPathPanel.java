@@ -795,7 +795,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     }
     
     public double getCameraPixelsize(){
-        return Double.parseDouble(cameraPixelSize.toString());
+        return Double.parseDouble(cameraPixelSize.getText());
     }
     
     public void setBy(JComboBox combo, String device, String port) {

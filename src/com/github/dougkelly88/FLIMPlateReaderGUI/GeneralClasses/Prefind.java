@@ -150,8 +150,16 @@ public class Prefind {
                 h_pix=Double.parseDouble(thisvar[1]);
             } else if (thisvar[0].equals("v_pix")){
                 v_pix=Double.parseDouble(thisvar[1]);   
+            } else if (thisvar[0].equals("Reject")){
+                //Special case for not accepting - keep last other than total failure
+                System.out.println("Field rejected");
+                h_pix=0;
+                v_pix=0;
+                input.setTitle("Prefind");
+                return false;
             } else {
                 System.out.println("Unknown (or no) arguments returned from the macro! FAIL!");
+                input.setTitle("Prefind");
                 h_pix=0;
                 v_pix=0;
                 return false;
