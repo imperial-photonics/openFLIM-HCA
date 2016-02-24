@@ -593,40 +593,80 @@ public class LightPathPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_objectiveComboBoxActionPerformed
 
+//    public void setMag(String magString){
+//        
+//        int indX=0;
+//        if(magString.contains("x")){
+//            indX=magString.indexOf("x");
+//        }else if(magString.contains("X")){
+//            indX=magString.indexOf("X");
+//        }else{
+//            System.out.println("Is objective empty? Yes-> everything is fine. No-> cannot identify objective label in hardware configuration file. Make sure there is only one x included"
+//                        + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");
+//        }
+//        String newString=null;
+//        newString= magString.substring(0,indX);
+//        int indXX=0;
+//        try{
+//            var_.magnification=Double.parseDouble(magString.substring(0,indX));
+//        }catch(Exception ex){
+//            if(newString.contains(" ")){
+//                indXX=newString.indexOf(" ");
+//            }else if(magString.contains("XO")){
+//                indXX=newString.indexOf("o")+1;
+//            }else{
+//            System.out.println("Is objective empty? Yes-> everything is fine. No-> cannot identify objective label in hardware configuration file. Make sure there is only one x included"
+//                        + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");
+//            }
+//            try{
+//            var_.magnification=Double.parseDouble(magString.substring(indXX,indX));
+//            }catch(Exception exx){
+//                warningMessage("Cannot identify objective label in hardware configuration file. Make sure there is only one x included"
+//                        + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");
+//            }
+//        }
+//        
+//        System.out.println("Magnification changed to "+var_.magnification);
+//    }
+    
     public void setMag(String magString){
-        
-        int indX=0;
-        if(magString.contains("x")){
-            indX=magString.indexOf("x");
-        }else if(magString.contains("X")){
-            indX=magString.indexOf("X");
-        }else{
-            System.out.println("Is objective empty? Yes-> everything is fine. No-> cannot identify objective label in hardware configuration file. Make sure there is only one x included"
-                        + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");
+        String xtype="";
+        if(magString.indexOf("x")>=0){
+            xtype="x";
+        } else {
+            xtype="X";
         }
-        String newString=null;
-        newString= magString.substring(0,indX);
-        int indXX=0;
-        try{
-            var_.magnification=Double.parseDouble(magString.substring(0,indX));
-        }catch(Exception ex){
-            if(newString.contains(" ")){
-                indXX=newString.indexOf(" ");
-            }else if(magString.contains("XO")){
-                indXX=newString.indexOf("o")+1;
-            }else{
-            System.out.println("Is objective empty? Yes-> everything is fine. No-> cannot identify objective label in hardware configuration file. Make sure there is only one x included"
-                        + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");
-            }
-            try{
-            var_.magnification=Double.parseDouble(magString.substring(indXX,indX));
-            }catch(Exception exx){
-                warningMessage("Cannot identify objective label in hardware configuration file. Make sure there is only one x included"
-                        + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");
+        //System.out.println("Hello World");
+        String[] parts = magString.split(xtype);
+        String partbefore = parts[0];
+        String partafter = parts[1];
+        //System.out.println(xtype);
+        //System.out.println(partbefore);
+        char[] Beforearray = partbefore.toCharArray();
+        String magvalue="";
+        // Numbers and decimal point
+        String matchstring="[0-9.]";
+        String str="";
+        for(char ch : Beforearray){
+            str=Character.toString(ch);
+            if(str.matches(matchstring)){
+                magvalue=magvalue.concat(str);
             }
         }
+        System.out.println("Magnification: "+magvalue);
+        String immersionfluid="";
+        if(partafter.equals("O")){
+            immersionfluid="Oil";
+        } else if(partafter.equals("W")){
+            immersionfluid="Water";
+        } else if(partafter.equals("G")){
+            immersionfluid="Glycerol";
+        } else {
+            immersionfluid.equals("Air");
+        }
+        System.out.println("Immersion fluid: "+immersionfluid);
         
-        System.out.println("Magnification changed to "+var_.magnification);
+        var_.magnification=Double.parseDouble(magvalue);
     }
     
     private double getMag(String desc) {

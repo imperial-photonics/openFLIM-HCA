@@ -1185,14 +1185,19 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 
                 if(FOVaccepted==true){
                     // Add this FOV to the normal sequence list shown on front panel
-                    // Was: FOV modifiedFOV = xYSequencing1.searchFOVtableModel_.getFOV(i);
+                    // Was: FOV modifiedFOV = xYSequencing1.searchFOVtableModel_.getFOV(i); - NO CONVERSION?
                     FOV modifiedFOV = xyzmi_.getCurrentFOV();
-                    // WARNING - need to modify this to accounf for the fact that it's relative to the corner not the centre? Or edit the macro?'
-                    //double rel_Hshift = (core_.getImageHeight()/2)-prefindHcentre;
-                    //double rel_Vshift = (core_.getImageWidth()/2)-prefindVcentre;
-                    //modifiedFOV.setX(modifiedFOV.getX()+(rel_Hshift*var_.magnification*var_.relay*var_.camerapixelsize));
-                    //modifiedFOV.setY(modifiedFOV.getY()+(rel_Vshift*var_.magnification*var_.relay*var_.camerapixelsize));
-                    // Manipulate the xy position by adding the ###DISPLACEMENT - CONVERSION FACTORS?
+                    if(prefind_.getHCentre()==0&prefind_.getVCentre()==0){
+                        // We're good... no position feedback, as impossible to be at 0,0?
+                    } else {
+                        //Need to work out an offset for the FOV, then...
+                        // WARNING - need to modify this to accounf for the fact that it's relative to the corner not the centre? Or edit the macro?'                        
+                        double rel_Hshift = (core_.getImageHeight()/2)-prefindHcentre; //assuming all the units are in pixels...
+                        double rel_Vshift = (core_.getImageWidth()/2)-prefindVcentre;                        
+                        modifiedFOV.setX(modifiedFOV.getX()+(rel_Hshift*var_.magnification*var_.relay*var_.camerapixelsize)); //in microns?
+                        modifiedFOV.setY(modifiedFOV.getY()+(rel_Vshift*var_.magnification*var_.relay*var_.camerapixelsize));                        
+                    }
+                    // It's all relative Z, so let's go with calling it zero - we're not 3D z-searching yet
                     modifiedFOV.setZ(0);
                     
                     xYSequencing1.tableModel_.addRow(modifiedFOV);
