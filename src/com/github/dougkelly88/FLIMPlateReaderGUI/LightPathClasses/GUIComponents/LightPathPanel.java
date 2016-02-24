@@ -631,42 +631,63 @@ public class LightPathPanel extends javax.swing.JPanel {
     
     public void setMag(String magString){
         String xtype="";
+        boolean Empty=false;
         if(magString.indexOf("x")>=0){
             xtype="x";
-        } else {
+        } else if (magString.indexOf("X")>=0){
             xtype="X";
+        } else {
+            System.out.println("Is objective empty? Yes-> everything is fine. No-> cannot identify objective label in hardware configuration file. Make sure there is only one x included"
+                        + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");            
+            Empty=true;
         }
         //System.out.println("Hello World");
-        String[] parts = magString.split(xtype);
-        String partbefore = parts[0];
-        String partafter = parts[1];
-        //System.out.println(xtype);
-        //System.out.println(partbefore);
-        char[] Beforearray = partbefore.toCharArray();
-        String magvalue="";
-        // Numbers and decimal point
-        String matchstring="[0-9.]";
-        String str="";
-        for(char ch : Beforearray){
-            str=Character.toString(ch);
-            if(str.matches(matchstring)){
-                magvalue=magvalue.concat(str);
-            }
-        }
-        System.out.println("Magnification: "+magvalue);
-        String immersionfluid="";
-        if(partafter.equals("O")){
-            immersionfluid="Oil";
-        } else if(partafter.equals("W")){
-            immersionfluid="Water";
-        } else if(partafter.equals("G")){
-            immersionfluid="Glycerol";
+        if(Empty){
+            //var_.magnification=0;
+            System.out.println("NO OBJECTIVE FOUND!");
         } else {
-            immersionfluid.equals("Air");
+            String[] parts = magString.split(xtype);
+            String partbefore = parts[0];
+            String partafter="";
+            if(parts.length>1){
+                partafter = parts[1];
+            } else {
+                partafter ="Air";
+            }
+            //System.out.println(xtype);
+            //System.out.println(partbefore);
+            char[] Beforearray = partbefore.toCharArray();
+            String magvalue="";
+            // Numbers and decimal point
+            String matchstring="[0-9.]";
+            String str="";
+            for(char ch : Beforearray){
+                str=Character.toString(ch);
+                if(str.matches(matchstring)){
+                    magvalue=magvalue.concat(str);
+                }
+            }
+            System.out.println("Magnification: "+magvalue);
+            String immersionfluid="";
+            if(partafter.equals("O")){
+                immersionfluid="Oil";
+            } else if(partafter.equals("W")){
+                immersionfluid="Water";
+            } else if(partafter.equals("G")){
+                immersionfluid="Glycerol";
+            } else {
+                immersionfluid.equals("Air");
+            }
+            System.out.println("Immersion fluid: "+immersionfluid);
+
+            try {
+                var_.magnification=Double.parseDouble(magvalue);
+            } catch(Exception exx) {
+                    warningMessage("Cannot identify objective label in hardware configuration file. Make sure there is only one x included"
+                            + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");
+                }
+            System.out.println("Magnification changed to "+var_.magnification);
         }
-        System.out.println("Immersion fluid: "+immersionfluid);
-        
-        var_.magnification=Double.parseDouble(magvalue);
     }
     
     private double getMag(String desc) {
