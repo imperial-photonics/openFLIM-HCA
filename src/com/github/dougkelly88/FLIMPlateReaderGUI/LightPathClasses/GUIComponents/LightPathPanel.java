@@ -669,11 +669,11 @@ public class LightPathPanel extends javax.swing.JPanel {
             }
             System.out.println("Magnification: "+magvalue);
             String immersionfluid="";
-            if(partafter.equals("O")){
+            if(partafter.equals("O")||partafter.equals("Oil")){
                 immersionfluid="Oil";
-            } else if(partafter.equals("W")){
+            } else if(partafter.equals("W")||partafter.equals("Water")){
                 immersionfluid="Water";
-            } else if(partafter.equals("G")){
+            } else if(partafter.equals("G")||partafter.equals("Glycerol")){
                 immersionfluid="Glycerol";
             } else {
                 immersionfluid.equals("Air");
