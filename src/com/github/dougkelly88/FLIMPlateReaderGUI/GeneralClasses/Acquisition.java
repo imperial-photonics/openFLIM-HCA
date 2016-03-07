@@ -162,7 +162,7 @@ public class Acquisition {
                     core_.snapImage();
                     Object img = core_.getImage();
                     // Display acquired images while the acquisition goes on
-                    //gui_.displayImage(img);
+                    gui_.displayImage(img);
                     // this bit c.f. FrameAverager
                     if (core_.getBytesPerPixel() == 2){
                         short[] pixS = (short[]) img;

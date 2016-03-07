@@ -1599,7 +1599,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         // Send Email after finishing acquisition!
      /*   if(xYSequencing1.sendEmailBoolean){
             xYSequencing1.sendEmail();
-        }*/                            
+        }*/
+        // try to close live mode window, or start up a new live acq? might need to be done in snapFlimImageThread.java?
+        
     }
 
     public void setStopButtonFalse(int step, int end, String name) throws InterruptedException{
