@@ -13,6 +13,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.snapFlimImageThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Prefind;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.prefindThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZMotionInterface;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.AcqOrderTableModel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.FComparator;
@@ -119,7 +120,7 @@ import org.micromanager.utils.ImageUtils;
 public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
     public CMMCore core_;
-    //private MMStudio gui_;  // Might be useful to put in at some point?
+    private MMStudio gui_;  // Might be useful to put in at some point? ### WAS DISABLED
     static HCAFLIMPluginFrame frame_;
     private SeqAcqProps sap_;
     private Variable var_;
@@ -134,6 +135,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public static HSSFWorkbook wbLoad = new HSSFWorkbook();
     public Thread sequenceThread;
     public Thread snapFlimImageThread;   
+    public Thread prefindThread;
     public ProgressBar progressBar_;
     public Arduino arduino_;
     public boolean terminate = false;
@@ -177,7 +179,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         xYSequencing1.setParent(this);
         lightPathControls1.setParent(this);
         
-        MMStudio gui_ = MMStudio.getInstance();
+        gui_ = MMStudio.getInstance(); // ### WAS MMStudio gui_ = MMStudio.getInstance(); 
         gui_.registerForEvents(this);
         
         this.AcquisitionSavingMode = "separate OME.tiff for every FOV";
@@ -1019,7 +1021,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
     // A routine for determining whehter we want to accept a FOV - hive this off to a separate class later
     public boolean checkprefindimg(Object img){
-        MMStudio gui_ = MMStudio.getInstance();
+        //MMStudio gui_ = MMStudio.getInstance(); // ### WAS ENABLED
         boolean accept = false;
         
         //gui_.displayImage(img);
@@ -1082,7 +1084,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
     public boolean testPrefind() {// throws InterruptedException{ 
         //prefind_.Snapandshow(prefindImage);
-        MMStudio gui_ = MMStudio.getInstance();
+        //MMStudio gui_ = MMStudio.getInstance(); // ### WAS ENABLED
         try{
             if (gui_.isLiveModeOn()){
                 gui_.enableLiveMode(false);
@@ -1101,7 +1103,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         prefindHcentre=0;
         prefindVcentre=0;
         progressBar_.setStart("Prefind: ");
-        MMStudio gui_ = MMStudio.getInstance();
+        //MMStudio gui_ = MMStudio.getInstance(); // ### WAS ENABLED
         try{
             if (gui_.isLiveModeOn()){
                 gui_.enableLiveMode(false);
@@ -1247,13 +1249,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }
     
     public void doSequenceAcquisition() throws InterruptedException{
+        double Initialdelay = fLIMPanel1.getCurrentDelay();
+        
         if(this.checkifAFenabled()){
             // Set the AF default position to the current Z
             // Might want to replace this with a button that the user presses to set this? Pop up a dialogue?
             xYZPanel1.setFixedAFDefault(xyzmi_.getZAbsolute());
         }     
-        
-        
+                
         // Setup for the acquisition overall
         Acquisition acq = new Acquisition();
         ArrayList<FOV> fovs = new ArrayList<>();
@@ -1573,9 +1576,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 System.out.println("Well Measured: "+lastFOV.getWell());
                 
                 
-            // RESET DELAY TO BE CONSISTENT WITH UI
+            // SET DELAY TO BE SAME AS BEFORE ACQUISITION // WAS JUST CONSISTENT WITH UI
             try{
-                core_.setProperty("Delay box", "Delay (ps)", fLIMPanel1.getCurrentDelay());
+                core_.setProperty("Delay box", "Delay (ps)", Initialdelay); // ###WAS core_.setProperty("Delay box", "Delay (ps)", fLIMPanel1.getCurrentDelay());
+                // Update UI to match
+                fLIMPanel1.setCurrentDelay(Initialdelay);
             } catch (Exception  e){
                 System.out.println(e.getMessage());
             }
@@ -1600,8 +1605,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
      /*   if(xYSequencing1.sendEmailBoolean){
             xYSequencing1.sendEmail();
         }*/
-        // try to close live mode window, or start up a new live acq? might need to be done in snapFlimImageThread.java?
-        
+        //Reset delay, turn on live mode (don't care about reusing the window?)
+        gui_.enableLiveMode(true);
     }
 
     public void setStopButtonFalse(int step, int end, String name) throws InterruptedException{
@@ -1612,22 +1617,29 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         stopSequenceButton.setSelected(false);
     }
     
+    public void prefindButtonPressed(){
+        //Open a thread for prefind
+        progressBar_.setStart("Prefinding...");
+        prefindThread = new Thread(new prefindThread(this));
+        prefindThread.start();
+    }
+    
     private void snapFLIMButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapFLIMButtonActionPerformed
         // is button pressed?
         singleImage=1;
         // open new Thread for snap Image
         progressBar_.setStart("Snap FLIM image");
-        snapFlimImageThread =new Thread(new snapFlimImageThread(this));
+        snapFlimImageThread = new Thread(new snapFlimImageThread(this));
         snapFlimImageThread.start();
     }//GEN-LAST:event_snapFLIMButtonActionPerformed
 
     public void snapFLIMImageButton(){
         boolean jump=false;
         try{
-            boolean abort=arduino_.checkSafety();;
+            boolean abort=arduino_.checkSafety();
             if(abort==true){
                 jump=true;
-            } else{
+            } else {
                 arduino_.setDigitalOutHigh();
 //                wait(var_.shutterResponse);
             }

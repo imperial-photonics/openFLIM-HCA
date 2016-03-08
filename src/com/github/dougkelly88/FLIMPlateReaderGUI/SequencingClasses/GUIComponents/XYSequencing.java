@@ -1145,10 +1145,10 @@ public class XYSequencing extends javax.swing.JPanel {
         generatesearchFOVs(); // does this need any other arguments?
         // Call the search function in the parent (HCAFLIMPluginFrame())
         try{
-            parent_.prefind();
+            parent_.prefindButtonPressed();
         }
-        catch (InterruptedException IE){
-            System.out.println(IE);
+        catch (Exception e){
+            System.out.println(e);
         }
     }//GEN-LAST:event_quickPFButtonActionPerformed
 

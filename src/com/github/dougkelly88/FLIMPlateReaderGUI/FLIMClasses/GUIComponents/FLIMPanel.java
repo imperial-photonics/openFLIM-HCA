@@ -1375,6 +1375,10 @@ public class FLIMPanel extends javax.swing.JPanel {
         return fastDelaySlider_.getValue();
     }
     
+    public void setCurrentDelay(Double Delay_to_set){
+        fastDelaySlider_.setValue(Delay_to_set.intValue());
+    }
+    
     public void updatePanel(){
         // do something when FLIMPanel is selected
     }
