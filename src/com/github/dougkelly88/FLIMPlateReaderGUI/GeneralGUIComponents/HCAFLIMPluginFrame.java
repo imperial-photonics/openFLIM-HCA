@@ -527,7 +527,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             .addGap(0, 64, Short.MAX_VALUE)
         );
 
-        stopSequenceButton.setText("Stop HCA sequence");
+        stopSequenceButton.setText("Abort prefind/acq");
+        stopSequenceButton.setToolTipText("");
         stopSequenceButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stopSequenceButtonActionPerformed(evt);
@@ -1196,8 +1197,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         // WARNING - need to modify this to accounf for the fact that it's relative to the corner not the centre? Or edit the macro?'                        
                         double rel_Hshift = (core_.getImageHeight()/2)-prefindHcentre; //assuming all the units are in pixels...
                         double rel_Vshift = (core_.getImageWidth()/2)-prefindVcentre;                        
-                        modifiedFOV.setX(modifiedFOV.getX()+(rel_Hshift*var_.magnification*var_.relay*var_.camerapixelsize)); //in microns?
-                        modifiedFOV.setY(modifiedFOV.getY()+(rel_Vshift*var_.magnification*var_.relay*var_.camerapixelsize));                        
+                        double binning = Double.parseDouble(core_.getProperty("Camera", "Binning"));
+                        modifiedFOV.setX(modifiedFOV.getX()+(rel_Hshift*var_.magnification*var_.relay*var_.camerapixelsize*binning)); //in microns?
+                        modifiedFOV.setY(modifiedFOV.getY()+(rel_Vshift*var_.magnification*var_.relay*var_.camerapixelsize*binning));                        
                     }
                     // It's all relative Z, so let's go with calling it zero - we're not 3D z-searching yet
                     modifiedFOV.setZ(0);
