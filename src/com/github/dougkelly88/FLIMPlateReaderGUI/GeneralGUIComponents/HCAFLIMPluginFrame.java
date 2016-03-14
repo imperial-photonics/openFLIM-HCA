@@ -1198,8 +1198,20 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         double rel_Hshift = (core_.getImageHeight()/2)-prefindHcentre; //assuming all the units are in pixels...
                         double rel_Vshift = (core_.getImageWidth()/2)-prefindVcentre;                        
                         double binning = Double.parseDouble(core_.getProperty("Camera", "Binning"));
-                        modifiedFOV.setX(modifiedFOV.getX()+(rel_Hshift*var_.magnification*var_.relay*var_.camerapixelsize*binning)); //in microns?
-                        modifiedFOV.setY(modifiedFOV.getY()+(rel_Vshift*var_.magnification*var_.relay*var_.camerapixelsize*binning));                        
+                        double scalingfactor = ((var_.camerapixelsize*binning)/(var_.magnification*var_.relay));
+                        double Hdelta=0;
+                        double Vdelta=0;
+                        if (this.proSettingsGUI1.getHVswap()){
+                            //Swap H and V
+                            Vdelta = rel_Hshift;
+                            Hdelta = rel_Vshift;
+                        } else {
+                            //Don't swap H and V
+                            Vdelta = rel_Vshift;
+                            Hdelta = rel_Hshift;                            
+                        }
+                        modifiedFOV.setX(modifiedFOV.getX()+(Hdelta*scalingfactor*this.proSettingsGUI1.getHshiftscale())); //in microns?
+                        modifiedFOV.setY(modifiedFOV.getY()+(Vdelta*scalingfactor*this.proSettingsGUI1.getVshiftscale()));                        
                     }
                     // It's all relative Z, so let's go with calling it zero - we're not 3D z-searching yet
                     modifiedFOV.setZ(0);
