@@ -402,9 +402,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         statusLabel = new javax.swing.JLabel();
         sequenceSetupBasePanel = new javax.swing.JPanel();
         sequenceSetupTabbedPane = new javax.swing.JTabbedPane();
-        xYSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing();
         spectralSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.SpectralSequencing();
         timeCourseSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.TimeCourseSequencing();
+        xYSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing();
         HCAsequenceProgressBar = new javax.swing.JPanel();
         snapFLIMButton = new javax.swing.JButton();
         startSequenceButton = new javax.swing.JButton();
@@ -458,9 +458,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         sequenceSetupBasePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Setup HCA sequenced acquisition"));
 
-        sequenceSetupTabbedPane.addTab("XYZ positions", xYSequencing1);
         sequenceSetupTabbedPane.addTab("Filter sets", spectralSequencing1);
         sequenceSetupTabbedPane.addTab("Time course", timeCourseSequencing1);
+        sequenceSetupTabbedPane.addTab("XYZ positions", xYSequencing1);
 
         HCAsequenceProgressBar.setBorder(javax.swing.BorderFactory.createTitledBorder("FLIM acquisition"));
 
@@ -1195,9 +1195,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     } else {
                         //Need to work out an offset for the FOV, then...
                         // WARNING - need to modify this to accounf for the fact that it's relative to the corner not the centre? Or edit the macro?'                        
-                        double rel_Hshift = (core_.getImageHeight()/2)-prefindHcentre; //assuming all the units are in pixels...
-                        double rel_Vshift = (core_.getImageWidth()/2)-prefindVcentre;                        
-                        double binning = Double.parseDouble(core_.getProperty("Camera", "Binning"));
+                        double rel_Hshift = (core_.getImageWidth()/2)-prefindHcentre; //assuming all the units are in pixels...
+                        double rel_Vshift = (core_.getImageHeight()/2)-prefindVcentre;                        
+                        double binning = 2;// Double.parseDouble(core_.getProperty("Camera", "Binning"));
                         double scalingfactor = ((var_.camerapixelsize*binning)/(var_.magnification*var_.relay));
                         double Hdelta=0;
                         double Vdelta=0;
@@ -1215,7 +1215,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     }
                     // It's all relative Z, so let's go with calling it zero - we're not 3D z-searching yet
                     modifiedFOV.setZ(0);
-                    
+                    FOV currentz0FOV = xyzmi_.getCurrentFOV();
+                    currentz0FOV.setZ(0);
+                    xYSequencing1.tableModel_.addRow(currentz0FOV);
                     xYSequencing1.tableModel_.addRow(modifiedFOV);
                     noofFOVsSinceLastSuccess=0;
                     noofacceptedFOVs_thiswell++;
