@@ -54,9 +54,9 @@ public class Prefind {
     private HCAFLIMPluginFrame frame_;
     
     // Prefind results info
-    private boolean judgement = false;
-    private double h_pix=0;
-    private double v_pix=0;
+    private boolean judgement;
+    private double[] h_pix;
+    private double[] v_pix;
     
     // Maybe only need this one for a plugin filter?
     static int NO_UNDO;
@@ -68,13 +68,16 @@ public class Prefind {
         frame_= HCAFLIMPluginFrame.getInstance();
         ImagePlus rawImage = new ij.ImagePlus();
         ImagePlus output = new ij.ImagePlus();
+        h_pix = new double[] {0.0};
+        v_pix = new double[] {0.0};
+        judgement = false;
     }
     
-    public double getHCentre(){
+    public double[] getHCentre(){
         return h_pix;
     }
     
-    public double getVCentre(){
+    public double[] getVCentre(){
         return v_pix;
     }
     
@@ -125,8 +128,10 @@ public class Prefind {
     
     private boolean runAMacro(ImagePlus input, String macroname){
         // Reset the target co-ordinates...
-        h_pix=0;
-        v_pix=0;
+        // Garbage collector should deal with the Java nonsense where you need to instantiate an array each time you just want to set new values from scratch...
+        // http://stackoverflow.com/questions/4208655/empty-an-array-in-java-processing
+        h_pix = new double[] {0};
+        v_pix = new double[] {0};
         //We're going to use ### as our split delimiter
         Double pfthresh=frame_.getPrefindThreshold();
         Double pctcover=frame_.getPercentCoverage();
@@ -147,22 +152,30 @@ public class Prefind {
             if (thisvar[0].equals("Accept")){
                 judgement=true;
             } else if (thisvar[0].equals("h_pix")){
-                h_pix=Double.parseDouble(thisvar[1]);
+                //Split second part by commas...
+                String[] h_array = thisvar[1].split(",");
+                //Loop for conversion to double, assignment to array...
+                for(int j=0;j<h_array.length;j++){
+                    h_pix [j] = Double.parseDouble(h_array[j]);
+                }
             } else if (thisvar[0].equals("v_pix")){
-                v_pix=Double.parseDouble(thisvar[1]);   
+                //Split second part by commas...
+                String[] v_array = thisvar[1].split(",");
+                //Loop for conversion to double, assignment to array...
+                for(int j=0;j<v_array.length;j++){
+                    v_pix [j] = Double.parseDouble(v_array[j]);
+                }
             } else if (thisvar[0].equals("Reject")){
                 //Special case for not accepting - keep last other than total failure
                 System.out.println("Field rejected");
-                h_pix=0;
-                v_pix=0;
+                h_pix = new double[] {0};
+                v_pix = new double[] {0};
                 input.setTitle("Prefind");
-                return false;
             } else {
                 System.out.println("Unknown (or no) arguments returned from the macro! FAIL!");
                 input.setTitle("Prefind");
-                h_pix=0;
-                v_pix=0;
-                return false;
+                h_pix = new double[] {0};
+                v_pix = new double[] {0};
             }
         }
         System.out.println(feedback);

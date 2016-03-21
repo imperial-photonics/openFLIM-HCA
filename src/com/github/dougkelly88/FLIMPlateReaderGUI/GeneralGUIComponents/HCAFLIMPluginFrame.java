@@ -147,8 +147,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public Prefind prefind_;
     public ImagePlus prefindImage;
     public ImageProcessor prefindIP;
-    private double prefindHcentre;
-    private double prefindVcentre;
+    private double[] prefindHcentres;
+    private double[] prefindVcentres;
     private double camerapixelsize;
     
     private boolean testmode;
@@ -1118,8 +1118,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
     public boolean prefind() throws InterruptedException{ // THROW is copied from doSequenceAcquisition - assume this is for Abort?
         // Reset local copy of targeted co-ords - remember these are in pixel units
-        prefindHcentre=0;
-        prefindVcentre=0;
+        prefindHcentres = new double[] {0};
+        prefindVcentres = new double[] {0};
         progressBar_.setStart("Prefind: ");
         //MMStudio gui_ = MMStudio.getInstance(); // ### WAS ENABLED
         try{
@@ -1192,59 +1192,67 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 FOVaccepted=result;
                 // Increment FOV list position counter
                 noofattemptedFOVs_thiswell++;
-                
-                if(prefind_.getHCentre()==0&prefind_.getVCentre()==0){
+                double[] H_array = prefind_.getHCentre();
+                double[] V_array = prefind_.getHCentre();
+                //Might be worth swapping the operands below...
+                if(prefind_.getHCentre().length==1&&prefind_.getVCentre().length==1&&H_array[0]==0&V_array[0]==0){
                     // Reset displacements if the macro just returns yes/no
-                    prefindHcentre = 0;
-                    prefindVcentre = 0;
+                    prefindHcentres = new double[] {0};
+                    prefindVcentres = new double[] {0};
                 } else {
                     // If we have a nonzero value returned for the centre of the desired FOV, need to do some thinking to get where we should go to...
-                    prefindHcentre = prefind_.getHCentre();
-                    prefindVcentre = prefind_.getVCentre();
+                    prefindHcentres = prefind_.getHCentre();
+                    prefindVcentres = prefind_.getVCentre();
                 }                
                 
                 if(FOVaccepted==true){
                     // Add this FOV to the normal sequence list shown on front panel
                     // Was: FOV modifiedFOV = xYSequencing1.searchFOVtableModel_.getFOV(i); - NO CONVERSION?
-                    FOV modifiedFOV = xyzmi_.getCurrentFOV();
-                    if(prefind_.getHCentre()==0&prefind_.getVCentre()==0){
-                        // We're good... no position feedback, as impossible to be at 0,0?
-                    } else {
-                        //Need to work out an offset for the FOV, then...
-                        // WARNING - need to modify this to accounf for the fact that it's relative to the corner not the centre? Or edit the macro?'                        
-                        double rel_Hshift = (core_.getImageWidth()/2)-prefindHcentre; //assuming all the units are in pixels...
-                        double rel_Vshift = (core_.getImageHeight()/2)-prefindVcentre;                        
-                        int[] binning = this.GenUtils_.getCameraBinning(); // Double.parseDouble(core_.getProperty("Camera", "Binning"));
-                        // int[] binning = {2,2}; //Emergency fix replacement...
-                        double Hdelta=0;
-                        double Vdelta=0;
-                        double Hscalingfactor=0;
-                        double Vscalingfactor=0;                        
-                        if (this.proSettingsGUI1.getHVswap()){
-                            //Swap H and V
-                            Vdelta = rel_Hshift;
-                            Hdelta = rel_Vshift;
-                            Vscalingfactor = ((var_.camerapixelsize*binning[0])/(var_.magnification*var_.relay));
-                            Hscalingfactor = ((var_.camerapixelsize*binning[1])/(var_.magnification*var_.relay));
-                        } else {
-                            //Don't swap H and V
-                            Vdelta = rel_Vshift;
-                            Hdelta = rel_Hshift;                            
-                            Hscalingfactor = ((var_.camerapixelsize*binning[0])/(var_.magnification*var_.relay));
-                            Vscalingfactor = ((var_.camerapixelsize*binning[1])/(var_.magnification*var_.relay));                            
+                    
+                    // We're going to trust the macro NOT to return "Accept" if something goes wrong...
+                    // We'll assume that there's some way to screw up reading the results table though...
+                    if(prefindHcentres.length == prefindVcentres.length){
+                        for(int m=0;m<prefindHcentres.length;m++){
+                            FOV modifiedFOV = xyzmi_.getCurrentFOV();
+                            //Need to work out an offset for the FOV, then...
+                            // WARNING - need to modify this to accounf for the fact that it's relative to the corner not the centre? Or edit the macro?'                        
+                            double rel_Hshift = (core_.getImageWidth()/2)-prefindHcentres[m]; //assuming all the units are in pixels...
+                            double rel_Vshift = (core_.getImageHeight()/2)-prefindVcentres[m];                        
+                            int[] binning = this.GenUtils_.getCameraBinning(); // Double.parseDouble(core_.getProperty("Camera", "Binning"));
+                            // int[] binning = {2,2}; //Emergency fix replacement...
+                            double Hdelta=0;
+                            double Vdelta=0;
+                            double Hscalingfactor=0;
+                            double Vscalingfactor=0;                        
+                            if (this.proSettingsGUI1.getHVswap()){
+                                //Swap H and V
+                                Vdelta = rel_Hshift;
+                                Hdelta = rel_Vshift;
+                                Vscalingfactor = ((var_.camerapixelsize*binning[0])/(var_.magnification*var_.relay));
+                                Hscalingfactor = ((var_.camerapixelsize*binning[1])/(var_.magnification*var_.relay));
+                            } else {
+                                //Don't swap H and V
+                                Vdelta = rel_Vshift;
+                                Hdelta = rel_Hshift;                            
+                                Hscalingfactor = ((var_.camerapixelsize*binning[0])/(var_.magnification*var_.relay));
+                                Vscalingfactor = ((var_.camerapixelsize*binning[1])/(var_.magnification*var_.relay));                            
+                            }
+                            //WARNING! Might need to 
+                            modifiedFOV.setX(modifiedFOV.getX()+(Hdelta*Hscalingfactor*this.proSettingsGUI1.getHshiftscale())); //in microns?
+                            modifiedFOV.setY(modifiedFOV.getY()+(Vdelta*Vscalingfactor*this.proSettingsGUI1.getVshiftscale()));                        
+                            
+                            // It's all relative Z, so let's go with calling it zero - we're not 3D z-searching yet
+                            modifiedFOV.setZ(0);
+                            FOV currentz0FOV = xyzmi_.getCurrentFOV();
+                            currentz0FOV.setZ(0);
+                            //xYSequencing1.tableModel_.addRow(currentz0FOV);
+                            xYSequencing1.tableModel_.addRow(modifiedFOV);
+                            noofFOVsSinceLastSuccess=0;
+                            noofacceptedFOVs_thiswell++;
                         }
-                        //WARNING! Might need to 
-                        modifiedFOV.setX(modifiedFOV.getX()+(Hdelta*Hscalingfactor*this.proSettingsGUI1.getHshiftscale())); //in microns?
-                        modifiedFOV.setY(modifiedFOV.getY()+(Vdelta*Vscalingfactor*this.proSettingsGUI1.getVshiftscale()));                        
+                    } else {
+                        System.out.println("Mismatch in X and Y array length!!!");
                     }
-                    // It's all relative Z, so let's go with calling it zero - we're not 3D z-searching yet
-                    modifiedFOV.setZ(0);
-                    FOV currentz0FOV = xyzmi_.getCurrentFOV();
-                    currentz0FOV.setZ(0);
-                    xYSequencing1.tableModel_.addRow(currentz0FOV);
-                    xYSequencing1.tableModel_.addRow(modifiedFOV);
-                    noofFOVsSinceLastSuccess=0;
-                    noofacceptedFOVs_thiswell++;
                 } else { 
                    // We didn't like this FOV
                     noofFOVsSinceLastSuccess++;
