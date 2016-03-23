@@ -35,8 +35,8 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         var_.autofocusWhich = AutoFocusSelectComboBox.getSelectedItem().toString();
         var_.acquisitionStrategy = AcquisitionStrategyComboBox.getSelectedItem().toString();
         H_shift_scale = 1;
-        V_shift_scale = 1;
-        HV_swap = false;
+        V_shift_scale = -1;
+        HV_swap = true;
     }
 
     /**
@@ -412,7 +412,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             }
         });
 
-        VShiftScale.setText("1");
+        VShiftScale.setText("-1");
         VShiftScale.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 VShiftScaleActionPerformed(evt);
@@ -423,6 +423,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
 
         jLabel3.setText("V shift scaling");
 
+        H_V_swap.setSelected(true);
         H_V_swap.setText("H/V swap");
         H_V_swap.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -510,7 +511,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(VShiftScale, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))))
-                .addContainerGap(118, Short.MAX_VALUE))
+                .addContainerGap(135, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

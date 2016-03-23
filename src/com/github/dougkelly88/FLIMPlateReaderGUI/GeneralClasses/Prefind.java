@@ -155,6 +155,7 @@ public class Prefind {
                 //Split second part by commas...
                 String[] h_array = thisvar[1].split(",");
                 //Loop for conversion to double, assignment to array...
+                h_pix = new double [h_array.length];
                 for(int j=0;j<h_array.length;j++){
                     h_pix [j] = Double.parseDouble(h_array[j]);
                 }
@@ -162,6 +163,7 @@ public class Prefind {
                 //Split second part by commas...
                 String[] v_array = thisvar[1].split(",");
                 //Loop for conversion to double, assignment to array...
+                v_pix = new double [v_array.length];
                 for(int j=0;j<v_array.length;j++){
                     v_pix [j] = Double.parseDouble(v_array[j]);
                 }

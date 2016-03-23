@@ -1218,8 +1218,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                             // WARNING - need to modify this to accounf for the fact that it's relative to the corner not the centre? Or edit the macro?'                        
                             double rel_Hshift = (core_.getImageWidth()/2)-prefindHcentres[m]; //assuming all the units are in pixels...
                             double rel_Vshift = (core_.getImageHeight()/2)-prefindVcentres[m];                        
-                            int[] binning = this.GenUtils_.getCameraBinning(); // Double.parseDouble(core_.getProperty("Camera", "Binning"));
-                            // int[] binning = {2,2}; //Emergency fix replacement...
+                            //int[] binning = this.GenUtils_.getCameraBinning(); // Double.parseDouble(core_.getProperty("Camera", "Binning"));
+                            int[] binning = {2,2}; //Emergency fix replacement...
                             double Hdelta=0;
                             double Vdelta=0;
                             double Hscalingfactor=0;
