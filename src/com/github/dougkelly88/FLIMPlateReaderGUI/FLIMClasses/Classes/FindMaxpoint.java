@@ -55,7 +55,7 @@ public class FindMaxpoint {
     public int xMax=16666;
     // Autogate default values
     int gateWidth=4000;
-    int numDelays=7;
+    int numDelays=8;
     int lifeTime=3400;
     int repRate=60;
 //    private XYDataset dataset_;
@@ -294,8 +294,8 @@ public class FindMaxpoint {
             warningMessage("Delay before the peak is smaller or equal zero. Please check delay integrity!");
         }
         // adding log delays
-        for (int i = 0; i < numDelays-1; i++){
-                delayLoop=maxValue +(int) (lifeTime* log(((double) numDelays-1)/( (double) numDelays-1-i)));
+        for (int i = 0; i < numDelays-2; i++){
+                delayLoop=maxValue +(int) (lifeTime* log(((double) numDelays-2)/( (double) numDelays-2-i)));
                 n=i+1;
                 // check if last delays still in rep rate
                 if ((double) delayLoop<1/(double)repRate*1000000){
@@ -305,6 +305,7 @@ public class FindMaxpoint {
                    break;
                 }
             }
+        gates.add(16500);
         return gates;
     }
     
@@ -370,6 +371,10 @@ public class FindMaxpoint {
     
     public String getAcquiredMaxpointValue(){
         return Integer.toString(maxpointDelay_);
+    }
+
+    public void changePeakIntensityPoint(int PP) {
+        maxpointDelay_=PP;
     }
     
 }
