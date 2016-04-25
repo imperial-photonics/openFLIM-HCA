@@ -57,4 +57,40 @@ public class GeneralUtilities {
     return Returnvalue;
     }
     
+// CAN'T seem to get these called from PrefindPanel.java - moved there...    
+    
+//    public int SanityCheckInt(String input_text){
+//        int retval = (int) Math.round(SanityCheckDouble(input_text));
+//        return retval;
+//    }
+//
+//    public double SanityCheckDouble(String input_text){
+//        String NumberRegex = "[^0-9]"; //The ^ at the start means "anything except whatever's next"
+//        String OriginalString=input_text;
+//        String[] SplitArray = OriginalString.split("\\."); 
+//        String Output="";
+//        //OK, so if we don't see a decimal point, assume it's an int
+//        if(SplitArray.length!=0){
+//            for (int i=0;i<SplitArray.length;i++){
+//                if(i==(SplitArray.length-1)&&i>0){
+//                    Output=Output+".";
+//                }
+//                String RegexedString = SplitArray[i].replaceAll(NumberRegex, "");
+//                //System.out.println(RegexedString);
+//                Output=Output+RegexedString;
+//            }
+//        } else {
+//            Output=OriginalString.replaceAll(NumberRegex, "");
+//        }
+//        int res=0;
+//        res=Output.length();
+//        //OK, we should have a sensible string now (excluding if just a decimal)
+//        //but could still be a double if there's no digits before the decimal
+//        if(Output.equals(".")){
+//            Output="0";
+//        }
+//        Double retval=Double.parseDouble(Output);
+//        //System.out.println(retval);
+//        return retval;
+//    }
 }

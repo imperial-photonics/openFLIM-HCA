@@ -142,7 +142,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public boolean terminate = false;
     public int singleImage;
     
-    private GeneralUtilities GenUtils_;
+    public GeneralUtilities GenUtils_;
     
     public Prefind prefind_;
     public ImagePlus prefindImage;

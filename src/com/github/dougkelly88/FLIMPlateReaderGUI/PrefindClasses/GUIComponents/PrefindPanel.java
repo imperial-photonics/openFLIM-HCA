@@ -6,6 +6,7 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.PrefindClasses.GUIComponents;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Prefind;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.GeneralUtilities;
 import ij.io.DirectoryChooser;
 
 /**
@@ -15,7 +16,9 @@ import ij.io.DirectoryChooser;
 public class PrefindPanel extends javax.swing.JPanel {
 
     private HCAFLIMPluginFrame parent_;
+    private GeneralUtilities GenUtils_;
     public Prefind prefind_;
+    private String NumberRegex = "\\d+"; // Should be just the digits with this...
     
     /**
      * Creates new form PrefindPanel
@@ -24,6 +27,42 @@ public class PrefindPanel extends javax.swing.JPanel {
         initComponents();
     }
     
+    public int SanityCheckInt(String input_text){
+        int retval = (int) Math.round(SanityCheckDouble(input_text));
+        return retval;
+    }
+    
+    public double SanityCheckDouble(String input_text){
+        String NumberRegex = "[^0-9]"; //The ^ at the start means "anything except whatever's next"
+        String OriginalString=input_text;
+        String[] SplitArray = OriginalString.split("\\."); 
+        String Output="";
+        //OK, so if we don't see a decimal point, assume it's an int
+        if(SplitArray.length!=0){
+            for (int i=0;i<SplitArray.length;i++){
+                if(i==(SplitArray.length-1)&&i>0){
+                    Output=Output+".";
+                }
+                String RegexedString = SplitArray[i].replaceAll(NumberRegex, "");
+                //System.out.println(RegexedString);
+                Output=Output+RegexedString;
+            }
+        } else {
+            Output=OriginalString.replaceAll(NumberRegex, "");
+        }
+        int res;
+        res=Output.length();
+        //OK, we should have a sensible string now (excluding if just a decimal)
+        //but could still be a double if there's no digits before the decimal
+        if(Output.equals(".")){
+            Output="0";
+        }
+        Double retval=Double.parseDouble(Output);
+        //System.out.println(retval);
+        return retval;
+    }
+    
+
     public void setParent(Object o) {
         parent_ = (HCAFLIMPluginFrame) o;
     }
@@ -282,19 +321,19 @@ public class PrefindPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void varTextbox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_varTextbox1ActionPerformed
-        VarSlider1.setValue(Integer.getInteger(varTextbox1.getText()));
+        VarSlider1.setValue(this.SanityCheckInt(varTextbox1.getText()));
     }//GEN-LAST:event_varTextbox1ActionPerformed
 
     private void varTextbox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_varTextbox2ActionPerformed
-        VarSlider2.setValue(Integer.getInteger(varTextbox2.getText()));
+        VarSlider2.setValue(this.SanityCheckInt(varTextbox2.getText()));
     }//GEN-LAST:event_varTextbox2ActionPerformed
 
     private void varTextbox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_varTextbox3ActionPerformed
-        VarSlider3.setValue(Integer.getInteger(varTextbox3.getText()));
+        VarSlider3.setValue(this.SanityCheckInt(varTextbox3.getText()));
     }//GEN-LAST:event_varTextbox3ActionPerformed
 
     private void varTextbox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_varTextbox4ActionPerformed
-        VarSlider4.setValue(Integer.getInteger(varTextbox4.getText()));
+        VarSlider4.setValue(this.SanityCheckInt(varTextbox4.getText()));
     }//GEN-LAST:event_varTextbox4ActionPerformed
 
     private void VarSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_VarSlider1StateChanged
