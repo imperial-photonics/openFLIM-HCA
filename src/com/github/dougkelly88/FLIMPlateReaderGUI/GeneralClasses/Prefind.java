@@ -42,7 +42,11 @@ import ij.ImagePlus;
 //import ij.text.*; // Was unused?
 //import ij.plugin.filter.*; // Was unused?
 import org.micromanager.utils.ImageUtils;
+import ij.io.DirectoryChooser;
 // End of added imageJ bits
+
+//Import stuff for file reading
+import java.io.*;
 
 // Remember - ImagePlus > ImageStack > ImagePRocessor: http://fiji.sc/Introduction_into_Developing_Plugins
 
@@ -79,6 +83,99 @@ public class Prefind {
     
     public double[] getVCentre(){
         return v_pix;
+    }
+    
+    public String getmacropath(){
+        String directoryName=ij.IJ.getDirectory("macros");
+        String macropath = directoryName+frame_.getSelectedAnalyser();      
+        return macropath;
+    }
+    
+    public double[] getvarlimits(int whichvarnumber){
+        double[] limits = new double[2];
+        //Set defaults
+        limits[0]=0;
+        limits[1]=0;
+        // Get macro path
+        String macropath = getmacropath();
+        
+        boolean success=false;
+        try {
+            String varname = "";
+            //http://www.mkyong.com/java8/java-8-stream-read-a-file-line-by-line/
+            //http://www.javapractices.com/topic/TopicAction.do?Id=42
+            //http://stackoverflow.com/questions/2788080/java-how-to-read-a-text-file
+
+            try{
+                //Create object of FileReader
+                FileReader inputFile = new FileReader(macropath);
+
+                //Instantiate the BufferedReader Class
+                BufferedReader bufferReader = new BufferedReader(inputFile);
+
+                //Variable to hold the one line data
+                String line;
+
+                // Read file line by line and print on the console
+                for (int i=0;i<4;i++) {
+                    line = bufferReader.readLine();
+                    //System.out.println(line);
+                    if((i+1)==whichvarnumber){
+                        limits[0] = Double.parseDouble(line.split("!!!")[2]);
+                        limits[1] = Double.parseDouble(line.split("!!!")[3]);
+                    }
+                }
+                bufferReader.close();
+            } catch(IOException e) {
+                System.out.println(e);
+            }
+
+        } catch (Exception e) {
+            success=false;
+        }
+        if(success=true){
+            
+        } else {    
+            // Get min from macrofile
+            limits[0]=0;
+            // Get max from macrofile
+            limits[1]=100;
+        }
+        return limits;
+    }
+    
+    public String getvarname(int whichvarnumber){
+        // Get macro path
+        String macropath = getmacropath();
+        String varname = "";
+        //http://www.mkyong.com/java8/java-8-stream-read-a-file-line-by-line/
+        //http://www.javapractices.com/topic/TopicAction.do?Id=42
+        //http://stackoverflow.com/questions/2788080/java-how-to-read-a-text-file
+        
+        try{
+            //Create object of FileReader
+            FileReader inputFile = new FileReader(macropath);
+
+            //Instantiate the BufferedReader Class
+            BufferedReader bufferReader = new BufferedReader(inputFile);
+
+            //Variable to hold the one line data
+            String line;
+
+            // Read file line by line and print on the console
+            for (int i=0;i<4;i++) {
+                line = bufferReader.readLine();
+                //System.out.println(line);
+                if((i+1)==whichvarnumber){
+                    varname = line.split("!!!")[1];
+                }
+            }
+            bufferReader.close();
+        } catch(IOException e) {
+            System.out.println(e);
+        }
+        
+        return varname;
     }
     
     public boolean getJudgement(){

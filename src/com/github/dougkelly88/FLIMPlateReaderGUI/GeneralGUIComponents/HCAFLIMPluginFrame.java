@@ -181,6 +181,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         xYZPanel1.setParent(this);
         xYSequencing1.setParent(this);
         lightPathControls1.setParent(this);
+        prefindPanel1.setParent(this);
         
         gui_ = MMStudio.getInstance(); // ### WAS MMStudio gui_ = MMStudio.getInstance(); 
         gui_.registerForEvents(this);
@@ -411,6 +412,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         spectralSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.SpectralSequencing();
         timeCourseSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.TimeCourseSequencing();
         xYSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing();
+        Prefindpanel = new javax.swing.JPanel();
+        prefindPanel1 = new com.github.dougkelly88.FLIMPlateReaderGUI.PrefindClasses.GUIComponents.PrefindPanel();
         HCAsequenceProgressBar = new javax.swing.JPanel();
         snapFLIMButton = new javax.swing.JButton();
         startSequenceButton = new javax.swing.JButton();
@@ -468,6 +471,25 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         sequenceSetupTabbedPane.addTab("Filter sets", spectralSequencing1);
         sequenceSetupTabbedPane.addTab("Time course", timeCourseSequencing1);
         sequenceSetupTabbedPane.addTab("XYZ positions", xYSequencing1);
+
+        javax.swing.GroupLayout PrefindpanelLayout = new javax.swing.GroupLayout(Prefindpanel);
+        Prefindpanel.setLayout(PrefindpanelLayout);
+        PrefindpanelLayout.setHorizontalGroup(
+            PrefindpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PrefindpanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(prefindPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(157, Short.MAX_VALUE))
+        );
+        PrefindpanelLayout.setVerticalGroup(
+            PrefindpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PrefindpanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(prefindPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(261, Short.MAX_VALUE))
+        );
+
+        sequenceSetupTabbedPane.addTab("Prefind settings", Prefindpanel);
 
         HCAsequenceProgressBar.setBorder(javax.swing.BorderFactory.createTitledBorder("FLIM acquisition"));
 
@@ -662,7 +684,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             sequenceSetupBasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sequenceSetupBasePanelLayout.createSequentialGroup()
                 .addGroup(sequenceSetupBasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sequenceSetupTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 693, Short.MAX_VALUE)
+                    .addComponent(sequenceSetupTabbedPane)
                     .addComponent(HCAsequenceProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1082,10 +1104,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             } else {
                 // Starts as false by default, so just leave it as such...
             }           
-            //Indicate whether field was accepted or rejected (crudely for now)
-            //System.out.println(accept);
 
-            //ij.IJ.runMacro("TEST"); //Jut need the name of the macro, but also need correct image to do it on?
             prefind_img.show();
             currentWin = ij.WindowManager.getCurrentWindow();
             prefind_img.changes = false; // White lie to stop that whiny popup coming up after image changes from thresholding?
@@ -1098,6 +1117,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         //String Macropath="C:\\Program Files\\Micro-Manager-1.4.20\\plugins\\TEST.ijm";
         System.out.println(accept);
         return accept;
+    }
+    
+    public void updatePrefindPanel(){
+        prefindPanel1.UpdatePrefindPanel();
     }
     
     public boolean testPrefind() {// throws InterruptedException{ 
@@ -1937,6 +1960,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem FLIMHCAHelpMenu;
     private javax.swing.JTabbedPane FLIMPanel;
     private javax.swing.JPanel HCAsequenceProgressBar;
+    private javax.swing.JPanel Prefindpanel;
     private javax.swing.JButton TestButton;
     private javax.swing.JMenuItem aboutMenu;
     private javax.swing.JFormattedTextField accFramesField;
@@ -1962,6 +1986,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem loadPlateMetadataMenu;
     private javax.swing.JMenuItem loadSequencingTablesMenu;
     private javax.swing.JMenuItem loadSoftwareConfig;
+    private com.github.dougkelly88.FLIMPlateReaderGUI.PrefindClasses.GUIComponents.PrefindPanel prefindPanel1;
     private ProSettingsGUI.ProSettingsPanel proSettingsGUI1;
     private javax.swing.JPanel progressBarPanel;
     private javax.swing.JMenuItem quitMenu;

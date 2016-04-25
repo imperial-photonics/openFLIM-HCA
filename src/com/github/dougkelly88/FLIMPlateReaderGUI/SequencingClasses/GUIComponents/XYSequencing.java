@@ -1096,6 +1096,7 @@ public class XYSequencing extends javax.swing.JPanel {
 
     private void prefindMacronameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prefindMacronameActionPerformed
         // TODO add your handling code here:
+        parent_.updatePrefindPanel();
     }//GEN-LAST:event_prefindMacronameActionPerformed
 
     private void testPrefindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testPrefindActionPerformed
@@ -1118,7 +1119,7 @@ public class XYSequencing extends javax.swing.JPanel {
         // Update the list of macros in the combobox nextdoor
 
         // http://rsb.info.nih.gov/ij/developer/api/ij/io/DirectoryChooser.html
-        String directoryName=ij.IJ.getDirectory("plugins");
+        String directoryName=ij.IJ.getDirectory("macros");
         System.out.println(directoryName);
         // http://alvinalexander.com/java/list-files-directory-match-filename-extension-pattern
         java.util.Collection macrofiles;
