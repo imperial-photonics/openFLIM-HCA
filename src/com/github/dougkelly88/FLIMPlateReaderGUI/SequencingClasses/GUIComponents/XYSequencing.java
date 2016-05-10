@@ -695,7 +695,7 @@ public class XYSequencing extends javax.swing.JPanel {
     }
 
     public String getSelectedAnalyser (){
-        System.out.println(prefindMacroname.getSelectedItem().toString());
+        //System.out.println(prefindMacroname.getSelectedItem().toString());
         return prefindMacroname.getSelectedItem().toString();
     }
         

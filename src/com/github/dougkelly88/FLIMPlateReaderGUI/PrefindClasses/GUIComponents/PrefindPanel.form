@@ -87,13 +87,11 @@
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="VarMax2" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Group type="103" alignment="3" groupAlignment="3" attributes="0">
-                                  <Component id="varTextbox2" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="varLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                              <Component id="varTextbox2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="varLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="VarMax2" min="-2" max="-2" attributes="0"/>
                           <Component id="VarMin2" max="32767" attributes="0"/>
                           <Component id="VarSlider2" max="32767" attributes="0"/>
                       </Group>

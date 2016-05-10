@@ -9,6 +9,20 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.List;
 /**
  *
  * @author Frederik
@@ -21,7 +35,12 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     private double H_shift_scale;
     private double V_shift_scale;
     private boolean HV_swap;
-    
+    private Gson gson;
+    private Writer writer;
+    private FileInputStream objectiveFileInputStream;
+    private JsonReader reader;
+    private Hashtable <String, Objective> objectiveTable;
+    private List<Objective> currentObjectiveArray;
     /**
      * Creates new form ProSettingsGUI
      */
@@ -37,6 +56,25 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         H_shift_scale = 1;
         V_shift_scale = 1;
         HV_swap = false;
+        gson = new GsonBuilder().create();
+        // Fill up our objective table...
+        //currentObjectiveArray = new List<Objective>();
+        try{          
+            objectiveFileInputStream = new FileInputStream("C:\\Program Files\\Micro-Manager-1.4.20\\ObjectiveOffsets\\Output.json");
+            currentObjectiveArray = readObjectiveJson(objectiveFileInputStream);
+        } catch(Exception ex) {
+            System.out.println("oops");
+            System.out.println(ex);
+        }
+        
+//        Integer turretPositions = currentObjectiveArray.size();
+//        objectiveTable = new Hashtable<String, Objective>();
+//        objectiveTable.clear();
+//        for(Integer i=0;i<turretPositions;i++){
+//            String key = "Turretposition_"+i.toString();
+//            JSONview.setText(key);
+//            objectiveTable.put(key, currentObjectiveArray.get(i));
+//        }
     }
 
     /**
@@ -90,6 +128,9 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         H_V_swap = new javax.swing.JToggleButton();
+        JSONtest = new javax.swing.JButton();
+        JSONview = new javax.swing.JTextField();
+        readJSON = new javax.swing.JButton();
 
         arduinoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Arduino"));
 
@@ -192,7 +233,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             warningPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(warningPanelLayout.createSequentialGroup()
                 .addComponent(importantInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 585, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 16, Short.MAX_VALUE))
+                .addGap(0, 18, Short.MAX_VALUE))
         );
         warningPanelLayout.setVerticalGroup(
             warningPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -430,6 +471,22 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             }
         });
 
+        JSONtest.setText("Test JSON");
+        JSONtest.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JSONtestActionPerformed(evt);
+            }
+        });
+
+        JSONview.setText("TEST INIT");
+        JSONview.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JSONviewActionPerformed(evt);
+            }
+        });
+
+        readJSON.setText("Read JSON");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -438,11 +495,21 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             .addComponent(dougPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(Hardware, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(fOVPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(arduinoPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(fOVPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(arduinoPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(50, 50, 50)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -461,22 +528,28 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                             .addComponent(H_V_swap))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap())
+                                .addComponent(JSONtest)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(readJSON))
+                            .addComponent(JSONview, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(warningPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(arduinoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(arduinoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(JSONtest)
+                            .addComponent(readJSON))
+                        .addGap(18, 18, 18)
+                        .addComponent(JSONview, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -510,7 +583,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(VShiftScale, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))))
-                .addContainerGap(118, Short.MAX_VALUE))
+                .addContainerGap(152, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -611,6 +684,29 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         HV_swap = H_V_swap.isSelected();
     }//GEN-LAST:event_H_V_swapActionPerformed
 
+    private void JSONviewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JSONviewActionPerformed
+        // TODO add your handling code here:
+
+        JSONview.setText("HELLO");
+    }//GEN-LAST:event_JSONviewActionPerformed
+
+    private void JSONtestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JSONtestActionPerformed
+        try{
+            writer = new FileWriter("C:\\Program Files\\Micro-Manager-1.4.20\\ObjectiveOffsets\\Output.json");
+        } catch (IOException ex) {         
+        }        
+        Objective [] Objectivearray = new Objective[6];
+        for (int i=0;i<6;i++){
+                Objectivearray[i] = new Objective("Turret_pos"+i,(i*10.0),(i*1.0),(i*2.0),(i*3.0));
+        }
+        gson.toJson(Objectivearray, writer);
+        try{
+            writer.close();
+        } catch (IOException ex) {
+        } finally {
+        }
+    }//GEN-LAST:event_JSONtestActionPerformed
+
     public double getHshiftscale(){
         return H_shift_scale;
     }
@@ -627,7 +723,98 @@ public class ProSettingsPanel extends javax.swing.JPanel {
        // do something when ProSettingsPanel is selected
     }
     
+    public List readObjectiveJson(InputStream in) throws IOException{
+        reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+        try{
+            return readObjectivesArray(reader);
+        } finally {
+            reader.close();
+        }
+    }
+    
+    public List readObjectivesArray(JsonReader reader) throws IOException {
+        List Objectives = new ArrayList();
+        reader.beginArray();
+        while (reader.hasNext()){
+            Objectives.add(readObjectiveProperties(reader));
+        }
+        reader.endArray();
+        return Objectives;
+    }
+    
+    public Objective readObjectiveProperties (JsonReader reader) throws IOException {
+        //initialise with some defaults
+        String name = "NULL";
+        Double magnification = 1.0;
+        Double Xoffset = 0.0;
+        Double Yoffset = 0.0;
+        Double Zoffset = 0.0;
+        
+        reader.beginObject();
+        while(reader.hasNext()){
+            String itemname = reader.nextName();
+            if(itemname.equals("name")){
+                name = reader.nextString();
+            } else if(itemname.equals("magnification")){
+                magnification = reader.nextDouble();
+            } else if(itemname.equals("Xoffset")){
+                Xoffset = reader.nextDouble();
+            } else if(itemname.equals("Yoffset")){
+                Yoffset = reader.nextDouble();
+            } else if(itemname.equals("Zoffset")){
+                Zoffset = reader.nextDouble();
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+        return new Objective(name, magnification,Xoffset,Yoffset,Zoffset);
+    }
 
+    public class Objective {
+        private String name;
+        private Double magnification;
+        private Double Xoffset;
+        private Double Yoffset;
+        private Double Zoffset;
+        
+        public Objective(){
+            name = "Default";
+            magnification = 1.0;
+            Xoffset = 0.0;
+            Yoffset = 0.0;
+            Zoffset = 10.0;            
+        }
+
+        public Objective (String namein, Double magnificationin, Double Xoffsetin, Double Yoffsetin, Double Zoffsetin){
+            name = namein;
+            magnification = magnificationin;
+            Xoffset = Xoffsetin;
+            Yoffset = Yoffsetin;
+            Zoffset = Zoffsetin;
+        }
+        
+        public String getname (){
+            return this.name;
+        }
+
+        public Double getmag (){
+            return this.magnification;
+        }
+        
+        public Double getXoffset (){
+            return this.Xoffset;
+        }
+        
+        public Double Yoffset (){
+            return this.Yoffset;
+        }
+        
+        public Double Zoffset (){
+            return this.Zoffset;
+        }
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox AcquisitionSavingMode_combo;
     private javax.swing.JComboBox AcquisitionStrategyComboBox;
@@ -636,6 +823,8 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JTextField HShiftScale;
     private javax.swing.JToggleButton H_V_swap;
     private javax.swing.JPanel Hardware;
+    private javax.swing.JButton JSONtest;
+    private javax.swing.JTextField JSONview;
     private javax.swing.JLabel MotorizedMicroscopeTableLabel;
     private javax.swing.JTextField Text_for_prefind_thresh;
     private javax.swing.JTextField VShiftScale;
@@ -655,6 +844,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JTextField pct_coverage_text;
     private javax.swing.JTextField percentage_coverage;
     private javax.swing.JTextField prefindthreshtest;
+    private javax.swing.JButton readJSON;
     private javax.swing.JTextField relayField;
     private javax.swing.JLabel relayText;
     private javax.swing.JTextField shutterResponseField;

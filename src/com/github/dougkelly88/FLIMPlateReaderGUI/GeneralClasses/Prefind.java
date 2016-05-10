@@ -139,7 +139,7 @@ public class Prefind {
             // Get min from macrofile
             limits[0]=0;
             // Get max from macrofile
-            limits[1]=100;
+            limits[1]=0;
         }
         return limits;
     }
@@ -148,9 +148,14 @@ public class Prefind {
         // Get macro path
         String macropath = getmacropath();
         String varname = "";
+        int maxvars=4; //maximum number of lines with info on variables
+        int minparams=4; //minimum number of parameters per line
         //http://www.mkyong.com/java8/java-8-stream-read-a-file-line-by-line/
         //http://www.javapractices.com/topic/TopicAction.do?Id=42
         //http://stackoverflow.com/questions/2788080/java-how-to-read-a-text-file
+
+        //Variable to hold the one line data
+        String line;
         
         try{
             //Create object of FileReader
@@ -159,19 +164,33 @@ public class Prefind {
             //Instantiate the BufferedReader Class
             BufferedReader bufferReader = new BufferedReader(inputFile);
 
-            //Variable to hold the one line data
-            String line;
-
-            // Read file line by line and print on the console
-            for (int i=0;i<4;i++) {
-                line = bufferReader.readLine();
-                //System.out.println(line);
-                if((i+1)==whichvarnumber){
-                    varname = line.split("!!!")[1];
+            // Read file line by line
+            // Make sure that there's at least ### parameters in 
+            for (int i=0;i<maxvars;i++) {
+                Boolean read_error = false;
+                
+                try{
+                    line = bufferReader.readLine();
+                } catch (IOException e) {
+                    line = "BAD LINE";
+                    //System.out.println("Tried to read nonexistent line! Macro too short!");
+                }
+                if (line!= null){
+                    //System.out.println(line);
+                    if((line.split("!!!")).length<minparams){
+                        varname="";
+                        System.out.println("Not enough parameters provided by macro! Should be at least "+minparams);
+                    } else if ((i+1)==whichvarnumber){
+                        varname = line.split("!!!")[1];
+                    }
+                } else {
+                    System.out.println("Not enough lines in the file!");
+                    varname = "UNDEFINED";
                 }
             }
             bufferReader.close();
         } catch(IOException e) {
+            //Set varname to blank here?
             System.out.println(e);
         }
         

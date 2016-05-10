@@ -7,7 +7,11 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.PrefindClasses.GUIComponents;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Prefind;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.GeneralUtilities;
+// Enable next 2 lines if needed for doing prefind image processing here.
+//import ij.ImagePlus;
+//import ij.process.ImageProcessor;
 import ij.io.DirectoryChooser;
+
 
 /**
  *
@@ -19,6 +23,9 @@ public class PrefindPanel extends javax.swing.JPanel {
     private GeneralUtilities GenUtils_;
     public Prefind prefind_;
     private String NumberRegex = "\\d+"; // Should be just the digits with this...
+    //public ImageProcessor prefindPanelIP;
+    //public ImagePlus rawPrefindImage;
+    //public ImagePlus processedPrefindImage;
     
     /**
      * Creates new form PrefindPanel
@@ -37,7 +44,7 @@ public class PrefindPanel extends javax.swing.JPanel {
         String OriginalString=input_text;
         String[] SplitArray = OriginalString.split("\\."); 
         String Output="";
-        //OK, so if we don't see a decimal point, assume it's an int
+        //If do see a decimal point, assume it's a double, and say that only the last decimal point counts
         if(SplitArray.length!=0){
             for (int i=0;i<SplitArray.length;i++){
                 if(i==(SplitArray.length-1)&&i>0){
@@ -47,7 +54,7 @@ public class PrefindPanel extends javax.swing.JPanel {
                 //System.out.println(RegexedString);
                 Output=Output+RegexedString;
             }
-        } else {
+        } else { //If we don't see a decimal point, assume it's an int
             Output=OriginalString.replaceAll(NumberRegex, "");
         }
         int res;
@@ -72,44 +79,64 @@ public class PrefindPanel extends javax.swing.JPanel {
         
         // We know we have 4 sliders, so...
         
+        boolean update_error=false;
+        
         for(int i=1; i<=4; i++){
-            String thisvarname = parent_.prefind_.getvarname(i);
-            double[] thisvarlims = parent_.prefind_.getvarlimits(i);
-            Double min = thisvarlims[0];
-            Double max = thisvarlims[1];
-            String thisvarmin = min.toString();
-            String thisvarmax = max.toString();
-            int thisvarminint = min.intValue();
-            int thisvarmaxint = max.intValue();
-            switch(i) {
-                case 1:
-                    this.VarMin1.setText(thisvarmin);
-                    this.VarMax1.setText(thisvarmax);
-                    this.VarSlider1.setMinimum(thisvarminint);
-                    this.VarSlider1.setMaximum(thisvarmaxint);
-                    this.varLabel1.setText(thisvarname);
-                    break;
-                case 2:
-                    this.VarMin2.setText(thisvarmin);
-                    this.VarMax2.setText(thisvarmax);
-                    this.VarSlider2.setMinimum(thisvarminint);
-                    this.VarSlider2.setMaximum(thisvarmaxint);
-                    this.varLabel2.setText(thisvarname);
-                    break;
-                case 3:   
-                    this.VarMin3.setText(thisvarmin);
-                    this.VarMax3.setText(thisvarmax);
-                    this.VarSlider3.setMinimum(thisvarminint);
-                    this.VarSlider3.setMaximum(thisvarmaxint);                    
-                    this.varLabel3.setText(thisvarname);
-                    break;
-                case 4: 
-                    this.VarMin4.setText(thisvarmin);
-                    this.VarMax4.setText(thisvarmax);
-                    this.VarSlider4.setMinimum(thisvarminint);
-                    this.VarSlider4.setMaximum(thisvarmaxint);                    
-                    this.varLabel4.setText(thisvarname);
-                    break;
+            if(!update_error){
+                String thisvarname = parent_.prefind_.getvarname(i);
+                if (thisvarname.equals("")){//Remember .equals, not == for strings?
+                    update_error=true;
+                }
+                double[] thisvarlims = {0.0,0.0};
+                Double min = thisvarlims[0];
+                Double max = thisvarlims[1];
+                String thisvarmin = min.toString();
+                String thisvarmax = max.toString();
+                int thisvarminint = min.intValue();
+                int thisvarmaxint = max.intValue();  
+                if(thisvarname.equals("")){
+                    //Either the variable name is blank, there aren't enough variables described, or there aren't enough parameters for this one...
+                    thisvarname="ERROR";
+                } else {
+                    //All fine - carry on!
+                    thisvarlims = parent_.prefind_.getvarlimits(i);
+                    min = thisvarlims[0];
+                    max = thisvarlims[1];
+                    thisvarmin = min.toString();
+                    thisvarmax = max.toString();
+                    thisvarminint = min.intValue();
+                    thisvarmaxint = max.intValue();                
+                }
+                switch(i) {
+                    case 1:
+                        this.VarMin1.setText(thisvarmin);
+                        this.VarMax1.setText(thisvarmax);
+                        this.VarSlider1.setMinimum(thisvarminint);
+                        this.VarSlider1.setMaximum(thisvarmaxint);
+                        this.varLabel1.setText(thisvarname);
+                        break;
+                    case 2:
+                        this.VarMin2.setText(thisvarmin);
+                        this.VarMax2.setText(thisvarmax);
+                        this.VarSlider2.setMinimum(thisvarminint);
+                        this.VarSlider2.setMaximum(thisvarmaxint);
+                        this.varLabel2.setText(thisvarname);
+                        break;
+                    case 3:   
+                        this.VarMin3.setText(thisvarmin);
+                        this.VarMax3.setText(thisvarmax);
+                        this.VarSlider3.setMinimum(thisvarminint);
+                        this.VarSlider3.setMaximum(thisvarmaxint);                    
+                        this.varLabel3.setText(thisvarname);
+                        break;
+                    case 4: 
+                        this.VarMin4.setText(thisvarmin);
+                        this.VarMax4.setText(thisvarmax);
+                        this.VarSlider4.setMinimum(thisvarminint);
+                        this.VarSlider4.setMaximum(thisvarmaxint);                    
+                        this.varLabel4.setText(thisvarname);
+                        break;
+                }
             }
         }
        
@@ -289,10 +316,9 @@ public class PrefindPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(VarMax2)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(varTextbox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(varLabel2)))
+                                .addComponent(varTextbox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(varLabel2))
+                            .addComponent(VarMax2)
                             .addComponent(VarMin2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(VarSlider2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)

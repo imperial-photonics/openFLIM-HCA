@@ -25,6 +25,9 @@ import mmcorej.StrVector;
 import org.micromanager.MMStudio;
 import org.micromanager.api.events.PropertyChangedEvent;
 
+//import com.google.gson.Gson;
+//import com.google.gson.GsonBuilder;
+
 /**
  *
  * @author dk1109
@@ -64,6 +67,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         arduino_ = Arduino.getInstance();
         arduinoSM_ = ArduinoStepperMotor.getInstance();
         xYZPanel_ = XYZPanel.getInstance();
+        //Gson gson = new GsonBuilder().create();
         
         try {
             gui_.registerForEvents(this);
@@ -851,6 +855,7 @@ public class LightPathPanel extends javax.swing.JPanel {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            // Might want to revert objective offsets etc on this failing?
         }
 
     }
