@@ -17,7 +17,6 @@ public class CurrentLightPath {
     String objectiveLabel;
     String portLabel;
     String filterCubeLabel;
-    Double [] objectiveOffsets; //X and Y;
 
     public CurrentLightPath(){
         exFilterLabel = "465/30";
@@ -27,7 +26,6 @@ public class CurrentLightPath {
         filterCubeLabel = "Empty (Sectioned)";
         objectiveLabel = "LUCPLFLN40X";
         portLabel = "Camera";
-        objectiveOffsets = new Double [] {0.0, 0.0};
     }
     
     /**
@@ -46,7 +44,6 @@ public class CurrentLightPath {
         objectiveLabel = "LUCPLFLN40X";
         portLabel = "Camera";
         filterCubeLabel = "None (sectioned)";
-        objectiveOffsets = new Double [] {0.0, 0.0};
     }
     
     
@@ -107,11 +104,4 @@ public class CurrentLightPath {
         this.filterCubeLabel = filterCubeLabel;
     }
     
-    public Double [] getObjectiveOffsets(){
-        return this.objectiveOffsets;
-    }
-
-    public void setObjectiveOffsets(Double[] newObjectiveOffsets){
-        this.objectiveOffsets=newObjectiveOffsets;
-    }
 }

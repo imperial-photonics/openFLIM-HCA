@@ -453,7 +453,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             }
         });
 
-        VShiftScale.setText("1");
+        VShiftScale.setText("-1");
         VShiftScale.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 VShiftScaleActionPerformed(evt);
@@ -464,6 +464,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
 
         jLabel3.setText("V shift scaling");
 
+        H_V_swap.setSelected(true);
         H_V_swap.setText("H/V swap");
         H_V_swap.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
