@@ -80,7 +80,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         setControlDefaults();
     }
     
-    private void LoadObjectiveOffsets(){
+    public void LoadObjectiveOffsets(){
         // Show a warning if the objectives loaded don't match the ones stored in Micro-manager?
         int num_props = 4; //Name, Xoff, Yoff, Zoff
         ObjectiveOffsetInfo = new String [objectiveComboBox.getItemCount()] [num_props];
@@ -102,10 +102,10 @@ public class LightPathPanel extends javax.swing.JPanel {
         String explanationstring = "The following objective offsets are not matched to the objectives listed in micro-manager - please fix this:\n\n";
         for(int i=0;i<objectiveComboBox.getItemCount();i++){
             if (ObjectiveOffsetInfo[0] [i].equals(objectiveComboBox.getItemAt(i).toString())){
-                mismatchedObj.concat("0");
+                mismatchedObj=mismatchedObj.concat("0");
             } else {
-                mismatchedObj.concat("1");
-                explanationstring.concat(objectiveComboBox.getItemAt(i).toString()+"\n");
+                mismatchedObj=mismatchedObj.concat("1");
+                explanationstring=explanationstring.concat(objectiveComboBox.getItemAt(i).toString()+"\n");
             }
         }
                
@@ -625,20 +625,20 @@ public class LightPathPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_emissionComboBoxActionPerformed
 
     private void objectiveComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectiveComboBoxActionPerformed
-        double [] OldOffsets = getObjectiveOffsets();
+//        double [] OldOffsets = getObjectiveOffsets();
         
         setByLabel(objectiveComboBox, "Objective");
         
-        //get the offsets here...
-        double [] NewOffsets = {0,0,0}; // placeholder
-        setObjectiveOffsets(NewOffsets);
-        
-        //Shift the stage to account for the objetive change
-        double [] Shifts = {0,0,0};
-        for (int i=0;i<=2;i++){
-            Shifts[i] = NewOffsets[i]-OldOffsets[i];
-        }
-        parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
+//        //get the offsets here...
+//        double [] NewOffsets = {0,0,0}; // placeholder
+//        setObjectiveOffsets(NewOffsets);
+//        
+//        //Shift the stage to account for the objetive change
+//        double [] Shifts = {0,0,0};
+//        for (int i=0;i<=2;i++){
+//            Shifts[i] = NewOffsets[i]-OldOffsets[i];
+//        }
+//        parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
                 
         currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
         var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
@@ -953,7 +953,6 @@ public class LightPathPanel extends javax.swing.JPanel {
         //Objective Load
         populateComboBoxes(objectiveComboBox, "Objective");
         //Then load the offset values
-        LoadObjectiveOffsets();
 
         //SwitchPort Load
         populateComboBoxes(switchPortComboBox, "LightPathPrism");

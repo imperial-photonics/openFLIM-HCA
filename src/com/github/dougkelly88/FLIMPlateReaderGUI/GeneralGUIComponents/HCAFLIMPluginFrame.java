@@ -1032,6 +1032,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         }
         // set loaded values in all panels
         lightPathControls1.setLoadedSoftwareValues();
+        lightPathControls1.LoadObjectiveOffsets();
         fLIMPanel1.setLoadedSoftwareValues();
     }//GEN-LAST:event_loadSoftwareConfigActionPerformed
 
