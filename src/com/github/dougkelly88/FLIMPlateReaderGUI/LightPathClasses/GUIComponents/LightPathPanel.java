@@ -27,6 +27,10 @@ import org.micromanager.api.events.PropertyChangedEvent;
 import ij.IJ.*;
 //import com.google.gson.Gson;
 //import com.google.gson.GsonBuilder;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  *
@@ -82,6 +86,10 @@ public class LightPathPanel extends javax.swing.JPanel {
         setControlDefaults();
     }
     
+    private String [] interpretObjectiveInfo(String info){
+        return info.split("##");
+    }
+    
     public void LoadObjectiveOffsets(){
         // Show a warning if the objectives loaded don't match the ones stored in Micro-manager?
         int num_props = 4; //Name, Xoff, Yoff, Zoff
@@ -89,16 +97,34 @@ public class LightPathPanel extends javax.swing.JPanel {
         //Load the file with the stored offsets
         String directoryName = ij.IJ.getDirectory("ImageJ");
         String objFilepath = directoryName.concat("OPENFLIMHCA_ObjectiveOffsets.txt");
-        System.out.println(objFilepath);
-
+        //System.out.println(objFilepath);
         //Compare the loaded data with the names of the objectives stored in ImageJ
-        //ComboBox isn't populated yet?
-        
-        for(int i=0;i<objectiveComboBox.getItemCount();i++){
-            for(int j=0;j<num_props;j++){
-                ObjectiveOffsetInfo[i] [j] = "";
-            }
-        }
+        try{
+            File objfile = new File (objFilepath);
+            FileReader fileReader = new FileReader(objfile);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            StringBuffer stringBuffer = new StringBuffer();
+            String line;
+            int i=0;
+            while ((line = bufferedReader.readLine()) != null) {
+                String thisObjectiveInfo = line;
+                for(int j=0;j<num_props;j++){
+                    String [] interpretedObjectiveInfo = interpretObjectiveInfo(thisObjectiveInfo);
+                    if(interpretedObjectiveInfo.length == num_props){
+                        ObjectiveOffsetInfo[i] [j] = interpretedObjectiveInfo[j];
+                    } else {
+                        if (j>0){
+                            ObjectiveOffsetInfo[i] [j] = "0";
+                        } else {
+                            ObjectiveOffsetInfo[i] [j] = "Unknown";
+                        }
+                    }
+                }
+                i++;
+            }            
+        } catch (IOException e) {
+            e.printStackTrace();
+	}
         
         String mismatchedObj = "";
         String explanationstring = "The following objective offsets are not matched to the objectives listed in micro-manager - please fix this:\n\n";
