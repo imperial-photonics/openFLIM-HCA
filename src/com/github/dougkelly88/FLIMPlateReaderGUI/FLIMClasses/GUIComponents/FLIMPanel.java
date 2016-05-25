@@ -363,7 +363,11 @@ public class FLIMPanel extends javax.swing.JPanel {
         });
 
         acquiredMaxpointField.setText("N/A");
-        acquiredMaxpointField.setEnabled(false);
+        acquiredMaxpointField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                acquiredMaxpointFieldActionPerformed(evt);
+            }
+        });
 
         findMaxPointMinField.setText("0");
         findMaxPointMinField.addActionListener(new java.awt.event.ActionListener() {
@@ -576,7 +580,7 @@ public class FLIMPanel extends javax.swing.JPanel {
         delayTablePanel.setLayout(delayTablePanelLayout);
         delayTablePanelLayout.setHorizontalGroup(
             delayTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 128, Short.MAX_VALUE)
+            .addGap(0, 140, Short.MAX_VALUE)
         );
         delayTablePanelLayout.setVerticalGroup(
             delayTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -603,7 +607,7 @@ public class FLIMPanel extends javax.swing.JPanel {
             delaySeqPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(delaySeqPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(delayTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(delayTablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(delaySeqPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(delaySeqPanelLayout.createSequentialGroup()
@@ -1088,6 +1092,10 @@ public class FLIMPanel extends javax.swing.JPanel {
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
        autogateSettingsDialog.dispose(); 
     }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void acquiredMaxpointFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acquiredMaxpointFieldActionPerformed
+        fm_.changePeakIntensityPoint(Integer.parseInt(acquiredMaxpointField.getText()));
+    }//GEN-LAST:event_acquiredMaxpointFieldActionPerformed
 
     public void setDelayComboBox(){
         String file1 = null;
