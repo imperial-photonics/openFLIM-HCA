@@ -18,6 +18,9 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     private Variable var_;
     private Arduino arduino_;
     private XYSequencing xYSeq_;        
+    private double H_shift_scale;
+    private double V_shift_scale;
+    private boolean HV_swap;
     
     /**
      * Creates new form ProSettingsGUI
@@ -31,6 +34,9 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         var_.motorizedMicroscopeTabelWhich = motorizedMicroscopeTableComboBox.getSelectedItem().toString();
         var_.autofocusWhich = AutoFocusSelectComboBox.getSelectedItem().toString();
         var_.acquisitionStrategy = AcquisitionStrategyComboBox.getSelectedItem().toString();
+        H_shift_scale = 1;
+        V_shift_scale = 1;
+        HV_swap = false;
     }
 
     /**
@@ -79,6 +85,11 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         Text_for_prefind_thresh = new javax.swing.JTextField();
         percentage_coverage = new javax.swing.JTextField();
         pct_coverage_text = new javax.swing.JTextField();
+        HShiftScale = new javax.swing.JTextField();
+        VShiftScale = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        H_V_swap = new javax.swing.JToggleButton();
 
         arduinoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Arduino"));
 
@@ -181,7 +192,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             warningPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(warningPanelLayout.createSequentialGroup()
                 .addComponent(importantInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 585, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 16, Short.MAX_VALUE))
         );
         warningPanelLayout.setVerticalGroup(
             warningPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -394,6 +405,31 @@ public class ProSettingsPanel extends javax.swing.JPanel {
 
         pct_coverage_text.setText("% coverage needed");
 
+        HShiftScale.setText("1");
+        HShiftScale.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                HShiftScaleActionPerformed(evt);
+            }
+        });
+
+        VShiftScale.setText("1");
+        VShiftScale.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                VShiftScaleActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("H shift scaling");
+
+        jLabel3.setText("V shift scaling");
+
+        H_V_swap.setText("H/V swap");
+        H_V_swap.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                H_V_swapActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -408,13 +444,21 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                             .addComponent(fOVPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(arduinoPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(50, 50, 50)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(prefindthreshtest, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
-                            .addComponent(percentage_coverage))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(Text_for_prefind_thresh, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
-                            .addComponent(pct_coverage_text))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(prefindthreshtest, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
+                                    .addComponent(percentage_coverage)
+                                    .addComponent(HShiftScale)
+                                    .addComponent(VShiftScale))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(Text_for_prefind_thresh, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+                                        .addComponent(pct_coverage_text))
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel3)))
+                            .addComponent(H_V_swap))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
@@ -448,15 +492,25 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
+                        .addGap(5, 5, 5)
+                        .addComponent(H_V_swap)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(prefindthreshtest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(Text_for_prefind_thresh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(percentage_coverage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(pct_coverage_text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(101, Short.MAX_VALUE))
+                            .addComponent(pct_coverage_text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(HShiftScale, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(VShiftScale, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))))
+                .addContainerGap(118, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -542,6 +596,33 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         var_.relay = Double.parseDouble(relayField.getText( ));
     }//GEN-LAST:event_relayFieldActionPerformed
 
+    private void HShiftScaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HShiftScaleActionPerformed
+        // TODO add your handling code here:
+        H_shift_scale = Double.parseDouble(HShiftScale.getText());
+    }//GEN-LAST:event_HShiftScaleActionPerformed
+
+    private void VShiftScaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VShiftScaleActionPerformed
+        // TODO add your handling code here:
+        V_shift_scale = Double.parseDouble(VShiftScale.getText());
+    }//GEN-LAST:event_VShiftScaleActionPerformed
+
+    private void H_V_swapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_H_V_swapActionPerformed
+        // TODO add your handling code here:
+        HV_swap = H_V_swap.isSelected();
+    }//GEN-LAST:event_H_V_swapActionPerformed
+
+    public double getHshiftscale(){
+        return H_shift_scale;
+    }
+
+    public double getVshiftscale(){
+        return V_shift_scale;
+    }
+
+    public boolean getHVswap(){
+        return HV_swap;
+    }    
+    
     public void updatePanel(){
        // do something when ProSettingsPanel is selected
     }
@@ -552,9 +633,12 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox AcquisitionStrategyComboBox;
     private javax.swing.JLabel AutoFocusLabel;
     private javax.swing.JComboBox AutoFocusSelectComboBox;
+    private javax.swing.JTextField HShiftScale;
+    private javax.swing.JToggleButton H_V_swap;
     private javax.swing.JPanel Hardware;
     private javax.swing.JLabel MotorizedMicroscopeTableLabel;
     private javax.swing.JTextField Text_for_prefind_thresh;
+    private javax.swing.JTextField VShiftScale;
     private javax.swing.JPanel acquisitionStrategyPanel;
     private javax.swing.JPanel arduinoPanel;
     private javax.swing.JPanel dougPanel;
@@ -563,6 +647,8 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane importantInfo;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JTextField laserIntensityField;
     private javax.swing.JLabel laserIntensityLabel;
     private javax.swing.JComboBox motorizedMicroscopeTableComboBox;

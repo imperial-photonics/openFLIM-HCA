@@ -13,6 +13,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.snapFlimImageThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Prefind;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.GeneralUtilities;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.prefindThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZMotionInterface;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.AcqOrderTableModel;
@@ -141,11 +142,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public boolean terminate = false;
     public int singleImage;
     
+    private GeneralUtilities GenUtils_;
+    
     public Prefind prefind_;
     public ImagePlus prefindImage;
     public ImageProcessor prefindIP;
-    private double prefindHcentre;
-    private double prefindVcentre;
+    private double[] prefindHcentres;
+    private double[] prefindVcentres;
     private double camerapixelsize;
     
     private boolean testmode;
@@ -178,6 +181,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         xYZPanel1.setParent(this);
         xYSequencing1.setParent(this);
         lightPathControls1.setParent(this);
+        prefindPanel1.setParent(this);
         
         gui_ = MMStudio.getInstance(); // ### WAS MMStudio gui_ = MMStudio.getInstance(); 
         gui_.registerForEvents(this);
@@ -222,6 +226,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             if ("HamamatsuHam_DCAM".equals(cam)){
                 core_.setProperty(cam, "Binning", "2x2");
                 core_.setProperty(cam, "TRIGGER SOURCE", "SOFTWARE");
+            } else if ("DemoCam".equals(cam)) {
+                // Think this shouldn't crash it...
+                core_.setProperty(cam, "Binning", "1");
             }
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -402,9 +409,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         statusLabel = new javax.swing.JLabel();
         sequenceSetupBasePanel = new javax.swing.JPanel();
         sequenceSetupTabbedPane = new javax.swing.JTabbedPane();
-        xYSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing();
         spectralSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.SpectralSequencing();
         timeCourseSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.TimeCourseSequencing();
+        xYSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing();
+        Prefindpanel = new javax.swing.JPanel();
+        prefindPanel1 = new com.github.dougkelly88.FLIMPlateReaderGUI.PrefindClasses.GUIComponents.PrefindPanel();
         HCAsequenceProgressBar = new javax.swing.JPanel();
         snapFLIMButton = new javax.swing.JButton();
         startSequenceButton = new javax.swing.JButton();
@@ -421,6 +430,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         softwareBinningButton = new javax.swing.JLabel();
         softwareBinningField = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        TestButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
@@ -458,9 +468,28 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         sequenceSetupBasePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Setup HCA sequenced acquisition"));
 
-        sequenceSetupTabbedPane.addTab("XYZ positions", xYSequencing1);
         sequenceSetupTabbedPane.addTab("Filter sets", spectralSequencing1);
         sequenceSetupTabbedPane.addTab("Time course", timeCourseSequencing1);
+        sequenceSetupTabbedPane.addTab("XYZ positions", xYSequencing1);
+
+        javax.swing.GroupLayout PrefindpanelLayout = new javax.swing.GroupLayout(Prefindpanel);
+        Prefindpanel.setLayout(PrefindpanelLayout);
+        PrefindpanelLayout.setHorizontalGroup(
+            PrefindpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PrefindpanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(prefindPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(157, Short.MAX_VALUE))
+        );
+        PrefindpanelLayout.setVerticalGroup(
+            PrefindpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PrefindpanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(prefindPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(261, Short.MAX_VALUE))
+        );
+
+        sequenceSetupTabbedPane.addTab("Prefind settings", Prefindpanel);
 
         HCAsequenceProgressBar.setBorder(javax.swing.BorderFactory.createTitledBorder("FLIM acquisition"));
 
@@ -527,7 +556,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             .addGap(0, 64, Short.MAX_VALUE)
         );
 
-        stopSequenceButton.setText("Stop HCA sequence");
+        stopSequenceButton.setText("Abort prefind/acq");
+        stopSequenceButton.setToolTipText("");
         stopSequenceButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stopSequenceButtonActionPerformed(evt);
@@ -559,6 +589,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
         });
 
+        TestButton.setText("TEST BUTTON");
+        TestButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TestButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout HCAsequenceProgressBarLayout = new javax.swing.GroupLayout(HCAsequenceProgressBar);
         HCAsequenceProgressBar.setLayout(HCAsequenceProgressBarLayout);
         HCAsequenceProgressBarLayout.setHorizontalGroup(
@@ -582,13 +619,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                                     .addComponent(startSequenceButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(stopSequenceButton, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE))
-                                    .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
                                         .addGap(7, 7, 7)
                                         .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(experimentNameText)
-                                            .addComponent(experimentNameField))))
+                                            .addComponent(experimentNameField)))
+                                    .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(TestButton)
+                                            .addComponent(stopSequenceButton, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE))))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
@@ -622,7 +661,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(snapBFButton)
                             .addComponent(jLabel2)
-                            .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TestButton))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(startSequenceButton)
@@ -644,7 +684,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             sequenceSetupBasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sequenceSetupBasePanelLayout.createSequentialGroup()
                 .addGroup(sequenceSetupBasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sequenceSetupTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 693, Short.MAX_VALUE)
+                    .addComponent(sequenceSetupTabbedPane)
                     .addComponent(HCAsequenceProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1064,10 +1104,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             } else {
                 // Starts as false by default, so just leave it as such...
             }           
-            //Indicate whether field was accepted or rejected (crudely for now)
-            //System.out.println(accept);
 
-            //ij.IJ.runMacro("TEST"); //Jut need the name of the macro, but also need correct image to do it on?
             prefind_img.show();
             currentWin = ij.WindowManager.getCurrentWindow();
             prefind_img.changes = false; // White lie to stop that whiny popup coming up after image changes from thresholding?
@@ -1080,6 +1117,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         //String Macropath="C:\\Program Files\\Micro-Manager-1.4.20\\plugins\\TEST.ijm";
         System.out.println(accept);
         return accept;
+    }
+    
+    public void updatePrefindPanel(){
+        prefindPanel1.UpdatePrefindPanel();
     }
     
     public boolean testPrefind() {// throws InterruptedException{ 
@@ -1100,8 +1141,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
     public boolean prefind() throws InterruptedException{ // THROW is copied from doSequenceAcquisition - assume this is for Abort?
         // Reset local copy of targeted co-ords - remember these are in pixel units
-        prefindHcentre=0;
-        prefindVcentre=0;
+        prefindHcentres = new double[] {0};
+        prefindVcentres = new double[] {0};
         progressBar_.setStart("Prefind: ");
         //MMStudio gui_ = MMStudio.getInstance(); // ### WAS ENABLED
         try{
@@ -1174,37 +1215,67 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 FOVaccepted=result;
                 // Increment FOV list position counter
                 noofattemptedFOVs_thiswell++;
-                
-                if(prefind_.getHCentre()==0&prefind_.getVCentre()==0){
+                double[] H_array = prefind_.getHCentre();
+                double[] V_array = prefind_.getHCentre();
+                //Might be worth swapping the operands below...
+                if(prefind_.getHCentre().length==1&&prefind_.getVCentre().length==1&&H_array[0]==0&V_array[0]==0){
                     // Reset displacements if the macro just returns yes/no
-                    prefindHcentre = 0;
-                    prefindVcentre = 0;
+                    prefindHcentres = new double[] {0};
+                    prefindVcentres = new double[] {0};
                 } else {
                     // If we have a nonzero value returned for the centre of the desired FOV, need to do some thinking to get where we should go to...
-                    prefindHcentre = prefind_.getHCentre();
-                    prefindVcentre = prefind_.getVCentre();
+                    prefindHcentres = prefind_.getHCentre();
+                    prefindVcentres = prefind_.getVCentre();
                 }                
                 
                 if(FOVaccepted==true){
                     // Add this FOV to the normal sequence list shown on front panel
                     // Was: FOV modifiedFOV = xYSequencing1.searchFOVtableModel_.getFOV(i); - NO CONVERSION?
-                    FOV modifiedFOV = xyzmi_.getCurrentFOV();
-                    if(prefind_.getHCentre()==0&prefind_.getVCentre()==0){
-                        // We're good... no position feedback, as impossible to be at 0,0?
-                    } else {
-                        //Need to work out an offset for the FOV, then...
-                        // WARNING - need to modify this to accounf for the fact that it's relative to the corner not the centre? Or edit the macro?'                        
-                        double rel_Hshift = (core_.getImageHeight()/2)-prefindHcentre; //assuming all the units are in pixels...
-                        double rel_Vshift = (core_.getImageWidth()/2)-prefindVcentre;                        
-                        modifiedFOV.setX(modifiedFOV.getX()+(rel_Hshift*var_.magnification*var_.relay*var_.camerapixelsize)); //in microns?
-                        modifiedFOV.setY(modifiedFOV.getY()+(rel_Vshift*var_.magnification*var_.relay*var_.camerapixelsize));                        
-                    }
-                    // It's all relative Z, so let's go with calling it zero - we're not 3D z-searching yet
-                    modifiedFOV.setZ(0);
                     
-                    xYSequencing1.tableModel_.addRow(modifiedFOV);
-                    noofFOVsSinceLastSuccess=0;
-                    noofacceptedFOVs_thiswell++;
+                    // We're going to trust the macro NOT to return "Accept" if something goes wrong...
+                    // We'll assume that there's some way to screw up reading the results table though...
+                    if(prefindHcentres.length == prefindVcentres.length){
+                        for(int m=0;m<prefindHcentres.length;m++){
+                            FOV modifiedFOV = xyzmi_.getCurrentFOV();
+                            //Need to work out an offset for the FOV, then...
+                            // WARNING - need to modify this to accounf for the fact that it's relative to the corner not the centre? Or edit the macro?'                        
+                            double rel_Hshift = (core_.getImageWidth()/2)-prefindHcentres[m]; //assuming all the units are in pixels...
+                            double rel_Vshift = (core_.getImageHeight()/2)-prefindVcentres[m];                        
+                            int[] binning = this.GenUtils_.getCameraBinning(); // Double.parseDouble(core_.getProperty("Camera", "Binning"));
+                            // int[] binning = {2,2}; //Emergency fix replacement...
+                            double Hdelta=0;
+                            double Vdelta=0;
+                            double Hscalingfactor=0;
+                            double Vscalingfactor=0;                        
+                            if (this.proSettingsGUI1.getHVswap()){
+                                //Swap H and V
+                                Vdelta = rel_Hshift;
+                                Hdelta = rel_Vshift;
+                                Vscalingfactor = ((var_.camerapixelsize*binning[0])/(var_.magnification*var_.relay));
+                                Hscalingfactor = ((var_.camerapixelsize*binning[1])/(var_.magnification*var_.relay));
+                            } else {
+                                //Don't swap H and V
+                                Vdelta = rel_Vshift;
+                                Hdelta = rel_Hshift;                            
+                                Hscalingfactor = ((var_.camerapixelsize*binning[0])/(var_.magnification*var_.relay));
+                                Vscalingfactor = ((var_.camerapixelsize*binning[1])/(var_.magnification*var_.relay));                            
+                            }
+                            //WARNING! Might need to 
+                            modifiedFOV.setX(modifiedFOV.getX()+(Hdelta*Hscalingfactor*this.proSettingsGUI1.getHshiftscale())); //in microns?
+                            modifiedFOV.setY(modifiedFOV.getY()+(Vdelta*Vscalingfactor*this.proSettingsGUI1.getVshiftscale()));                        
+                            
+                            // It's all relative Z, so let's go with calling it zero - we're not 3D z-searching yet
+                            modifiedFOV.setZ(0);
+                            FOV currentz0FOV = xyzmi_.getCurrentFOV();
+                            currentz0FOV.setZ(0);
+                            //xYSequencing1.tableModel_.addRow(currentz0FOV);
+                            xYSequencing1.tableModel_.addRow(modifiedFOV);
+                            noofFOVsSinceLastSuccess=0;
+                            noofacceptedFOVs_thiswell++;
+                        }
+                    } else {
+                        System.out.println("Mismatch in X and Y array length!!!");
+                    }
                 } else { 
                    // We didn't like this FOV
                     noofFOVsSinceLastSuccess++;
@@ -1771,6 +1842,17 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
        
         
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void TestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TestButtonActionPerformed
+        // TODO add your handling code here:
+        String binningval ="";
+        try {
+            binningval = core_.getProperty("Camera", "Binning");
+            System.out.println(binningval);
+        } catch (Exception e) {
+            System.out.println("FAIL on get camera binning value");
+        }
+    }//GEN-LAST:event_TestButtonActionPerformed
    
     public void changeAbortHCAsequencBoolean(){
     //abortHCAsequencBoolean=abortHCAsequencesButton.isSelected();
@@ -1878,6 +1960,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem FLIMHCAHelpMenu;
     private javax.swing.JTabbedPane FLIMPanel;
     private javax.swing.JPanel HCAsequenceProgressBar;
+    private javax.swing.JPanel Prefindpanel;
+    private javax.swing.JButton TestButton;
     private javax.swing.JMenuItem aboutMenu;
     private javax.swing.JFormattedTextField accFramesField;
     private javax.swing.JMenuItem advancedMenu;
@@ -1902,6 +1986,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem loadPlateMetadataMenu;
     private javax.swing.JMenuItem loadSequencingTablesMenu;
     private javax.swing.JMenuItem loadSoftwareConfig;
+    private com.github.dougkelly88.FLIMPlateReaderGUI.PrefindClasses.GUIComponents.PrefindPanel prefindPanel1;
     private ProSettingsGUI.ProSettingsPanel proSettingsGUI1;
     private javax.swing.JPanel progressBarPanel;
     private javax.swing.JMenuItem quitMenu;

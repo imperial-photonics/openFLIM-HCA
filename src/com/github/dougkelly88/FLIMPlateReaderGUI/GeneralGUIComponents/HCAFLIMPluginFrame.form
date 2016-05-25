@@ -272,7 +272,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="sequenceSetupTabbedPane" pref="693" max="32767" attributes="0"/>
+                              <Component id="sequenceSetupTabbedPane" max="32767" attributes="0"/>
                               <Component id="HCAsequenceProgressBar" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -295,15 +295,6 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing" name="xYSequencing1">
-                      <Constraints>
-                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="XYZ positions">
-                            <Property name="tabTitle" type="java.lang.String" value="XYZ positions"/>
-                          </JTabbedPaneConstraints>
-                        </Constraint>
-                      </Constraints>
-                    </Component>
                     <Component class="com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.SpectralSequencing" name="spectralSequencing1">
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
@@ -322,6 +313,52 @@
                         </Constraint>
                       </Constraints>
                     </Component>
+                    <Component class="com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing" name="xYSequencing1">
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                          <JTabbedPaneConstraints tabName="XYZ positions">
+                            <Property name="tabTitle" type="java.lang.String" value="XYZ positions"/>
+                          </JTabbedPaneConstraints>
+                        </Constraint>
+                      </Constraints>
+                    </Component>
+                    <Container class="javax.swing.JPanel" name="Prefindpanel">
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="HCAFLIMPluginFrame_Prefindpanel"/>
+                      </AuxValues>
+                      <Constraints>
+                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                          <JTabbedPaneConstraints tabName="Prefind settings">
+                            <Property name="tabTitle" type="java.lang.String" value="Prefind settings"/>
+                          </JTabbedPaneConstraints>
+                        </Constraint>
+                      </Constraints>
+
+                      <Layout>
+                        <DimensionLayout dim="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="prefindPanel1" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="157" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                        <DimensionLayout dim="1">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="prefindPanel1" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="261" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                      </Layout>
+                      <SubComponents>
+                        <Component class="com.github.dougkelly88.FLIMPlateReaderGUI.PrefindClasses.GUIComponents.PrefindPanel" name="prefindPanel1">
+                        </Component>
+                      </SubComponents>
+                    </Container>
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JPanel" name="HCAsequenceProgressBar">
@@ -356,15 +393,18 @@
                                                   <Component id="startSequenceButton" max="32767" attributes="0"/>
                                               </Group>
                                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                                  <Group type="102" attributes="0">
-                                                      <EmptySpace max="-2" attributes="0"/>
-                                                      <Component id="stopSequenceButton" pref="139" max="32767" attributes="0"/>
-                                                  </Group>
                                                   <Group type="102" alignment="0" attributes="0">
                                                       <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                                                       <Group type="103" groupAlignment="0" attributes="0">
                                                           <Component id="experimentNameText" min="-2" max="-2" attributes="0"/>
                                                           <Component id="experimentNameField" max="32767" attributes="0"/>
+                                                      </Group>
+                                                  </Group>
+                                                  <Group type="102" alignment="0" attributes="0">
+                                                      <EmptySpace max="-2" attributes="0"/>
+                                                      <Group type="103" groupAlignment="0" attributes="0">
+                                                          <Component id="TestButton" min="-2" max="-2" attributes="0"/>
+                                                          <Component id="stopSequenceButton" pref="139" max="32767" attributes="0"/>
                                                       </Group>
                                                   </Group>
                                               </Group>
@@ -414,6 +454,7 @@
                                           <Component id="snapBFButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="accFramesField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="TestButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="3" attributes="0">
@@ -521,7 +562,8 @@
                     </Container>
                     <Component class="javax.swing.JToggleButton" name="stopSequenceButton">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Stop HCA sequence"/>
+                        <Property name="text" type="java.lang.String" value="Abort prefind/acq"/>
+                        <Property name="toolTipText" type="java.lang.String" value=""/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="stopSequenceButtonActionPerformed"/>
@@ -559,6 +601,14 @@
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="TestButton">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="TEST BUTTON"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TestButtonActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>
