@@ -94,14 +94,14 @@ public class LightPathPanel extends javax.swing.JPanel {
         
         for(int i=0;i<objectiveComboBox.getItemCount();i++){
             for(int j=0;j<num_props;j++){
-                ObjectiveOffsetInfo[j] [i] = "";
+                ObjectiveOffsetInfo[i] [j] = "";
             }
         }
         
         String mismatchedObj = "";
         String explanationstring = "The following objective offsets are not matched to the objectives listed in micro-manager - please fix this:\n\n";
         for(int i=0;i<objectiveComboBox.getItemCount();i++){
-            if (ObjectiveOffsetInfo[0] [i].equals(objectiveComboBox.getItemAt(i).toString())){
+            if (ObjectiveOffsetInfo[i] [0].equals(objectiveComboBox.getItemAt(i).toString())){
                 mismatchedObj=mismatchedObj.concat("0");
             } else {
                 mismatchedObj=mismatchedObj.concat("1");
@@ -625,7 +625,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_emissionComboBoxActionPerformed
 
     private void objectiveComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectiveComboBoxActionPerformed
-//        double [] OldOffsets = getObjectiveOffsets();
+        double [] OldOffsets = getObjectiveOffsets();
         
         setByLabel(objectiveComboBox, "Objective");
         
@@ -953,7 +953,8 @@ public class LightPathPanel extends javax.swing.JPanel {
         //Objective Load
         populateComboBoxes(objectiveComboBox, "Objective");
         //Then load the offset values
-
+        LoadObjectiveOffsets();
+        
         //SwitchPort Load
         populateComboBoxes(switchPortComboBox, "LightPathPrism");
         
