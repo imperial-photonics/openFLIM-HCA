@@ -48,7 +48,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     private XYZPanel xYZPanel_;
     private static final LightPathPanel fINSTANCE =  new LightPathPanel();
     private String [] [] ObjectiveOffsetInfo;
-    private boolean Offsetsloaded;
+    public boolean Offsetsloaded;
     // TODO: replace var_ stuff with currentLightPath_
 //    private SequencedAcquisitionProperties sap_;
     // TODO: generate a method that checks for spectral overlap between
@@ -115,7 +115,7 @@ public class LightPathPanel extends javax.swing.JPanel {
             // if we have a case where an objective name doesn't match the file...
             System.out.println(explanationstring);
         }
-        Offsetsloaded=true;
+        //Offsetsloaded=true;
     }
     
     /**
@@ -631,7 +631,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         double [] OldOffsets = getObjectiveOffsets();
         
         setByLabel(objectiveComboBox, "Objective");
-        if (Offsetsloaded = true){
+        if (Offsetsloaded == true){
             //get the offsets here...
             double [] NewOffsets = {0,0,0}; // placeholder
             setObjectiveOffsets(NewOffsets);

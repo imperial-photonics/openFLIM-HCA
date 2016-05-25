@@ -259,6 +259,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         // Hopefully allow for simple diabling of things like XYZmotion and whatnot when not running on acquisition machine
         File testmodefile = new File("C:\\Program Files\\Micro-Manager-1.4.20\\testmode.txt");
         testmode=testmodefile.exists();
+        
+        this.lightPathControls1.Offsetsloaded=true;
     }
 
     public CMMCore getCore() {
