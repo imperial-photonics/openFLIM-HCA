@@ -74,6 +74,10 @@ public final class XYZMotionInterface {
     }
 
     public int gotoFOV(FOV fov) {
+        double []Offsets = parent_.getObjectiveOffsets();
+        fov.setX(fov.getX()+Offsets[0]);
+        fov.setY(fov.getY()+Offsets[1]);
+        fov.setZ(fov.getZ()+Offsets[2]);
 
         try {
             Point2D.Double stage = fovXYtoStageXY(fov);
@@ -87,11 +91,11 @@ public final class XYZMotionInterface {
     }
 
     public FOV getCurrentFOV() {
-
+        double []Offsets = parent_.getObjectiveOffsets();
         try {
             Point2D.Double xy = stageXYtoFOVXY(core_.getXYStagePosition(xystage_));
             Double z = getZAbsolute();
-            return new FOV(xy.getX(), xy.getY(), z, pp_);
+            return new FOV(xy.getX()-Offsets[0], xy.getY()-Offsets[1], z-Offsets[2], pp_);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -201,10 +205,11 @@ public final class XYZMotionInterface {
     }
 
     public boolean moveZAbsolute(double z) {
+        double []Offsets = parent_.getObjectiveOffsets();
         try {
             // TODO: check within bounds?
             // TODO: calibrate to make up for lack of parfocality...
-            core_.setPosition(zstage_, z);
+            core_.setPosition(zstage_, z+Offsets[2]);
             //parent_.currentFOV_.setZ(z);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -213,6 +218,7 @@ public final class XYZMotionInterface {
     }
     
     public Double getZAbsolute(){
+        double []Offsets = parent_.getObjectiveOffsets();
         double z = 0.0;
         
         try{
@@ -221,7 +227,7 @@ public final class XYZMotionInterface {
             System.out.println(e.getMessage());
         }
         
-        return z;
+        return z-Offsets[2];
     }
 
     public void enableManualXYControls(boolean on){

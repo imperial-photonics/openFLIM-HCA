@@ -24,7 +24,7 @@ import mmcorej.CMMCore;
 import mmcorej.StrVector;
 import org.micromanager.MMStudio;
 import org.micromanager.api.events.PropertyChangedEvent;
-
+import ij.IJ.*;
 //import com.google.gson.Gson;
 //import com.google.gson.GsonBuilder;
 
@@ -47,6 +47,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     private ArduinoStepperMotor arduinoSM_;
     private XYZPanel xYZPanel_;
     private static final LightPathPanel fINSTANCE =  new LightPathPanel();
+    private String [] [] ObjectiveOffsetInfo;
     // TODO: replace var_ stuff with currentLightPath_
 //    private SequencedAcquisitionProperties sap_;
     // TODO: generate a method that checks for spectral overlap between
@@ -78,7 +79,42 @@ public class LightPathPanel extends javax.swing.JPanel {
         currentLightPath_ = new CurrentLightPath();
         setControlDefaults();
     }
+    
+    private void LoadObjectiveOffsets(){
+        // Show a warning if the objectives loaded don't match the ones stored in Micro-manager?
+        int num_props = 4; //Name, Xoff, Yoff, Zoff
+        ObjectiveOffsetInfo = new String [objectiveComboBox.getItemCount()] [num_props];
+        //Load the file with the stored offsets
+        String directoryName = ij.IJ.getDirectory("ImageJ");
+        String objFilepath = directoryName.concat("OPENFLIMHCA_ObjectiveOffsets.txt");
+        System.out.println(objFilepath);
 
+        //Compare the loaded data with the names of the objectives stored in ImageJ
+        //ComboBox isn't populated yet?
+        
+        for(int i=0;i<objectiveComboBox.getItemCount();i++){
+            for(int j=0;j<num_props;j++){
+                ObjectiveOffsetInfo[j] [i] = "";
+            }
+        }
+        
+        String mismatchedObj = "";
+        String explanationstring = "The following objective offsets are not matched to the objectives listed in micro-manager - please fix this:\n\n";
+        for(int i=0;i<objectiveComboBox.getItemCount();i++){
+            if (ObjectiveOffsetInfo[0] [i].equals(objectiveComboBox.getItemAt(i).toString())){
+                mismatchedObj.concat("0");
+            } else {
+                mismatchedObj.concat("1");
+                explanationstring.concat(objectiveComboBox.getItemAt(i).toString()+"\n");
+            }
+        }
+               
+        if(Integer.parseInt((String)mismatchedObj)>0){
+            // if we have a case where an objective name doesn't match the file...
+            System.out.println(explanationstring);
+        }     
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -589,7 +625,21 @@ public class LightPathPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_emissionComboBoxActionPerformed
 
     private void objectiveComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectiveComboBoxActionPerformed
+        double [] OldOffsets = getObjectiveOffsets();
+        
         setByLabel(objectiveComboBox, "Objective");
+        
+        //get the offsets here...
+        double [] NewOffsets = {0,0,0}; // placeholder
+        setObjectiveOffsets(NewOffsets);
+        
+        //Shift the stage to account for the objetive change
+        double [] Shifts = {0,0,0};
+        for (int i=0;i<=2;i++){
+            Shifts[i] = NewOffsets[i]-OldOffsets[i];
+        }
+        parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
+                
         currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
         var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
         if ((String) objectiveComboBox.getSelectedItem()!=null){
@@ -902,6 +952,8 @@ public class LightPathPanel extends javax.swing.JPanel {
 
         //Objective Load
         populateComboBoxes(objectiveComboBox, "Objective");
+        //Then load the offset values
+        LoadObjectiveOffsets();
 
         //SwitchPort Load
         populateComboBoxes(switchPortComboBox, "LightPathPrism");
@@ -1001,6 +1053,13 @@ public class LightPathPanel extends javax.swing.JPanel {
         parent_ = (HCAFLIMPluginFrame) o;
     }
     
+    public double[] getObjectiveOffsets(){
+        return currentLightPath_.getObjectiveOffsets();
+    }
+    
+    public void setObjectiveOffsets(double[] newOffsets){
+        currentLightPath_.setObjectiveOffsets(newOffsets);
+    }    
     
     public Object getFrameParent(){
         return parent_;

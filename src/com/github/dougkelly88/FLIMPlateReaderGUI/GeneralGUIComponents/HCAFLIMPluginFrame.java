@@ -277,6 +277,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         return this.testmode;
     }
     
+    public double[] getObjectiveOffsets(){
+        return this.lightPathControls1.getObjectiveOffsets();
+    } 
+    
+    public void setObjectiveOffsets(double []NewOffsets){
+        this.lightPathControls1.setObjectiveOffsets(NewOffsets);
+    } 
+    
     private void setupSequencingTable(){
         
         String[] possibles = {"XYZ", "Filter change", "Time course", "Bright field"};
