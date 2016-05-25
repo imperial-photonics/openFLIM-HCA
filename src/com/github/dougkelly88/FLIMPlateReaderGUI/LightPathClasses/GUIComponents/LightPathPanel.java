@@ -48,6 +48,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     private XYZPanel xYZPanel_;
     private static final LightPathPanel fINSTANCE =  new LightPathPanel();
     private String [] [] ObjectiveOffsetInfo;
+    private boolean Offsetsloaded;
     // TODO: replace var_ stuff with currentLightPath_
 //    private SequencedAcquisitionProperties sap_;
     // TODO: generate a method that checks for spectral overlap between
@@ -68,6 +69,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         arduino_ = Arduino.getInstance();
         arduinoSM_ = ArduinoStepperMotor.getInstance();
         xYZPanel_ = XYZPanel.getInstance();
+        Offsetsloaded = false;
         //Gson gson = new GsonBuilder().create();
         
         try {
@@ -112,7 +114,8 @@ public class LightPathPanel extends javax.swing.JPanel {
         if(Integer.parseInt((String)mismatchedObj)>0){
             // if we have a case where an objective name doesn't match the file...
             System.out.println(explanationstring);
-        }     
+        }
+        Offsetsloaded=true;
     }
     
     /**
@@ -628,17 +631,18 @@ public class LightPathPanel extends javax.swing.JPanel {
         double [] OldOffsets = getObjectiveOffsets();
         
         setByLabel(objectiveComboBox, "Objective");
-        
-//        //get the offsets here...
-//        double [] NewOffsets = {0,0,0}; // placeholder
-//        setObjectiveOffsets(NewOffsets);
-//        
-//        //Shift the stage to account for the objetive change
-//        double [] Shifts = {0,0,0};
-//        for (int i=0;i<=2;i++){
-//            Shifts[i] = NewOffsets[i]-OldOffsets[i];
-//        }
-//        parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
+        if (Offsetsloaded = true){
+            //get the offsets here...
+            double [] NewOffsets = {0,0,0}; // placeholder
+            setObjectiveOffsets(NewOffsets);
+
+            //Shift the stage to account for the objetive change
+            double [] Shifts = {0,0,0};
+            for (int i=0;i<=2;i++){
+                Shifts[i] = NewOffsets[i]-OldOffsets[i];
+            }
+            parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
+        }
                 
         currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
         var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
