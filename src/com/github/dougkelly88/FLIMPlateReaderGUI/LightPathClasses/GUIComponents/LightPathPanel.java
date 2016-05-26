@@ -127,7 +127,7 @@ public class LightPathPanel extends javax.swing.JPanel {
 	}
         
         String mismatchedObj = "";
-        String explanationstring = "The following objective offsets are not matched to the objectives listed in micro-manager - please fix this:\n\n";
+        String explanationstring = "The following objective(s) listed in micro-manager offsets are not matched to the objectives listed in the saved Objective Offsets file - please fix this:\n\n";
         for(int i=0;i<objectiveComboBox.getItemCount();i++){
             if (ObjectiveOffsetInfo[i] [0].equals(objectiveComboBox.getItemAt(i).toString())){
                 mismatchedObj=mismatchedObj.concat("0");
@@ -657,10 +657,15 @@ public class LightPathPanel extends javax.swing.JPanel {
         double [] OldOffsets = getObjectiveOffsets();
         
         setByLabel(objectiveComboBox, "Objective");
+        currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
+        var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
+        int whichobj = objectiveComboBox.getSelectedIndex();
         if (Offsetsloaded == true){
             //get the offsets here...
-            double [] NewOffsets = {0,0,0}; // placeholder
+            
+            double [] NewOffsets = {Double.parseDouble(ObjectiveOffsetInfo[whichobj] [1]),Double.parseDouble(ObjectiveOffsetInfo[whichobj] [2]),Double.parseDouble(ObjectiveOffsetInfo[whichobj] [3])}; // placeholder
             setObjectiveOffsets(NewOffsets);
+
 
             //Shift the stage to account for the objetive change
             double [] Shifts = {0,0,0};
@@ -670,8 +675,6 @@ public class LightPathPanel extends javax.swing.JPanel {
             parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
         }
                 
-        currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
-        var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
         if ((String) objectiveComboBox.getSelectedItem()!=null){
                 setMag((String) objectiveComboBox.getSelectedItem());
         }
