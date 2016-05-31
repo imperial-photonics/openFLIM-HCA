@@ -40,7 +40,7 @@ public class RowComparator implements Comparator<SeqAcqSetup>{
                 //Determine if row is 'Even'
                 int colnum = Integer.parseInt(wellref1[1]);
                 
-                if(0==colnum%2){
+                if(0!=colnum%2){
                     return row1.compareTo(row2);   
                 }
                 else{

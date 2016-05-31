@@ -47,7 +47,7 @@ public class ColumnComparator implements Comparator<SeqAcqSetup>{
             else if("Horizontal".equals(o1.getSnaketype())){
                 //Determine if row is 'Even'
                 int rownum = utilities_.WellLetterstoNumber(wellref1[0]);
-                if(0==rownum%2){
+                if(0!=rownum%2){
                     return col1_pad.compareTo(col2_pad);   
                 }
                 else{
