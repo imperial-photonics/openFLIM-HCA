@@ -343,7 +343,8 @@ public class XYZPanel extends javax.swing.JPanel {
         });
 
         fixedAFdefault.setEditable(false);
-        fixedAFdefault.setText("9136");
+        fixedAFdefault.setText("5851");
+        fixedAFdefault.setToolTipText("");
         fixedAFdefault.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fixedAFdefaultActionPerformed(evt);

@@ -75,13 +75,9 @@ public final class XYZMotionInterface {
 
     public int gotoFOV(FOV fov) {
         double []Offsets = parent_.getObjectiveOffsets();
-        fov.setX(fov.getX()+Offsets[0]);
-        fov.setY(fov.getY()+Offsets[1]);
-        fov.setZ(fov.getZ()+Offsets[2]);
-
         try {
             Point2D.Double stage = fovXYtoStageXY(fov);
-            core_.setXYPosition(xystage_, stage.getX(), stage.getY());
+            core_.setXYPosition(xystage_, stage.getX()+Offsets[0], stage.getY()+Offsets[1]);
             // parent_.currentFOV_ = fov;
         } catch (Exception e) {
             System.out.println(e.getMessage());

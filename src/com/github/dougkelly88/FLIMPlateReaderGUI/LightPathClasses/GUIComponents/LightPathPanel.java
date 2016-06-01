@@ -97,11 +97,12 @@ public class LightPathPanel extends javax.swing.JPanel {
         //Load the file with the stored offsets
         String directoryName = ij.IJ.getDirectory("ImageJ");
         String objFilepath = directoryName.concat("OPENFLIMHCA_ObjectiveOffsets.txt");
+        //String objFilepath = "C:\\temp\\OOO.txt";
         //System.out.println(objFilepath);
         //Compare the loaded data with the names of the objectives stored in ImageJ
         try{
             File objfile = new File (objFilepath);
-            FileReader fileReader = new FileReader(objfile);
+            FileReader fileReader = new FileReader(objFilepath);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             StringBuffer stringBuffer = new StringBuffer();
             String line;
@@ -129,7 +130,11 @@ public class LightPathPanel extends javax.swing.JPanel {
         String mismatchedObj = "";
         String explanationstring = "The following objective(s) listed in micro-manager offsets are not matched to the objectives listed in the saved Objective Offsets file - please fix this:\n\n";
         for(int i=0;i<objectiveComboBox.getItemCount();i++){
+            //System.out.println("Array: "+ObjectiveOffsetInfo[i] [0]);
+            //System.out.println("Box: "+objectiveComboBox.getItemAt(i).toString());
             if (ObjectiveOffsetInfo[i] [0].equals(objectiveComboBox.getItemAt(i).toString())){
+                mismatchedObj=mismatchedObj.concat("0");
+            } else if (ObjectiveOffsetInfo[i] [0].equals("Unknown")){
                 mismatchedObj=mismatchedObj.concat("0");
             } else {
                 mismatchedObj=mismatchedObj.concat("1");
@@ -140,8 +145,9 @@ public class LightPathPanel extends javax.swing.JPanel {
         if(Integer.parseInt((String)mismatchedObj)>0){
             // if we have a case where an objective name doesn't match the file...
             System.out.println(explanationstring);
+        } else {
+            Offsetsloaded=true;
         }
-        //Offsetsloaded=true;
     }
     
     /**
