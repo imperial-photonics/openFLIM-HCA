@@ -7,6 +7,7 @@ package ProSettingsGUI;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing;
 
 import com.google.gson.Gson;
@@ -29,6 +30,7 @@ import java.util.List;
  */
 public class ProSettingsPanel extends javax.swing.JPanel {
     
+    private HCAFLIMPluginFrame parent_;
     private Variable var_;
     private Arduino arduino_;
     private XYSequencing xYSeq_;        
@@ -59,13 +61,13 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         gson = new GsonBuilder().create();
         // Fill up our objective table...
         //currentObjectiveArray = new List<Objective>();
-        try{          
-            objectiveFileInputStream = new FileInputStream("C:\\Program Files\\Micro-Manager-1.4.20\\ObjectiveOffsets\\Output.json");
-            currentObjectiveArray = readObjectiveJson(objectiveFileInputStream);
-        } catch(Exception ex) {
-            System.out.println("oops");
-            System.out.println(ex);
-        }
+//        try{          
+//            objectiveFileInputStream = new FileInputStream("C:\\Program Files\\Micro-Manager-1.4.20\\ObjectiveOffsets\\Output.json");
+//            currentObjectiveArray = readObjectiveJson(objectiveFileInputStream);
+//        } catch(Exception ex) {
+//            System.out.println("oops");
+//            System.out.println(ex);
+//        }
         
 //        Integer turretPositions = currentObjectiveArray.size();
 //        objectiveTable = new Hashtable<String, Objective>();
@@ -131,6 +133,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         JSONtest = new javax.swing.JButton();
         JSONview = new javax.swing.JTextField();
         readJSON = new javax.swing.JButton();
+        forceAFdefault = new javax.swing.JButton();
 
         arduinoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Arduino"));
 
@@ -233,7 +236,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             warningPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(warningPanelLayout.createSequentialGroup()
                 .addComponent(importantInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 585, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 18, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         warningPanelLayout.setVerticalGroup(
             warningPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -488,6 +491,13 @@ public class ProSettingsPanel extends javax.swing.JPanel {
 
         readJSON.setText("Read JSON");
 
+        forceAFdefault.setText("Set AF default");
+        forceAFdefault.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                forceAFdefaultActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -526,8 +536,11 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                                         .addComponent(pct_coverage_text))
                                     .addComponent(jLabel2)
                                     .addComponent(jLabel3)))
-                            .addComponent(H_V_swap))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(H_V_swap)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(forceAFdefault)))
+                        .addGap(0, 12, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -536,7 +549,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(readJSON))
                             .addComponent(JSONview, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(22, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -551,6 +564,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                             .addComponent(readJSON))
                         .addGap(18, 18, 18)
                         .addComponent(JSONview, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(8, 8, 8)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -566,8 +580,10 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addComponent(H_V_swap)
+                        .addGap(0, 0, 0)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(H_V_swap)
+                            .addComponent(forceAFdefault))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(prefindthreshtest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -584,10 +600,13 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(VShiftScale, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))))
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addContainerGap(143, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    public void setParent(Object o){
+        parent_ = (HCAFLIMPluginFrame) o;
+    }
     
     private void updateLaserIntensityButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateLaserIntensityButtonActionPerformed
         double intensity=arduino_.getLaserIntensity();
@@ -692,21 +711,26 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_JSONviewActionPerformed
 
     private void JSONtestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JSONtestActionPerformed
-        try{
-            writer = new FileWriter("C:\\Program Files\\Micro-Manager-1.4.20\\ObjectiveOffsets\\Output.json");
-        } catch (IOException ex) {         
-        }        
-        Objective [] Objectivearray = new Objective[6];
-        for (int i=0;i<6;i++){
-                Objectivearray[i] = new Objective("Turret_pos"+i,(i*10.0),(i*1.0),(i*2.0),(i*3.0));
-        }
-        gson.toJson(Objectivearray, writer);
-        try{
-            writer.close();
-        } catch (IOException ex) {
-        } finally {
-        }
+//        try{
+//            writer = new FileWriter("C:\\Program Files\\Micro-Manager-1.4.20\\ObjectiveOffsets\\Output.json");
+//        } catch (IOException ex) {         
+//        }        
+//        Objective [] Objectivearray = new Objective[6];
+//        for (int i=0;i<6;i++){
+//                Objectivearray[i] = new Objective("Turret_pos"+i,(i*10.0),(i*1.0),(i*2.0),(i*3.0));
+//        }
+//        gson.toJson(Objectivearray, writer);
+//        try{
+//            writer.close();
+//        } catch (IOException ex) {
+//        } finally {
+//        }
     }//GEN-LAST:event_JSONtestActionPerformed
+
+    private void forceAFdefaultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forceAFdefaultActionPerformed
+        // TODO add your handling code here:
+        parent_.setAFdefaultheight(Double.parseDouble(parent_.xyzmi_.getZAbsolute().toString()));
+    }//GEN-LAST:event_forceAFdefaultActionPerformed
 
     public double getHshiftscale(){
         return H_shift_scale;
@@ -834,6 +858,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JPanel dougPanel;
     private javax.swing.JRadioButton enableLightCheckButton;
     private javax.swing.JPanel fOVPanel;
+    private javax.swing.JButton forceAFdefault;
     private javax.swing.JScrollPane importantInfo;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;

@@ -889,7 +889,7 @@ public class XYZPanel extends javax.swing.JPanel {
         try{
             core_.setProperty("ManualFocus", "NearLimit", 9300);
             core_.setProperty("ManualFocus", "FarLimit", 10);
-            core_.setProperty("Objective", "Safe Position", 3000); //TODO: check that this is a good compromise between clearance and speed
+            core_.setProperty("Objective", "Safe Position", 10); //TODO: check that this is a good compromise between clearance and speed
             afObj = core_.getAllowedPropertyValues("AutoFocusZDC", "ObjectiveTypeSetting");
             String[] installedObjStr = (core_.getAllowedPropertyValues("Objective", "Label")).toArray();
             installedObj = new ArrayList(Arrays.asList(installedObjStr));
@@ -898,7 +898,7 @@ public class XYZPanel extends javax.swing.JPanel {
                 if (installedObj.contains(str))
                     afObjectiveCombo.addItem(str);
             }
-            xyzmi_.moveZAbsolute(3000);
+            xyzmi_.moveZAbsolute(10);
             currentZPositionField.setText(Double.toString(xyzmi_.getZAbsolute()));
             core_.setProperty("AutoFocusZDC", "SearchRange", Double.parseDouble(afSearchField.getText()));
         } catch (Exception e){

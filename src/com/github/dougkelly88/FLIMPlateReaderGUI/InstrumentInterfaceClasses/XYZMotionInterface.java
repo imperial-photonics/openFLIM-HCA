@@ -92,6 +92,7 @@ public final class XYZMotionInterface {
             Point2D.Double xy = stageXYtoFOVXY(core_.getXYStagePosition(xystage_));
             Double z = getZAbsolute();
             return new FOV(xy.getX()-Offsets[0], xy.getY()-Offsets[1], z-Offsets[2], pp_);
+            //return new FOV(xy.getX(), xy.getY(), z, pp_);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

@@ -101,6 +101,7 @@ public class FOVTableModel extends AbstractTableModel {
     }
 
     public void addRow(FOV fov) {
+        // Check seems to fail with objective offsets enabled? Z issue?
         int row = data_.size();
         fov = validateData(fov);
         if (!data_.contains(fov)) {

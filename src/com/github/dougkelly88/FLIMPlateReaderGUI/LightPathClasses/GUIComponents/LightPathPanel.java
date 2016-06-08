@@ -13,6 +13,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.SliderControl;
 import com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.Classes.CurrentLightPath;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.XYZClasses.GUIComponents.XYZPanel;
 import java.awt.BorderLayout;
 import java.util.logging.Level;
@@ -63,7 +64,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     // first being closed. 
 
     /**
-     * Creates new form FLIMControls
+     * Creates new form FLIMControls //?? Lightpathcontrols?
      */
     public LightPathPanel() {
         initComponents();
@@ -661,29 +662,55 @@ public class LightPathPanel extends javax.swing.JPanel {
 
     private void objectiveComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectiveComboBoxActionPerformed
         double [] OldOffsets = getObjectiveOffsets();
-        
         setByLabel(objectiveComboBox, "Objective");
         currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
         var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
         int whichobj = objectiveComboBox.getSelectedIndex();
         if (Offsetsloaded == true){
             //get the offsets here...
-            
+            FOV ThisFOV = new FOV(0, 0, 0, parent_.pp_);
+            ThisFOV = parent_.xyzmi_.getCurrentFOV();            
             double [] NewOffsets = {Double.parseDouble(ObjectiveOffsetInfo[whichobj] [1]),Double.parseDouble(ObjectiveOffsetInfo[whichobj] [2]),Double.parseDouble(ObjectiveOffsetInfo[whichobj] [3])}; // placeholder
             setObjectiveOffsets(NewOffsets);
-
-
             //Shift the stage to account for the objetive change
+            //parent_.xyzmi_.gotoFOV(ThisFOV);
+            // Use relative shift here due to trouble with absolute ones
             double [] Shifts = {0,0,0};
-            for (int i=0;i<=2;i++){
+            for (int i=0;i<=2;i++){ // X ONLY
                 Shifts[i] = NewOffsets[i]-OldOffsets[i];
             }
             parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
+            
         }
                 
         if ((String) objectiveComboBox.getSelectedItem()!=null){
                 setMag((String) objectiveComboBox.getSelectedItem());
         }
+//        double [] OldOffsets = getObjectiveOffsets();
+////        FOV ThisFOV = parent_.xyzmi_.getCurrentFOV();
+//        setByLabel(objectiveComboBox, "Objective");
+//        currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
+//        var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
+//        int whichobj = objectiveComboBox.getSelectedIndex();
+//        if (Offsetsloaded == true){
+//            //get the offsets here...
+//            
+//            double [] NewOffsets = {Double.parseDouble(ObjectiveOffsetInfo[whichobj] [1]),Double.parseDouble(ObjectiveOffsetInfo[whichobj] [2]),Double.parseDouble(ObjectiveOffsetInfo[whichobj] [3])}; // placeholder
+//            setObjectiveOffsets(NewOffsets);
+//
+//
+//            //Shift the stage to account for the objetive change - replacing with FOV actions gives some kind of exception?
+//            double [] Shifts = {0,0,0};
+//            for (int i=0;i<=2;i++){
+//                Shifts[i] = NewOffsets[i]-OldOffsets[i];
+//            }
+//            parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
+//            //parent_.xyzmi_.gotoFOV(ThisFOV);
+//        }
+//                
+//        if ((String) objectiveComboBox.getSelectedItem()!=null){
+//                setMag((String) objectiveComboBox.getSelectedItem());
+//        }
     }//GEN-LAST:event_objectiveComboBoxActionPerformed
 
 //    public void setMag(String magString){
@@ -1109,7 +1136,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     }
     
     public static LightPathPanel getInstance() {
-            return fINSTANCE;
+          return fINSTANCE;
     }
     
     public void updatePanel(){
