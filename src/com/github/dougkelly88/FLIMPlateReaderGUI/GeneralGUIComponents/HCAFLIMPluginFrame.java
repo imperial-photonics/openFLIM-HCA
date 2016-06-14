@@ -178,7 +178,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         // Leaking this in constructor may lead to trouble in multithreaded situations?
         // Can these be moved to another method? Looks like it, but can be left for another day...
         frame_ = this;
-        this.proSettingsGUI1.setParent(this);
         xYZPanel1.setParent(this);
         xYSequencing1.setParent(this);
         lightPathControls1.setParent(this);
@@ -215,7 +214,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         try {
             lastAFposition = Double.parseDouble(core_.getProperty("Objective", "Safe Position")); // Bottom out the default AF position
         } catch (Exception ex) {
-            lastAFposition = 0;            
+            lastAFposition = 3000;            
             // Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         fLIMPanel1.setDelayComboBox();
@@ -261,7 +260,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         File testmodefile = new File("C:\\Program Files\\Micro-Manager-1.4.20\\testmode.txt");
         testmode=testmodefile.exists();
         
-        this.lightPathControls1.Offsetsloaded=true;
+        this.lightPathControls1.ObjOffsetsloaded=true;
+        this.lightPathControls1.PortOffsetsloaded=true;
     }
 
     public CMMCore getCore() {
@@ -287,7 +287,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public void setObjectiveOffsets(double []NewOffsets){
         this.lightPathControls1.setObjectiveOffsets(NewOffsets);
     } 
+
+    public double[] getPortOffsets(){
+        return this.lightPathControls1.getPortOffsets();
+    } 
     
+    public void setPortOffsets(double []NewOffsets){
+        this.lightPathControls1.setPortOffsets(NewOffsets);
+    }    
     private void setupSequencingTable(){
         
         String[] possibles = {"XYZ", "Filter change", "Time course", "Bright field"};
@@ -1135,10 +1142,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         prefindPanel1.UpdatePrefindPanel();
     }
     
-    public void setAFdefaultheight(double defaultheight){
-        this.xYZPanel1.setFixedAFDefault(defaultheight);
-    }
-    
     public boolean testPrefind() {// throws InterruptedException{ 
         //prefind_.Snapandshow(prefindImage);
         //MMStudio gui_ = MMStudio.getInstance(); // ### WAS ENABLED
@@ -1154,7 +1157,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         //boolean result = false;
         return result;
     }
-
+    
     public boolean prefind() throws InterruptedException{ // THROW is copied from doSequenceAcquisition - assume this is for Abort?
         // Reset local copy of targeted co-ords - remember these are in pixel units
         prefindHcentres = new double[] {0};

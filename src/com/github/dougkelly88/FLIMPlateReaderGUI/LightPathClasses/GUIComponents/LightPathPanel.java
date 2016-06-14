@@ -10,10 +10,11 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.ArduinoStepperMotor;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Objective_object;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Port_object;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.SliderControl;
 import com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.Classes.CurrentLightPath;
-import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.XYZClasses.GUIComponents.XYZPanel;
 import java.awt.BorderLayout;
 import java.util.logging.Level;
@@ -26,12 +27,16 @@ import mmcorej.StrVector;
 import org.micromanager.MMStudio;
 import org.micromanager.api.events.PropertyChangedEvent;
 import ij.IJ.*;
-//import com.google.gson.Gson;
-//import com.google.gson.GsonBuilder;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.nio.file.Files;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 
 /**
  *
@@ -53,7 +58,9 @@ public class LightPathPanel extends javax.swing.JPanel {
     private XYZPanel xYZPanel_;
     private static final LightPathPanel fINSTANCE =  new LightPathPanel();
     private String [] [] ObjectiveOffsetInfo;
-    public boolean Offsetsloaded;
+    private String [] [] PortOffsetInfo;
+    public boolean ObjOffsetsloaded;
+    public boolean PortOffsetsloaded;
     // TODO: replace var_ stuff with currentLightPath_
 //    private SequencedAcquisitionProperties sap_;
     // TODO: generate a method that checks for spectral overlap between
@@ -64,7 +71,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     // first being closed. 
 
     /**
-     * Creates new form FLIMControls //?? Lightpathcontrols?
+     * Creates new form FLIMControls
      */
     public LightPathPanel() {
         initComponents();
@@ -74,7 +81,8 @@ public class LightPathPanel extends javax.swing.JPanel {
         arduino_ = Arduino.getInstance();
         arduinoSM_ = ArduinoStepperMotor.getInstance();
         xYZPanel_ = XYZPanel.getInstance();
-        Offsetsloaded = false;
+        ObjOffsetsloaded = false;
+        PortOffsetsloaded = false;
         //Gson gson = new GsonBuilder().create();
         
         try {
@@ -91,65 +99,135 @@ public class LightPathPanel extends javax.swing.JPanel {
         return info.split("##");
     }
     
-    public void LoadObjectiveOffsets(){
+    public void LoadJSONObjOffsets(){
         // Show a warning if the objectives loaded don't match the ones stored in Micro-manager?
         int num_props = 4; //Name, Xoff, Yoff, Zoff
         ObjectiveOffsetInfo = new String [objectiveComboBox.getItemCount()] [num_props];
+        
+        Gson gson = new Gson();
         //Load the file with the stored offsets
         String directoryName = ij.IJ.getDirectory("ImageJ");
-        String objFilepath = directoryName.concat("OPENFLIMHCA_ObjectiveOffsets.txt");
-        //String objFilepath = "C:\\temp\\OOO.txt";
-        //System.out.println(objFilepath);
-        //Compare the loaded data with the names of the objectives stored in ImageJ
+        String objFilepath = directoryName.concat("OPENFLIMHCA_JSONObjectiveOffsets.txt");
+        String JSONInString = "";
         try{
-            File objfile = new File (objFilepath);
-            FileReader fileReader = new FileReader(objFilepath);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            StringBuffer stringBuffer = new StringBuffer();
-            String line;
-            int i=0;
-            while ((line = bufferedReader.readLine()) != null) {
-                String thisObjectiveInfo = line;
-                for(int j=0;j<num_props;j++){
-                    String [] interpretedObjectiveInfo = interpretObjectiveInfo(thisObjectiveInfo);
-                    if(interpretedObjectiveInfo.length == num_props){
-                        ObjectiveOffsetInfo[i] [j] = interpretedObjectiveInfo[j];
-                    } else {
-                        if (j>0){
-                            ObjectiveOffsetInfo[i] [j] = "0";
-                        } else {
-                            ObjectiveOffsetInfo[i] [j] = "Unknown";
-                        }
-                    }
-                }
-                i++;
-            }            
-        } catch (IOException e) {
-            e.printStackTrace();
-	}
-        
+            JSONInString = new String(Files.readAllBytes(FileSystems.getDefault().getPath(objFilepath)));
+        } catch (Exception e) {
+            
+        }
+        Objective_object[] objs = gson.fromJson(JSONInString, Objective_object[].class);
+        for(int i=0;i<objs.length;i++){
+                ObjectiveOffsetInfo[i] [0] = objs[i].getObjectiveName();
+                ObjectiveOffsetInfo[i] [1] = objs[i].getObjectiveOffsets()[0].toString();
+                ObjectiveOffsetInfo[i] [2] = objs[i].getObjectiveOffsets()[1].toString();
+                ObjectiveOffsetInfo[i] [3] = objs[i].getObjectiveOffsets()[2].toString();
+        }
         String mismatchedObj = "";
         String explanationstring = "The following objective(s) listed in micro-manager offsets are not matched to the objectives listed in the saved Objective Offsets file - please fix this:\n\n";
         for(int i=0;i<objectiveComboBox.getItemCount();i++){
-            //System.out.println("Array: "+ObjectiveOffsetInfo[i] [0]);
-            //System.out.println("Box: "+objectiveComboBox.getItemAt(i).toString());
             if (ObjectiveOffsetInfo[i] [0].equals(objectiveComboBox.getItemAt(i).toString())){
-                mismatchedObj=mismatchedObj.concat("0");
-            } else if (ObjectiveOffsetInfo[i] [0].equals("Unknown")){
                 mismatchedObj=mismatchedObj.concat("0");
             } else {
                 mismatchedObj=mismatchedObj.concat("1");
-                explanationstring=explanationstring.concat(objectiveComboBox.getItemAt(i).toString()+"\n");
+                explanationstring=explanationstring.concat(objectiveComboBox.getItemAt(i).toString()+" is stored in the file as "+ObjectiveOffsetInfo[i] [0]+"\n");
             }
         }
-               
         if(Integer.parseInt((String)mismatchedObj)>0){
             // if we have a case where an objective name doesn't match the file...
             System.out.println(explanationstring);
-        } else {
-            Offsetsloaded=true;
         }
-    }
+    }    
+    
+    public void LoadJSONPortOffsets(){
+        // Show a warning if the objectives loaded don't match the ones stored in Micro-manager?
+        int num_props = 4; //Name, Xoff, Yoff, Zoff
+        PortOffsetInfo = new String [switchPortComboBox.getItemCount()] [num_props];
+        
+        Gson gson = new Gson();
+        //Load the file with the stored offsets
+        String directoryName = ij.IJ.getDirectory("ImageJ");
+        String objFilepath = directoryName.concat("OPENFLIMHCA_JSONPortOffsets.txt");
+        String JSONInString = "";
+        try{
+            JSONInString = new String(Files.readAllBytes(FileSystems.getDefault().getPath(objFilepath)));
+        } catch (Exception e) {
+            
+        }
+        Port_object[] ports = gson.fromJson(JSONInString, Port_object[].class);
+        for(int i=0;i<ports.length;i++){
+                PortOffsetInfo[i] [0] = ports[i].getPortName();
+                PortOffsetInfo[i] [1] = ports[i].getPortOffsets()[0].toString();
+                PortOffsetInfo[i] [2] = ports[i].getPortOffsets()[1].toString();
+                PortOffsetInfo[i] [3] = ports[i].getPortOffsets()[2].toString();
+        }
+        String mismatchedPort = "";
+        String explanationstring = "The following objective(s) listed in micro-manager offsets are not matched to the ports listed in the saved Port Offsets file - please fix this:\n\n";
+        for(int i=0;i<switchPortComboBox.getItemCount();i++){
+            if (PortOffsetInfo[i] [0].equals(switchPortComboBox.getItemAt(i).toString())){
+                mismatchedPort=mismatchedPort.concat("0");
+            } else {
+                mismatchedPort=mismatchedPort.concat("1");
+                explanationstring=explanationstring.concat(switchPortComboBox.getItemAt(i).toString()+" is stored in the file as: "+PortOffsetInfo[i] [0]+"\n");
+            }
+        }
+        if(Integer.parseInt((String)mismatchedPort)>0){
+            // if we have a case where an objective name doesn't match the file...
+            System.out.println(explanationstring);
+        }
+    }    
+    
+//    public void LoadObjectiveOffsets(){
+//        // Show a warning if the objectives loaded don't match the ones stored in Micro-manager?
+//        int num_props = 4; //Name, Xoff, Yoff, Zoff
+//        ObjectiveOffsetInfo = new String [objectiveComboBox.getItemCount()] [num_props];
+//        //Load the file with the stored offsets
+//        String directoryName = ij.IJ.getDirectory("ImageJ");
+//        String objFilepath = directoryName.concat("OPENFLIMHCA_ObjectiveOffsets.txt");
+//        //System.out.println(objFilepath);
+//        //Compare the loaded data with the names of the objectives stored in ImageJ
+//        try{
+//            File objfile = new File (objFilepath);
+//            FileReader fileReader = new FileReader(objfile);
+//            BufferedReader bufferedReader = new BufferedReader(fileReader);
+//            StringBuffer stringBuffer = new StringBuffer();
+//            String line;
+//            int i=0;
+//            while ((line = bufferedReader.readLine()) != null) {
+//                String thisObjectiveInfo = line;
+//                for(int j=0;j<num_props;j++){
+//                    String [] interpretedObjectiveInfo = interpretObjectiveInfo(thisObjectiveInfo);
+//                    if(interpretedObjectiveInfo.length == num_props){
+//                        ObjectiveOffsetInfo[i] [j] = interpretedObjectiveInfo[j];
+//                    } else {
+//                        if (j>0){
+//                            ObjectiveOffsetInfo[i] [j] = "0";
+//                        } else {
+//                            ObjectiveOffsetInfo[i] [j] = "Unknown";
+//                        }
+//                    }
+//                }
+//                i++;
+//            }            
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//	}
+//        
+//        String mismatchedObj = "";
+//        String explanationstring = "The following objective(s) listed in micro-manager offsets are not matched to the objectives listed in the saved Objective Offsets file - please fix this:\n\n";
+//        for(int i=0;i<objectiveComboBox.getItemCount();i++){
+//            if (ObjectiveOffsetInfo[i] [0].equals(objectiveComboBox.getItemAt(i).toString())){
+//                mismatchedObj=mismatchedObj.concat("0");
+//            } else {
+//                mismatchedObj=mismatchedObj.concat("1");
+//                explanationstring=explanationstring.concat(objectiveComboBox.getItemAt(i).toString()+"\n");
+//            }
+//        }
+//               
+//        if(Integer.parseInt((String)mismatchedObj)>0){
+//            // if we have a case where an objective name doesn't match the file...
+//            System.out.println(explanationstring);
+//        }
+//        //Offsetsloaded=true;
+//    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -662,55 +740,29 @@ public class LightPathPanel extends javax.swing.JPanel {
 
     private void objectiveComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectiveComboBoxActionPerformed
         double [] OldOffsets = getObjectiveOffsets();
+        
         setByLabel(objectiveComboBox, "Objective");
         currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
         var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
         int whichobj = objectiveComboBox.getSelectedIndex();
-        if (Offsetsloaded == true){
+        if (ObjOffsetsloaded == true){
             //get the offsets here...
-            FOV ThisFOV = new FOV(0, 0, 0, parent_.pp_);
-            ThisFOV = parent_.xyzmi_.getCurrentFOV();            
+            
             double [] NewOffsets = {Double.parseDouble(ObjectiveOffsetInfo[whichobj] [1]),Double.parseDouble(ObjectiveOffsetInfo[whichobj] [2]),Double.parseDouble(ObjectiveOffsetInfo[whichobj] [3])}; // placeholder
             setObjectiveOffsets(NewOffsets);
+
+
             //Shift the stage to account for the objetive change
-            //parent_.xyzmi_.gotoFOV(ThisFOV);
-            // Use relative shift here due to trouble with absolute ones
             double [] Shifts = {0,0,0};
-            for (int i=0;i<=2;i++){ // X ONLY
+            for (int i=0;i<=2;i++){
                 Shifts[i] = NewOffsets[i]-OldOffsets[i];
             }
             parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
-            
         }
                 
         if ((String) objectiveComboBox.getSelectedItem()!=null){
                 setMag((String) objectiveComboBox.getSelectedItem());
         }
-//        double [] OldOffsets = getObjectiveOffsets();
-////        FOV ThisFOV = parent_.xyzmi_.getCurrentFOV();
-//        setByLabel(objectiveComboBox, "Objective");
-//        currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
-//        var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
-//        int whichobj = objectiveComboBox.getSelectedIndex();
-//        if (Offsetsloaded == true){
-//            //get the offsets here...
-//            
-//            double [] NewOffsets = {Double.parseDouble(ObjectiveOffsetInfo[whichobj] [1]),Double.parseDouble(ObjectiveOffsetInfo[whichobj] [2]),Double.parseDouble(ObjectiveOffsetInfo[whichobj] [3])}; // placeholder
-//            setObjectiveOffsets(NewOffsets);
-//
-//
-//            //Shift the stage to account for the objetive change - replacing with FOV actions gives some kind of exception?
-//            double [] Shifts = {0,0,0};
-//            for (int i=0;i<=2;i++){
-//                Shifts[i] = NewOffsets[i]-OldOffsets[i];
-//            }
-//            parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
-//            //parent_.xyzmi_.gotoFOV(ThisFOV);
-//        }
-//                
-//        if ((String) objectiveComboBox.getSelectedItem()!=null){
-//                setMag((String) objectiveComboBox.getSelectedItem());
-//        }
     }//GEN-LAST:event_objectiveComboBoxActionPerformed
 
 //    public void setMag(String magString){
@@ -840,9 +892,28 @@ public class LightPathPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_filterCubeComboBoxActionPerformed
 
     private void switchPortComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_switchPortComboBoxActionPerformed
+        double [] OldOffsets = getPortOffsets();
+        
         setByLabel(switchPortComboBox, "LightPathPrism");
         currentLightPath_.setPortLabel((String) switchPortComboBox.getSelectedItem());
         var_.SwitchPortComboBoxSelectedItem = (String) switchPortComboBox.getSelectedItem();
+        int whichport = switchPortComboBox.getSelectedIndex();
+        
+        if (PortOffsetsloaded == true){
+            //get the offsets here...
+            
+            double [] NewOffsets = {Double.parseDouble(PortOffsetInfo[whichport] [1]),Double.parseDouble(PortOffsetInfo[whichport] [2]),Double.parseDouble(PortOffsetInfo[whichport] [3])}; // placeholder
+            setPortOffsets(NewOffsets);
+
+
+            //Shift the stage to account for the objetive change
+            double [] Shifts = {0,0,0};
+            for (int i=0;i<=2;i++){
+                Shifts[i] = NewOffsets[i]-OldOffsets[i];
+            }
+            parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
+        }
+        
         if(switchPortComboBox.getSelectedIndex()==0){
            laserToggle.setText("Turn laser ON");
             try {
@@ -1019,11 +1090,11 @@ public class LightPathPanel extends javax.swing.JPanel {
         //Objective Load
         populateComboBoxes(objectiveComboBox, "Objective");
         //Then load the offset values
-        LoadObjectiveOffsets();
+        LoadJSONObjOffsets();
         
         //SwitchPort Load
         populateComboBoxes(switchPortComboBox, "LightPathPrism");
-        
+        LoadJSONPortOffsets();
         
         // set defaults
         setDefaultLightPath();
@@ -1127,6 +1198,14 @@ public class LightPathPanel extends javax.swing.JPanel {
         currentLightPath_.setObjectiveOffsets(newOffsets);
     }    
     
+    public double[] getPortOffsets(){
+        return currentLightPath_.getPortOffsets();
+    }
+    
+    public void setPortOffsets(double[] newOffsets){
+        currentLightPath_.setPortOffsets(newOffsets);
+    }    
+    
     public Object getFrameParent(){
         return parent_;
     }
@@ -1136,7 +1215,7 @@ public class LightPathPanel extends javax.swing.JPanel {
     }
     
     public static LightPathPanel getInstance() {
-          return fINSTANCE;
+            return fINSTANCE;
     }
     
     public void updatePanel(){

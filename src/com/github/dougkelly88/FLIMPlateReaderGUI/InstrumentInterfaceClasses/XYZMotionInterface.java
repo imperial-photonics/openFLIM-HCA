@@ -74,10 +74,20 @@ public final class XYZMotionInterface {
     }
 
     public int gotoFOV(FOV fov) {
-        double []Offsets = parent_.getObjectiveOffsets();
+        double []ObjOffsets = parent_.getObjectiveOffsets();
+        double []PortOffsets = parent_.getPortOffsets();
+        double []Offsets = {0,0,0};
+        for (int i=0;i<3; i++){
+            Offsets[i] = ObjOffsets[i]+PortOffsets[i];
+        }
+        
+        fov.setX(fov.getX()+Offsets[0]);
+        fov.setY(fov.getY()+Offsets[1]);
+        fov.setZ(fov.getZ()+Offsets[2]);
+
         try {
             Point2D.Double stage = fovXYtoStageXY(fov);
-            core_.setXYPosition(xystage_, stage.getX()+Offsets[0], stage.getY()+Offsets[1]);
+            core_.setXYPosition(xystage_, stage.getX(), stage.getY());
             // parent_.currentFOV_ = fov;
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -87,12 +97,17 @@ public final class XYZMotionInterface {
     }
 
     public FOV getCurrentFOV() {
-        double []Offsets = parent_.getObjectiveOffsets();
+        double []ObjOffsets = parent_.getObjectiveOffsets();
+        double []PortOffsets = parent_.getPortOffsets();
+        double []Offsets = {0,0,0};
+        for (int i=0;i<3; i++){
+            Offsets[i] = ObjOffsets[i]+PortOffsets[i];
+        }
+        
         try {
             Point2D.Double xy = stageXYtoFOVXY(core_.getXYStagePosition(xystage_));
             Double z = getZAbsolute();
             return new FOV(xy.getX()-Offsets[0], xy.getY()-Offsets[1], z-Offsets[2], pp_);
-            //return new FOV(xy.getX(), xy.getY(), z, pp_);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -202,7 +217,13 @@ public final class XYZMotionInterface {
     }
 
     public boolean moveZAbsolute(double z) {
-        double []Offsets = parent_.getObjectiveOffsets();
+        double []ObjOffsets = parent_.getObjectiveOffsets();
+        double []PortOffsets = parent_.getPortOffsets();
+        double []Offsets = {0,0,0};
+        for (int i=0;i<3; i++){
+            Offsets[i] = ObjOffsets[i]+PortOffsets[i];
+        }
+        
         try {
             // TODO: check within bounds?
             // TODO: calibrate to make up for lack of parfocality...
@@ -215,7 +236,13 @@ public final class XYZMotionInterface {
     }
     
     public Double getZAbsolute(){
-        double []Offsets = parent_.getObjectiveOffsets();
+        double []ObjOffsets = parent_.getObjectiveOffsets();
+        double []PortOffsets = parent_.getPortOffsets();
+        double []Offsets = {0,0,0};
+        for (int i=0;i<3; i++){
+            Offsets[i] = ObjOffsets[i]+PortOffsets[i];
+        }
+        
         double z = 0.0;
         
         try{

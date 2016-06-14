@@ -18,6 +18,7 @@ public class CurrentLightPath {
     String portLabel;
     String filterCubeLabel;
     double [] objectiveOffsets;
+    double [] portOffsets;
 
     public CurrentLightPath(){
         exFilterLabel = "465/30";
@@ -28,6 +29,7 @@ public class CurrentLightPath {
         objectiveLabel = "LUCPLFLN40X";
         portLabel = "Camera";
         objectiveOffsets = new double [] {0.0, 0.0, 0.0}; // X, Y, Z
+        portOffsets = new double [] {0.0, 0.0, 0.0}; // X, Y, Z
     }
     
     /**
@@ -38,7 +40,7 @@ public class CurrentLightPath {
      * @param dichroic  (CSUX) Dichroic filter
      * @param objectiveOffsets Objective offsets in XYZ
      */
-    public CurrentLightPath(String exfilt, String emfilt, String ndfilt, String dichroic, double[] objOffsets){
+    public CurrentLightPath(String exfilt, String emfilt, String ndfilt, String dichroic, double[] objOffsets, double[] portOffsetvalues){
         exFilterLabel = exfilt;
         emFilterLabel = emfilt;
         ndFilterLabel = ndfilt;
@@ -49,6 +51,7 @@ public class CurrentLightPath {
         filterCubeLabel = "None (sectioned)";
         // added this to the constructor, but couldn't find it being used in the project - jsut the empty one...
         objectiveOffsets = objOffsets; // X, Y, Z
+        portOffsets = portOffsetvalues; // X, Y, Z
     }
     
 
@@ -60,6 +63,14 @@ public class CurrentLightPath {
         objectiveOffsets = newOffsets;
     }
 
+    public double[] getPortOffsets(){
+        return portOffsets;
+    }
+    
+    public void setPortOffsets(double[] newOffsets){
+        portOffsets = newOffsets;
+    }
+    
     public String getExFilterLabel() {
         return exFilterLabel;
     }
