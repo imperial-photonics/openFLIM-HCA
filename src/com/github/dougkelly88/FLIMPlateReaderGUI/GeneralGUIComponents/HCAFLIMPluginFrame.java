@@ -1887,6 +1887,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             fileInputStream1.close();       
     }
     
+    public void setAFdefaultheight(double newAFdefaultheight){
+        this.xYZPanel1.setFixedAFDefault(newAFdefaultheight);
+    }
+    
     public void saveSequencingTablesFunction(){
     // write sheets to .xls
         wb = new HSSFWorkbook();

@@ -112,7 +112,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         try{
             JSONInString = new String(Files.readAllBytes(FileSystems.getDefault().getPath(objFilepath)));
         } catch (Exception e) {
-            
+            JSONInString = "FAIL";
         }
         Objective_object[] objs = gson.fromJson(JSONInString, Objective_object[].class);
         for(int i=0;i<objs.length;i++){
