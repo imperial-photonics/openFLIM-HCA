@@ -402,8 +402,10 @@
                           <Component id="groupDescLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="groupDescField" alignment="0" max="32767" attributes="0"/>
                           <Component id="snakeType" max="32767" attributes="0"/>
+                          <Component id="snaketypelabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="insertType" alignment="0" max="32767" attributes="0"/>
                       </Group>
-                      <Component id="snaketypelabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="52" max="32767" attributes="0"/>
               </Group>
@@ -434,6 +436,10 @@
                   <Component id="snaketypelabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                   <Component id="snakeType" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="insertType" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -522,6 +528,26 @@
         <Component class="javax.swing.JLabel" name="snaketypelabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Snake type"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="insertType">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="4">
+                <StringItem index="0" value="Item 1"/>
+                <StringItem index="1" value="Item 2"/>
+                <StringItem index="2" value="Item 3"/>
+                <StringItem index="3" value="Item 4"/>
+              </StringArray>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="insertTypeActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel2">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Insert type"/>
           </Properties>
         </Component>
       </SubComponents>

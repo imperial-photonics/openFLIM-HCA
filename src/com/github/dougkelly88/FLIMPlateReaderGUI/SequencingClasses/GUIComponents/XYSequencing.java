@@ -5,6 +5,7 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents;
 
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Insert_object;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
@@ -12,6 +13,8 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPlu
 import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZMotionInterface;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel;
+import com.google.gson.Gson;
+import javax.swing.JComboBox;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -38,6 +41,8 @@ import javax.swing.text.NumberFormatter;
 // This lot are for attempts at handling filenames - to get the list of macros
 //import Java.io.*;
 import ij.io.DirectoryChooser;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 // http://stackoverflow.com/questions/31700500/using-netbeans-8-0-2-and-want-to-use-org-apache-commons-io-fileutils-how
 //import javax.swing.filechooser.FileNameExtensionFilter;
 //import org.apache.commons.io.FileUtils;
@@ -65,6 +70,9 @@ public class XYSequencing extends javax.swing.JPanel {
     String emailString;
     private Variable var_;
     private ArrayList<FOV> spiralFOVs = new ArrayList<FOV>();
+    private double[] insertOffsets;
+    private String [] [] insertOffsetInfo;
+    public boolean InsertOffsetsloaded;
 
     /**
      * Creates new form XYSequencing
@@ -73,12 +81,37 @@ public class XYSequencing extends javax.swing.JPanel {
         initComponents();
         setControlDefaults();
         var_ = Variable.getInstance();
+        insertOffsets = new double [] {0.0, 0.0, 0.0}; // X, Y, Z
     }
 
     public static XYSequencing getInstance() {
         return fINSTANCE;
     }     
-            
+    
+    private void setupInsertComboBox(){
+        Gson gsonInserts = new Gson();
+        //Load the file with the stored offsets
+        String directoryName = ij.IJ.getDirectory("ImageJ");
+        String objectFilepath = directoryName.concat("OPENFLIMHCA_JSONInsertOffsets.txt");
+        String JSONInString = "";
+        try{
+            JSONInString = new String(Files.readAllBytes(FileSystems.getDefault().getPath(objectFilepath)));
+        } catch (Exception e) {
+        }
+        insertType.removeAllItems();
+        Insert_object[] inserts = gsonInserts.fromJson(JSONInString, Insert_object[].class);
+        insertOffsetInfo = new String [inserts.length] [inserts[0].getClass().getDeclaredFields().length]; // hopefully 2nd one gets us 4 fields from the class?
+        //System.out.println(inserts[0].getClass().getDeclaredFields().length);
+        for(int i=0;i<inserts.length;i++){
+                insertOffsetInfo[i] [0] = inserts[i].getInsertName();
+                insertOffsetInfo[i] [1] = inserts[i].getInsertOffsets()[0].toString();
+                insertOffsetInfo[i] [2] = inserts[i].getInsertOffsets()[1].toString();
+                insertOffsetInfo[i] [3] = inserts[i].getInsertOffsets()[2].toString();
+                insertType.addItem(inserts[i].getInsertName());
+        }
+        InsertOffsetsloaded=true;
+    }
+                   
     private void setControlDefaults() {
 
         pmdp_ = new PlateMapDrawPanel(this);
@@ -187,6 +220,7 @@ public class XYSequencing extends javax.swing.JPanel {
         });
 
 //        fovTable_.setDefaultRenderer(FOV.class, new TableRenderer());
+        setupInsertComboBox();
     }
 
     public void onPlateConfigLoaded(boolean enable, PlateProperties pp) {
@@ -235,6 +269,8 @@ public class XYSequencing extends javax.swing.JPanel {
         groupDescField = new javax.swing.JTextField();
         snakeType = new javax.swing.JComboBox();
         snaketypelabel = new javax.swing.JLabel();
+        insertType = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
 
         storedXYZPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Stored XYZ positions"));
 
@@ -525,6 +561,15 @@ public class XYSequencing extends javax.swing.JPanel {
 
         snaketypelabel.setText("Snake type");
 
+        insertType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        insertType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                insertTypeActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Insert type");
+
         javax.swing.GroupLayout autoFOVPanelLayout = new javax.swing.GroupLayout(autoFOVPanel);
         autoFOVPanel.setLayout(autoFOVPanelLayout);
         autoFOVPanelLayout.setHorizontalGroup(
@@ -545,8 +590,10 @@ public class XYSequencing extends javax.swing.JPanel {
                         .addComponent(FOVPatternCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(groupDescLabel)
                         .addComponent(groupDescField)
-                        .addComponent(snakeType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(snaketypelabel))
+                        .addComponent(snakeType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(snaketypelabel)
+                        .addComponent(insertType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel2))
                 .addContainerGap(52, Short.MAX_VALUE))
         );
         autoFOVPanelLayout.setVerticalGroup(
@@ -572,6 +619,10 @@ public class XYSequencing extends javax.swing.JPanel {
                 .addComponent(snaketypelabel)
                 .addGap(4, 4, 4)
                 .addComponent(snakeType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(insertType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1161,6 +1212,26 @@ public class XYSequencing extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_snakeTypeActionPerformed
 
+    private void insertTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertTypeActionPerformed
+        double [] OldOffsets = getInsertOffsets();
+        
+        //setByLabel(objectiveComboBox, "Objective"); - don't need to perform checking function?
+        if (InsertOffsetsloaded == true){
+            //get the offsets here...
+            int whichinsert = insertType.getSelectedIndex();
+            double [] NewOffsets = {Double.parseDouble(insertOffsetInfo[whichinsert] [1]),Double.parseDouble(insertOffsetInfo[whichinsert] [2]),Double.parseDouble(insertOffsetInfo[whichinsert] [3])}; // placeholder
+            setInsertOffsets(NewOffsets);
+
+
+            //Shift the stage to account for the objetive change
+            double [] Shifts = {0,0,0};
+            for (int i=0;i<=2;i++){
+                Shifts[i] = NewOffsets[i]-OldOffsets[i];
+            }
+            parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
+        }
+    }//GEN-LAST:event_insertTypeActionPerformed
+
     public String getSnakeType(){
         return snakeType.getSelectedItem().toString();
     }
@@ -1169,6 +1240,14 @@ public class XYSequencing extends javax.swing.JPanel {
         pp_ = pp;
     }
 
+    public double[] getInsertOffsets(){
+        return insertOffsets;
+    }
+    
+    public void setInsertOffsets(double[] newOffsets){
+        insertOffsets = newOffsets;
+    }
+    
     public void setParent(Object o) {
         parent_ = (HCAFLIMPluginFrame) o;
     }
@@ -1234,8 +1313,10 @@ public class XYSequencing extends javax.swing.JPanel {
     private javax.swing.JButton genZStackButton;
     private javax.swing.JTextField groupDescField;
     private javax.swing.JLabel groupDescLabel;
+    private javax.swing.JComboBox insertType;
     private javax.swing.JFormattedTextField intensityThresoldField;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

@@ -291,10 +291,19 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public double[] getPortOffsets(){
         return this.lightPathControls1.getPortOffsets();
     } 
-    
+      
     public void setPortOffsets(double []NewOffsets){
         this.lightPathControls1.setPortOffsets(NewOffsets);
+    }
+    
+    public double[] getInsertOffsets(){
+        return this.xYSequencing1.getInsertOffsets();
+    } 
+    
+    public void setInsertOffsets(double []NewOffsets){
+        this.xYSequencing1.setInsertOffsets(NewOffsets);
     }    
+    
     private void setupSequencingTable(){
         
         String[] possibles = {"XYZ", "Filter change", "Time course", "Bright field"};

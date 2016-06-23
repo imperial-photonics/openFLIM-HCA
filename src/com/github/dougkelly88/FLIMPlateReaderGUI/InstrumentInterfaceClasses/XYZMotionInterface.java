@@ -72,14 +72,20 @@ public final class XYZMotionInterface {
             System.out.println(e.getMessage());
         } 
     }
-
-    public int gotoFOV(FOV fov) {
+    
+    public double [] calculateOffsets(){
         double []ObjOffsets = parent_.getObjectiveOffsets();
         double []PortOffsets = parent_.getPortOffsets();
+        double []InsertOffsets = parent_.getInsertOffsets();
         double []Offsets = {0,0,0};
         for (int i=0;i<3; i++){
-            Offsets[i] = ObjOffsets[i]+PortOffsets[i];
+            Offsets[i] = ObjOffsets[i]+PortOffsets[i]+InsertOffsets[i];
         }
+        return Offsets;
+    }
+
+    public int gotoFOV(FOV fov) {
+        double[] Offsets = calculateOffsets();
         
         fov.setX(fov.getX()+Offsets[0]);
         fov.setY(fov.getY()+Offsets[1]);
@@ -97,12 +103,7 @@ public final class XYZMotionInterface {
     }
 
     public FOV getCurrentFOV() {
-        double []ObjOffsets = parent_.getObjectiveOffsets();
-        double []PortOffsets = parent_.getPortOffsets();
-        double []Offsets = {0,0,0};
-        for (int i=0;i<3; i++){
-            Offsets[i] = ObjOffsets[i]+PortOffsets[i];
-        }
+        double[] Offsets = calculateOffsets();
         
         try {
             Point2D.Double xy = stageXYtoFOVXY(core_.getXYStagePosition(xystage_));
@@ -217,12 +218,7 @@ public final class XYZMotionInterface {
     }
 
     public boolean moveZAbsolute(double z) {
-        double []ObjOffsets = parent_.getObjectiveOffsets();
-        double []PortOffsets = parent_.getPortOffsets();
-        double []Offsets = {0,0,0};
-        for (int i=0;i<3; i++){
-            Offsets[i] = ObjOffsets[i]+PortOffsets[i];
-        }
+        double[] Offsets = calculateOffsets();
         
         try {
             // TODO: check within bounds?
@@ -236,12 +232,7 @@ public final class XYZMotionInterface {
     }
     
     public Double getZAbsolute(){
-        double []ObjOffsets = parent_.getObjectiveOffsets();
-        double []PortOffsets = parent_.getPortOffsets();
-        double []Offsets = {0,0,0};
-        for (int i=0;i<3; i++){
-            Offsets[i] = ObjOffsets[i]+PortOffsets[i];
-        }
+        double[] Offsets = calculateOffsets();
         
         double z = 0.0;
         
