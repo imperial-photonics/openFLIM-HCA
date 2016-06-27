@@ -100,7 +100,7 @@ public class XYSequencing extends javax.swing.JPanel {
         }
         insertType.removeAllItems();
         Insert_object[] inserts = gsonInserts.fromJson(JSONInString, Insert_object[].class);
-        insertOffsetInfo = new String [inserts.length] [inserts[0].getClass().getDeclaredFields().length]; // hopefully 2nd one gets us 4 fields from the class?
+        insertOffsetInfo = new String [inserts.length] [inserts[0].getClass().getDeclaredFields().length];
         //System.out.println(inserts[0].getClass().getDeclaredFields().length);
         for(int i=0;i<inserts.length;i++){
                 insertOffsetInfo[i] [0] = inserts[i].getInsertName();
