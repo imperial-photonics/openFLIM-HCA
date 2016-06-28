@@ -5,7 +5,6 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents;
 
-import com.github.dougkelly88.FLIMPlateReaderGUI.FLIMClasses.Classes.FindMaxpoint;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.ArduinoStepperMotor;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
@@ -26,16 +25,10 @@ import mmcorej.CMMCore;
 import mmcorej.StrVector;
 import org.micromanager.MMStudio;
 import org.micromanager.api.events.PropertyChangedEvent;
-import ij.IJ.*;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import java.nio.file.Files;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.nio.file.FileSystems;
 
 /**
@@ -120,6 +113,7 @@ public class LightPathPanel extends javax.swing.JPanel {
                 ObjectiveOffsetInfo[i] [1] = objs[i].getObjectiveOffsets()[0].toString();
                 ObjectiveOffsetInfo[i] [2] = objs[i].getObjectiveOffsets()[1].toString();
                 ObjectiveOffsetInfo[i] [3] = objs[i].getObjectiveOffsets()[2].toString();
+                System.out.println(ObjectiveOffsetInfo[i]);
         }
         String mismatchedObj = "";
         String explanationstring = "The following objective(s) listed in micro-manager offsets are not matched to the objectives listed in the saved Objective Offsets file - please fix this:\n\n";

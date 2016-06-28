@@ -21,7 +21,6 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Compa
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.SeqAcqSetupChainedComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.SnakeOrderer;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.TComparator;
-import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.WellComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.XComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.YComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.RowComparator;
@@ -75,26 +74,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
-import loci.formats.CoreMetadata;
-import loci.formats.FormatException;
-import loci.formats.FormatTools;
 import mmcorej.DeviceType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import loci.formats.ImageWriter;
-import loci.formats.MetadataTools;
-import loci.formats.ome.OMEXMLMetadata;
-import loci.formats.services.OMEXMLService;
-import ome.xml.model.enums.DimensionOrder;
-import ome.xml.model.enums.EnumerationException;
-import ome.xml.model.enums.NamingConvention;
-import ome.xml.model.enums.PixelType;
-import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveInteger;
-import loci.formats.out.TiffWriter;
 
 // Try and import stuff for ImageJ imageprocessing capabilities
 //Cut-paste from: https://micro-manager.org/w/images/b/b6/RatiometricImaging_singleImage.bsh
@@ -1442,14 +1424,17 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 else if (str.equals("Time course"))
                     comparators.add(new TComparator());
             }
+            int sassSize=sass.size();
+            
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
+            
             // check which acquisition strategy is selected
 //            if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
 //                sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
 //            } else {
 //                System.out.print("'Start always by column 1 (horizontal fast axis)' as acquisition mode selected");
 //            }
-            int sassSize=sass.size();
+            
             
             System.out.println("Sorting...");     
             //Added this to print out what I think is the XYZ order it's going to try things in...
@@ -1536,9 +1521,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                             //Do the XY move...
                             xyzmi_.gotoFOV(sas.getFOV());
                             //Wait for stage - make this into a function for xyzmi?
-                            while (xyzmi_.isStageBusy()){
-                                System.out.println("Stage moving...");
-                            }
+//rr                            while (xyzmi_.isStageBusy()){
+//rr                                System.out.println("Stage moving...");
+//rr                            }
                             //OK - xy has changed, so let's do an autofocus and make sure to add in any Z offsets...                            
                             if(this.checkifAFenabled()){
                                 //If the autofocus is selected...
@@ -1586,6 +1571,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         if (!"".equals(s))
                             core_.setProperty("NDFW", "Label", s);
                         core_.setExposure(sas.getFilters().getIntTime());
+                        System.out.println(sas.getFilters().getIntTime());
+                        System.out.println(sas.getFilters().getDelays());
                         s = sas.getFilters().getDiFilt();
                         if (!"".equals(s))
                             core_.setProperty("CSUX-Dichroic Mirror", "Label", s);
@@ -1638,17 +1625,17 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     if(abort==true){
                         break;
                     }
-                    while (xyzmi_.isStageBusy()){
-                        System.out.println("Stage moving...");
-                    }
+//rr                    while (xyzmi_.isStageBusy()){
+//rr                        System.out.println("Stage moving...");
+//rr                   }
                    // core_.waitForDeviceType(DeviceType.XYStageDevice);
                     /*if(timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell())){
                         core_.setProperty("SyringePump","Liquid Dispersion?", "Go");
                         wait(1000);
                             }*/
-                    core_.waitForDeviceType(DeviceType.AutoFocusDevice);
+//rr                    core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                     arduino_.setDigitalOutHigh();
-                    wait(var_.shutterResponse);
+//rr                    wait(var_.shutterResponse);
                 }
                 catch (Exception e) {
                     System.out.println(e.getMessage());
