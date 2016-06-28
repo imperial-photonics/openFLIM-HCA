@@ -14,7 +14,6 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZM
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel;
 import com.google.gson.Gson;
-import javax.swing.JComboBox;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -24,7 +23,6 @@ import java.awt.event.MouseEvent;
 import static java.lang.Math.abs;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Locale;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -40,9 +38,15 @@ import javax.swing.text.NumberFormatter;
 
 // This lot are for attempts at handling filenames - to get the list of macros
 //import Java.io.*;
-import ij.io.DirectoryChooser;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 // http://stackoverflow.com/questions/31700500/using-netbeans-8-0-2-and-want-to-use-org-apache-commons-io-fileutils-how
 //import javax.swing.filechooser.FileNameExtensionFilter;
 //import org.apache.commons.io.FileUtils;
@@ -1299,6 +1303,62 @@ public class XYSequencing extends javax.swing.JPanel {
     public void setXYZMotionInterface(XYZMotionInterface xyzmi_) {
         this.xyzmi_ = xyzmi_;
     }
+    
+    public void sendEmail(String subject, String text, String toEmail) {
+         
+      // Recipient's email ID needs to be mentioned.
+      String to = toEmail;
+      
+      // Sender's email ID needs to be mentioned
+      String from = "flimplatereader@gmail.com";
+
+      // Assuming you are sending email from localhost
+      String host = "localhost";
+
+      // Get system properties
+    //  Properties properties = System.getProperties();
+      Properties properties = System.getProperties();
+
+      // Setup mail server
+      //properties.setProperty("mail.smtp.host", "10.101.3.229");
+      properties.setProperty("mail.smtp.host", "smtp.gmail.com");
+      properties.put("mail.smtp.port", "587");
+      properties.setProperty("mail.user", "flimplatereader");
+      properties.setProperty("mail.password", "flimimages");
+      properties.put("mail.smtp.starttls.enable","true"); 
+      properties.put("mail.smtp.auth", "true"); //enable authentication
+        
+        String pww="flimimages";
+        Session session;
+        session = Session.getDefaultInstance(properties, new javax.mail.Authenticator(){ 
+            protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
+                return new javax.mail.PasswordAuthentication("flimplatereader@gmail.com", pww);
+            }
+        });
+
+      try{
+         // Create a default MimeMessage object.
+         MimeMessage message = new MimeMessage(session);
+
+         // Set From: header field of the header.
+         message.setFrom(new InternetAddress(from));
+
+         // Set To: header field of the header.
+         message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+
+         // Set Subject: header field
+         message.setSubject(subject);
+
+         // Now set the actual message
+         message.setText(text);
+
+         // Send message
+         Transport.send(message);
+         System.out.println("Sent message successfully....");
+      }catch (MessagingException mex) {
+         mex.printStackTrace();
+      }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox FOVPatternCombo;
@@ -1337,5 +1397,6 @@ public class XYSequencing extends javax.swing.JPanel {
     private javax.swing.JComboBox zModeCombo;
     // End of variables declaration//GEN-END:variables
 
-    
+         
+      
 }

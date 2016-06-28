@@ -1686,9 +1686,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             System.out.println(e.getMessage());
         }        
         // Send Email after finishing acquisition!
-     /*   if(xYSequencing1.sendEmailBoolean){
-            xYSequencing1.sendEmail();
-        }*/
+ //      if(xYSequencing1.sendEmailBoolean){
+   //         xYSequencing1.sendEmail();
+  //      }
         //Reset delay, turn on live mode (don't care about reusing the window?)
         gui_.enableLiveMode(true);
     }
@@ -1811,7 +1811,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_softwareBinningFieldActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        boolean jump=false;
+    String text= "Year it did work!";
+    String subject="Did it work once again?";
+    String toEmail="flimplatereader@gmail.com";
+    xYSequencing1.sendEmail(text, subject, toEmail);
+        
+        /*        boolean jump=false;
         try{
             boolean abort=arduino_.checkSafety();;
             if(abort==true){
@@ -1852,7 +1857,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             System.out.println(e.getMessage());
         }
         
-       
+       */
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
