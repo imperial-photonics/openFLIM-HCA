@@ -17,23 +17,10 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="warningPanel" max="32767" attributes="0"/>
-          <Component id="dougPanel" alignment="0" max="32767" attributes="0"/>
           <Component id="Hardware" alignment="0" max="32767" attributes="0"/>
-          <Group type="102" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="AcquisitionSavingMode_combo" min="-2" pref="206" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jLabel1" min="-2" pref="149" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                  </Group>
-                  <Component id="acquisitionStrategyPanel" alignment="0" max="32767" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                  <Component id="dougPanel" alignment="0" max="32767" attributes="0"/>
                   <Component id="fOVPanel" alignment="0" max="32767" attributes="0"/>
                   <Component id="arduinoPanel" alignment="0" max="32767" attributes="0"/>
               </Group>
@@ -80,6 +67,31 @@
                   </Group>
               </Group>
           </Group>
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="acquisitionStrategyPanel" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="AcquisitionSavingMode_combo" min="-2" pref="206" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="jLabel1" min="-2" pref="149" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="eMailAddressLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="eMailAddressField" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="UpdateEmailButton" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="eMailDefault" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -101,7 +113,6 @@
               <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="fOVPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="dougPanel" min="-2" max="-2" attributes="0"/>
@@ -116,7 +127,6 @@
                       <Component id="acquisitionStrategyPanel" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="H_V_swap" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="forceAFdefault" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -143,7 +153,15 @@
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace pref="143" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="eMailAddressLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="eMailAddressField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="UpdateEmailButton" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="eMailDefault" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="111" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -730,6 +748,32 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="forceAFdefaultActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="eMailAddressLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Email address:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="eMailAddressField">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="flimplatereader@gmail.com"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="eMailAddressFieldActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="eMailDefault">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Default: flimplatereader@gmail.com / PW:flimimages"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="UpdateEmailButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Update Email"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="UpdateEmailButtonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

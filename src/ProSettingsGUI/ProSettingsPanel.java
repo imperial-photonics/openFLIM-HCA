@@ -29,7 +29,8 @@ import java.util.List;
  * @author Frederik
  */
 public class ProSettingsPanel extends javax.swing.JPanel {
-    
+    public static String eMail;
+ 
     private HCAFLIMPluginFrame parent_;
     private Variable var_;
     private Arduino arduino_;
@@ -57,6 +58,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         var_.acquisitionStrategy = AcquisitionStrategyComboBox.getSelectedItem().toString();
         H_shift_scale = 1;
         V_shift_scale = 1;
+        eMail="flimplatereader@gmail.com";
         HV_swap = false;
         gson = new GsonBuilder().create();
         // Fill up our objective table...
@@ -134,6 +136,10 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         JSONview = new javax.swing.JTextField();
         readJSON = new javax.swing.JButton();
         forceAFdefault = new javax.swing.JButton();
+        eMailAddressLabel = new javax.swing.JLabel();
+        eMailAddressField = new javax.swing.JTextField();
+        eMailDefault = new javax.swing.JLabel();
+        UpdateEmailButton = new javax.swing.JButton();
 
         arduinoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Arduino"));
 
@@ -498,25 +504,33 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             }
         });
 
+        eMailAddressLabel.setText("Email address:");
+
+        eMailAddressField.setText("flimplatereader@gmail.com");
+        eMailAddressField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eMailAddressFieldActionPerformed(evt);
+            }
+        });
+
+        eMailDefault.setText("Default: flimplatereader@gmail.com / PW:flimimages");
+
+        UpdateEmailButton.setText("Update Email");
+        UpdateEmailButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UpdateEmailButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(warningPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(dougPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(Hardware, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(dougPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(fOVPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(arduinoPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -550,6 +564,25 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                                 .addComponent(readJSON))
                             .addComponent(JSONview, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap(22, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(eMailAddressLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(eMailAddressField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(UpdateEmailButton))
+                            .addComponent(eMailDefault))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -567,7 +600,6 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                 .addGap(8, 8, 8)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fOVPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(dougPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -580,7 +612,6 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, 0)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(H_V_swap)
                             .addComponent(forceAFdefault))
@@ -600,7 +631,14 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(VShiftScale, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))))
-                .addContainerGap(143, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(eMailAddressLabel)
+                    .addComponent(eMailAddressField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(UpdateEmailButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(eMailDefault)
+                .addContainerGap(111, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -626,6 +664,8 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_enableLightCheckButtonActionPerformed
 
+   
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String test=xOffsetRingField.getText();
         System.out.println(test);
@@ -731,6 +771,15 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
         parent_.setAFdefaultheight(Double.parseDouble(parent_.xyzmi_.getZAbsolute().toString()));
     }//GEN-LAST:event_forceAFdefaultActionPerformed
+
+    private void eMailAddressFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eMailAddressFieldActionPerformed
+         
+    }//GEN-LAST:event_eMailAddressFieldActionPerformed
+
+    private void UpdateEmailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateEmailButtonActionPerformed
+        eMail=eMailAddressField.getText();
+        System.out.println("New Email address:"+eMail);
+    }//GEN-LAST:event_UpdateEmailButtonActionPerformed
 
     public double getHshiftscale(){
         return H_shift_scale;
@@ -852,10 +901,14 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JTextField JSONview;
     private javax.swing.JLabel MotorizedMicroscopeTableLabel;
     private javax.swing.JTextField Text_for_prefind_thresh;
+    private javax.swing.JButton UpdateEmailButton;
     private javax.swing.JTextField VShiftScale;
     private javax.swing.JPanel acquisitionStrategyPanel;
     private javax.swing.JPanel arduinoPanel;
     private javax.swing.JPanel dougPanel;
+    private javax.swing.JTextField eMailAddressField;
+    private javax.swing.JLabel eMailAddressLabel;
+    private javax.swing.JLabel eMailDefault;
     private javax.swing.JRadioButton enableLightCheckButton;
     private javax.swing.JPanel fOVPanel;
     private javax.swing.JButton forceAFdefault;

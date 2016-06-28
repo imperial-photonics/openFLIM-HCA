@@ -5,6 +5,7 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents;
 
+import ProSettingsGUI.ProSettingsPanel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.sequencingThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Acquisition;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
@@ -1521,9 +1522,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                             //Do the XY move...
                             xyzmi_.gotoFOV(sas.getFOV());
                             //Wait for stage - make this into a function for xyzmi?
-                            while (xyzmi_.isStageBusy()){
-                                System.out.println("Stage moving...");
-                            }
+//                            while (xyzmi_.isStageBusy()){
+//                                System.out.println("Stage moving...");
+//                            }
                             //OK - xy has changed, so let's do an autofocus and make sure to add in any Z offsets...                            
                             if(this.checkifAFenabled()){
                                 //If the autofocus is selected...
@@ -1623,9 +1624,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     if(abort==true){
                         break;
                     }
-                    while (xyzmi_.isStageBusy()){
-                        System.out.println("Stage moving...");
-                   }
+//                    while (xyzmi_.isStageBusy()){
+//                        System.out.println("Stage moving...");
+//                   }
                    // core_.waitForDeviceType(DeviceType.XYStageDevice);
                     /*if(timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell())){
                         core_.setProperty("SyringePump","Liquid Dispersion?", "Go");
@@ -1686,9 +1687,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             System.out.println(e.getMessage());
         }        
         // Send Email after finishing acquisition!
- //      if(xYSequencing1.sendEmailBoolean){
-   //         xYSequencing1.sendEmail();
-  //      }
+       try {
+           String toEmail=ProSettingsPanel.eMail;
+           String subject="Plate reader acquisition finished!";
+           String text=sass.toString();
+            xYSequencing1.sendEmail(subject, text, toEmail);
+        } catch(Exception  e){
+            System.out.println("Could not send Email!");
+        }
         //Reset delay, turn on live mode (don't care about reusing the window?)
         gui_.enableLiveMode(true);
     }
@@ -1814,7 +1820,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     String text= "Year it did work!";
     String subject="Did it work once again?";
     String toEmail="flimplatereader@gmail.com";
-    xYSequencing1.sendEmail(text, subject, toEmail);
+    xYSequencing1.sendEmail(subject, text, toEmail);
         
         /*        boolean jump=false;
         try{
