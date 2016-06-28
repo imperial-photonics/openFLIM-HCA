@@ -1521,9 +1521,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                             //Do the XY move...
                             xyzmi_.gotoFOV(sas.getFOV());
                             //Wait for stage - make this into a function for xyzmi?
-//rr                            while (xyzmi_.isStageBusy()){
-//rr                                System.out.println("Stage moving...");
-//rr                            }
+                            while (xyzmi_.isStageBusy()){
+                                System.out.println("Stage moving...");
+                            }
                             //OK - xy has changed, so let's do an autofocus and make sure to add in any Z offsets...                            
                             if(this.checkifAFenabled()){
                                 //If the autofocus is selected...
@@ -1571,8 +1571,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         if (!"".equals(s))
                             core_.setProperty("NDFW", "Label", s);
                         core_.setExposure(sas.getFilters().getIntTime());
-                        System.out.println(sas.getFilters().getIntTime());
-                        System.out.println(sas.getFilters().getDelays());
                         s = sas.getFilters().getDiFilt();
                         if (!"".equals(s))
                             core_.setProperty("CSUX-Dichroic Mirror", "Label", s);
@@ -1625,17 +1623,17 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     if(abort==true){
                         break;
                     }
-//rr                    while (xyzmi_.isStageBusy()){
-//rr                        System.out.println("Stage moving...");
-//rr                   }
+                    while (xyzmi_.isStageBusy()){
+                        System.out.println("Stage moving...");
+                   }
                    // core_.waitForDeviceType(DeviceType.XYStageDevice);
                     /*if(timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell())){
                         core_.setProperty("SyringePump","Liquid Dispersion?", "Go");
                         wait(1000);
                             }*/
-//rr                    core_.waitForDeviceType(DeviceType.AutoFocusDevice);
+                    core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                     arduino_.setDigitalOutHigh();
-//rr                    wait(var_.shutterResponse);
+                    wait(var_.shutterResponse);
                 }
                 catch (Exception e) {
                     System.out.println(e.getMessage());
