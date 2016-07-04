@@ -1151,6 +1151,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         prefindPanel1.UpdatePrefindPanel();
     }
     
+    public String getPrefindSettingValue(int i){
+        return prefindPanel1.getPrefindSettingValue(i);
+    }
+    
     public boolean testPrefind() {// throws InterruptedException{ 
         //prefind_.Snapandshow(prefindImage);
         //MMStudio gui_ = MMStudio.getInstance(); // ### WAS ENABLED
@@ -1192,8 +1196,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         // Work out the max number of FOVs
         // !!! NEED TO MAKE SURE THAT THIS WORKS ID TOO MANY FOVS ARE SPECIFIED! REDUCE THE #OF ATTEMPTS PERHAPS?
-        int Attempts_perFOV = xYSequencing1.getNoOfAttempts();
-        int NoOfFOVsToFind = xYSequencing1.getNoOfFOVToFind();
+        int Attempts_perFOV = prefindPanel1.getNoOfAttempts();
+        int NoOfFOVsToFind = prefindPanel1.getNoOfFOVToFind();
         int FOVs_per_well=Attempts_perFOV*NoOfFOVsToFind;
         
         System.out.println("Attempts per FOV: "+Attempts_perFOV+"   Initial no of FOVs: "+NoOfFOVsToFind+"   FOVs per well: "+FOVs_per_well);

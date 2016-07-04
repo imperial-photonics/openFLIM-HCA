@@ -197,6 +197,10 @@ public class Prefind {
         return varname;
     }
     
+    public String getVarValue(int whichvarnumber){
+        return frame_.getPrefindSettingValue(whichvarnumber);
+    }
+    
     public boolean getJudgement(){
         return judgement;
     }
@@ -242,6 +246,42 @@ public class Prefind {
         return false;
     }
     
+    private int getNoOfParams(){
+        String macropath = getmacropath();
+        int paramsFound = 0;
+        String line="";
+        try{
+            //Create object of FileReader
+            FileReader inputFile = new FileReader(macropath);
+            //Instantiate the BufferedReader Class
+            BufferedReader bufferReader = new BufferedReader(inputFile);
+            // Read file line by line
+            // Make sure that there's at least ### parameters in 
+            boolean paramsAllRead = false;
+            while (paramsAllRead == false) {
+                Boolean read_error = false;
+                try{
+                    line = bufferReader.readLine();
+                } catch (IOException e) {
+                    line = "BAD LINE";
+                    //paramsAllRead = true; //Maybe?
+                }
+                if (line!= null){
+                    if((line.split("//!!!")).length>1){
+                        paramsFound++;
+                    }
+                } else {
+                    paramsAllRead = true;
+                }
+            }
+            bufferReader.close();
+        } catch(IOException e) {
+            //Set varname to blank here?
+            System.out.println(e);
+        }
+        return paramsFound;
+    }
+    
     private boolean runAMacro(ImagePlus input, String macroname){
         // Reset the target co-ordinates...
         // Garbage collector should deal with the Java nonsense where you need to instantiate an array each time you just want to set new values from scratch...
@@ -251,9 +291,18 @@ public class Prefind {
         //We're going to use ### as our split delimiter
         Double pfthresh=frame_.getPrefindThreshold();
         Double pctcover=frame_.getPercentCoverage();
+        String paramString = "";
+                
+        for(int i=1;i<=getNoOfParams();i++){
+            String paramName = getvarname(i);
+            String paramValue = getVarValue(i);
+            paramString = paramString+paramName+"="+paramValue+"###";
+        }
+        
         String Parameterstring = "Threshold="+pfthresh.intValue()+"###Pctcover="+pctcover.intValue(); //ADD IN GETPERCENTCOVERAGE
         //IJ.run(input, macroname, Parameterstring);
-        IJ.runMacroFile(macroname, Parameterstring);
+        //IJ.runMacroFile(macroname, Parameterstring);
+        IJ.runMacroFile(macroname, paramString);
         String feedback = (input.getTitle());
         String[] feedbackarray = feedback.split("###"); // In case we try to get other parameters back too (mostly relative pixel positions for targeting)
         // Look up Maps for ~equivalent to dynamically named variables. For now though....
