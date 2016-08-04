@@ -970,7 +970,7 @@ public class LightPathPanel extends javax.swing.JPanel {
         } catch (Exception ex) {
             System.out.println("Error: Couldn't set default camera to FLIM camera!");
         }
-        
+        gui_.refreshGUI();
     }//GEN-LAST:event_flimCameraActionPerformed
 
     private void setCameraPath(double camerapixelsize, boolean FLIM){
@@ -989,16 +989,17 @@ public class LightPathPanel extends javax.swing.JPanel {
         try {
             if (gui_.isLiveModeOn()){
                 gui_.enableLiveMode(false);
-                core_.setCameraDevice("Andor sCMOS Camera");
+                core_.setCameraDevice("Retiga");
                 gui_.enableLiveMode(true);
             } else{
-                core_.setCameraDevice("Andor sCMOS Camera");
+                core_.setCameraDevice("Retiga");
             }
             var_.camerapixelsize = 6.45;
             this.cameraPixelSize.setText(Double.toString(var_.camerapixelsize));
         } catch (Exception ex) {
             System.out.println("Error: Couldn't set default camera to bright field camera!");
         }
+        gui_.refreshGUI();
     }//GEN-LAST:event_bfCameraActionPerformed
 
     private void wakeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wakeButtonActionPerformed
