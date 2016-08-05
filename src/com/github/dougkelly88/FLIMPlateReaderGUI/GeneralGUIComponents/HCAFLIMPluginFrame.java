@@ -46,6 +46,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -96,6 +97,19 @@ import ome.xml.model.primitives.NonNegativeInteger;
 import ome.xml.model.primitives.PositiveInteger;
 import loci.formats.out.TiffWriter;
 
+// Stuff for saving XYZ positions as JSON objects
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
 // Try and import stuff for ImageJ imageprocessing capabilities
 //Cut-paste from: https://micro-manager.org/w/images/b/b6/RatiometricImaging_singleImage.bsh
 //import ij.*; // Was unused?
@@ -105,6 +119,8 @@ import ij.gui.*;
 //import java.lang.System; // Was unused?
 import ij.process.*;
 import ij.ImagePlus;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 //import ij.plugin.*; // Was unused?
 //import java.lang.Math; // Was unused?
 //import java.awt.image.*; // Was unused?
@@ -142,6 +158,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public boolean terminate = false;
     public int singleImage;
     
+    private String XYZfolder;
+    private FileWriter XYZFW;
+    
     public GeneralUtilities GenUtils_;
     
     public Prefind prefind_;
@@ -152,6 +171,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private double camerapixelsize;
     
     private boolean testmode;
+    public boolean FOVNudgeMode;
     
     private ArrayList<String> initLDWells = new ArrayList<>();
     // Replaces private ArrayList<String> initLDWells = new ArrayList<String>();
@@ -262,6 +282,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         
         this.lightPathControls1.ObjOffsetsloaded=true;
         this.lightPathControls1.PortOffsetsloaded=true;
+        FOVNudgeMode = false;
     }
 
     public CMMCore getCore() {
@@ -303,6 +324,99 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public void setInsertOffsets(double []NewOffsets){
         this.xYSequencing1.setInsertOffsets(NewOffsets);
     }    
+    
+    public void nudgeFOVs(double stepsize, String axis){
+        int noOfFOVs = this.xYSequencing1.tableModel_.getRowCount();
+        for(int i=0;i<noOfFOVs;i++){
+            FOV alterationFOV = this.xYSequencing1.tableModel_.getFOV(i);
+            if(axis == "X"){
+                alterationFOV.setX(alterationFOV.getX()-stepsize);
+            } else if (axis == "Y"){
+                alterationFOV.setY(alterationFOV.getY()-stepsize);
+            } else {
+                System.out.println("Er...");
+            }
+            this.xYSequencing1.tableModel_.setValueAtRow(alterationFOV, i);
+        }
+        // need to update the panel here...
+        this.xYSequencing1.tableModel_.fireTableDataChanged();
+    }
+    
+    public void saveXYZ(){
+        int noOfFOVs = this.xYSequencing1.tableModel_.getRowCount();
+        Gson XYZpositions = new Gson();
+        // Get folder to store positions in
+        
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Select target directory to save positions into as JSON objects");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        Component parentFrame = null;
+        int returnVal = chooser.showOpenDialog(parentFrame);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            XYZfolder = chooser.getSelectedFile().getPath();
+        }
+        
+        for (int i=0; i<(noOfFOVs); i++){
+            try {
+                XYZFW = new FileWriter(XYZfolder.concat("\\XYZPos_"+i+".json"));
+                XYZpositions.toJson(this.xYSequencing1.tableModel_.getFOV(i), XYZFW);
+            } catch (IOException e) {
+                System.out.println("Failed making file in "+XYZfolder);
+            }
+            try{
+                XYZFW.close();
+            } catch (IOException e) {
+                
+            }
+        }
+    }
+    
+    public boolean getFOVNudgeMode(){
+        return FOVNudgeMode;
+    }
+    
+    public void loadXYZ(){
+        // Get folder to load positions from
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Select directory to load positions saved as JSON objects from");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        Component parentFrame = null;
+        int returnVal = chooser.showOpenDialog(parentFrame);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            XYZfolder = chooser.getSelectedFile().getPath();
+        }
+        
+        // Make a filter for .json files - maybe best to do elsewhere?
+        
+        File dir = new File(XYZfolder);
+        FilenameFilter JSONfilter = new FilenameFilter(){
+            public boolean accept(File dir, String name) {
+                String lowercaseName = name.toLowerCase();
+                if (lowercaseName.endsWith(".json")){
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+                
+        File[] loadedXYZpositions = dir.listFiles(JSONfilter);
+
+        // Uncheck the autogenerate FOV box, because if you select anything else with that it'll dump these
+        this.xYSequencing1.uncheckAutogenerateFOVs();
+        
+        // loop through files, load, convert to object and insert into table
+        Gson XYZpositions = new Gson();
+        for (File file: loadedXYZpositions){
+            try{
+                String JSONInString = new String(Files.readAllBytes(FileSystems.getDefault().getPath(file.getAbsolutePath())));
+                FOV FOVtoadd = XYZpositions.fromJson(JSONInString, FOV.class);
+                this.xYSequencing1.addaFOV(FOVtoadd);
+            } catch (Exception e) {
+            }
+        }
+    
+    }
     
     private void setupSequencingTable(){
         

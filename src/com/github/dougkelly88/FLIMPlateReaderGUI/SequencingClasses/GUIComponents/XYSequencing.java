@@ -111,7 +111,12 @@ public class XYSequencing extends javax.swing.JPanel {
         }
         InsertOffsetsloaded=true;
     }
-                   
+
+    public void addaFOV(FOV FOVtoadd) {                                               
+        tableModel_.addRow(FOVtoadd);
+        pmdp_.addSelectedWell(FOVtoadd.getWell());
+    }  
+    
     private void setControlDefaults() {
 
         pmdp_ = new PlateMapDrawPanel(this);
@@ -244,6 +249,9 @@ public class XYSequencing extends javax.swing.JPanel {
         genZStackButton = new javax.swing.JButton();
         zModeCombo = new javax.swing.JComboBox();
         clearZButton = new javax.swing.JButton();
+        SaveXYZ = new javax.swing.JButton();
+        LoadXYZ = new javax.swing.JButton();
+        FOVNudgeCheckbox = new javax.swing.JCheckBox();
         prefindPanel = new javax.swing.JPanel();
         quickPFButton = new javax.swing.JButton();
         advancedPFButton = new javax.swing.JToggleButton();
@@ -326,6 +334,27 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
+        SaveXYZ.setText("Save XYZ");
+        SaveXYZ.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SaveXYZActionPerformed(evt);
+            }
+        });
+
+        LoadXYZ.setText("Load XYZ");
+        LoadXYZ.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LoadXYZActionPerformed(evt);
+            }
+        });
+
+        FOVNudgeCheckbox.setText("Nudge mode");
+        FOVNudgeCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FOVNudgeCheckboxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout storedXYZPanelLayout = new javax.swing.GroupLayout(storedXYZPanel);
         storedXYZPanel.setLayout(storedXYZPanelLayout);
         storedXYZPanelLayout.setHorizontalGroup(
@@ -335,30 +364,42 @@ public class XYSequencing extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(storeXYZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(clearXYZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(genZStackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(zModeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(clearZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(34, 34, 34))
+                    .addComponent(clearZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(storedXYZPanelLayout.createSequentialGroup()
+                        .addComponent(SaveXYZ)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(LoadXYZ))
+                    .addComponent(clearXYZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(zModeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, storedXYZPanelLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(FOVNudgeCheckbox)
+                .addGap(52, 52, 52))
         );
         storedXYZPanelLayout.setVerticalGroup(
             storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, storedXYZPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(fovTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(storedXYZPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(zModeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(genZStackButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(clearZButton)
-                        .addGap(5, 5, 5)
-                        .addComponent(storeXYZButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(clearXYZButton)))
+                .addComponent(fovTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(37, 37, 37))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, storedXYZPanelLayout.createSequentialGroup()
+                .addComponent(zModeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(genZStackButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(clearZButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(storeXYZButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(clearXYZButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(SaveXYZ)
+                    .addComponent(LoadXYZ))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(FOVNudgeCheckbox))
         );
 
         prefindPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Prefind"));
@@ -667,6 +708,18 @@ public class XYSequencing extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_autoGenerateFOVsCheckActionPerformed
 
+    public boolean reportAutogenerateFOVstatus(){
+        return autoGenerateFOVsCheck.isSelected();
+    }
+    
+    public void checkAutogenerateFOVs(){
+        autoGenerateFOVsCheck.setSelected(true);
+    }
+
+    public void uncheckAutogenerateFOVs(){
+        autoGenerateFOVsCheck.setSelected(false);
+    }
+    
     public void generateFOVs() {
         if (autoGenerateFOVsCheck.isSelected()) {
 
@@ -1232,6 +1285,18 @@ public class XYSequencing extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_insertTypeActionPerformed
 
+    private void SaveXYZActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveXYZActionPerformed
+        parent_.saveXYZ();
+    }//GEN-LAST:event_SaveXYZActionPerformed
+
+    private void LoadXYZActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoadXYZActionPerformed
+        parent_.loadXYZ();
+    }//GEN-LAST:event_LoadXYZActionPerformed
+
+    private void FOVNudgeCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FOVNudgeCheckboxActionPerformed
+        parent_.FOVNudgeMode = FOVNudgeCheckbox.isSelected();
+    }//GEN-LAST:event_FOVNudgeCheckboxActionPerformed
+
     public String getSnakeType(){
         return snakeType.getSelectedItem().toString();
     }
@@ -1301,8 +1366,11 @@ public class XYSequencing extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox FOVNudgeCheckbox;
     private javax.swing.JComboBox FOVPatternCombo;
     private javax.swing.JFormattedTextField FOVToFindField;
+    private javax.swing.JButton LoadXYZ;
+    private javax.swing.JButton SaveXYZ;
     private javax.swing.JToggleButton advancedPFButton;
     private javax.swing.JFormattedTextField attemptsField;
     private javax.swing.JPanel autoFOVPanel;
