@@ -329,10 +329,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         int noOfFOVs = this.xYSequencing1.tableModel_.getRowCount();
         for(int i=0;i<noOfFOVs;i++){
             FOV alterationFOV = this.xYSequencing1.tableModel_.getFOV(i);
+            // Note that the opposite signs for X and Y here are because of how this behaves in the main tablemodel...
             if(axis == "X"){
                 alterationFOV.setX(alterationFOV.getX()-stepsize);
             } else if (axis == "Y"){
-                alterationFOV.setY(alterationFOV.getY()-stepsize);
+                alterationFOV.setY(alterationFOV.getY()+stepsize);
             } else {
                 System.out.println("Er...");
             }
@@ -1269,6 +1270,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         return prefindPanel1.getPrefindSettingValue(i);
     }
     
+    public int getPrefind_NoOfAttempts(){
+        return prefindPanel1.getNoOfAttempts();
+    }
+    
+    public int getPrefind_NoOfFOVToFind(){
+        return prefindPanel1.getNoOfFOVToFind();
+    }
+    
     public boolean testPrefind() {// throws InterruptedException{ 
         //prefind_.Snapandshow(prefindImage);
         //MMStudio gui_ = MMStudio.getInstance(); // ### WAS ENABLED
@@ -1321,7 +1330,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         FOV FOVlastgoneto = new FOV(0, 0, 0, pp_); //
 
         // Autofocus how often?
-        int FOVs_since_last_AF;
+        int FOVs_since_last_AF = 0;
+        int Max_FOV_switch_without_AF = 4;
 
         // Add this for Abort capability - not yet implemented properly!
         int endOk=0;        
@@ -1342,20 +1352,24 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 FOVtogoto = xYSequencing1.searchFOVtableModel_.getFOV(i);
                 if(!testmode){
                     xyzmi_.gotoFOV(FOVtogoto); // XY move only
+                    System.out.println(FOVtogoto.getWell()+" - item#"+i+" of "+xYSequencing1.searchFOVtableModel_.getRowCount());
                     //Wait for XY move to finish                
                     while (xyzmi_.isStageBusy()){
                         System.out.println("Stage moving...");
                     }                    
                     //Autofocus if needed
-                    if(FOVtogoto.getWell()!=FOVlastgoneto.getWell() || noofFOVsSinceLastSuccess==0){ 
+                    if(FOVtogoto.getWell()!=FOVlastgoneto.getWell() || noofFOVsSinceLastSuccess==0 || FOVs_since_last_AF>=Max_FOV_switch_without_AF){ 
                         // For now, let's try autofocusing if we're in a different well to before? Or if the last FOV was successful?
                         if(this.checkifAFenabled()){
                             xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                            FOVs_since_last_AF = 0;
                         } else {
                             xyzmi_.moveZAbsolute(this.getFixedAFDefault());
                         }
                     }
                 }
+                
+                FOVs_since_last_AF++;
 
                 boolean result = prefind_.Analyse(prefind_.Snapandshow(prefindImage));
                 FOVaccepted=result;

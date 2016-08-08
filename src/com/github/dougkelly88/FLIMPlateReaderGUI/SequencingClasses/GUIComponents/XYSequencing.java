@@ -779,7 +779,8 @@ public class XYSequencing extends javax.swing.JPanel {
                     
                     String wellString = Character.toString((char) (65 + rows)) + Integer.toString(cols + 1);
                     //Max # of times to search = #of FOVs desired * #to try before giving up
-                    searchfovs = generateSpiral(Integer.parseInt(FOVToFindField.getText())*(Integer.parseInt(attemptsField.getText())),wellString);
+                    searchfovs = generateSpiral(parent_.getPrefind_NoOfAttempts()*parent_.getPrefind_NoOfFOVToFind(),wellString);
+                    //searchfovs = generateSpiral(Integer.parseInt(FOVToFindField.getText())*(Integer.parseInt(attemptsField.getText())),wellString);
 
                     for (FOV fov : searchfovs) {
                         //Do we need this part?
@@ -937,7 +938,7 @@ public class XYSequencing extends javax.swing.JPanel {
 //        System.out.println("Start");
 //        System.out.println("y: "+fov.getY()+"    x: "+fov.getX()+"           ny: "+ny+"    nx: "+nx);
 // 
-        while (fovind < noFOV & dirind < 100) {   // just in case we have a runaway case...
+        while (fovind < noFOV & dirind < 1000) {   // just in case we have a runaway case...
             ny++;
             for(int iy=0;iy<ny;iy++){
                 if(fovind<noFOV){

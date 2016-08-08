@@ -161,12 +161,12 @@ public class FOV implements Comparable<FOV> {
     }
 
     public double getWidth_() {
-        double newWidth=(((width_*40)/var_.magnification)/var_.relay);
+        double newWidth=(((width_*40)/var_.magnification)*var_.relay); //Changed to x var_relay, not divide...
         return newWidth;
     }
 
     public double getHeight_() {
-        double newheight=(((height_*40)/var_.magnification)/var_.relay);
+        double newheight=(((height_*40)/var_.magnification)*var_.relay); //Changed to x var_relay, not divide...
         return newheight;
     }
 
