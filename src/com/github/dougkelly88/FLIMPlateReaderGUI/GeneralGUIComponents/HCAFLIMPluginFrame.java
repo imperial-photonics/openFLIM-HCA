@@ -46,6 +46,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -79,6 +80,19 @@ import mmcorej.DeviceType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 
+// Stuff for saving XYZ positions as JSON objects
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
 // Try and import stuff for ImageJ imageprocessing capabilities
 //Cut-paste from: https://micro-manager.org/w/images/b/b6/RatiometricImaging_singleImage.bsh
 //import ij.*; // Was unused?
@@ -88,6 +102,8 @@ import ij.gui.*;
 //import java.lang.System; // Was unused?
 import ij.process.*;
 import ij.ImagePlus;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 //import ij.plugin.*; // Was unused?
 //import java.lang.Math; // Was unused?
 //import java.awt.image.*; // Was unused?
@@ -125,6 +141,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public boolean terminate = false;
     public int singleImage;
     
+    private String XYZfolder;
+    private FileWriter XYZFW;
+    
     public GeneralUtilities GenUtils_;
     
     public Prefind prefind_;
@@ -135,6 +154,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private double camerapixelsize;
     
     private boolean testmode;
+    public boolean FOVNudgeMode;
     
     private ArrayList<String> initLDWells = new ArrayList<>();
     // Replaces private ArrayList<String> initLDWells = new ArrayList<String>();
@@ -245,6 +265,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         
         this.lightPathControls1.ObjOffsetsloaded=true;
         this.lightPathControls1.PortOffsetsloaded=true;
+        FOVNudgeMode = false;
     }
 
     public CMMCore getCore() {
@@ -286,6 +307,100 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     public void setInsertOffsets(double []NewOffsets){
         this.xYSequencing1.setInsertOffsets(NewOffsets);
     }    
+    
+    public void nudgeFOVs(double stepsize, String axis){
+        int noOfFOVs = this.xYSequencing1.tableModel_.getRowCount();
+        for(int i=0;i<noOfFOVs;i++){
+            FOV alterationFOV = this.xYSequencing1.tableModel_.getFOV(i);
+            // Note that the opposite signs for X and Y here are because of how this behaves in the main tablemodel...
+            if(axis == "X"){
+                alterationFOV.setX(alterationFOV.getX()-stepsize);
+            } else if (axis == "Y"){
+                alterationFOV.setY(alterationFOV.getY()+stepsize);
+            } else {
+                System.out.println("Er...");
+            }
+            this.xYSequencing1.tableModel_.setValueAtRow(alterationFOV, i);
+        }
+        // need to update the panel here...
+        this.xYSequencing1.tableModel_.fireTableDataChanged();
+    }
+    
+    public void saveXYZ(){
+        int noOfFOVs = this.xYSequencing1.tableModel_.getRowCount();
+        Gson XYZpositions = new Gson();
+        // Get folder to store positions in
+        
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Select target directory to save positions into as JSON objects");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        Component parentFrame = null;
+        int returnVal = chooser.showOpenDialog(parentFrame);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            XYZfolder = chooser.getSelectedFile().getPath();
+        }
+        
+        for (int i=0; i<(noOfFOVs); i++){
+            try {
+                XYZFW = new FileWriter(XYZfolder.concat("\\XYZPos_"+i+".json"));
+                XYZpositions.toJson(this.xYSequencing1.tableModel_.getFOV(i), XYZFW);
+            } catch (IOException e) {
+                System.out.println("Failed making file in "+XYZfolder);
+            }
+            try{
+                XYZFW.close();
+            } catch (IOException e) {
+                
+            }
+        }
+    }
+    
+    public boolean getFOVNudgeMode(){
+        return FOVNudgeMode;
+    }
+    
+    public void loadXYZ(){
+        // Get folder to load positions from
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Select directory to load positions saved as JSON objects from");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        Component parentFrame = null;
+        int returnVal = chooser.showOpenDialog(parentFrame);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            XYZfolder = chooser.getSelectedFile().getPath();
+        }
+        
+        // Make a filter for .json files - maybe best to do elsewhere?
+        
+        File dir = new File(XYZfolder);
+        FilenameFilter JSONfilter = new FilenameFilter(){
+            public boolean accept(File dir, String name) {
+                String lowercaseName = name.toLowerCase();
+                if (lowercaseName.endsWith(".json")){
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+                
+        File[] loadedXYZpositions = dir.listFiles(JSONfilter);
+
+        // Uncheck the autogenerate FOV box, because if you select anything else with that it'll dump these
+        this.xYSequencing1.uncheckAutogenerateFOVs();
+        
+        // loop through files, load, convert to object and insert into table
+        Gson XYZpositions = new Gson();
+        for (File file: loadedXYZpositions){
+            try{
+                String JSONInString = new String(Files.readAllBytes(FileSystems.getDefault().getPath(file.getAbsolutePath())));
+                FOV FOVtoadd = XYZpositions.fromJson(JSONInString, FOV.class);
+                this.xYSequencing1.addaFOV(FOVtoadd);
+            } catch (Exception e) {
+            }
+        }
+    
+    }
     
     private void setupSequencingTable(){
         
@@ -1134,6 +1249,18 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         prefindPanel1.UpdatePrefindPanel();
     }
     
+    public String getPrefindSettingValue(int i){
+        return prefindPanel1.getPrefindSettingValue(i);
+    }
+    
+    public int getPrefind_NoOfAttempts(){
+        return prefindPanel1.getNoOfAttempts();
+    }
+    
+    public int getPrefind_NoOfFOVToFind(){
+        return prefindPanel1.getNoOfFOVToFind();
+    }
+    
     public boolean testPrefind() {// throws InterruptedException{ 
         //prefind_.Snapandshow(prefindImage);
         //MMStudio gui_ = MMStudio.getInstance(); // ### WAS ENABLED
@@ -1175,8 +1302,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         // Work out the max number of FOVs
         // !!! NEED TO MAKE SURE THAT THIS WORKS ID TOO MANY FOVS ARE SPECIFIED! REDUCE THE #OF ATTEMPTS PERHAPS?
-        int Attempts_perFOV = xYSequencing1.getNoOfAttempts();
-        int NoOfFOVsToFind = xYSequencing1.getNoOfFOVToFind();
+        int Attempts_perFOV = prefindPanel1.getNoOfAttempts();
+        int NoOfFOVsToFind = prefindPanel1.getNoOfFOVToFind();
         int FOVs_per_well=Attempts_perFOV*NoOfFOVsToFind;
         
         System.out.println("Attempts per FOV: "+Attempts_perFOV+"   Initial no of FOVs: "+NoOfFOVsToFind+"   FOVs per well: "+FOVs_per_well);
@@ -1186,7 +1313,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         FOV FOVlastgoneto = new FOV(0, 0, 0, pp_); //
 
         // Autofocus how often?
-        int FOVs_since_last_AF;
+        int FOVs_since_last_AF = 0;
+        int Max_FOV_switch_without_AF = 4;
 
         // Add this for Abort capability - not yet implemented properly!
         int endOk=0;        
@@ -1207,20 +1335,24 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 FOVtogoto = xYSequencing1.searchFOVtableModel_.getFOV(i);
                 if(!testmode){
                     xyzmi_.gotoFOV(FOVtogoto); // XY move only
+                    System.out.println(FOVtogoto.getWell()+" - item#"+i+" of "+xYSequencing1.searchFOVtableModel_.getRowCount());
                     //Wait for XY move to finish                
                     while (xyzmi_.isStageBusy()){
                         System.out.println("Stage moving...");
                     }                    
                     //Autofocus if needed
-                    if(FOVtogoto.getWell()!=FOVlastgoneto.getWell() || noofFOVsSinceLastSuccess==0){ 
+                    if(FOVtogoto.getWell()!=FOVlastgoneto.getWell() || noofFOVsSinceLastSuccess==0 || FOVs_since_last_AF>=Max_FOV_switch_without_AF){ 
                         // For now, let's try autofocusing if we're in a different well to before? Or if the last FOV was successful?
                         if(this.checkifAFenabled()){
                             xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                            FOVs_since_last_AF = 0;
                         } else {
                             xyzmi_.moveZAbsolute(this.getFixedAFDefault());
                         }
                     }
                 }
+                
+                FOVs_since_last_AF++;
 
                 boolean result = prefind_.Analyse(prefind_.Snapandshow(prefindImage));
                 FOVaccepted=result;

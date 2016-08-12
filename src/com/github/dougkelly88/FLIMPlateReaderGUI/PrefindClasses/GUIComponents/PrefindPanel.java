@@ -142,6 +142,33 @@ public class PrefindPanel extends javax.swing.JPanel {
        
         //System.out.println(thisvarname+" -  Min: "+thisvarmin+"  Max: "+thisvarmax);
     }
+    
+    public int getNoOfAttempts(){
+        return Integer.parseInt(this.attemptsBeforeFail.getText());
+    }
+    
+    public int getNoOfFOVToFind(){
+        return Integer.parseInt(this.FOVPerWellDesired.getText());
+    }
+    
+    public String getPrefindSettingValue(int whichvalue){
+        String retval = "0";
+        switch(whichvalue) {
+            case 1:
+                retval = Integer.toString(this.VarSlider1.getValue());
+                break;
+            case 2:
+                retval = Integer.toString(this.VarSlider2.getValue());
+                break;
+            case 3:   
+                retval = Integer.toString(this.VarSlider3.getValue());
+                break;
+            case 4: 
+                retval = Integer.toString(this.VarSlider4.getValue());
+                break;
+        }
+        return retval;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -172,6 +199,11 @@ public class PrefindPanel extends javax.swing.JPanel {
         varLabel2 = new javax.swing.JLabel();
         varLabel3 = new javax.swing.JLabel();
         varLabel4 = new javax.swing.JLabel();
+        testPrefind = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        FOVPerWellDesired = new javax.swing.JTextField();
+        attemptsBeforeFail = new javax.swing.JTextField();
 
         VarSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -254,6 +286,26 @@ public class PrefindPanel extends javax.swing.JPanel {
 
         varLabel4.setText("UNNAMED VAR4");
 
+        testPrefind.setText("Test prefind on this FOV");
+        testPrefind.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                testPrefindActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Desired # of FOV per well");
+
+        jLabel2.setText("Attempts before giving up");
+
+        FOVPerWellDesired.setText("1");
+        FOVPerWellDesired.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FOVPerWellDesiredActionPerformed(evt);
+            }
+        });
+
+        attemptsBeforeFail.setText("10");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -268,10 +320,6 @@ public class PrefindPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(VarSlider4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(VarMax4, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(VarSlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(VarMax2, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -282,7 +330,13 @@ public class PrefindPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(VarSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(VarMax1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(VarMax1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(testPrefind)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(VarSlider4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(VarMax4, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -302,6 +356,16 @@ public class PrefindPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(varLabel3)))
                 .addContainerGap(48, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(FOVPerWellDesired)
+                    .addComponent(attemptsBeforeFail, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel1))
+                .addGap(176, 176, 176))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -337,12 +401,22 @@ public class PrefindPanel extends javax.swing.JPanel {
                                 .addComponent(VarMax4)
                                 .addComponent(varTextbox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(varLabel4)))
-                        .addGap(152, 152, 152))
+                        .addGap(61, 61, 61))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(varTextbox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(varLabel1))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(FOVPerWellDesired, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(attemptsBeforeFail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(testPrefind)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -387,8 +461,17 @@ public class PrefindPanel extends javax.swing.JPanel {
         varTextbox2.setText(intermedval.toString());
     }//GEN-LAST:event_VarSlider2PropertyChange
 
+    private void testPrefindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testPrefindActionPerformed
+        parent_.testPrefind();        // TODO add your handling code here:
+    }//GEN-LAST:event_testPrefindActionPerformed
+
+    private void FOVPerWellDesiredActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FOVPerWellDesiredActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FOVPerWellDesiredActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField FOVPerWellDesired;
     private javax.swing.JLabel VarMax1;
     private javax.swing.JLabel VarMax2;
     private javax.swing.JLabel VarMax3;
@@ -401,6 +484,10 @@ public class PrefindPanel extends javax.swing.JPanel {
     private javax.swing.JSlider VarSlider2;
     private javax.swing.JSlider VarSlider3;
     private javax.swing.JSlider VarSlider4;
+    private javax.swing.JTextField attemptsBeforeFail;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JButton testPrefind;
     private javax.swing.JLabel varLabel1;
     private javax.swing.JLabel varLabel2;
     private javax.swing.JLabel varLabel3;

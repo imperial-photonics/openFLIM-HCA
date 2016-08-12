@@ -852,11 +852,17 @@ public class XYZPanel extends javax.swing.JPanel {
             xyzmi_.moveXYRelative(step,0);
             currentXUm_ = currentXUm_ + step;
             dp_.setCurrentX(currentXUm_);
+            if(parent_.getFOVNudgeMode()==true){
+                parent_.nudgeFOVs(step,"X");
+            }
         }
         else if (axis == Y_AXIS){
             xyzmi_.moveXYRelative(0,step);
             currentYUm_ = currentYUm_ + step;
             dp_.setCurrentY(currentYUm_);
+            if(parent_.getFOVNudgeMode()==true){
+                parent_.nudgeFOVs(step,"Y");
+            }            
         }
         
     }
