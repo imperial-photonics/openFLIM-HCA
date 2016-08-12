@@ -1560,7 +1560,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             int sassSize=sass.size();
             
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
-            
+            if(var_.specialAcq){
+            System.out.println(var_.specialAcq);
+            for (int h=0; h<sassSize; h++){
+                SeqAcqSetup CurrSAS = sass.get(h);
+                System.out.println("Time="+CurrSAS.getTimePoint().getTimeCell()+"    Filt="+CurrSAS.getFilters().getLabel()+"    Well="+CurrSAS.getFOV().getWell()+"    X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
+            }
+            Collections.sort(sass, new RowComparator());
+            }
             // check which acquisition strategy is selected
 //            if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
 //                sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
@@ -1764,9 +1771,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         core_.setProperty("SyringePump","Liquid Dispersion?", "Go");
                         wait(1000);
                             }*/
-                    core_.waitForDeviceType(DeviceType.AutoFocusDevice);
-                    arduino_.setDigitalOutHigh();
-                    wait(var_.shutterResponse);
+//zzz                    core_.waitForDeviceType(DeviceType.AutoFocusDevice);
+//                    arduino_.setDigitalOutHigh();
+//                    wait(var_.shutterResponse);
                 }
                 catch (Exception e) {
                     System.out.println(e.getMessage());

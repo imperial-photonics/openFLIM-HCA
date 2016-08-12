@@ -140,6 +140,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         eMailAddressField = new javax.swing.JTextField();
         eMailDefault = new javax.swing.JLabel();
         UpdateEmailButton = new javax.swing.JButton();
+        SpecialAcquistionTickBox = new javax.swing.JCheckBox();
 
         arduinoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Arduino"));
 
@@ -522,6 +523,13 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             }
         });
 
+        SpecialAcquistionTickBox.setText("Special Acquisition (Row A with filtercombination 1, Row B with filtercombination 2, ...):");
+        SpecialAcquistionTickBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SpecialAcquistionTickBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -580,7 +588,8 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                                 .addComponent(eMailAddressField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(UpdateEmailButton))
-                            .addComponent(eMailDefault))
+                            .addComponent(eMailDefault)
+                            .addComponent(SpecialAcquistionTickBox))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -638,7 +647,9 @@ public class ProSettingsPanel extends javax.swing.JPanel {
                     .addComponent(UpdateEmailButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(eMailDefault)
-                .addContainerGap(111, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(SpecialAcquistionTickBox)
+                .addContainerGap(100, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -781,6 +792,14 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         System.out.println("New Email address:"+eMail);
     }//GEN-LAST:event_UpdateEmailButtonActionPerformed
 
+    private void SpecialAcquistionTickBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SpecialAcquistionTickBoxActionPerformed
+        if (SpecialAcquistionTickBox.isSelected()){
+            var_.specialAcq=true;
+        } else {
+            var_.specialAcq=false;
+        }
+    }//GEN-LAST:event_SpecialAcquistionTickBoxActionPerformed
+
     public double getHshiftscale(){
         return H_shift_scale;
     }
@@ -900,6 +919,7 @@ public class ProSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JButton JSONtest;
     private javax.swing.JTextField JSONview;
     private javax.swing.JLabel MotorizedMicroscopeTableLabel;
+    private javax.swing.JCheckBox SpecialAcquistionTickBox;
     private javax.swing.JTextField Text_for_prefind_thresh;
     private javax.swing.JButton UpdateEmailButton;
     private javax.swing.JTextField VShiftScale;
