@@ -1718,6 +1718,50 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         System.out.println(e.getMessage());
                     }
                 }
+                // Special Acquisiton Fred:
+                
+                if(var_.specialAcq){
+                    for (FilterSetup fs : fss){
+                        String flabel   = fs.getLabel();
+                        String NDfil    = fs.getNDFilt();
+                        int intTime     = fs.getIntTime();
+                        ArrayList<Integer> dell= fs.getDelays();
+                        System.out.println("Label: "+flabel+"   ND filter: "+NDfil+"   intTime: "+intTime+"   Delays: "+dell);
+                    }
+                    if(sas.getFOV().getWell().contains("A1")){
+                        FilterSetup fsA=fss.get(1);
+                        String flabelA   = fsA.getLabel();
+                        String NDfilA    = fsA.getNDFilt();
+                        int intTimeA     = fsA.getIntTime();
+                        ArrayList<Integer> dellA= fsA.getDelays();
+                        try {
+                            core_.setProperty("NDFW", "Label", NDfilA);
+                            core_.setExposure(intTimeA);
+                            sas.getFilters().setDelays(dellA);
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        
+                        System.out.println("Label: "+flabelA+"   ND filter: "+NDfilA+"   intTime: "+intTimeA+"   Delays: "+dellA);
+                    } else if (sas.getFOV().getWell().contains("B12")){
+                        FilterSetup fsB=fss.get(2);
+                        String flabelB   = fsB.getLabel();
+                        String NDfilB    = fsB.getNDFilt();
+                        int intTimeB     = fsB.getIntTime();
+                        ArrayList<Integer> dellB= fsB.getDelays();
+                        try {
+                            core_.setProperty("NDFW", "Label", NDfilB);
+                            core_.setExposure(intTimeB);
+                            sas.getFilters().setDelays(dellB);
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        System.out.println("Label: "+flabelB+"   ND filter: "+NDfilB+"   intTime: "+intTimeB+"   Delays: "+dellB);
+                    }
+                }
+                
+                
+                
                 //Get laser intensity
                 String intensity=Double.toString(arduino_.getLaserIntensity());
                 // do acquisition
