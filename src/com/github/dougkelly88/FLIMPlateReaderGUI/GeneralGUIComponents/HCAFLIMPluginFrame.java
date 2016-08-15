@@ -2062,6 +2062,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     ArrayList<Integer> dell= fs.getDelays();
                     System.out.println("Label: "+flabel+"   ND filter: "+NDfil+"   intTime: "+intTime+"   Delays: "+dell);
         }
+        FilterSetup testt=fss.get(0);
+        System.out.println(testt);
+        FilterSetup testtt=fss.get(1);
+        System.out.println(testtt);
         
     }//GEN-LAST:event_TestButtonActionPerformed
    
