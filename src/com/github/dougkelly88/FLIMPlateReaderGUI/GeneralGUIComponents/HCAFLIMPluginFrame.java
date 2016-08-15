@@ -2008,13 +2008,17 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
     private void TestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TestButtonActionPerformed
         // TODO add your handling code here:
-        String binningval ="";
-        try {
-            binningval = core_.getProperty("Camera", "Binning");
-            System.out.println(binningval);
-        } catch (Exception e) {
-            System.out.println("FAIL on get camera binning value");
+        ArrayList<FilterSetup> fss = new ArrayList<>();
+        fss = spectralSequencing1.getFilterTable();
+        System.out.println(fss);
+        for (FilterSetup fs : fss){
+                    String flabel   = fs.getLabel();
+                    String NDfil    = fs.getNDFilt();
+                    int intTime     = fs.getIntTime();
+                    ArrayList<Integer> dell= fs.getDelays();
+                    System.out.println("Label: "+flabel+"   ND filter: "+NDfil+"   intTime: "+intTime+"   Delays: "+dell);
         }
+        
     }//GEN-LAST:event_TestButtonActionPerformed
    
     public void changeAbortHCAsequencBoolean(){
