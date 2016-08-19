@@ -324,5 +324,18 @@ public final class XYZMotionInterface {
             Logger.getLogger(XYZMotionInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public boolean isStageBusyFred() {
+        boolean stageMoving;
+            try {
+                    Point2D.Double pfff = core_.getXYStagePosition(xystage_);
+                    System.out.println("pff:  "+pfff);
+                    stageMoving=false;
+                } catch (Exception ex) {
+                    System.out.println("Ignore XY Stage error. Stage moving...");
+                    stageMoving=true;
+                }
+        return stageMoving;
+    }
     
 }

@@ -102,6 +102,7 @@ import ij.gui.*;
 //import java.lang.System; // Was unused?
 import ij.process.*;
 import ij.ImagePlus;
+import java.awt.geom.Point2D;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 //import ij.plugin.*; // Was unused?
@@ -1667,7 +1668,19 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         else{
                             //Do the XY move...
                             xyzmi_.gotoFOV(sas.getFOV());
+                            
                             //Wait for stage - make this into a function for xyzmi?
+                           boolean stageMoving=true;
+                            while (stageMoving){
+                                   try {
+                                        Point2D.Double pfff = core_.getXYStagePosition(core_.getXYStageDevice());
+                                        System.out.println("pff:  "+pfff);
+                                        stageMoving=false;
+                                    } catch (Exception ex) {
+                                        System.out.println("Ignore XY Stage error. Stage moving...");
+                                        stageMoving=true;
+                                    }
+                            }
 //                            while (xyzmi_.isStageBusy()){
 //                                System.out.println("Stage moving...");
 //                            }
