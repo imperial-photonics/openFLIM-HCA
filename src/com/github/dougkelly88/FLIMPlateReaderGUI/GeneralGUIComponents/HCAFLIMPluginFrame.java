@@ -26,6 +26,7 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Compa
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.YComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.RowComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ColumnComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.WellComparator;
 //import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.XY_simul_Comparator;  // Replaced by Row, Column comparators
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ZComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
@@ -1562,9 +1563,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
             if(var_.specialAcq){
-                Collections.sort(sass, new FComparator());
-                Collections.sort(sass, new RowComparator());
+                //Collections.sort(sass, new FComparator());
                 
+                Collections.sort(sass, new XComparator());
+                Collections.sort(sass, new YComparator());
+                Collections.sort(sass, new WellComparator());
                 for (int h=0; h<sassSize; h++){
                     SeqAcqSetup CurrSAS = sass.get(h);
                     System.out.println("Time="+CurrSAS.getTimePoint().getTimeCell()+"    Filt="+CurrSAS.getFilters().getLabel()+"    Well="+CurrSAS.getFOV().getWell()+"    X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
@@ -1622,7 +1625,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 //            int fovSinceLastAF = 0;
             int jump=1;
             if(var_.specialAcq){
-                jump=sassSize/fss.size();
+                jump=fss.size();
             }
             for ( ind = 0; ind < sass.size(); ind +=jump){
             
