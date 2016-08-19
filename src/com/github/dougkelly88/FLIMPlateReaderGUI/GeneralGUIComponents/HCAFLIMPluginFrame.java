@@ -1561,12 +1561,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             
             Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
             if(var_.specialAcq){
-            System.out.println(var_.specialAcq);
-            for (int h=0; h<sassSize; h++){
-                SeqAcqSetup CurrSAS = sass.get(h);
-                System.out.println("Time="+CurrSAS.getTimePoint().getTimeCell()+"    Filt="+CurrSAS.getFilters().getLabel()+"    Well="+CurrSAS.getFOV().getWell()+"    X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
-            }
-            Collections.sort(sass, new RowComparator());
+                Collections.sort(sass, new FComparator());
+                Collections.sort(sass, new RowComparator());
+                
+                for (int h=0; h<sassSize; h++){
+                    SeqAcqSetup CurrSAS = sass.get(h);
+                    System.out.println("Time="+CurrSAS.getTimePoint().getTimeCell()+"    Filt="+CurrSAS.getFilters().getLabel()+"    Well="+CurrSAS.getFOV().getWell()+"    X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
+                }
+               System.out.println(sassSize); 
+               System.out.println(fss.size()); 
             }
             // check which acquisition strategy is selected
 //            if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
@@ -1616,7 +1619,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             String lastFiltLabel = "";
             FOV lastFOV = new FOV(0, 0, 0, pp_);
 //            int fovSinceLastAF = 0;
-            for ( ind = 0; ind < sass.size(); ind++){
+            int jump=1;
+            if(var_.specialAcq){
+                jump=sassSize/fss.size();
+            }
+            for ( ind = 0; ind < sass.size(); ind +=jump){
             
                 //check for flag (stop button) and abort sequence
                 if(terminate){
@@ -1728,8 +1735,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         ArrayList<Integer> dell= fs.getDelays();
                         System.out.println("Label: "+flabel+"   ND filter: "+NDfil+"   intTime: "+intTime+"   Delays: "+dell);
                     }
-                    if(sas.getFOV().getWell().contains("A1")){
-                        FilterSetup fsA=fss.get(1);
+                    if(sas.getFOV().getWell().contains("A")){
+                        FilterSetup fsA=fss.get(0);
+                        System.out.println(fsA);
                         String flabelA   = fsA.getLabel();
                         String NDfilA    = fsA.getNDFilt();
                         int intTimeA     = fsA.getIntTime();
@@ -1741,10 +1749,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         } catch (Exception ex) {
                             Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        
-                        System.out.println("Label: "+flabelA+"   ND filter: "+NDfilA+"   intTime: "+intTimeA+"   Delays: "+dellA);
-                    } else if (sas.getFOV().getWell().contains("B12")){
-                        FilterSetup fsB=fss.get(2);
+                        try {
+                            System.out.println("Label: "+flabelA+"read"+"   ND filter: "+core_.getProperty("NDFW", "Label")+"   intTime: "+core_.getExposure()+"   Delays: "+sas.getFilters().getDelays());
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        System.out.println("Label: "+flabelA+"set"+"   ND filter: "+NDfilA+"   intTime: "+intTimeA+"   Delays: "+dellA);
+                    } else if (sas.getFOV().getWell().contains("B")){
+                        FilterSetup fsB=fss.get(1);
+                        System.out.println(fsB);
                         String flabelB   = fsB.getLabel();
                         String NDfilB    = fsB.getNDFilt();
                         int intTimeB     = fsB.getIntTime();
@@ -1756,8 +1769,13 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         } catch (Exception ex) {
                             Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        System.out.println("Label: "+flabelB+"   ND filter: "+NDfilB+"   intTime: "+intTimeB+"   Delays: "+dellB);
-                    }
+                        try {
+                            System.out.println("Label: "+flabelB+"read"+"   ND filter: "+core_.getProperty("NDFW", "Label")+"   intTime: "+core_.getExposure()+"   Delays: "+sas.getFilters().getDelays());
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        System.out.println("Label: "+flabelB+"set"+"   ND filter: "+NDfilB+"   intTime: "+intTimeB+"   Delays: "+dellB);
+                    }   
                 }
                 
                 
