@@ -1846,9 +1846,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         core_.setProperty("SyringePump","Liquid Dispersion?", "Go");
                         wait(1000);
                             }*/
-//zzz                    core_.waitForDeviceType(DeviceType.AutoFocusDevice);
-//                    arduino_.setDigitalOutHigh();
-//                    wait(var_.shutterResponse);
+                    core_.waitForDeviceType(DeviceType.AutoFocusDevice);
+                    arduino_.setDigitalOutHigh();
+                    wait(var_.shutterResponse);
                 }
                 catch (Exception e) {
                     System.out.println(e.getMessage());
