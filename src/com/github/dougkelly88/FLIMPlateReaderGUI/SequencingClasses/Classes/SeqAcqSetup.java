@@ -15,13 +15,23 @@ public class SeqAcqSetup {
     FOV fov_;
     TimePoint tp_;
     FilterSetup fs_;
+    // Added Snaketype and methods to set/get to allow for snake acquisitions - None, Horizontal, Vertical?
+    String snaketype_;
 
     public SeqAcqSetup(FOV fov, TimePoint tp, FilterSetup fs) {
         fov_ = fov;
         tp_ = tp;
         fs_ = fs;
+        snaketype_="None";
     }
 
+    public SeqAcqSetup(FOV fov, TimePoint tp, FilterSetup fs, String snaketype) {
+        fov_ = fov;
+        tp_ = tp;
+        fs_ = fs;
+        snaketype_=snaketype;
+    }
+    
     public SeqAcqSetup getSeqAcqSetup() {
         return this;
     }
@@ -38,6 +48,10 @@ public class SeqAcqSetup {
         return fs_;
     }
 
+    public String getSnaketype() {
+        return snaketype_;
+    }
+
     public void setFOV(FOV fov) {
         this.fov_ = fov;
     }
@@ -48,6 +62,10 @@ public class SeqAcqSetup {
 
     public void setFilterSetup(FilterSetup fs) {
         this.fs_ = fs;
+    }
+
+    public void setSnaketype(String snaketype){
+        this.snaketype_=snaketype;
     }
     
     @Override

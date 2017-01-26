@@ -5,6 +5,8 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Frederik
@@ -12,20 +14,21 @@ package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes;
 
 public class TimePoint implements Comparable<TimePoint> {
     private Double time_ = 10.0;
-    private Double ld_ = 100.0;
-    private boolean sa_ = false;
+    private boolean ld_ = false;
+    //private boolean sa_ = false;
+    private ArrayList<String> ldWells_;
     
-    public TimePoint(Double time, Double ld, boolean sa){
+    public TimePoint(Double time, boolean ld, ArrayList<String> ldWells){
         time_ = time;
         ld_ = ld;
-        sa_ = sa;
+        ldWells_ = ldWells;
    
     }
     
     public TimePoint (Double time){
         time_ = time;
-        ld_ = 0.0;
-        sa_ = false;
+        ld_ = false;
+        ldWells_ = new ArrayList<String>();
     }
     
     public TimePoint getTimePoint(){
@@ -40,20 +43,20 @@ public class TimePoint implements Comparable<TimePoint> {
         this.time_ = time;
     }
 
-    public Double getLDVolume() {
+    public boolean getLDState() {
         return ld_;
     }
 
-    public void setLDVolume(Double LDState) {
+    public void setLDState(boolean LDState) {
         this.ld_ = LDState;
     }
 
-    public boolean getSAState() {
-        return sa_;
+    public ArrayList<String> getLdWells() {
+        return ldWells_;
     }
 
-    public void setSAState(boolean SAState) {
-        this.sa_ = SAState;
+    public void setLdWells(ArrayList<String> LDWells) {
+        this.ldWells_ = LDWells;
     }
 
     // Override compareTo so that TimePoint.sort orders by time value
@@ -101,7 +104,8 @@ public class TimePoint implements Comparable<TimePoint> {
     @Override
     public String toString(){
         return "Time point: Time (s) = " + this.time_ 
-                + ", Liquid dispensing volume = " + this.ld_; 
+                + ", Liquid dispensing?= " + this.ld_
+                + ", Liquid dispension Well(s)= " + this.ldWells_; 
     }
     
 }

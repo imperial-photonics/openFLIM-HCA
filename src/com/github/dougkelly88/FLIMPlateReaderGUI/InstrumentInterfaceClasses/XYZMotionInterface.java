@@ -6,11 +6,13 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mmcorej.CMMCore;
 import mmcorej.DeviceType;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -31,7 +33,7 @@ public final class XYZMotionInterface {
     Point2D.Double[] xpltWellCentres_ = new Point2D.Double[3];
     AffineTransform transform_;
     HCAFLIMPluginFrame parent_;
-    private VariableTest var_;
+    private Variable var_;
 
     //TODO: implement safety checks for objective fouling. 
     //TODO: deal with objective focal shifts
@@ -41,7 +43,7 @@ public final class XYZMotionInterface {
         parent_ = parent;
         pp_ = parent.pp_;
         core_ = parent.core_;
-        var_ = VariableTest.getInstance();
+        var_ = Variable.getInstance();
         
         xystage_ = core_.getXYStageDevice();
         zstage_ = core_.getFocusDevice();
@@ -62,22 +64,37 @@ public final class XYZMotionInterface {
         
         try{
             core_.setPosition(zstage_, Double.parseDouble(core_.getProperty("Objective", "Safe Position")));
-            core_.home(xystage_);
+            //core_.home(xystage_);
             core_.waitForDeviceType(DeviceType.XYStageDevice);
-//            gotoFOV(new FOV("C4", pp_, 1000));
-            gotoFOV(parent.currentFOV_);
+            gotoFOV(new FOV("C4", pp_, 1000));
         } catch (Exception e)
         {
             System.out.println(e.getMessage());
         } 
     }
+    
+    public double [] calculateOffsets(){
+        double []ObjOffsets = parent_.getObjectiveOffsets();
+        double []PortOffsets = parent_.getPortOffsets();
+        double []InsertOffsets = parent_.getInsertOffsets();
+        double []Offsets = {0,0,0};
+        for (int i=0;i<3; i++){
+            Offsets[i] = ObjOffsets[i]+PortOffsets[i]+InsertOffsets[i];
+        }
+        return Offsets;
+    }
 
     public int gotoFOV(FOV fov) {
+        double[] Offsets = calculateOffsets();
+        
+        fov.setX(fov.getX()+Offsets[0]);
+        fov.setY(fov.getY()+Offsets[1]);
+        fov.setZ(fov.getZ()+Offsets[2]);
 
         try {
             Point2D.Double stage = fovXYtoStageXY(fov);
             core_.setXYPosition(xystage_, stage.getX(), stage.getY());
-            parent_.currentFOV_ = fov;
+            // parent_.currentFOV_ = fov;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -86,17 +103,32 @@ public final class XYZMotionInterface {
     }
 
     public FOV getCurrentFOV() {
-
+        double[] Offsets = calculateOffsets();
+        
         try {
             Point2D.Double xy = stageXYtoFOVXY(core_.getXYStagePosition(xystage_));
             Double z = getZAbsolute();
-            return new FOV(xy.getX(), xy.getY(), z, pp_);
+            return new FOV(xy.getX()-Offsets[0], xy.getY()-Offsets[1], z-Offsets[2], pp_);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
         return new FOV("A1", pp_, 0);   // replace with something that more clearly
         // indicated error?
+    }
+    
+    public boolean isStageBusy(){
+        if(!parent_.getTestmode()){
+            try {
+                    Point2D.Double xy = stageXYtoFOVXY(core_.getXYStagePosition(xystage_));
+                    return false;
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    return true;
+                } 
+        }
+        // Stage moves are instantaneous in testmode...
+        return false;
     }
 
     public Point2D.Double fovXYtoStageXY(FOV fov) {
@@ -167,8 +199,8 @@ public final class XYZMotionInterface {
     public boolean moveXYRelative(double x, double y) {
         try {
             core_.setRelativeXYPosition(xystage_, x, y);
-            parent_.currentFOV_.setX(x);
-            parent_.currentFOV_.setY(y);
+            //parent_.currentFOV_.setX(x);
+            //parent_.currentFOV_.setY(y);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -178,7 +210,7 @@ public final class XYZMotionInterface {
     public boolean moveZRelative(double z) {
         try {
             core_.setRelativePosition(zstage_, z);
-            parent_.currentFOV_.setZ(z);
+            //parent_.currentFOV_.setZ(z);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -186,11 +218,13 @@ public final class XYZMotionInterface {
     }
 
     public boolean moveZAbsolute(double z) {
+        double[] Offsets = calculateOffsets();
+        
         try {
             // TODO: check within bounds?
             // TODO: calibrate to make up for lack of parfocality...
-            core_.setPosition(zstage_, z);
-            parent_.currentFOV_.setZ(z);
+            core_.setPosition(zstage_, z+Offsets[2]);
+            //parent_.currentFOV_.setZ(z);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -198,6 +232,8 @@ public final class XYZMotionInterface {
     }
     
     public Double getZAbsolute(){
+        double[] Offsets = calculateOffsets();
+        
         double z = 0.0;
         
         try{
@@ -206,7 +242,7 @@ public final class XYZMotionInterface {
             System.out.println(e.getMessage());
         }
         
-        return z;
+        return z-Offsets[2];
     }
 
     public void enableManualXYControls(boolean on){
@@ -217,8 +253,8 @@ public final class XYZMotionInterface {
                     core_.setProperty(xystage_, "Enable joystick?", "False");
                     double x = core_.getXPosition(xystage_);
                     double y = core_.getYPosition(xystage_);
-                    parent_.currentFOV_.setX(x);
-                    parent_.currentFOV_.setY(y);
+                    //parent_.currentFOV_.setX(x);
+                    //parent_.currentFOV_.setY(y);
                             }
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -232,7 +268,7 @@ public final class XYZMotionInterface {
                 else {
                     core_.setProperty("OlympusHub", "Control", "Computer");
                     double z = core_.getPosition(zstage_);
-                    parent_.currentFOV_.setZ(z);
+                    //parent_.currentFOV_.setZ(z);
                 }
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -247,7 +283,7 @@ public final class XYZMotionInterface {
                 else {
                     core_.setProperty("ManualFocus", "FocusWheel", "Off");
                     double z = core_.getPosition(zstage_);
-                    parent_.currentFOV_.setZ(z);
+                    //parent_.currentFOV_.setZ(z);
                 }
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -257,18 +293,37 @@ public final class XYZMotionInterface {
     
     public double customAutofocus(Double offset){
         Double focusOffset = null;
-        try{
-            core_.setProperty("Objective", "Use Safe Position", "0");
-            this.moveZRelative(-offset);
-            core_.setProperty("AutoFocusZDC", "MeasureOffset", "Now");
-            focusOffset = Double.parseDouble(core_.getProperty("AutoFocusZDC", "Offset"));
-        //    this.moveZAbsolute(offset + focusOffset);
-            this.moveZRelative(offset - focusOffset); // Doug
-        //    this.moveZRelative(offset);
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-        }
+        
+        if(var_.autofocusWhich.equals("ZDC Olympus")){
+            try{
+                core_.setProperty("Objective", "Use Safe Position", "0");
+                this.moveZRelative(-offset);
+                core_.setProperty("AutoFocusZDC", "MeasureOffset", "Now");
+                focusOffset = Double.parseDouble(core_.getProperty("AutoFocusZDC", "Offset"));
+            //    this.moveZAbsolute(offset + focusOffset);
+                this.moveZRelative(offset - focusOffset); // Doug
+            //    this.moveZRelative(offset);
+            } catch (Exception e){
+                System.out.println(e.getMessage());
+            }
         return focusOffset;
+        }
+        else if(var_.autofocusWhich.equals("Definite focus Zeiss")){
+            System.out.println("autofocusComboBox in ProSetting is on Definite focus Zeis. Not implemented yet! Go back to ZDC Olympus.");
+        }
+        else{
+            System.out.println("autofocusComboBox in ProSetting is seeing nothing!");
+        }   
+         return focusOffset;   
     }
+    
+    public void runInitializationRitual(){
+        try {
+            core_.home(xystage_);
+        } catch (Exception ex) {
+            Logger.getLogger(XYZMotionInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     
 }

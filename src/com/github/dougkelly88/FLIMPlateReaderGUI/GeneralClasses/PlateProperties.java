@@ -29,7 +29,7 @@ public class PlateProperties {
     String plateName = "Greiner uClear";
     int rows = 8;
     int cols = 12;
-    String wellShape = "Square";
+    String wellShape = "Circle";
     
     double wellSizeUm = 6500;
     double wellSpacingVUm = 9000;

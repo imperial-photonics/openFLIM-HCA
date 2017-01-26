@@ -7,7 +7,9 @@
 /* 
 AO= incubation light photodiode
 A1= room light photodiode
-A2= mercury burner vs. light path microswitch
+A2= stepmotor STEP
+A3= stepmotor DIRECTION
+A4= stepmotor POSITION0
 A5= laser intensity photodiode
 D8=shutter
 D9=shutter
@@ -32,7 +34,8 @@ public class Arduino {
     private static HCAFLIMPluginFrame frame;
     double th1=0.5;
     double th2=0.5;
-    private VariableTest var_;
+    private Variable var_;
+    private boolean pos0=false;
     
     public static Arduino getInstance() {
        return fINSTANCE;
@@ -47,7 +50,7 @@ public class Arduino {
             System.out.println("Error: Arduino initalization unsure!");
         }
     frame = (HCAFLIMPluginFrame) frame_;
-    var_ = VariableTest.getInstance();
+    var_ = Variable.getInstance();
     }
     
     public void initializeArduino() {

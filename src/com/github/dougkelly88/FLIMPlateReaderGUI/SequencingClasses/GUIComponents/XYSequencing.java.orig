@@ -5,7 +5,6 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents;
 
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Insert_object;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
@@ -13,7 +12,6 @@ import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPlu
 import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZMotionInterface;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel;
-import com.google.gson.Gson;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -23,6 +21,7 @@ import java.awt.event.MouseEvent;
 import static java.lang.Math.abs;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -38,15 +37,7 @@ import javax.swing.text.NumberFormatter;
 
 // This lot are for attempts at handling filenames - to get the list of macros
 //import Java.io.*;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.util.Properties;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import ij.io.DirectoryChooser;
 // http://stackoverflow.com/questions/31700500/using-netbeans-8-0-2-and-want-to-use-org-apache-commons-io-fileutils-how
 //import javax.swing.filechooser.FileNameExtensionFilter;
 //import org.apache.commons.io.FileUtils;
@@ -74,9 +65,6 @@ public class XYSequencing extends javax.swing.JPanel {
     String emailString;
     private Variable var_;
     private ArrayList<FOV> spiralFOVs = new ArrayList<FOV>();
-    private double[] insertOffsets;
-    private String [] [] insertOffsetInfo;
-    public boolean InsertOffsetsloaded;
 
     /**
      * Creates new form XYSequencing
@@ -85,42 +73,12 @@ public class XYSequencing extends javax.swing.JPanel {
         initComponents();
         setControlDefaults();
         var_ = Variable.getInstance();
-        insertOffsets = new double [] {0.0, 0.0, 0.0}; // X, Y, Z
     }
 
     public static XYSequencing getInstance() {
         return fINSTANCE;
     }     
-    
-    private void setupInsertComboBox(){
-        Gson gsonInserts = new Gson();
-        //Load the file with the stored offsets
-        String directoryName = ij.IJ.getDirectory("ImageJ");
-        String objectFilepath = directoryName.concat("OPENFLIMHCA_JSONInsertOffsets.txt");
-        String JSONInString = "";
-        try{
-            JSONInString = new String(Files.readAllBytes(FileSystems.getDefault().getPath(objectFilepath)));
-        } catch (Exception e) {
-        }
-        insertType.removeAllItems();
-        Insert_object[] inserts = gsonInserts.fromJson(JSONInString, Insert_object[].class);
-        insertOffsetInfo = new String [inserts.length] [inserts[0].getClass().getDeclaredFields().length];
-        //System.out.println(inserts[0].getClass().getDeclaredFields().length);
-        for(int i=0;i<inserts.length;i++){
-                insertOffsetInfo[i] [0] = inserts[i].getInsertName();
-                insertOffsetInfo[i] [1] = inserts[i].getInsertOffsets()[0].toString();
-                insertOffsetInfo[i] [2] = inserts[i].getInsertOffsets()[1].toString();
-                insertOffsetInfo[i] [3] = inserts[i].getInsertOffsets()[2].toString();
-                insertType.addItem(inserts[i].getInsertName());
-        }
-        InsertOffsetsloaded=true;
-    }
-
-    public void addaFOV(FOV FOVtoadd) {                                               
-        tableModel_.addRow(FOVtoadd);
-        pmdp_.addSelectedWell(FOVtoadd.getWell());
-    }  
-    
+            
     private void setControlDefaults() {
 
         pmdp_ = new PlateMapDrawPanel(this);
@@ -229,7 +187,6 @@ public class XYSequencing extends javax.swing.JPanel {
         });
 
 //        fovTable_.setDefaultRenderer(FOV.class, new TableRenderer());
-        setupInsertComboBox();
     }
 
     public void onPlateConfigLoaded(boolean enable, PlateProperties pp) {
@@ -251,11 +208,7 @@ public class XYSequencing extends javax.swing.JPanel {
         storeXYZButton = new javax.swing.JButton();
         fovTablePanel = new javax.swing.JPanel();
         genZStackButton = new javax.swing.JButton();
-        zModeCombo = new javax.swing.JComboBox();
         clearZButton = new javax.swing.JButton();
-        SaveXYZ = new javax.swing.JButton();
-        LoadXYZ = new javax.swing.JButton();
-        FOVNudgeCheckbox = new javax.swing.JCheckBox();
         prefindPanel = new javax.swing.JPanel();
         quickPFButton = new javax.swing.JButton();
         advancedPFButton = new javax.swing.JToggleButton();
@@ -279,10 +232,6 @@ public class XYSequencing extends javax.swing.JPanel {
         ringRadiusLabel = new javax.swing.JLabel();
         groupDescLabel = new javax.swing.JLabel();
         groupDescField = new javax.swing.JTextField();
-        snakeType = new javax.swing.JComboBox();
-        snaketypelabel = new javax.swing.JLabel();
-        insertType = new javax.swing.JComboBox();
-        jLabel2 = new javax.swing.JLabel();
 
         storedXYZPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Stored XYZ positions"));
 
@@ -324,38 +273,10 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
-        zModeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Z as offset", "Absolute Z" }));
-        zModeCombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                zModeComboActionPerformed(evt);
-            }
-        });
-
         clearZButton.setText("Clear Z stack");
         clearZButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearZButtonActionPerformed(evt);
-            }
-        });
-
-        SaveXYZ.setText("Save XYZ");
-        SaveXYZ.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SaveXYZActionPerformed(evt);
-            }
-        });
-
-        LoadXYZ.setText("Load XYZ");
-        LoadXYZ.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                LoadXYZActionPerformed(evt);
-            }
-        });
-
-        FOVNudgeCheckbox.setText("Nudge mode");
-        FOVNudgeCheckbox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                FOVNudgeCheckboxActionPerformed(evt);
             }
         });
 
@@ -368,42 +289,33 @@ public class XYSequencing extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(storeXYZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(genZStackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(clearZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(storedXYZPanelLayout.createSequentialGroup()
-                        .addComponent(SaveXYZ)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(LoadXYZ))
                     .addComponent(clearXYZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(zModeCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, storedXYZPanelLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(FOVNudgeCheckbox)
-                .addGap(52, 52, 52))
+                    .addComponent(genZStackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(clearZButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(34, 34, 34))
         );
         storedXYZPanelLayout.setVerticalGroup(
             storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, storedXYZPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fovTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(fovTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(storedXYZPanelLayout.createSequentialGroup()
+<<<<<<< HEAD
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(zModeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+=======
+                        .addGap(0, 29, Short.MAX_VALUE)
+>>>>>>> IMPERIAL_ONE/master
+                        .addComponent(genZStackButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(clearZButton)
+                        .addGap(5, 5, 5)
+                        .addComponent(storeXYZButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(clearXYZButton)))
                 .addGap(37, 37, 37))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, storedXYZPanelLayout.createSequentialGroup()
-                .addComponent(zModeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(genZStackButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(clearZButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(storeXYZButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(clearXYZButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(storedXYZPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(SaveXYZ)
-                    .addComponent(LoadXYZ))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(FOVNudgeCheckbox))
         );
 
         prefindPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Prefind"));
@@ -596,49 +508,25 @@ public class XYSequencing extends javax.swing.JPanel {
             }
         });
 
-        snakeType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Horizontal snake", "Vertical snake", "No sorting" }));
-        snakeType.setToolTipText("Type of motion pattern for stage during acquisition sequence");
-        snakeType.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                snakeTypeActionPerformed(evt);
-            }
-        });
-
-        snaketypelabel.setText("Snake type");
-
-        insertType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        insertType.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                insertTypeActionPerformed(evt);
-            }
-        });
-
-        jLabel2.setText("Insert type");
-
         javax.swing.GroupLayout autoFOVPanelLayout = new javax.swing.GroupLayout(autoFOVPanel);
         autoFOVPanel.setLayout(autoFOVPanelLayout);
         autoFOVPanelLayout.setHorizontalGroup(
             autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(autoFOVPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(autoFOVPanelLayout.createSequentialGroup()
-                            .addComponent(ringRadiusLabel)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(ringRadiusField, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(autoGenerateFOVsCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, autoFOVPanelLayout.createSequentialGroup()
-                            .addComponent(noFOVLabel)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(noFOVsField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(FOVPatternCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(groupDescLabel)
-                        .addComponent(groupDescField)
-                        .addComponent(snakeType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(snaketypelabel)
-                        .addComponent(insertType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jLabel2))
+                .addGroup(autoFOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(autoFOVPanelLayout.createSequentialGroup()
+                        .addComponent(ringRadiusLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ringRadiusField, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(autoGenerateFOVsCheck, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, autoFOVPanelLayout.createSequentialGroup()
+                        .addComponent(noFOVLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(noFOVsField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(FOVPatternCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(groupDescLabel)
+                    .addComponent(groupDescField))
                 .addContainerGap(52, Short.MAX_VALUE))
         );
         autoFOVPanelLayout.setVerticalGroup(
@@ -660,14 +548,6 @@ public class XYSequencing extends javax.swing.JPanel {
                 .addComponent(groupDescLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(groupDescField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(snaketypelabel)
-                .addGap(4, 4, 4)
-                .addComponent(snakeType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(insertType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -712,18 +592,6 @@ public class XYSequencing extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_autoGenerateFOVsCheckActionPerformed
 
-    public boolean reportAutogenerateFOVstatus(){
-        return autoGenerateFOVsCheck.isSelected();
-    }
-    
-    public void checkAutogenerateFOVs(){
-        autoGenerateFOVsCheck.setSelected(true);
-    }
-
-    public void uncheckAutogenerateFOVs(){
-        autoGenerateFOVsCheck.setSelected(false);
-    }
-    
     public void generateFOVs() {
         if (autoGenerateFOVsCheck.isSelected()) {
 
@@ -783,8 +651,7 @@ public class XYSequencing extends javax.swing.JPanel {
                     
                     String wellString = Character.toString((char) (65 + rows)) + Integer.toString(cols + 1);
                     //Max # of times to search = #of FOVs desired * #to try before giving up
-                    searchfovs = generateSpiral(parent_.getPrefind_NoOfAttempts()*parent_.getPrefind_NoOfFOVToFind(),wellString);
-                    //searchfovs = generateSpiral(Integer.parseInt(FOVToFindField.getText())*(Integer.parseInt(attemptsField.getText())),wellString);
+                    searchfovs = generateSpiral(Integer.parseInt(FOVToFindField.getText())*(Integer.parseInt(attemptsField.getText())),wellString);
 
                     for (FOV fov : searchfovs) {
                         //Do we need this part?
@@ -804,7 +671,7 @@ public class XYSequencing extends javax.swing.JPanel {
     }
 
     public String getSelectedAnalyser (){
-        //System.out.println(prefindMacroname.getSelectedItem().toString());
+        System.out.println(prefindMacroname.getSelectedItem().toString());
         return prefindMacroname.getSelectedItem().toString();
     }
         
@@ -816,7 +683,7 @@ public class XYSequencing extends javax.swing.JPanel {
         FOV fov = new FOV(wellString, pp_, 0);
         double[] centrexy = {fov.getX(), fov.getY()};
 //        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
-        double[] DXY = {parent_.globalFOVset_.getWidth_(), parent_.globalFOVset_.getHeight_()};
+        double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
         int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         double[] dxy = new double[2];
         int stepsInCurrentDir;
@@ -859,7 +726,7 @@ public class XYSequencing extends javax.swing.JPanel {
         FOV fov = new FOV(wellString, pp_, 0);
         double[] centrexy = {fov.getX(), fov.getY()};
 //        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
-        double[] DXY = {parent_.globalFOVset_.getWidth_(), parent_.globalFOVset_.getHeight_()};
+        double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
         
         /*int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         double[] dxy = new double[2];
@@ -928,7 +795,7 @@ public class XYSequencing extends javax.swing.JPanel {
         FOV fov = new FOV(wellString, pp_, 0);
         double[] centrexy = {fov.getX(), fov.getY()};
 //        double[] DXY = {sap_.getFLIMFOVSize()[0], sap_.getFLIMFOVSize()[1]};
-        double[] DXY = {parent_.globalFOVset_.getWidth_(), parent_.globalFOVset_.getHeight_()};
+        double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
         
         /*int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
         double[] dxy = new double[2];
@@ -942,7 +809,7 @@ public class XYSequencing extends javax.swing.JPanel {
 //        System.out.println("Start");
 //        System.out.println("y: "+fov.getY()+"    x: "+fov.getX()+"           ny: "+ny+"    nx: "+nx);
 // 
-        while (fovind < noFOV & dirind < 1000) {   // just in case we have a runaway case...
+        while (fovind < noFOV & dirind < 100) {   // just in case we have a runaway case...
             ny++;
             for(int iy=0;iy<ny;iy++){
                 if(fovind<noFOV){
@@ -970,7 +837,7 @@ public class XYSequencing extends javax.swing.JPanel {
     
     private double[] mysteriousSpiralProducer(double ny, double nx, String wellString, double[] centrexy, ArrayList<FOV> spiralFgOVs) {
         FOV fov = new FOV(wellString, pp_, 0);
-        double[] DXY = {parent_.globalFOVset_.getWidth_(), parent_.globalFOVset_.getHeight_()};
+        double[] DXY = {parent_.currentFOV_.getWidth_(), parent_.currentFOV_.getHeight_()};
         if(nx==0 & ny==1){
             centrexy[1]=centrexy[1]+DXY[1];
             fov = new FOV(centrexy[0], centrexy[1], 0,wellString, pp_);
@@ -1161,10 +1028,6 @@ public class XYSequencing extends javax.swing.JPanel {
         tableModel_.addWholeData(newtemp);
     }
 
-    private void zModeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zModeComboActionPerformed
-        zAsOffset_ = (String) zModeCombo.getSelectedItem() == "Z as offset";
-    }//GEN-LAST:event_zModeComboActionPerformed
-
     private void storeXYZButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_storeXYZButtonActionPerformed
         
         FOV newfov = xyzmi_.getCurrentFOV();
@@ -1205,7 +1068,6 @@ public class XYSequencing extends javax.swing.JPanel {
 
     private void prefindMacronameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prefindMacronameActionPerformed
         // TODO add your handling code here:
-        parent_.updatePrefindPanel();
     }//GEN-LAST:event_prefindMacronameActionPerformed
 
     private void testPrefindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testPrefindActionPerformed
@@ -1228,7 +1090,7 @@ public class XYSequencing extends javax.swing.JPanel {
         // Update the list of macros in the combobox nextdoor
 
         // http://rsb.info.nih.gov/ij/developer/api/ij/io/DirectoryChooser.html
-        String directoryName=ij.IJ.getDirectory("macros");
+        String directoryName=ij.IJ.getDirectory("plugins");
         System.out.println(directoryName);
         // http://alvinalexander.com/java/list-files-directory-match-filename-extension-pattern
         java.util.Collection macrofiles;
@@ -1255,10 +1117,10 @@ public class XYSequencing extends javax.swing.JPanel {
         generatesearchFOVs(); // does this need any other arguments?
         // Call the search function in the parent (HCAFLIMPluginFrame())
         try{
-            parent_.prefindButtonPressed();
+            parent_.prefind();
         }
-        catch (Exception e){
-            System.out.println(e);
+        catch (InterruptedException IE){
+            System.out.println(IE);
         }
     }//GEN-LAST:event_quickPFButtonActionPerformed
 
@@ -1266,58 +1128,11 @@ public class XYSequencing extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_percentCoverageActionPerformed
 
-    private void snakeTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snakeTypeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_snakeTypeActionPerformed
-
-    private void insertTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertTypeActionPerformed
-        double [] OldOffsets = getInsertOffsets();
-        
-        //setByLabel(objectiveComboBox, "Objective"); - don't need to perform checking function?
-        if (InsertOffsetsloaded == true){
-            //get the offsets here...
-            int whichinsert = insertType.getSelectedIndex();
-            double [] NewOffsets = {Double.parseDouble(insertOffsetInfo[whichinsert] [1]),Double.parseDouble(insertOffsetInfo[whichinsert] [2]),Double.parseDouble(insertOffsetInfo[whichinsert] [3])}; // placeholder
-            setInsertOffsets(NewOffsets);
-
-
-            //Shift the stage to account for the objetive change
-            double [] Shifts = {0,0,0};
-            for (int i=0;i<=2;i++){
-                Shifts[i] = NewOffsets[i]-OldOffsets[i];
-            }
-            parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
-        }
-    }//GEN-LAST:event_insertTypeActionPerformed
-
-    private void SaveXYZActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveXYZActionPerformed
-        parent_.saveXYZ();
-    }//GEN-LAST:event_SaveXYZActionPerformed
-
-    private void LoadXYZActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoadXYZActionPerformed
-        parent_.loadXYZ();
-    }//GEN-LAST:event_LoadXYZActionPerformed
-
-    private void FOVNudgeCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FOVNudgeCheckboxActionPerformed
-        parent_.FOVNudgeMode = FOVNudgeCheckbox.isSelected();
-    }//GEN-LAST:event_FOVNudgeCheckboxActionPerformed
-
-    public String getSnakeType(){
-        return snakeType.getSelectedItem().toString();
-    }
     
     public void setPlateProperties(PlateProperties pp) {
         pp_ = pp;
     }
 
-    public double[] getInsertOffsets(){
-        return insertOffsets;
-    }
-    
-    public void setInsertOffsets(double[] newOffsets){
-        insertOffsets = newOffsets;
-    }
-    
     public void setParent(Object o) {
         parent_ = (HCAFLIMPluginFrame) o;
     }
@@ -1369,69 +1184,10 @@ public class XYSequencing extends javax.swing.JPanel {
     public void setXYZMotionInterface(XYZMotionInterface xyzmi_) {
         this.xyzmi_ = xyzmi_;
     }
-    
-    public void sendEmail(String subject, String text, String toEmail) {
-         
-      // Recipient's email ID needs to be mentioned.
-      String to = toEmail;
-      
-      // Sender's email ID needs to be mentioned
-      String from = "flimplatereader@gmail.com";
-
-      // Assuming you are sending email from localhost
-      String host = "localhost";
-
-      // Get system properties
-    //  Properties properties = System.getProperties();
-      Properties properties = System.getProperties();
-
-      // Setup mail server
-      //properties.setProperty("mail.smtp.host", "10.101.3.229");
-      properties.setProperty("mail.smtp.host", "smtp.gmail.com");
-      properties.put("mail.smtp.port", "587");
-      properties.setProperty("mail.user", "flimplatereader");
-      properties.setProperty("mail.password", "flimimages");
-      properties.put("mail.smtp.starttls.enable","true"); 
-      properties.put("mail.smtp.auth", "true"); //enable authentication
-        
-        String pww="flimimages";
-        Session session;
-        session = Session.getDefaultInstance(properties, new javax.mail.Authenticator(){ 
-            protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
-                return new javax.mail.PasswordAuthentication("flimplatereader@gmail.com", pww);
-            }
-        });
-
-      try{
-         // Create a default MimeMessage object.
-         MimeMessage message = new MimeMessage(session);
-
-         // Set From: header field of the header.
-         message.setFrom(new InternetAddress(from));
-
-         // Set To: header field of the header.
-         message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-
-         // Set Subject: header field
-         message.setSubject(subject);
-
-         // Now set the actual message
-         message.setText(text);
-
-         // Send message
-         Transport.send(message);
-         System.out.println("Sent message successfully....");
-      }catch (MessagingException mex) {
-         mex.printStackTrace();
-      }
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox FOVNudgeCheckbox;
     private javax.swing.JComboBox FOVPatternCombo;
     private javax.swing.JFormattedTextField FOVToFindField;
-    private javax.swing.JButton LoadXYZ;
-    private javax.swing.JButton SaveXYZ;
     private javax.swing.JToggleButton advancedPFButton;
     private javax.swing.JFormattedTextField attemptsField;
     private javax.swing.JPanel autoFOVPanel;
@@ -1442,10 +1198,8 @@ public class XYSequencing extends javax.swing.JPanel {
     private javax.swing.JButton genZStackButton;
     private javax.swing.JTextField groupDescField;
     private javax.swing.JLabel groupDescLabel;
-    private javax.swing.JComboBox insertType;
     private javax.swing.JFormattedTextField intensityThresoldField;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1458,14 +1212,14 @@ public class XYSequencing extends javax.swing.JPanel {
     private javax.swing.JButton quickPFButton;
     private javax.swing.JFormattedTextField ringRadiusField;
     private javax.swing.JLabel ringRadiusLabel;
-    private javax.swing.JComboBox snakeType;
-    private javax.swing.JLabel snaketypelabel;
     private javax.swing.JButton storeXYZButton;
     private javax.swing.JPanel storedXYZPanel;
+<<<<<<< HEAD
     private javax.swing.JButton testPrefind;
     private javax.swing.JComboBox zModeCombo;
+=======
+>>>>>>> IMPERIAL_ONE/master
     // End of variables declaration//GEN-END:variables
 
-         
-      
+    
 }

@@ -6,28 +6,79 @@
 package ProSettingsGUI;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.List;
 /**
  *
  * @author Frederik
  */
 public class ProSettingsPanel extends javax.swing.JPanel {
-    
-    private VariableTest var_;
+    public static String eMail;
+ 
+    private HCAFLIMPluginFrame parent_;
+    private Variable var_;
     private Arduino arduino_;
     private XYSequencing xYSeq_;        
-    
+    private double H_shift_scale;
+    private double V_shift_scale;
+    private boolean HV_swap;
+    private Gson gson;
+    private Writer writer;
+    private FileInputStream objectiveFileInputStream;
+    private JsonReader reader;
+    private Hashtable <String, Objective> objectiveTable;
+    private List<Objective> currentObjectiveArray;
     /**
      * Creates new form ProSettingsGUI
      */
     
     public ProSettingsPanel() {
         initComponents();
-        var_ = VariableTest.getInstance();
+        var_ = Variable.getInstance();
         arduino_ = Arduino.getInstance();
         xYSeq_ = XYSequencing.getInstance();
+        var_.motorizedMicroscopeTabelWhich = motorizedMicroscopeTableComboBox.getSelectedItem().toString();
+        var_.autofocusWhich = AutoFocusSelectComboBox.getSelectedItem().toString();
+        var_.acquisitionStrategy = AcquisitionStrategyComboBox.getSelectedItem().toString();
+        H_shift_scale = 1;
+        V_shift_scale = 1;
+        eMail="flimplatereader@gmail.com";
+        HV_swap = false;
+        gson = new GsonBuilder().create();
+        // Fill up our objective table...
+        //currentObjectiveArray = new List<Objective>();
+//        try{          
+//            objectiveFileInputStream = new FileInputStream("C:\\Program Files\\Micro-Manager-1.4.20\\ObjectiveOffsets\\Output.json");
+//            currentObjectiveArray = readObjectiveJson(objectiveFileInputStream);
+//        } catch(Exception ex) {
+//            System.out.println("oops");
+//            System.out.println(ex);
+//        }
+        
+//        Integer turretPositions = currentObjectiveArray.size();
+//        objectiveTable = new Hashtable<String, Objective>();
+//        objectiveTable.clear();
+//        for(Integer i=0;i<turretPositions;i++){
+//            String key = "Turretposition_"+i.toString();
+//            JSONview.setText(key);
+//            objectiveTable.put(key, currentObjectiveArray.get(i));
+//        }
     }
 
     /**
@@ -59,10 +110,37 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         yOffsetRingField = new javax.swing.JTextField();
         yOffsetRingLabel = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        relayText = new javax.swing.JLabel();
+        relayField = new javax.swing.JTextField();
         dougPanel = new javax.swing.JPanel();
         unknownFolderCheckBox = new javax.swing.JCheckBox();
         AcquisitionSavingMode_combo = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
+        Hardware = new javax.swing.JPanel();
+        AutoFocusSelectComboBox = new javax.swing.JComboBox();
+        AutoFocusLabel = new javax.swing.JLabel();
+        motorizedMicroscopeTableComboBox = new javax.swing.JComboBox();
+        MotorizedMicroscopeTableLabel = new javax.swing.JLabel();
+        acquisitionStrategyPanel = new javax.swing.JPanel();
+        AcquisitionStrategyComboBox = new javax.swing.JComboBox();
+        prefindthreshtest = new javax.swing.JTextField();
+        Text_for_prefind_thresh = new javax.swing.JTextField();
+        percentage_coverage = new javax.swing.JTextField();
+        pct_coverage_text = new javax.swing.JTextField();
+        HShiftScale = new javax.swing.JTextField();
+        VShiftScale = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        H_V_swap = new javax.swing.JToggleButton();
+        JSONtest = new javax.swing.JButton();
+        JSONview = new javax.swing.JTextField();
+        readJSON = new javax.swing.JButton();
+        forceAFdefault = new javax.swing.JButton();
+        eMailAddressLabel = new javax.swing.JLabel();
+        eMailAddressField = new javax.swing.JTextField();
+        eMailDefault = new javax.swing.JLabel();
+        UpdateEmailButton = new javax.swing.JButton();
+        SpecialAcquistionTickBox = new javax.swing.JCheckBox();
 
         arduinoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Arduino"));
 
@@ -101,30 +179,27 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         arduinoPanelLayout.setHorizontalGroup(
             arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(arduinoPanelLayout.createSequentialGroup()
+                .addGroup(arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(thresholdA0Field, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+                    .addComponent(thresholdA1Field)
+                    .addComponent(laserIntensityField)
+                    .addComponent(shutterResponseField, javax.swing.GroupLayout.Alignment.LEADING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(laserIntensityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(arduinoPanelLayout.createSequentialGroup()
-                        .addGroup(arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(thresholdA0Field, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
-                            .addComponent(thresholdA1Field)
-                            .addComponent(laserIntensityField)
-                            .addComponent(shutterResponseField, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(arduinoPanelLayout.createSequentialGroup()
                                 .addGroup(arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(thresholdA1Label)
                                     .addComponent(thresholdA0Label, javax.swing.GroupLayout.Alignment.TRAILING))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(updateLaserIntensityButton)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(laserIntensityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(arduinoPanelLayout.createSequentialGroup()
-                                .addComponent(shutterResponseLabel)
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(arduinoPanelLayout.createSequentialGroup()
-                        .addComponent(enableLightCheckButton)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(updateLaserIntensityButton))
+                            .addComponent(shutterResponseLabel))
+                        .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(arduinoPanelLayout.createSequentialGroup()
+                .addComponent(enableLightCheckButton)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         arduinoPanelLayout.setVerticalGroup(
             arduinoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -197,10 +272,19 @@ public class ProSettingsPanel extends javax.swing.JPanel {
 
         yOffsetRingLabel.setText("yOffset for centration of ring acquisition");
 
-        jButton1.setText("jButton1");
+        jButton1.setText("Check");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+
+        relayText.setText("relay between HRI and camera");
+
+        relayField.setText("0.7");
+        relayField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                relayFieldActionPerformed(evt);
             }
         });
 
@@ -210,26 +294,35 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fOVPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(xOffsetRingField, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
-                    .addComponent(yOffsetRingField))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(fOVPanelLayout.createSequentialGroup()
-                        .addComponent(xOffsetRingLabel)
+                        .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(xOffsetRingField, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+                            .addComponent(yOffsetRingField))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1))
-                    .addComponent(yOffsetRingLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(xOffsetRingLabel)
+                            .addComponent(yOffsetRingLabel))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(fOVPanelLayout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(relayField, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(relayText)
+                        .addGap(94, 94, 94))))
         );
         fOVPanelLayout.setVerticalGroup(
             fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fOVPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(relayText)
+                    .addComponent(relayField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(xOffsetRingField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(xOffsetRingLabel)
-                    .addComponent(jButton1))
+                    .addComponent(xOffsetRingLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fOVPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(yOffsetRingField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -260,10 +353,10 @@ public class ProSettingsPanel extends javax.swing.JPanel {
             .addGroup(dougPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(unknownFolderCheckBox)
-                .addContainerGap(53, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        AcquisitionSavingMode_combo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "separate OME.tiff for every FOV", "single SWP OME.tiff" }));
+        AcquisitionSavingMode_combo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "separate OME.tiff for every FOV", "single SWP OME.tiff", "single SWP OME.tiff with per FOV backup" }));
         AcquisitionSavingMode_combo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 AcquisitionSavingMode_comboActionPerformed(evt);
@@ -272,39 +365,297 @@ public class ProSettingsPanel extends javax.swing.JPanel {
 
         jLabel1.setText("Acquisition saving mode");
 
+        Hardware.setBorder(javax.swing.BorderFactory.createTitledBorder("Hardware"));
+
+        AutoFocusSelectComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "ZDC Olympus", "Definite focus Zeiss" }));
+        AutoFocusSelectComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AutoFocusSelectComboBoxActionPerformed(evt);
+            }
+        });
+
+        AutoFocusLabel.setText("Auto focus");
+
+        motorizedMicroscopeTableComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Corvus Stage", "WS PiezoDrive 08" }));
+        motorizedMicroscopeTableComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                motorizedMicroscopeTableComboBoxActionPerformed(evt);
+            }
+        });
+
+        MotorizedMicroscopeTableLabel.setText("Motorized microscope table");
+
+        javax.swing.GroupLayout HardwareLayout = new javax.swing.GroupLayout(Hardware);
+        Hardware.setLayout(HardwareLayout);
+        HardwareLayout.setHorizontalGroup(
+            HardwareLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HardwareLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(HardwareLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(AutoFocusLabel)
+                    .addComponent(MotorizedMicroscopeTableLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(HardwareLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(motorizedMicroscopeTableComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(AutoFocusSelectComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        HardwareLayout.setVerticalGroup(
+            HardwareLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HardwareLayout.createSequentialGroup()
+                .addGroup(HardwareLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(AutoFocusSelectComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(AutoFocusLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(HardwareLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(motorizedMicroscopeTableComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(MotorizedMicroscopeTableLabel))
+                .addContainerGap())
+        );
+
+        acquisitionStrategyPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Acquisition Strategy"));
+
+        AcquisitionStrategyComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Start always by column 1 (horizontal fast axis)", "Start always by row 1 (vertical fast axis) NOT IMPLEMENTED", "Snake (horizontal fast axis)", "Snake (vertical fast axis) NOT IMPLEMENTED" }));
+        AcquisitionStrategyComboBox.setSelectedItem(AcquisitionStrategyComboBox);
+        AcquisitionStrategyComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AcquisitionStrategyComboBoxActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout acquisitionStrategyPanelLayout = new javax.swing.GroupLayout(acquisitionStrategyPanel);
+        acquisitionStrategyPanel.setLayout(acquisitionStrategyPanelLayout);
+        acquisitionStrategyPanelLayout.setHorizontalGroup(
+            acquisitionStrategyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(acquisitionStrategyPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(AcquisitionStrategyComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        acquisitionStrategyPanelLayout.setVerticalGroup(
+            acquisitionStrategyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(AcquisitionStrategyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        prefindthreshtest.setText("210");
+        prefindthreshtest.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prefindthreshtestActionPerformed(evt);
+            }
+        });
+
+        Text_for_prefind_thresh.setEditable(false);
+        Text_for_prefind_thresh.setText("Threshold for prefind");
+        Text_for_prefind_thresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Text_for_prefind_threshActionPerformed(evt);
+            }
+        });
+
+        percentage_coverage.setText("0.5");
+
+        pct_coverage_text.setText("% coverage needed");
+
+        HShiftScale.setText("1");
+        HShiftScale.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                HShiftScaleActionPerformed(evt);
+            }
+        });
+
+        VShiftScale.setText("-1");
+        VShiftScale.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                VShiftScaleActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("H shift scaling");
+
+        jLabel3.setText("V shift scaling");
+
+        H_V_swap.setSelected(true);
+        H_V_swap.setText("H/V swap");
+        H_V_swap.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                H_V_swapActionPerformed(evt);
+            }
+        });
+
+        JSONtest.setText("Test JSON");
+        JSONtest.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JSONtestActionPerformed(evt);
+            }
+        });
+
+        JSONview.setText("TEST INIT");
+        JSONview.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JSONviewActionPerformed(evt);
+            }
+        });
+
+        readJSON.setText("Read JSON");
+
+        forceAFdefault.setText("Set AF default");
+        forceAFdefault.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                forceAFdefaultActionPerformed(evt);
+            }
+        });
+
+        eMailAddressLabel.setText("Email address:");
+
+        eMailAddressField.setText("flimplatereader@gmail.com");
+        eMailAddressField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eMailAddressFieldActionPerformed(evt);
+            }
+        });
+
+        eMailDefault.setText("Default: flimplatereader@gmail.com / PW:flimimages");
+
+        UpdateEmailButton.setText("Update Email");
+        UpdateEmailButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UpdateEmailButtonActionPerformed(evt);
+            }
+        });
+
+        SpecialAcquistionTickBox.setText("Special Acquisition (Row A with filtercombination 1, Row B with filtercombination 2, ...):");
+        SpecialAcquistionTickBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SpecialAcquistionTickBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(arduinoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(warningPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(fOVPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(dougPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Hardware, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(dougPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(fOVPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(arduinoPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(50, 50, 50)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(prefindthreshtest, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
+                                    .addComponent(percentage_coverage)
+                                    .addComponent(HShiftScale)
+                                    .addComponent(VShiftScale))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(Text_for_prefind_thresh, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+                                        .addComponent(pct_coverage_text))
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel3)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(H_V_swap)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(forceAFdefault)))
+                        .addGap(0, 12, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(JSONtest)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(readJSON))
+                            .addComponent(JSONview, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(22, Short.MAX_VALUE))))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(eMailAddressLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(eMailAddressField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(UpdateEmailButton))
+                            .addComponent(eMailDefault)
+                            .addComponent(SpecialAcquistionTickBox))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(warningPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(arduinoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(arduinoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(JSONtest)
+                            .addComponent(readJSON))
+                        .addGap(18, 18, 18)
+                        .addComponent(JSONview, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(fOVPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dougPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(3, 3, 3)
+                        .addComponent(Hardware, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(acquisitionStrategyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(H_V_swap)
+                            .addComponent(forceAFdefault))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(prefindthreshtest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Text_for_prefind_thresh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(percentage_coverage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(pct_coverage_text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(HShiftScale, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(VShiftScale, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(fOVPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(dougPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(AcquisitionSavingMode_combo, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap(86, Short.MAX_VALUE))
+                    .addComponent(eMailAddressLabel)
+                    .addComponent(eMailAddressField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(UpdateEmailButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(eMailDefault)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(SpecialAcquistionTickBox)
+                .addContainerGap(100, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    public void setParent(Object o){
+        parent_ = (HCAFLIMPluginFrame) o;
+    }
     
     private void updateLaserIntensityButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateLaserIntensityButtonActionPerformed
         double intensity=arduino_.getLaserIntensity();
@@ -324,6 +675,8 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_enableLightCheckButtonActionPerformed
 
+   
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String test=xOffsetRingField.getText();
         System.out.println(test);
@@ -355,22 +708,244 @@ public class ProSettingsPanel extends javax.swing.JPanel {
         var_.AcquisitionSavingMode = AcquisitionSavingMode_combo.getSelectedItem().toString(); 
     }//GEN-LAST:event_AcquisitionSavingMode_comboActionPerformed
 
+    private void AutoFocusSelectComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AutoFocusSelectComboBoxActionPerformed
+        var_.autofocusWhich = AutoFocusSelectComboBox.getSelectedItem().toString();
+    }//GEN-LAST:event_AutoFocusSelectComboBoxActionPerformed
+
+    private void motorizedMicroscopeTableComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_motorizedMicroscopeTableComboBoxActionPerformed
+        var_.motorizedMicroscopeTabelWhich = motorizedMicroscopeTableComboBox.getSelectedItem().toString();
+    }//GEN-LAST:event_motorizedMicroscopeTableComboBoxActionPerformed
+
+    private void AcquisitionStrategyComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AcquisitionStrategyComboBoxActionPerformed
+        var_.acquisitionStrategy = AcquisitionStrategyComboBox.getSelectedItem().toString();
+    }//GEN-LAST:event_AcquisitionStrategyComboBoxActionPerformed
+
+    private void prefindthreshtestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prefindthreshtestActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_prefindthreshtestActionPerformed
+
+    public double getPrefindThresh(){
+        return Double.parseDouble(this.prefindthreshtest.getText());
+    }
+    
+    private void Text_for_prefind_threshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Text_for_prefind_threshActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_Text_for_prefind_threshActionPerformed
+
+    public double getPercentCoverage(){
+        return Double.parseDouble(this.percentage_coverage.getText());
+    }
+    
+    private void relayFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relayFieldActionPerformed
+        var_.relay = Double.parseDouble(relayField.getText( ));
+    }//GEN-LAST:event_relayFieldActionPerformed
+
+    private void HShiftScaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HShiftScaleActionPerformed
+        // TODO add your handling code here:
+        H_shift_scale = Double.parseDouble(HShiftScale.getText());
+    }//GEN-LAST:event_HShiftScaleActionPerformed
+
+    private void VShiftScaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VShiftScaleActionPerformed
+        // TODO add your handling code here:
+        V_shift_scale = Double.parseDouble(VShiftScale.getText());
+    }//GEN-LAST:event_VShiftScaleActionPerformed
+
+    private void H_V_swapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_H_V_swapActionPerformed
+        // TODO add your handling code here:
+        HV_swap = H_V_swap.isSelected();
+    }//GEN-LAST:event_H_V_swapActionPerformed
+
+    private void JSONviewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JSONviewActionPerformed
+        // TODO add your handling code here:
+
+        JSONview.setText("HELLO");
+    }//GEN-LAST:event_JSONviewActionPerformed
+
+    private void JSONtestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JSONtestActionPerformed
+//        try{
+//            writer = new FileWriter("C:\\Program Files\\Micro-Manager-1.4.20\\ObjectiveOffsets\\Output.json");
+//        } catch (IOException ex) {         
+//        }        
+//        Objective [] Objectivearray = new Objective[6];
+//        for (int i=0;i<6;i++){
+//                Objectivearray[i] = new Objective("Turret_pos"+i,(i*10.0),(i*1.0),(i*2.0),(i*3.0));
+//        }
+//        gson.toJson(Objectivearray, writer);
+//        try{
+//            writer.close();
+//        } catch (IOException ex) {
+//        } finally {
+//        }
+    }//GEN-LAST:event_JSONtestActionPerformed
+
+    private void forceAFdefaultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forceAFdefaultActionPerformed
+        // TODO add your handling code here:
+        parent_.setAFdefaultheight(Double.parseDouble(parent_.xyzmi_.getZAbsolute().toString()));
+    }//GEN-LAST:event_forceAFdefaultActionPerformed
+
+    private void eMailAddressFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eMailAddressFieldActionPerformed
+         
+    }//GEN-LAST:event_eMailAddressFieldActionPerformed
+
+    private void UpdateEmailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateEmailButtonActionPerformed
+        eMail=eMailAddressField.getText();
+        System.out.println("New Email address:"+eMail);
+    }//GEN-LAST:event_UpdateEmailButtonActionPerformed
+
+    private void SpecialAcquistionTickBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SpecialAcquistionTickBoxActionPerformed
+        if (SpecialAcquistionTickBox.isSelected()){
+            var_.specialAcq=true;
+        } else {
+            var_.specialAcq=false;
+        }
+    }//GEN-LAST:event_SpecialAcquistionTickBoxActionPerformed
+
+    public double getHshiftscale(){
+        return H_shift_scale;
+    }
+
+    public double getVshiftscale(){
+        return V_shift_scale;
+    }
+
+    public boolean getHVswap(){
+        return HV_swap;
+    }    
+    
     public void updatePanel(){
        // do something when ProSettingsPanel is selected
     }
     
+    public List readObjectiveJson(InputStream in) throws IOException{
+        reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+        try{
+            return readObjectivesArray(reader);
+        } finally {
+            reader.close();
+        }
+    }
+    
+    public List readObjectivesArray(JsonReader reader) throws IOException {
+        List Objectives = new ArrayList();
+        reader.beginArray();
+        while (reader.hasNext()){
+            Objectives.add(readObjectiveProperties(reader));
+        }
+        reader.endArray();
+        return Objectives;
+    }
+    
+    public Objective readObjectiveProperties (JsonReader reader) throws IOException {
+        //initialise with some defaults
+        String name = "NULL";
+        Double magnification = 1.0;
+        Double Xoffset = 0.0;
+        Double Yoffset = 0.0;
+        Double Zoffset = 0.0;
+        
+        reader.beginObject();
+        while(reader.hasNext()){
+            String itemname = reader.nextName();
+            if(itemname.equals("name")){
+                name = reader.nextString();
+            } else if(itemname.equals("magnification")){
+                magnification = reader.nextDouble();
+            } else if(itemname.equals("Xoffset")){
+                Xoffset = reader.nextDouble();
+            } else if(itemname.equals("Yoffset")){
+                Yoffset = reader.nextDouble();
+            } else if(itemname.equals("Zoffset")){
+                Zoffset = reader.nextDouble();
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+        return new Objective(name, magnification,Xoffset,Yoffset,Zoffset);
+    }
 
+    public class Objective {
+        private String name;
+        private Double magnification;
+        private Double Xoffset;
+        private Double Yoffset;
+        private Double Zoffset;
+        
+        public Objective(){
+            name = "Default";
+            magnification = 1.0;
+            Xoffset = 0.0;
+            Yoffset = 0.0;
+            Zoffset = 10.0;            
+        }
+
+        public Objective (String namein, Double magnificationin, Double Xoffsetin, Double Yoffsetin, Double Zoffsetin){
+            name = namein;
+            magnification = magnificationin;
+            Xoffset = Xoffsetin;
+            Yoffset = Yoffsetin;
+            Zoffset = Zoffsetin;
+        }
+        
+        public String getname (){
+            return this.name;
+        }
+
+        public Double getmag (){
+            return this.magnification;
+        }
+        
+        public Double getXoffset (){
+            return this.Xoffset;
+        }
+        
+        public Double Yoffset (){
+            return this.Yoffset;
+        }
+        
+        public Double Zoffset (){
+            return this.Zoffset;
+        }
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox AcquisitionSavingMode_combo;
+    private javax.swing.JComboBox AcquisitionStrategyComboBox;
+    private javax.swing.JLabel AutoFocusLabel;
+    private javax.swing.JComboBox AutoFocusSelectComboBox;
+    private javax.swing.JTextField HShiftScale;
+    private javax.swing.JToggleButton H_V_swap;
+    private javax.swing.JPanel Hardware;
+    private javax.swing.JButton JSONtest;
+    private javax.swing.JTextField JSONview;
+    private javax.swing.JLabel MotorizedMicroscopeTableLabel;
+    private javax.swing.JCheckBox SpecialAcquistionTickBox;
+    private javax.swing.JTextField Text_for_prefind_thresh;
+    private javax.swing.JButton UpdateEmailButton;
+    private javax.swing.JTextField VShiftScale;
+    private javax.swing.JPanel acquisitionStrategyPanel;
     private javax.swing.JPanel arduinoPanel;
     private javax.swing.JPanel dougPanel;
+    private javax.swing.JTextField eMailAddressField;
+    private javax.swing.JLabel eMailAddressLabel;
+    private javax.swing.JLabel eMailDefault;
     private javax.swing.JRadioButton enableLightCheckButton;
     private javax.swing.JPanel fOVPanel;
+    private javax.swing.JButton forceAFdefault;
     private javax.swing.JScrollPane importantInfo;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JTextField laserIntensityField;
     private javax.swing.JLabel laserIntensityLabel;
+    private javax.swing.JComboBox motorizedMicroscopeTableComboBox;
+    private javax.swing.JTextField pct_coverage_text;
+    private javax.swing.JTextField percentage_coverage;
+    private javax.swing.JTextField prefindthreshtest;
+    private javax.swing.JButton readJSON;
+    private javax.swing.JTextField relayField;
+    private javax.swing.JLabel relayText;
     private javax.swing.JTextField shutterResponseField;
     private javax.swing.JLabel shutterResponseLabel;
     private javax.swing.JTextField thresholdA0Field;

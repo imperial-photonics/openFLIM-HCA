@@ -6,8 +6,11 @@
 package com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.GUIComponents;
 
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.ArduinoStepperMotor;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Objective_object;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Port_object;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.HCAFLIMPluginFrame;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents.SliderControl;
 import com.github.dougkelly88.FLIMPlateReaderGUI.LightPathClasses.Classes.CurrentLightPath;
@@ -16,10 +19,17 @@ import java.awt.BorderLayout;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import mmcorej.CMMCore;
 import mmcorej.StrVector;
 import org.micromanager.MMStudio;
 import org.micromanager.api.events.PropertyChangedEvent;
+
+import com.google.gson.Gson;
+import java.nio.file.Files;
+
+import java.nio.file.FileSystems;
 
 /**
  *
@@ -31,13 +41,19 @@ public class LightPathPanel extends javax.swing.JPanel {
     CMMCore core_;
     PropertyChangedEvent event_;
     private SeqAcqProps sap_;
-    private VariableTest var_;
+    private Variable var_;
     HCAFLIMPluginFrame parent_;
     SliderControl powerSlider_;
+    SliderControl continuouseFW_;
     CurrentLightPath currentLightPath_;
     private Arduino arduino_;
+    private ArduinoStepperMotor arduinoSM_;
     private XYZPanel xYZPanel_;
     private static final LightPathPanel fINSTANCE =  new LightPathPanel();
+    private String [] [] ObjectiveOffsetInfo;
+    private String [] [] PortOffsetInfo;
+    public boolean ObjOffsetsloaded;
+    public boolean PortOffsetsloaded;
     // TODO: replace var_ stuff with currentLightPath_
 //    private SequencedAcquisitionProperties sap_;
     // TODO: generate a method that checks for spectral overlap between
@@ -54,9 +70,14 @@ public class LightPathPanel extends javax.swing.JPanel {
         initComponents();
         gui_ = MMStudio.getInstance();
         sap_ = SeqAcqProps.getInstance();
-        var_ = VariableTest.getInstance();
+        var_ = Variable.getInstance();
         arduino_ = Arduino.getInstance();
+        arduinoSM_ = ArduinoStepperMotor.getInstance();
         xYZPanel_ = XYZPanel.getInstance();
+        ObjOffsetsloaded = false;
+        PortOffsetsloaded = false;
+        //Gson gson = new GsonBuilder().create();
+        
         try {
             gui_.registerForEvents(this);
             core_ = gui_.getCore();
@@ -64,9 +85,144 @@ public class LightPathPanel extends javax.swing.JPanel {
             //gui_.showMessage("Error in FLIMPanel constructor: " + e.getMessage());
         }
         currentLightPath_ = new CurrentLightPath();
-
+        setControlDefaults();
     }
-
+    
+    private String [] interpretObjectiveInfo(String info){
+        return info.split("##");
+    }
+    
+    public void LoadJSONObjOffsets(){
+        // Show a warning if the objectives loaded don't match the ones stored in Micro-manager?
+        int num_props = 4; //Name, Xoff, Yoff, Zoff
+        ObjectiveOffsetInfo = new String [objectiveComboBox.getItemCount()] [num_props];
+        
+        Gson gson = new Gson();
+        //Load the file with the stored offsets
+        String directoryName = ij.IJ.getDirectory("ImageJ");
+        String objFilepath = directoryName.concat("OPENFLIMHCA_JSONObjectiveOffsets.txt");
+        String JSONInString = "";
+        try{
+            JSONInString = new String(Files.readAllBytes(FileSystems.getDefault().getPath(objFilepath)));
+        } catch (Exception e) {
+            JSONInString = "FAIL";
+        }
+        Objective_object[] objs = gson.fromJson(JSONInString, Objective_object[].class);
+        for(int i=0;i<objs.length;i++){
+                ObjectiveOffsetInfo[i] [0] = objs[i].getObjectiveName();
+                ObjectiveOffsetInfo[i] [1] = objs[i].getObjectiveOffsets()[0].toString();
+                ObjectiveOffsetInfo[i] [2] = objs[i].getObjectiveOffsets()[1].toString();
+                ObjectiveOffsetInfo[i] [3] = objs[i].getObjectiveOffsets()[2].toString();
+                System.out.println(ObjectiveOffsetInfo[i]);
+        }
+        String mismatchedObj = "";
+        String explanationstring = "The following objective(s) listed in micro-manager offsets are not matched to the objectives listed in the saved Objective Offsets file - please fix this:\n\n";
+        for(int i=0;i<objectiveComboBox.getItemCount();i++){
+            if (ObjectiveOffsetInfo[i] [0].equals(objectiveComboBox.getItemAt(i).toString())){
+                mismatchedObj=mismatchedObj.concat("0");
+            } else {
+                mismatchedObj=mismatchedObj.concat("1");
+                explanationstring=explanationstring.concat(objectiveComboBox.getItemAt(i).toString()+" is stored in the file as "+ObjectiveOffsetInfo[i] [0]+"\n");
+            }
+        }
+        if(Integer.parseInt((String)mismatchedObj)>0){
+            // if we have a case where an objective name doesn't match the file...
+            System.out.println(explanationstring);
+        }
+    }    
+    
+    public void LoadJSONPortOffsets(){
+        // Show a warning if the objectives loaded don't match the ones stored in Micro-manager?
+        int num_props = 4; //Name, Xoff, Yoff, Zoff
+        PortOffsetInfo = new String [switchPortComboBox.getItemCount()] [num_props];
+        
+        Gson gson = new Gson();
+        //Load the file with the stored offsets
+        String directoryName = ij.IJ.getDirectory("ImageJ");
+        String objFilepath = directoryName.concat("OPENFLIMHCA_JSONPortOffsets.txt");
+        String JSONInString = "";
+        try{
+            JSONInString = new String(Files.readAllBytes(FileSystems.getDefault().getPath(objFilepath)));
+        } catch (Exception e) {
+            
+        }
+        Port_object[] ports = gson.fromJson(JSONInString, Port_object[].class);
+        for(int i=0;i<ports.length;i++){
+                PortOffsetInfo[i] [0] = ports[i].getPortName();
+                PortOffsetInfo[i] [1] = ports[i].getPortOffsets()[0].toString();
+                PortOffsetInfo[i] [2] = ports[i].getPortOffsets()[1].toString();
+                PortOffsetInfo[i] [3] = ports[i].getPortOffsets()[2].toString();
+        }
+        String mismatchedPort = "";
+        String explanationstring = "The following objective(s) listed in micro-manager offsets are not matched to the ports listed in the saved Port Offsets file - please fix this:\n\n";
+        for(int i=0;i<switchPortComboBox.getItemCount();i++){
+            if (PortOffsetInfo[i] [0].equals(switchPortComboBox.getItemAt(i).toString())){
+                mismatchedPort=mismatchedPort.concat("0");
+            } else {
+                mismatchedPort=mismatchedPort.concat("1");
+                explanationstring=explanationstring.concat(switchPortComboBox.getItemAt(i).toString()+" is stored in the file as: "+PortOffsetInfo[i] [0]+"\n");
+            }
+        }
+        if(Integer.parseInt((String)mismatchedPort)>0){
+            // if we have a case where an objective name doesn't match the file...
+            System.out.println(explanationstring);
+        }
+    }    
+    
+//    public void LoadObjectiveOffsets(){
+//        // Show a warning if the objectives loaded don't match the ones stored in Micro-manager?
+//        int num_props = 4; //Name, Xoff, Yoff, Zoff
+//        ObjectiveOffsetInfo = new String [objectiveComboBox.getItemCount()] [num_props];
+//        //Load the file with the stored offsets
+//        String directoryName = ij.IJ.getDirectory("ImageJ");
+//        String objFilepath = directoryName.concat("OPENFLIMHCA_ObjectiveOffsets.txt");
+//        //System.out.println(objFilepath);
+//        //Compare the loaded data with the names of the objectives stored in ImageJ
+//        try{
+//            File objfile = new File (objFilepath);
+//            FileReader fileReader = new FileReader(objfile);
+//            BufferedReader bufferedReader = new BufferedReader(fileReader);
+//            StringBuffer stringBuffer = new StringBuffer();
+//            String line;
+//            int i=0;
+//            while ((line = bufferedReader.readLine()) != null) {
+//                String thisObjectiveInfo = line;
+//                for(int j=0;j<num_props;j++){
+//                    String [] interpretedObjectiveInfo = interpretObjectiveInfo(thisObjectiveInfo);
+//                    if(interpretedObjectiveInfo.length == num_props){
+//                        ObjectiveOffsetInfo[i] [j] = interpretedObjectiveInfo[j];
+//                    } else {
+//                        if (j>0){
+//                            ObjectiveOffsetInfo[i] [j] = "0";
+//                        } else {
+//                            ObjectiveOffsetInfo[i] [j] = "Unknown";
+//                        }
+//                    }
+//                }
+//                i++;
+//            }            
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//	}
+//        
+//        String mismatchedObj = "";
+//        String explanationstring = "The following objective(s) listed in micro-manager offsets are not matched to the objectives listed in the saved Objective Offsets file - please fix this:\n\n";
+//        for(int i=0;i<objectiveComboBox.getItemCount();i++){
+//            if (ObjectiveOffsetInfo[i] [0].equals(objectiveComboBox.getItemAt(i).toString())){
+//                mismatchedObj=mismatchedObj.concat("0");
+//            } else {
+//                mismatchedObj=mismatchedObj.concat("1");
+//                explanationstring=explanationstring.concat(objectiveComboBox.getItemAt(i).toString()+"\n");
+//            }
+//        }
+//               
+//        if(Integer.parseInt((String)mismatchedObj)>0){
+//            // if we have a case where an objective name doesn't match the file...
+//            System.out.println(explanationstring);
+//        }
+//        //Offsetsloaded=true;
+//    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -103,6 +259,16 @@ public class LightPathPanel extends javax.swing.JPanel {
         Camera = new javax.swing.JPanel();
         flimCamera = new javax.swing.JButton();
         bfCamera = new javax.swing.JButton();
+        cameraPixelSize = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        ContinusouseFilterWheel = new javax.swing.JPanel();
+        continuouseFWPanel = new javax.swing.JPanel();
+        wakeButton = new javax.swing.JButton();
+        sleepButton = new javax.swing.JButton();
+        stepLeftButton = new javax.swing.JButton();
+        steprightButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         excitationSource.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Excitation source"));
 
@@ -342,6 +508,17 @@ public class LightPathPanel extends javax.swing.JPanel {
             }
         });
 
+        cameraPixelSize.setText("6.45");
+        cameraPixelSize.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cameraPixelSizeActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Camera pixel size");
+
+        jLabel8.setText("um");
+
         javax.swing.GroupLayout CameraLayout = new javax.swing.GroupLayout(Camera);
         Camera.setLayout(CameraLayout);
         CameraLayout.setHorizontalGroup(
@@ -351,16 +528,125 @@ public class LightPathPanel extends javax.swing.JPanel {
                 .addComponent(flimCamera, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(35, 35, 35)
                 .addComponent(bfCamera, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addGroup(CameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addGroup(CameraLayout.createSequentialGroup()
+                        .addComponent(cameraPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel8)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         CameraLayout.setVerticalGroup(
             CameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CameraLayout.createSequentialGroup()
-                .addContainerGap()
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(CameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(flimCamera)
-                    .addComponent(bfCamera))
+                    .addComponent(bfCamera)
+                    .addComponent(cameraPixelSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
                 .addContainerGap(20, Short.MAX_VALUE))
+        );
+
+        ContinusouseFilterWheel.setBorder(javax.swing.BorderFactory.createTitledBorder("Continuouse Filter Wheel"));
+        ContinusouseFilterWheel.setEnabled(false);
+
+        continuouseFWPanel.setEnabled(false);
+
+        javax.swing.GroupLayout continuouseFWPanelLayout = new javax.swing.GroupLayout(continuouseFWPanel);
+        continuouseFWPanel.setLayout(continuouseFWPanelLayout);
+        continuouseFWPanelLayout.setHorizontalGroup(
+            continuouseFWPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 320, Short.MAX_VALUE)
+        );
+        continuouseFWPanelLayout.setVerticalGroup(
+            continuouseFWPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 33, Short.MAX_VALUE)
+        );
+
+        wakeButton.setText("wake");
+        wakeButton.setEnabled(false);
+        wakeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                wakeButtonActionPerformed(evt);
+            }
+        });
+
+        sleepButton.setText("sleep");
+        sleepButton.setEnabled(false);
+        sleepButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sleepButtonActionPerformed(evt);
+            }
+        });
+
+        stepLeftButton.setText("stepLeftt");
+        stepLeftButton.setEnabled(false);
+        stepLeftButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stepLeftButtonActionPerformed(evt);
+            }
+        });
+
+        steprightButton.setText("stepRight");
+        steprightButton.setEnabled(false);
+        steprightButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                steprightButtonActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("jButton1");
+        jButton1.setEnabled(false);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout ContinusouseFilterWheelLayout = new javax.swing.GroupLayout(ContinusouseFilterWheel);
+        ContinusouseFilterWheel.setLayout(ContinusouseFilterWheelLayout);
+        ContinusouseFilterWheelLayout.setHorizontalGroup(
+            ContinusouseFilterWheelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ContinusouseFilterWheelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(ContinusouseFilterWheelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ContinusouseFilterWheelLayout.createSequentialGroup()
+                        .addComponent(continuouseFWPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(steprightButton))
+                    .addGroup(ContinusouseFilterWheelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(stepLeftButton)))
+                .addGap(18, 18, 18)
+                .addGroup(ContinusouseFilterWheelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ContinusouseFilterWheelLayout.createSequentialGroup()
+                        .addGroup(ContinusouseFilterWheelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(wakeButton)
+                            .addComponent(sleepButton))
+                        .addGap(25, 25, 25))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ContinusouseFilterWheelLayout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addContainerGap())))
+        );
+        ContinusouseFilterWheelLayout.setVerticalGroup(
+            ContinusouseFilterWheelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ContinusouseFilterWheelLayout.createSequentialGroup()
+                .addComponent(wakeButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(ContinusouseFilterWheelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(sleepButton)
+                    .addComponent(stepLeftButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(ContinusouseFilterWheelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(steprightButton)
+                    .addComponent(jButton1))
+                .addGap(0, 21, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ContinusouseFilterWheelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(continuouseFWPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -371,6 +657,7 @@ public class LightPathPanel extends javax.swing.JPanel {
             .addComponent(Filters, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(excitationSource, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(Camera, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(ContinusouseFilterWheel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -382,7 +669,9 @@ public class LightPathPanel extends javax.swing.JPanel {
                 .addComponent(Olympus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Camera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(89, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ContinusouseFilterWheel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -444,15 +733,129 @@ public class LightPathPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_emissionComboBoxActionPerformed
 
     private void objectiveComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectiveComboBoxActionPerformed
+        double [] OldOffsets = getObjectiveOffsets();
+        
         setByLabel(objectiveComboBox, "Objective");
         currentLightPath_.setObjectiveLabel((String) objectiveComboBox.getSelectedItem());
         var_.ObjectiveComboBoxSelectedItem = (String) objectiveComboBox.getSelectedItem();
-        double magnification = 1;
-//        if (!(objectiveComboBox.getSelectedItem() == null))
-//            magnification = getMag((String) objectiveComboBox.getSelectedItem());
-//        parent_.currentFOV_.setMagnification(magnification);
+        int whichobj = objectiveComboBox.getSelectedIndex();
+        if (ObjOffsetsloaded == true){
+            //get the offsets here...
+            
+            double [] NewOffsets = {Double.parseDouble(ObjectiveOffsetInfo[whichobj] [1]),Double.parseDouble(ObjectiveOffsetInfo[whichobj] [2]),Double.parseDouble(ObjectiveOffsetInfo[whichobj] [3])}; // placeholder
+            setObjectiveOffsets(NewOffsets);
+
+
+            //Shift the stage to account for the objetive change
+            double [] Shifts = {0,0,0};
+            for (int i=0;i<=2;i++){
+                Shifts[i] = NewOffsets[i]-OldOffsets[i];
+            }
+            parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
+        }
+                
+        if ((String) objectiveComboBox.getSelectedItem()!=null){
+                setMag((String) objectiveComboBox.getSelectedItem());
+        }
     }//GEN-LAST:event_objectiveComboBoxActionPerformed
 
+//    public void setMag(String magString){
+//        
+//        int indX=0;
+//        if(magString.contains("x")){
+//            indX=magString.indexOf("x");
+//        }else if(magString.contains("X")){
+//            indX=magString.indexOf("X");
+//        }else{
+//            System.out.println("Is objective empty? Yes-> everything is fine. No-> cannot identify objective label in hardware configuration file. Make sure there is only one x included"
+//                        + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");
+//        }
+//        String newString=null;
+//        newString= magString.substring(0,indX);
+//        int indXX=0;
+//        try{
+//            var_.magnification=Double.parseDouble(magString.substring(0,indX));
+//        }catch(Exception ex){
+//            if(newString.contains(" ")){
+//                indXX=newString.indexOf(" ");
+//            }else if(magString.contains("XO")){
+//                indXX=newString.indexOf("o")+1;
+//            }else{
+//            System.out.println("Is objective empty? Yes-> everything is fine. No-> cannot identify objective label in hardware configuration file. Make sure there is only one x included"
+//                        + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");
+//            }
+//            try{
+//            var_.magnification=Double.parseDouble(magString.substring(indXX,indX));
+//            }catch(Exception exx){
+//                warningMessage("Cannot identify objective label in hardware configuration file. Make sure there is only one x included"
+//                        + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");
+//            }
+//        }
+//        
+//        System.out.println("Magnification changed to "+var_.magnification);
+//    }
+    
+    public void setMag(String magString){
+        String xtype="";
+        boolean Empty=false;
+        if(magString.indexOf("x")>=0){
+            xtype="x";
+        } else if (magString.indexOf("X")>=0){
+            xtype="X";
+        } else {
+            System.out.println("Is objective empty? Yes-> everything is fine. No-> cannot identify objective label in hardware configuration file. Make sure there is only one x included"
+                        + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");            
+            Empty=true;
+        }
+        //System.out.println("Hello World");
+        if(Empty){
+            //var_.magnification=0;
+            System.out.println("NO OBJECTIVE FOUND!");
+        } else {
+            String[] parts = magString.split(xtype);
+            String partbefore = parts[0];
+            String partafter="";
+            if(parts.length>1){
+                partafter = parts[1];
+            } else {
+                partafter ="Air";
+            }
+            //System.out.println(xtype);
+            //System.out.println(partbefore);
+            char[] Beforearray = partbefore.toCharArray();
+            String magvalue="";
+            // Numbers and decimal point
+            String matchstring="[0-9.]";
+            String str="";
+            for(char ch : Beforearray){
+                str=Character.toString(ch);
+                if(str.matches(matchstring)){
+                    magvalue=magvalue.concat(str);
+                }
+            }
+            System.out.println("Magnification: "+magvalue);
+            String immersionfluid="";
+            if(partafter.equals("O")||partafter.equals("Oil")){
+                immersionfluid="Oil";
+            } else if(partafter.equals("W")||partafter.equals("Water")){
+                immersionfluid="Water";
+            } else if(partafter.equals("G")||partafter.equals("Glycerol")){
+                immersionfluid="Glycerol";
+            } else {
+                immersionfluid.equals("Air");
+            }
+            System.out.println("Immersion fluid: "+immersionfluid);
+
+            try {
+                var_.magnification=Double.parseDouble(magvalue);
+            } catch(Exception exx) {
+                    warningMessage("Cannot identify objective label in hardware configuration file. Make sure there is only one x included"
+                            + " and the magnification of the objective is in front of the x without a spacer. For example '40x oil' or similar.");
+                }
+            System.out.println("Magnification changed to "+var_.magnification);
+        }
+    }
+    
     private double getMag(String desc) {
         // TODO: CHECK THIS WORKS!
         // TODO: make this more general/robust...
@@ -483,9 +886,28 @@ public class LightPathPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_filterCubeComboBoxActionPerformed
 
     private void switchPortComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_switchPortComboBoxActionPerformed
+        double [] OldOffsets = getPortOffsets();
+        
         setByLabel(switchPortComboBox, "LightPathPrism");
         currentLightPath_.setPortLabel((String) switchPortComboBox.getSelectedItem());
         var_.SwitchPortComboBoxSelectedItem = (String) switchPortComboBox.getSelectedItem();
+        int whichport = switchPortComboBox.getSelectedIndex();
+        
+        if (PortOffsetsloaded == true){
+            //get the offsets here...
+            
+            double [] NewOffsets = {Double.parseDouble(PortOffsetInfo[whichport] [1]),Double.parseDouble(PortOffsetInfo[whichport] [2]),Double.parseDouble(PortOffsetInfo[whichport] [3])}; // placeholder
+            setPortOffsets(NewOffsets);
+
+
+            //Shift the stage to account for the objetive change
+            double [] Shifts = {0,0,0};
+            for (int i=0;i<=2;i++){
+                Shifts[i] = NewOffsets[i]-OldOffsets[i];
+            }
+            parent_.xyzmi_.moveXYRelative(Shifts[0], Shifts[1]); // ignoring Z for now
+        }
+        
         if(switchPortComboBox.getSelectedIndex()==0){
            laserToggle.setText("Turn laser ON");
             try {
@@ -542,22 +964,66 @@ public class LightPathPanel extends javax.swing.JPanel {
         } catch (Exception ex) {
             System.out.println("Error: Couldn't set default camera to FLIM camera!");
         }
-        
+        gui_.refreshGUI();
     }//GEN-LAST:event_flimCameraActionPerformed
 
+    private void setCameraPath(double camerapixelsize, boolean FLIM){
+            var_.camerapixelsize = 6.45;
+            this.cameraPixelSize.setText(Double.toString(var_.camerapixelsize));
+            if(FLIM){
+                parent_.setRelayMag(parent_.getRelayMag());
+                var_.relay=parent_.getRelayMag();
+            } else {
+                // No extra magnification from relay
+                var_.relay=1;
+            }
+    }
+    
     private void bfCameraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bfCameraActionPerformed
         try {
             if (gui_.isLiveModeOn()){
                 gui_.enableLiveMode(false);
-                core_.setCameraDevice("Flea2Cam");
+                core_.setCameraDevice("Retiga");
                 gui_.enableLiveMode(true);
             } else{
-                core_.setCameraDevice("Flea2Cam");
+                core_.setCameraDevice("Retiga");
             }
+            var_.camerapixelsize = 6.45;
+            this.cameraPixelSize.setText(Double.toString(var_.camerapixelsize));
         } catch (Exception ex) {
             System.out.println("Error: Couldn't set default camera to bright field camera!");
         }
+        gui_.refreshGUI();
     }//GEN-LAST:event_bfCameraActionPerformed
+
+    private void wakeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wakeButtonActionPerformed
+        arduinoSM_.wake();
+    }//GEN-LAST:event_wakeButtonActionPerformed
+
+    private void sleepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sleepButtonActionPerformed
+       arduinoSM_.sleep();
+    }//GEN-LAST:event_sleepButtonActionPerformed
+
+    private void stepLeftButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepLeftButtonActionPerformed
+        arduinoSM_.stepLeft();
+    }//GEN-LAST:event_stepLeftButtonActionPerformed
+
+    private void steprightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_steprightButtonActionPerformed
+        arduinoSM_.turnLeft();
+    }//GEN-LAST:event_steprightButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+            core_.setProperty("SyringePump", "Liquid Dispersion?", "Go");
+        } catch (Exception ex) {
+            System.out.println("noope");
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void cameraPixelSizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cameraPixelSizeActionPerformed
+        // TODO add your handling code here:
+        // Fire off something to reassess actual pixel size?
+    }//GEN-LAST:event_cameraPixelSizeActionPerformed
 
     public void setByLabel(JComboBox combo, String device) {
         try {
@@ -571,8 +1037,13 @@ public class LightPathPanel extends javax.swing.JPanel {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            // Might want to revert objective offsets etc on this failing?
         }
 
+    }
+    
+    public double getCameraPixelsize(){
+        return Double.parseDouble(cameraPixelSize.getText());
     }
     
     public void setBy(JComboBox combo, String device, String port) {
@@ -613,10 +1084,12 @@ public class LightPathPanel extends javax.swing.JPanel {
 
         //Objective Load
         populateComboBoxes(objectiveComboBox, "Objective");
-
+        //Then load the offset values
+        LoadJSONObjOffsets();
+        
         //SwitchPort Load
         populateComboBoxes(switchPortComboBox, "LightPathPrism");
-        
+        LoadJSONPortOffsets();
         
         // set defaults
         setDefaultLightPath();
@@ -712,6 +1185,21 @@ public class LightPathPanel extends javax.swing.JPanel {
         parent_ = (HCAFLIMPluginFrame) o;
     }
     
+    public double[] getObjectiveOffsets(){
+        return currentLightPath_.getObjectiveOffsets();
+    }
+    
+    public void setObjectiveOffsets(double[] newOffsets){
+        currentLightPath_.setObjectiveOffsets(newOffsets);
+    }    
+    
+    public double[] getPortOffsets(){
+        return currentLightPath_.getPortOffsets();
+    }
+    
+    public void setPortOffsets(double[] newOffsets){
+        currentLightPath_.setPortOffsets(newOffsets);
+    }    
     
     public Object getFrameParent(){
         return parent_;
@@ -738,26 +1226,55 @@ public class LightPathPanel extends javax.swing.JPanel {
         laserToggle.setText(text);
     }
     
+    public void setControlDefaults(){
+        var_.smPositionOld=0;
+        continuouseFW_ = new SliderControl("Laser intensity [%]",0,100,0);
+        continuouseFWPanel.setLayout(new BorderLayout());
+        continuouseFWPanel.add(continuouseFW_, BorderLayout.SOUTH);
+        continuouseFW_.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+
+            @Override
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                int currentVal=continuouseFW_.getValue().intValue();
+                continuouseFW_.setValue(currentVal);
+                
+                
+            }
+        });
+    }
+    
+    public void warningMessage(String news){
+        JOptionPane optionPane = new JOptionPane(news,JOptionPane.WARNING_MESSAGE);
+        JDialog dialog = optionPane.createDialog("Warning!");
+        dialog.setAlwaysOnTop(true);
+        dialog.setVisible(true);
+    }
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Camera;
+    private javax.swing.JPanel ContinusouseFilterWheel;
     private javax.swing.JPanel Filters;
     private javax.swing.JLabel ObjectiveLabel;
     private javax.swing.JPanel Olympus;
     private javax.swing.JButton bfCamera;
+    private javax.swing.JTextField cameraPixelSize;
+    private javax.swing.JPanel continuouseFWPanel;
     private javax.swing.JComboBox dichroicComboBox;
     private javax.swing.JComboBox emissionComboBox;
     private javax.swing.JComboBox excitationComboBox;
     private javax.swing.JPanel excitationSource;
     private javax.swing.JComboBox filterCubeComboBox;
     private javax.swing.JButton flimCamera;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel laserRepRateLabel;
     private javax.swing.JLabel laserRunTimeLabel;
     private javax.swing.JLabel laserSerialNumberLabel;
@@ -767,7 +1284,11 @@ public class LightPathPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox ndFWComboBox;
     public javax.swing.JComboBox objectiveComboBox;
     private javax.swing.JPanel outputPowerPanel;
+    private javax.swing.JButton sleepButton;
+    private javax.swing.JButton stepLeftButton;
+    private javax.swing.JButton steprightButton;
     private javax.swing.JComboBox switchPortComboBox;
+    private javax.swing.JButton wakeButton;
     // End of variables declaration//GEN-END:variables
 
 }

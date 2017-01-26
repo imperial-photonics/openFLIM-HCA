@@ -69,22 +69,11 @@
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="storeXYZButton" max="32767" attributes="0"/>
+                      <Component id="clearXYZButton" max="32767" attributes="0"/>
                       <Component id="genZStackButton" max="32767" attributes="0"/>
                       <Component id="clearZButton" max="32767" attributes="0"/>
-                      <Group type="102" attributes="0">
-                          <Component id="SaveXYZ" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
-                          <Component id="LoadXYZ" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="clearXYZButton" alignment="0" max="32767" attributes="0"/>
-                      <Component id="zModeCombo" alignment="0" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-              </Group>
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                  <Component id="FOVNudgeCheckbox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -92,26 +81,26 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="fovTablePanel" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
-              </Group>
-              <Group type="102" alignment="1" attributes="0">
-                  <Component id="zModeCombo" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="genZStackButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="clearZButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="storeXYZButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="clearXYZButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="SaveXYZ" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="LoadXYZ" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Component id="fovTablePanel" max="32767" attributes="0"/>
+                      <Group type="102" attributes="0">
+<<<<<<< HEAD
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <Component id="zModeCombo" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+=======
+                          <EmptySpace min="0" pref="29" max="32767" attributes="0"/>
+>>>>>>> IMPERIAL_ONE/master
+                          <Component id="genZStackButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="clearZButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                          <Component id="storeXYZButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="clearXYZButton" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
-                  <Component id="FOVNudgeCheckbox" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -159,49 +148,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="genZStackButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JComboBox" name="zModeCombo">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="2">
-                <StringItem index="0" value="Z as offset"/>
-                <StringItem index="1" value="Absolute Z"/>
-              </StringArray>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="zModeComboActionPerformed"/>
-          </Events>
-        </Component>
         <Component class="javax.swing.JButton" name="clearZButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Clear Z stack"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearZButtonActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="SaveXYZ">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Save XYZ"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SaveXYZActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="LoadXYZ">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Load XYZ"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="LoadXYZActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JCheckBox" name="FOVNudgeCheckbox">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Nudge mode"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="FOVNudgeCheckboxActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
@@ -421,29 +373,23 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="ringRadiusLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="ringRadiusField" min="-2" pref="53" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="autoGenerateFOVsCheck" max="32767" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="noFOVLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="noFOVsField" min="-2" pref="43" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="FOVPatternCombo" max="32767" attributes="0"/>
-                          <Component id="groupDescLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="groupDescField" alignment="0" max="32767" attributes="0"/>
-                          <Component id="snakeType" max="32767" attributes="0"/>
-                          <Component id="snaketypelabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="insertType" alignment="0" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="ringRadiusLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="ringRadiusField" min="-2" pref="53" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="autoGenerateFOVsCheck" max="32767" attributes="0"/>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Component id="noFOVLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Component id="noFOVsField" min="-2" pref="43" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="FOVPatternCombo" max="32767" attributes="0"/>
+                      <Component id="groupDescLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="groupDescField" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace pref="52" max="32767" attributes="0"/>
               </Group>
@@ -470,14 +416,6 @@
                   <Component id="groupDescLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="groupDescField" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="snaketypelabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
-                  <Component id="snakeType" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="insertType" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -547,46 +485,6 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="groupDescFieldActionPerformed"/>
           </Events>
-        </Component>
-        <Component class="javax.swing.JComboBox" name="snakeType">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="3">
-                <StringItem index="0" value="Horizontal snake"/>
-                <StringItem index="1" value="Vertical snake"/>
-                <StringItem index="2" value="No sorting"/>
-              </StringArray>
-            </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Type of motion pattern for stage during acquisition sequence"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="snakeTypeActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="snaketypelabel">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Snake type"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JComboBox" name="insertType">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
-                <StringItem index="0" value="Item 1"/>
-                <StringItem index="1" value="Item 2"/>
-                <StringItem index="2" value="Item 3"/>
-                <StringItem index="3" value="Item 4"/>
-              </StringArray>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="insertTypeActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Insert type"/>
-          </Properties>
         </Component>
       </SubComponents>
     </Container>

@@ -5,22 +5,29 @@
  */
 package com.github.dougkelly88.FLIMPlateReaderGUI.GeneralGUIComponents;
 
+import ProSettingsGUI.ProSettingsPanel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.sequencingThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Acquisition;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Arduino;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.DisplayImage2;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.PlateProperties;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.SeqAcqProps;
-import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.VariableTest;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Variable;
 import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.snapFlimImageThread;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.Prefind;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.GeneralUtilities;
+import com.github.dougkelly88.FLIMPlateReaderGUI.GeneralClasses.prefindThread;
 import com.github.dougkelly88.FLIMPlateReaderGUI.InstrumentInterfaceClasses.XYZMotionInterface;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.AcqOrderTableModel;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.FComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.SeqAcqSetupChainedComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.SnakeOrderer;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.TComparator;
-import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.WellComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.XComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.YComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.RowComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ColumnComparator;
+import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.WellComparator;
+//import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.XY_simul_Comparator;  // Replaced by Row, Column comparators
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.Comparators.ZComparator;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOV;
 import com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.Classes.FOVTableModel;
@@ -40,6 +47,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -69,26 +77,43 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import loci.common.services.DependencyException;
-import loci.common.services.ServiceException;
-import loci.common.services.ServiceFactory;
-import loci.formats.CoreMetadata;
-import loci.formats.FormatException;
-import loci.formats.FormatTools;
 import mmcorej.DeviceType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import loci.formats.ImageWriter;
-import loci.formats.MetadataTools;
-import loci.formats.ome.OMEXMLMetadata;
-import loci.formats.services.OMEXMLService;
-import ome.xml.model.enums.DimensionOrder;
-import ome.xml.model.enums.EnumerationException;
-import ome.xml.model.enums.NamingConvention;
-import ome.xml.model.enums.PixelType;
-import ome.xml.model.primitives.NonNegativeInteger;
-import ome.xml.model.primitives.PositiveInteger;
-import loci.formats.out.TiffWriter;
+
+// Stuff for saving XYZ positions as JSON objects
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
+// Try and import stuff for ImageJ imageprocessing capabilities
+//Cut-paste from: https://micro-manager.org/w/images/b/b6/RatiometricImaging_singleImage.bsh
+//import ij.*; // Was unused?
+import ij.gui.*;
+//import org.micromanager.api.AcquisitionOptions; - cannot find symbol?
+//import ij.WindowManager;
+//import java.lang.System; // Was unused?
+import ij.process.*;
+import ij.ImagePlus;
+import java.awt.geom.Point2D;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+//import ij.plugin.*; // Was unused?
+//import java.lang.Math; // Was unused?
+//import java.awt.image.*; // Was unused?
+//import ij.measure.*; // Was unused?
+//import ij.text.*; // Was unused?
+//import ij.plugin.filter.*; // Was unused?
+import org.micromanager.utils.ImageUtils;
+// End of added imageJ bits
 
 /**
  *
@@ -97,26 +122,48 @@ import loci.formats.out.TiffWriter;
 public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     
     public CMMCore core_;
+    private MMStudio gui_;  // Might be useful to put in at some point? ### WAS DISABLED
     static HCAFLIMPluginFrame frame_;
     private SeqAcqProps sap_;
-    private VariableTest var_;
+    private Variable var_;
     public PlateProperties pp_;
     public XYZMotionInterface xyzmi_;
     public AcqOrderTableModel tableModel_;
     private JTable seqOrderTable_;
-    public  FOV currentFOV_;
-    private DisplayImage2 displayImage2_;
+    public  FOV globalFOVset_;
+    //private DisplayImage2 displayImage2_;
+    private SnakeOrderer snakeOrderer_;
     public static HSSFWorkbook wb = new HSSFWorkbook();
     public static HSSFWorkbook wbLoad = new HSSFWorkbook();
     public Thread sequenceThread;
     public Thread snapFlimImageThread;   
+    public Thread prefindThread;
     public ProgressBar progressBar_;
     public Arduino arduino_;
     public boolean terminate = false;
     public int singleImage;
+    
+    private String XYZfolder;
+    private FileWriter XYZFW;
+    
+    public GeneralUtilities GenUtils_;
+    
+    public Prefind prefind_;
+    public ImagePlus prefindImage;
+    public ImageProcessor prefindIP;
+    private double[] prefindHcentres;
+    private double[] prefindVcentres;
+    private double camerapixelsize;
+    
+    private boolean testmode;
+    public boolean FOVNudgeMode;
+    
+    private ArrayList<String> initLDWells = new ArrayList<>();
+    // Replaces private ArrayList<String> initLDWells = new ArrayList<String>();
     //
     public String AcquisitionSavingMode;
-   
+    private double lastAFposition; // Variable to store last 'good' AF position
+    private ImageWindow currentWin = ij.WindowManager.getCurrentWindow();    
 //    public static HSSFWorkbook wb = new HSSFWorkbook();
 
     @Subscribe
@@ -133,11 +180,15 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         this.setIconImage(icon.getImage());
         this.setTitle("OpenFLIM-HCA Plugin");
         core_ = core;
+        // Leaking this in constructor may lead to trouble in multithreaded situations?
+        // Can these be moved to another method? Looks like it, but can be left for another day...
         frame_ = this;
         xYZPanel1.setParent(this);
         xYSequencing1.setParent(this);
         lightPathControls1.setParent(this);
-        MMStudio gui_ = MMStudio.getInstance();
+        prefindPanel1.setParent(this);
+        
+        gui_ = MMStudio.getInstance(); // ### WAS MMStudio gui_ = MMStudio.getInstance(); 
         gui_.registerForEvents(this);
         
         this.AcquisitionSavingMode = "separate OME.tiff for every FOV";
@@ -153,9 +204,9 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         sap_ = SeqAcqProps.getInstance();
         pp_ = new PlateProperties();
-        currentFOV_ = new FOV("C4", pp_, 1000);
+        globalFOVset_ = new FOV("C4", pp_, 1000);
 
-        var_ = VariableTest.getInstance();
+        var_ = Variable.getInstance();
         currentBasePathField.setText(var_.basepath);
         
 
@@ -163,15 +214,26 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         lightPathControls1.setLoadedHardwareValues();
         setupSequencingTable();
         xYZPanel1.setupAFParams(this);
+        
+        //Automatically wanted a try/catch here?
+        try {
+            lastAFposition = Double.parseDouble(core_.getProperty("Objective", "Safe Position")); // Bottom out the default AF position
+        } catch (Exception ex) {
+            lastAFposition = 3000;            
+            // Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
         fLIMPanel1.setDelayComboBox();
         
-        displayImage2_ = DisplayImage2.getInstance();
-        
+        //displayImage2_ = DisplayImage2.getInstance();
+        snakeOrderer_ = SnakeOrderer.getInstance();        
         try{
             String cam = core_.getCameraDevice();
             if ("HamamatsuHam_DCAM".equals(cam)){
                 core_.setProperty(cam, "Binning", "2x2");
                 core_.setProperty(cam, "TRIGGER SOURCE", "SOFTWARE");
+            } else if ("DemoCam".equals(cam)) {
+                // Think this shouldn't crash it...
+                core_.setProperty(cam, "Binning", "1");
             }
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -184,11 +246,162 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         arduino_ = Arduino.getInstance();
         arduino_.initializeArduino();
         
+        prefind_= new Prefind(frame_);
+        
         core_.setAutoShutter(false);
+        initLDWells.add("A1");
+        initLDWells.add("B2");
+        initLDWells.add("C3");
+        initLDWells.add("D4");
+        initLDWells.add("E5");
+        
+        prefindIP = ImageUtils.makeProcessor(core_);
+        prefindImage = new ImagePlus("Prefind",prefindIP);
+        // May need to work out the compensation or fix this to some value... https://valelab.ucsf.edu/~MM/doc/MMCore/html/class_c_m_m_core.html
+        // If ORCA, Zyla etc, set cam pixel size programatically for ones we have/know?
+        var_.camerapixelsize = lightPathControls1.getCameraPixelsize();
+        
+        // Hopefully allow for simple diabling of things like XYZmotion and whatnot when not running on acquisition machine
+        File testmodefile = new File("C:\\Program Files\\Micro-Manager-1.4.20\\testmode.txt");
+        testmode=testmodefile.exists();
+        
+        this.lightPathControls1.ObjOffsetsloaded=true;
+        this.lightPathControls1.PortOffsetsloaded=true;
+        FOVNudgeMode = false;
     }
 
     public CMMCore getCore() {
         return core_;
+    }
+    
+    public void setRelayMag(double relay_mag){
+        //this.proSettingsGUI1.setRelayMag(relay_mag);
+    }
+    
+    public double getRelayMag(){
+        return 0.7;// this.proSettingsGUI1.getRelayMag();
+    }
+    
+    public boolean getTestmode(){
+        return this.testmode;
+    }
+    
+    public double[] getObjectiveOffsets(){
+        return this.lightPathControls1.getObjectiveOffsets();
+    } 
+    
+    public void setObjectiveOffsets(double []NewOffsets){
+        this.lightPathControls1.setObjectiveOffsets(NewOffsets);
+    } 
+
+    public double[] getPortOffsets(){
+        return this.lightPathControls1.getPortOffsets();
+    } 
+      
+    public void setPortOffsets(double []NewOffsets){
+        this.lightPathControls1.setPortOffsets(NewOffsets);
+    }
+    
+    public double[] getInsertOffsets(){
+        return this.xYSequencing1.getInsertOffsets();
+    } 
+    
+    public void setInsertOffsets(double []NewOffsets){
+        this.xYSequencing1.setInsertOffsets(NewOffsets);
+    }    
+    
+    public void nudgeFOVs(double stepsize, String axis){
+        int noOfFOVs = this.xYSequencing1.tableModel_.getRowCount();
+        for(int i=0;i<noOfFOVs;i++){
+            FOV alterationFOV = this.xYSequencing1.tableModel_.getFOV(i);
+            // Note that the opposite signs for X and Y here are because of how this behaves in the main tablemodel...
+            if(axis == "X"){
+                alterationFOV.setX(alterationFOV.getX()-stepsize);
+            } else if (axis == "Y"){
+                alterationFOV.setY(alterationFOV.getY()+stepsize);
+            } else {
+                System.out.println("Er...");
+            }
+            this.xYSequencing1.tableModel_.setValueAtRow(alterationFOV, i);
+        }
+        // need to update the panel here...
+        this.xYSequencing1.tableModel_.fireTableDataChanged();
+    }
+    
+    public void saveXYZ(){
+        int noOfFOVs = this.xYSequencing1.tableModel_.getRowCount();
+        Gson XYZpositions = new Gson();
+        // Get folder to store positions in
+        
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Select target directory to save positions into as JSON objects");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        Component parentFrame = null;
+        int returnVal = chooser.showOpenDialog(parentFrame);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            XYZfolder = chooser.getSelectedFile().getPath();
+        }
+        
+        for (int i=0; i<(noOfFOVs); i++){
+            try {
+                XYZFW = new FileWriter(XYZfolder.concat("\\XYZPos_"+i+".json"));
+                XYZpositions.toJson(this.xYSequencing1.tableModel_.getFOV(i), XYZFW);
+            } catch (IOException e) {
+                System.out.println("Failed making file in "+XYZfolder);
+            }
+            try{
+                XYZFW.close();
+            } catch (IOException e) {
+                
+            }
+        }
+    }
+    
+    public boolean getFOVNudgeMode(){
+        return FOVNudgeMode;
+    }
+    
+    public void loadXYZ(){
+        // Get folder to load positions from
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Select directory to load positions saved as JSON objects from");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        Component parentFrame = null;
+        int returnVal = chooser.showOpenDialog(parentFrame);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            XYZfolder = chooser.getSelectedFile().getPath();
+        }
+        
+        // Make a filter for .json files - maybe best to do elsewhere?
+        
+        File dir = new File(XYZfolder);
+        FilenameFilter JSONfilter = new FilenameFilter(){
+            public boolean accept(File dir, String name) {
+                String lowercaseName = name.toLowerCase();
+                if (lowercaseName.endsWith(".json")){
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+                
+        File[] loadedXYZpositions = dir.listFiles(JSONfilter);
+
+        // Uncheck the autogenerate FOV box, because if you select anything else with that it'll dump these
+        this.xYSequencing1.uncheckAutogenerateFOVs();
+        
+        // loop through files, load, convert to object and insert into table
+        Gson XYZpositions = new Gson();
+        for (File file: loadedXYZpositions){
+            try{
+                String JSONInString = new String(Files.readAllBytes(FileSystems.getDefault().getPath(file.getAbsolutePath())));
+                FOV FOVtoadd = XYZpositions.fromJson(JSONInString, FOV.class);
+                this.xYSequencing1.addaFOV(FOVtoadd);
+            } catch (Exception e) {
+            }
+        }
+    
     }
     
     private void setupSequencingTable(){
@@ -323,9 +536,11 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         statusLabel = new javax.swing.JLabel();
         sequenceSetupBasePanel = new javax.swing.JPanel();
         sequenceSetupTabbedPane = new javax.swing.JTabbedPane();
-        xYSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing();
         spectralSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.SpectralSequencing();
         timeCourseSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.TimeCourseSequencing();
+        xYSequencing1 = new com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.XYSequencing();
+        Prefindpanel = new javax.swing.JPanel();
+        prefindPanel1 = new com.github.dougkelly88.FLIMPlateReaderGUI.PrefindClasses.GUIComponents.PrefindPanel();
         HCAsequenceProgressBar = new javax.swing.JPanel();
         snapFLIMButton = new javax.swing.JButton();
         startSequenceButton = new javax.swing.JButton();
@@ -339,7 +554,10 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         stopSequenceButton = new javax.swing.JToggleButton();
         experimentNameField = new javax.swing.JTextField();
         experimentNameText = new javax.swing.JLabel();
+        softwareBinningButton = new javax.swing.JLabel();
+        softwareBinningField = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        TestButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
@@ -352,7 +570,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         loadSoftwareConfig = new javax.swing.JMenuItem();
         saveSequencingTablesMenu = new javax.swing.JMenuItem();
         loadSequencingTablesMenu = new javax.swing.JMenuItem();
-        jMenu_create_simulated_SPW_OMEtiff = new javax.swing.JMenuItem();
         quitMenu = new javax.swing.JMenuItem();
         toolsMenu = new javax.swing.JMenu();
         advancedMenu = new javax.swing.JMenuItem();
@@ -378,9 +595,28 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         sequenceSetupBasePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Setup HCA sequenced acquisition"));
 
-        sequenceSetupTabbedPane.addTab("XYZ positions", xYSequencing1);
         sequenceSetupTabbedPane.addTab("Filter sets", spectralSequencing1);
         sequenceSetupTabbedPane.addTab("Time course", timeCourseSequencing1);
+        sequenceSetupTabbedPane.addTab("XYZ positions", xYSequencing1);
+
+        javax.swing.GroupLayout PrefindpanelLayout = new javax.swing.GroupLayout(Prefindpanel);
+        Prefindpanel.setLayout(PrefindpanelLayout);
+        PrefindpanelLayout.setHorizontalGroup(
+            PrefindpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PrefindpanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(prefindPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(157, Short.MAX_VALUE))
+        );
+        PrefindpanelLayout.setVerticalGroup(
+            PrefindpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PrefindpanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(prefindPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(261, Short.MAX_VALUE))
+        );
+
+        sequenceSetupTabbedPane.addTab("Prefind settings", Prefindpanel);
 
         HCAsequenceProgressBar.setBorder(javax.swing.BorderFactory.createTitledBorder("FLIM acquisition"));
 
@@ -447,7 +683,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             .addGap(0, 64, Short.MAX_VALUE)
         );
 
-        stopSequenceButton.setText("Stop HCA sequence");
+        stopSequenceButton.setText("Abort prefind/acq");
+        stopSequenceButton.setToolTipText("");
         stopSequenceButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 stopSequenceButtonActionPerformed(evt);
@@ -463,10 +700,26 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
 
         experimentNameText.setText("Name experiment");
 
+        softwareBinningButton.setText("Software Binning: ");
+
+        softwareBinningField.setText("1");
+        softwareBinningField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                softwareBinningFieldActionPerformed(evt);
+            }
+        });
+
         jButton1.setText("jButton1");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+
+        TestButton.setText("TEST BUTTON");
+        TestButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TestButtonActionPerformed(evt);
             }
         });
 
@@ -476,9 +729,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(progressBarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, HCAsequenceProgressBarLayout.createSequentialGroup()
+                .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
                         .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, HCAsequenceProgressBarLayout.createSequentialGroup()
                                 .addComponent(jLabel1)
@@ -494,21 +746,30 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                                     .addComponent(startSequenceButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(stopSequenceButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
                                         .addGap(7, 7, 7)
                                         .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(experimentNameText)
-                                            .addComponent(experimentNameField)
-                                            .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
-                                                .addComponent(jLabel2)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                            .addComponent(experimentNameField)))
+                                    .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(TestButton)
+                                            .addComponent(stopSequenceButton, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(HCAsequenceProgressBarLayout.createSequentialGroup()
+                                        .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel2)
+                                            .addComponent(softwareBinningButton))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(softwareBinningField)
+                                            .addComponent(accFramesField, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)))
+                                    .addComponent(jButton1))))
+                        .addGap(23, 23, 23))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, HCAsequenceProgressBarLayout.createSequentialGroup()
+                        .addComponent(progressBarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         HCAsequenceProgressBarLayout.setVerticalGroup(
             HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -521,16 +782,19 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(snapFLIMButton)
                             .addComponent(experimentNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton1))
+                            .addComponent(softwareBinningButton)
+                            .addComponent(softwareBinningField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(snapBFButton)
                             .addComponent(jLabel2)
-                            .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(accFramesField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TestButton))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(startSequenceButton)
-                            .addComponent(stopSequenceButton)))
+                            .addComponent(stopSequenceButton)
+                            .addComponent(jButton1)))
                     .addComponent(seqOrderBasePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(HCAsequenceProgressBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -680,14 +944,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
         });
         fileMenu.add(loadSequencingTablesMenu);
-
-        jMenu_create_simulated_SPW_OMEtiff.setText("(Test) Create simulated SPW OME.tiff");
-        jMenu_create_simulated_SPW_OMEtiff.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenu_create_simulated_SPW_OMEtiffActionPerformed(evt);
-            }
-        });
-        fileMenu.add(jMenu_create_simulated_SPW_OMEtiff);
 
         quitMenu.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
         quitMenu.setText("Quit");
@@ -895,6 +1151,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         }
         // set loaded values in all panels
         lightPathControls1.setLoadedSoftwareValues();
+        //lightPathControls1.LoadObjectiveOffsets();
         fLIMPanel1.setLoadedSoftwareValues();
     }//GEN-LAST:event_loadSoftwareConfigActionPerformed
 
@@ -916,25 +1173,316 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
        
         
     }//GEN-LAST:event_startSequenceButtonActionPerformed
+ 
+    public boolean checkifAFenabled(){
+        boolean AFenabled=xYZPanel1.getAFInSequence();
+        return AFenabled;
+    }
+    
+    public double getPrefindThreshold(){
+        return xYSequencing1.getPrefindThreshold();
+    }
+    
+    public double getPercentCoverage(){
+        return xYSequencing1.getPercentCoverage();
+    }
+    
+    // A routine for determining whehter we want to accept a FOV - hive this off to a separate class later
+    public boolean checkprefindimg(Object img){
+        //MMStudio gui_ = MMStudio.getInstance(); // ### WAS ENABLED
+        boolean accept = false;
+        
+        //gui_.displayImage(img);
+        try{
+            //Probably best not to have a new window open up each time...
+            //Should fix it to reuse the same window and just update it - eventually...
+            if(currentWin!=null){
+                //Probably should add a check that this is the right one - want to target the analysis window too?
+                currentWin.close();
+            }            
+            // Make an array of pixels from the current image in the core - should be freshly-snapped...
+            // Be sure that this isn't the last image if long integration times are order of the day?
+            byte[] pixels = (byte[])core_.getTaggedImage().pix;
+            // Image processor to target said image
+            ImageProcessor improc0 = ImageUtils.makeProcessor(core_, pixels);
+            // ImagePlus that uses the imageprocessor we just made...
+            ImagePlus prefind_img = new ImagePlus("Prefind image", improc0);
+            // Hopefully set the current window to our target one
+            ij.WindowManager.setTempCurrentImage(prefind_img);
+            // For simple thrsholding
+            double minthresh = 0;
+            double maxthresh = proSettingsGUI1.getPrefindThresh();
+            // Apply a simple threshold - probably want a set of cases here
+            improc0.setThreshold(minthresh, maxthresh, 1);//Think last argument being 1 => B&W LUT
+            byte[] thresholded = (byte[])improc0.getPixels();
+            double sum = 0;//
+            // Run the Process > Binary > "Make Binary" command - don't forget to divide sum by 255...
+            ij.IJ.run("Make Binary");
+            ij.IJ.run(prefind_img, "Multiply...", "1");
+            for (int k=0;k<thresholded.length;k++){
+                // For some reason, the binary image appears to go from -1 to 0, giving the -ve # of dark pixels... Fix this by:
+                sum += (double)((thresholded [k])+1);
+            }
+            // We now have the number of 'bright' pixels, hopefully            
+            // Compare to total ' of pixels to get %age
+            double fraction = sum/(double)(thresholded.length); //(double) casts to double
+            System.out.println("Pixels above threshold: "+sum+"    % coverage: "+fraction);
+            if((fraction*100)>proSettingsGUI1.getPercentCoverage()){
+                accept = true;
+            } else {
+                // Starts as false by default, so just leave it as such...
+            }           
+
+            prefind_img.show();
+            currentWin = ij.WindowManager.getCurrentWindow();
+            prefind_img.changes = false; // White lie to stop that whiny popup coming up after image changes from thresholding?
+            // From: http://imagej.1557.x6.nabble.com/Re-Plugin-Command-To-Close-Window-Without-quot-Save-Changes-quot-Dialog-td3683293.html
+            //prefind_img.close();
+
+        } catch (Exception e){
+             System.out.println(e.getMessage());
+        }
+        //String Macropath="C:\\Program Files\\Micro-Manager-1.4.20\\plugins\\TEST.ijm";
+        System.out.println(accept);
+        return accept;
+    }
+    
+    public void updatePrefindPanel(){
+        prefindPanel1.UpdatePrefindPanel();
+    }
+    
+    public String getPrefindSettingValue(int i){
+        return prefindPanel1.getPrefindSettingValue(i);
+    }
+    
+    public int getPrefind_NoOfAttempts(){
+        return prefindPanel1.getNoOfAttempts();
+    }
+    
+    public int getPrefind_NoOfFOVToFind(){
+        return prefindPanel1.getNoOfFOVToFind();
+    }
+    
+    public boolean testPrefind() {// throws InterruptedException{ 
+        //prefind_.Snapandshow(prefindImage);
+        //MMStudio gui_ = MMStudio.getInstance(); // ### WAS ENABLED
+        try{
+            if (gui_.isLiveModeOn()){
+                gui_.enableLiveMode(false);
+                gui_.closeAllAcquisitions();
+            }
+        } catch (Exception e) {
+            System.out.println("Failed stopping Live mode:   "+e);
+        }        
+        boolean result = prefind_.Analyse(prefind_.Snapandshow(prefindImage));
+        //boolean result = false;
+        return result;
+    }
+    
+    public boolean prefind() throws InterruptedException{ // THROW is copied from doSequenceAcquisition - assume this is for Abort?
+        // Reset local copy of targeted co-ords - remember these are in pixel units
+        prefindHcentres = new double[] {0};
+        prefindVcentres = new double[] {0};
+        progressBar_.setStart("Prefind: ");
+        //MMStudio gui_ = MMStudio.getInstance(); // ### WAS ENABLED
+        try{
+            if (gui_.isLiveModeOn()){
+                gui_.enableLiveMode(false);
+                gui_.closeAllAcquisitions();
+            }
+        } catch (Exception e) {
+            System.out.println("Failed stopping Live mode:   "+e);
+        }        
+        //Allow for testing on my laptop without the XY stage and whatnot...
+        
+        xYZPanel1.setFixedAFDefault(xyzmi_.getZAbsolute());
+
+        // Counters for determining progress
+        int noofFOVsSinceLastSuccess = 0;
+        int noofacceptedFOVs_thiswell = 0;
+        int noofattemptedFOVs_thiswell = 0;        
+
+        // Work out the max number of FOVs
+        // !!! NEED TO MAKE SURE THAT THIS WORKS ID TOO MANY FOVS ARE SPECIFIED! REDUCE THE #OF ATTEMPTS PERHAPS?
+        int Attempts_perFOV = prefindPanel1.getNoOfAttempts();
+        int NoOfFOVsToFind = prefindPanel1.getNoOfFOVToFind();
+        int FOVs_per_well=Attempts_perFOV*NoOfFOVsToFind;
+        
+        System.out.println("Attempts per FOV: "+Attempts_perFOV+"   Initial no of FOVs: "+NoOfFOVsToFind+"   FOVs per well: "+FOVs_per_well);
+
+        // Declare a blank FOV to be last gone to;
+        FOV FOVtogoto = new FOV(0, 0, 0, pp_);// Maybe a bit dangerous to have these the same? FOVtogoto should be overwritten though
+        FOV FOVlastgoneto = new FOV(0, 0, 0, pp_); //
+
+        // Autofocus how often?
+        int FOVs_since_last_AF = 0;
+        int Max_FOV_switch_without_AF = 4;
+
+        // Add this for Abort capability - not yet implemented properly!
+        int endOk=0;        
+        
+        //Clear user-visible FOV table
+        xYSequencing1.tableModel_.clearAllData();
+        Acquisition acq = new Acquisition();        
+        boolean FOVaccepted=false;
+        try {
+            for(int i=0;i<xYSequencing1.searchFOVtableModel_.getRowCount();i++){
+                // Check for abort button - presume that there's a listener event somewhere for that? Need to implement own one or make Abort general?
+                // NEED TO CHECK IF THIS IS DONE PROPERLY - Presumably we can just use the existing abort button?
+                if(terminate){
+                    endOk=1;
+                    break;
+                }  
+                // Get target XY position, go to it, if we're not just running tests
+                FOVtogoto = xYSequencing1.searchFOVtableModel_.getFOV(i);
+                if(!testmode){
+                    xyzmi_.gotoFOV(FOVtogoto); // XY move only
+                    System.out.println(FOVtogoto.getWell()+" - item#"+i+" of "+xYSequencing1.searchFOVtableModel_.getRowCount());
+                    //Wait for XY move to finish                
+                    while (xyzmi_.isStageBusy()){
+                        System.out.println("Stage moving...");
+                    }                    
+                    //Autofocus if needed
+                    if(FOVtogoto.getWell()!=FOVlastgoneto.getWell() || noofFOVsSinceLastSuccess==0 || FOVs_since_last_AF>=Max_FOV_switch_without_AF){ 
+                        // For now, let's try autofocusing if we're in a different well to before? Or if the last FOV was successful?
+                        if(this.checkifAFenabled()){
+                            xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                            FOVs_since_last_AF = 0;
+                        } else {
+                            xyzmi_.moveZAbsolute(this.getFixedAFDefault());
+                        }
+                    }
+                }
+                
+                FOVs_since_last_AF++;
+
+                boolean result = prefind_.Analyse(prefind_.Snapandshow(prefindImage));
+                FOVaccepted=result;
+                // Increment FOV list position counter
+                noofattemptedFOVs_thiswell++;
+                double[] H_array = prefind_.getHCentre();
+                double[] V_array = prefind_.getHCentre();
+                //Might be worth swapping the operands below...
+                if(prefind_.getHCentre().length==1&&prefind_.getVCentre().length==1&&H_array[0]==0&V_array[0]==0){
+                    // Reset displacements if the macro just returns yes/no
+                    prefindHcentres = new double[] {0};
+                    prefindVcentres = new double[] {0};
+                } else {
+                    // If we have a nonzero value returned for the centre of the desired FOV, need to do some thinking to get where we should go to...
+                    prefindHcentres = prefind_.getHCentre();
+                    prefindVcentres = prefind_.getVCentre();
+                }                
+                
+                if(FOVaccepted==true){
+                    // Add this FOV to the normal sequence list shown on front panel
+                    // Was: FOV modifiedFOV = xYSequencing1.searchFOVtableModel_.getFOV(i); - NO CONVERSION?
+                    
+                    // We're going to trust the macro NOT to return "Accept" if something goes wrong...
+                    // We'll assume that there's some way to screw up reading the results table though...
+                    if(prefindHcentres.length == prefindVcentres.length){
+                        for(int m=0;m<prefindHcentres.length;m++){
+                            FOV modifiedFOV = xyzmi_.getCurrentFOV();
+                            //Need to work out an offset for the FOV, then...
+                            // WARNING - need to modify this to accounf for the fact that it's relative to the corner not the centre? Or edit the macro?'                        
+                            double rel_Hshift = (core_.getImageWidth()/2)-prefindHcentres[m]; //assuming all the units are in pixels...
+                            double rel_Vshift = (core_.getImageHeight()/2)-prefindVcentres[m];                        
+                            //int[] binning = this.GenUtils_.getCameraBinning(); // Double.parseDouble(core_.getProperty("Camera", "Binning"));
+                            int[] binning = {2,2}; //Emergency fix replacement...
+                            double Hdelta=0;
+                            double Vdelta=0;
+                            double Hscalingfactor=0;
+                            double Vscalingfactor=0;                        
+                            if (this.proSettingsGUI1.getHVswap()){
+                                //Swap H and V
+                                Vdelta = rel_Hshift;
+                                Hdelta = rel_Vshift;
+                                Vscalingfactor = ((var_.camerapixelsize*binning[0])/(var_.magnification*var_.relay));
+                                Hscalingfactor = ((var_.camerapixelsize*binning[1])/(var_.magnification*var_.relay));
+                            } else {
+                                //Don't swap H and V
+                                Vdelta = rel_Vshift;
+                                Hdelta = rel_Hshift;                            
+                                Hscalingfactor = ((var_.camerapixelsize*binning[0])/(var_.magnification*var_.relay));
+                                Vscalingfactor = ((var_.camerapixelsize*binning[1])/(var_.magnification*var_.relay));                            
+                            }
+                            //WARNING! Might need to 
+                            modifiedFOV.setX(modifiedFOV.getX()+(Hdelta*Hscalingfactor*this.proSettingsGUI1.getHshiftscale())); //in microns?
+                            modifiedFOV.setY(modifiedFOV.getY()+(Vdelta*Vscalingfactor*this.proSettingsGUI1.getVshiftscale()));                        
+                            
+                            // It's all relative Z, so let's go with calling it zero - we're not 3D z-searching yet
+                            modifiedFOV.setZ(0);
+                            FOV currentz0FOV = xyzmi_.getCurrentFOV();
+                            currentz0FOV.setZ(0);
+                            //xYSequencing1.tableModel_.addRow(currentz0FOV);
+                            xYSequencing1.tableModel_.addRow(modifiedFOV);
+                            noofFOVsSinceLastSuccess=0;
+                            noofacceptedFOVs_thiswell++;
+                        }
+                    } else {
+                        System.out.println("Mismatch in X and Y array length!!!");
+                    }
+                } else { 
+                   // We didn't like this FOV
+                    noofFOVsSinceLastSuccess++;
+                }
+                if((noofacceptedFOVs_thiswell>=NoOfFOVsToFind) || (noofFOVsSinceLastSuccess>=Attempts_perFOV)){ // We have enough successful finds
+                    // Increment the loop counter just enough to move it into the start of the next well's sequence...
+                    i=i+(FOVs_per_well-noofattemptedFOVs_thiswell);
+                    // Reset the well-wise counters
+                    noofattemptedFOVs_thiswell=0;
+                    noofacceptedFOVs_thiswell=0;
+                } else {
+                    // We automatically go to the next well if we never find anything?, so don't need to do anything here...
+                }
+                // System.out.println(i); // For diagnostics
+                progressBar_.stepIncrement(i, xYSequencing1.searchFOVtableModel_.getRowCount());
+                endOk=0;  
+                // Now we can say that this was the last FOV we went to...
+                FOVlastgoneto=FOVtogoto;
+            }
+        } catch(Exception e) { // WAS InterruptedException, but complained that this would never be thrown from here?
+            Thread.currentThread().interrupt();               
+        }
+        // Set progressbar to 100% if not aborted before
+        if(endOk==1){
+                setStopButtonFalse(xYSequencing1.searchFOVtableModel_.getRowCount(), xYSequencing1.searchFOVtableModel_.getRowCount(), "FLIM sequence");
+            } else {
+            progressBar_.setEnd("FLIM sequence");
+        }        
+        return FOVaccepted;
+    }
+    
+    public double getAFOffset(){
+        return (double)xYZPanel1.getSampleAFOffset();
+    }
+    
+    public double getFixedAFDefault(){
+        return (double)xYZPanel1.getFixedAFDefault();
+    }
+    
+    public String getSelectedAnalyser(){
+        return xYSequencing1.getSelectedAnalyser();
+    }
     
     public void doSequenceAcquisition() throws InterruptedException{
-        System.out.println(var_.AcquisitionSavingMode);
+        double Initialdelay = fLIMPanel1.getCurrentDelay();
         
-        ImageWriter SPWWriter = null;        
-        if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff"))
-        try 
-        {
-            SPWWriter = this.createSPWWriter(FormatTools.UINT16);            
-            System.out.println(SPWWriter.toString());
-        }
-        catch (Exception e) {System.out.println(e.getMessage());}
-        
+        if(this.checkifAFenabled()){
+            // Set the AF default position to the current Z
+            // Might want to replace this with a button that the user presses to set this? Pop up a dialogue?
+            xYZPanel1.setFixedAFDefault(xyzmi_.getZAbsolute());
+        }     
+                
+        // Setup for the acquisition overall
         Acquisition acq = new Acquisition();
-        ArrayList<FOV> fovs = new ArrayList<FOV>();
-        ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
-        ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
+        ArrayList<FOV> fovs = new ArrayList<>();
+        //Replaces: ArrayList<FOV> fovs = new ArrayList<FOV>();
+        ArrayList<TimePoint> tps = new ArrayList<>();
+        //Replaces: ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
+        ArrayList<FilterSetup> fss = new ArrayList<>();
+        //Replaces: ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
         int endOk=0;
-        int ind=0;
+        int ind=0; // NOT USED? Breaks stuff if deleted?
         singleImage=0;
         
             // get all sequence parameters and put them together into an 
@@ -942,7 +1490,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             // Note that if a term is absent from the sequence setup, current
             // values should be used instead...
             
-            List<SeqAcqSetup> sass = new ArrayList<SeqAcqSetup>();
+            List<SeqAcqSetup> sass = new ArrayList<>();
+            //Replaces List<SeqAcqSetup> sass = new ArrayList<SeqAcqSetup>();
             ArrayList<String> order = tableModel_.getData();
             if (!order.contains("XYZ")){
                 fovs.add(xyzmi_.getCurrentFOV());
@@ -970,30 +1519,78 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             
             List<Comparator<SeqAcqSetup>> comparators = new ArrayList<Comparator<SeqAcqSetup>>();
             
+            String snaketype = "None";
+            if(xYSequencing1.getSnakeType().equals("Horizontal snake")){
+                snaketype="Horizontal";
+            } else if (xYSequencing1.getSnakeType().equals("Vertical snake")){
+                snaketype="Vertical";
+            } else {
+                // Already set to "None" otherwise
+            }
+            
             for (FOV fov : fovs){
                 for (TimePoint tp : tps){
                     for (FilterSetup fs : fss){
-                        sass.add(new SeqAcqSetup(fov, tp, fs));
+                        sass.add(new SeqAcqSetup(fov, tp, fs, snaketype));
                     }
                 }
             }
-            
             // use chained comparators to sort by multiple fields SIMULTANEOUSLY,
             // based on order determined in UI table.
             for (String str : order){
                 if (str.equals("XYZ")){
-                        comparators.add(new WellComparator());
+                         
+                        //comparators.add(new WellComparator());
+                    if(xYSequencing1.getSnakeType().equals("Horizontal snake")){
+                        comparators.add(new RowComparator());
+                        comparators.add(new ColumnComparator());                      
+                    } else if (xYSequencing1.getSnakeType().equals("Vertical snake")){
+                        comparators.add(new ColumnComparator());                        
+                        comparators.add(new RowComparator()); 
+                    } else {
+                        // No sorting in the last case
+                    }
+                        //comparators.add(new XY_simul_Comparator());
                         comparators.add(new ZComparator());
+                        
                 }
                 else if (str.equals("Filter change"))
                     comparators.add(new FComparator());
                 else if (str.equals("Time course"))
                     comparators.add(new TComparator());
             }
-            Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
             int sassSize=sass.size();
             
+            Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
+            if(var_.specialAcq){
+                //Collections.sort(sass, new FComparator());
+                
+                Collections.sort(sass, new XComparator());
+                Collections.sort(sass, new YComparator());
+                Collections.sort(sass, new WellComparator());
+                for (int h=0; h<sassSize; h++){
+                    SeqAcqSetup CurrSAS = sass.get(h);
+                    System.out.println("Time="+CurrSAS.getTimePoint().getTimeCell()+"    Filt="+CurrSAS.getFilters().getLabel()+"    Well="+CurrSAS.getFOV().getWell()+"    X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
+                }
+               System.out.println(sassSize); 
+               System.out.println(fss.size()); 
+            }
+            // check which acquisition strategy is selected
+//            if (var_.acquisitionStrategy.equalsIgnoreCase("Snake (horizontal fast axis)")){
+//                sass=snakeOrderer_.snakeOrdererHorizontalFast(sass);
+//            } else {
+//                System.out.print("'Start always by column 1 (horizontal fast axis)' as acquisition mode selected");
+//            }
             
+            
+            System.out.println("Sorting...");     
+            //Added this to print out what I think is the XYZ order it's going to try things in...
+            for (int h=0; h<sassSize; h++){
+                SeqAcqSetup CurrSAS = sass.get(h);
+                System.out.println("Time="+CurrSAS.getTimePoint().getTimeCell()+"    Filt="+CurrSAS.getFilters().getLabel()+"    Well="+CurrSAS.getFOV().getWell()+"    X="+CurrSAS.getFOV().getX()+"    Y="+CurrSAS.getFOV().getY()+"   Z="+CurrSAS.getFOV().getZ());
+            }
+            System.out.println("Waiting...");            
+
             long start_time = System.currentTimeMillis();
             // TODO: modify data saving such that time courses, z can be put in a 
             // single OME.TIFF. DISCUSS WITH IAN!
@@ -1025,9 +1622,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             Double lastTime = 0.0;
             String lastFiltLabel = "";
             FOV lastFOV = new FOV(0, 0, 0, pp_);
-            Double lastZ = 0.0;
 //            int fovSinceLastAF = 0;
-            for ( ind = 0; ind < sass.size(); ind++){
+            int jump=1;
+            if(var_.specialAcq){
+                jump=fss.size();
+            }
+            for ( ind = 0; ind < sass.size(); ind +=jump){
             
                 //check for flag (stop button) and abort sequence
                 if(terminate){
@@ -1038,15 +1638,14 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                 
                 // TODO: how much can these steps be parallelised?
                 // set FOV params
-                SeqAcqSetup sas = sass.get(ind);;
+                SeqAcqSetup sas = sass.get(ind);
                 // if time point changed different from last time, wait until 
                 // next time point reached...
                 if ((!sas.getTimePoint().getTimeCell().equals(lastTime)) & (order.contains("Time course"))){
                     Double next_time = sas.getTimePoint().getTimeCell() * 1000;
                     while ((System.currentTimeMillis() - start_time) < next_time){
                         Double timeLeft = next_time - (System.currentTimeMillis() - start_time);
-                        System.out.println("Waiting for " + timeLeft + " until next time point...");
-                        //check for flag (stop button) and abort time course wait
+                        //System.out.println("Waiting for " + timeLeft + " until next time point...");
                         if(terminate){
                             endOk=1;
                             break;    
@@ -1054,12 +1653,62 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     }
                 }
                 // if FOV different, deal with it here...
-                if ( ( (!sas.getFOV().equals(lastFOV)) | (sas.getFOV().getZ() != lastZ) ) & (order.contains("XYZ")) ){
+                if ( ( (!sas.getFOV().equals(lastFOV)) | (sas.getFOV().getZ() != lastFOV.getZ()) ) & (order.contains("XYZ")) ){
                     // TODO: this needs tweaking in order that autofocus works properly with Z stacks...
                     // Perhaps only do when XY change, and not Z?
-                    xyzmi_.gotoFOV(sas.getFOV());
-                    if (xYZPanel1.getAFInSequence())
-                        xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                    
+                    
+                    try{
+                        //Let's check if XY has changed
+                        if(sas.getFOV().equals(lastFOV)){
+                            //We're in the same XY place, so must be a z-shift - let's do a relative move
+                            //Also has the benefit of not having to care about offsets and whatnot
+                            double deltaz=sas.getFOV().getZ()-lastFOV.getZ();
+                            xyzmi_.moveZRelative(deltaz);
+                            // Indicate position desired and motion done.
+                            System.out.println("No xy move - relative Z shift is:"+deltaz+"   X:"+sas.getFOV().getX()+"   Y:"+sas.getFOV().getY()+"   Z:"+sas.getFOV().getZ());
+                        }
+                        else{
+                            //Do the XY move...
+                            xyzmi_.gotoFOV(sas.getFOV());
+                            
+                            //Wait for stage - make this into a function for xyzmi?
+                           boolean stageMoving=true;
+                            while (stageMoving){
+                                   try {
+                                        Point2D.Double pfff = core_.getXYStagePosition(core_.getXYStageDevice());
+                                        System.out.println("pff:  "+pfff);
+                                        stageMoving=false;
+                                    } catch (Exception ex) {
+                                        System.out.println("Ignore XY Stage error. Stage moving...");
+                                        stageMoving=true;
+                                    }
+                            }
+//                            while (xyzmi_.isStageBusy()){
+//                                System.out.println("Stage moving...");
+//                            }
+                            //OK - xy has changed, so let's do an autofocus and make sure to add in any Z offsets...                            
+                            if(this.checkifAFenabled()){
+                                //If the autofocus is selected...
+                                xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset()+sas.getFOV().getZ());
+                                System.out.println("Tried real autofocus");
+                            } else {
+                                //Otherwise we just assume that the height that we had at the start of the acquisition is
+                                //the real 'zero' height for the whole plate...
+                                //Presumably the user has set the Z heights sensibly in relation to this...
+                                xyzmi_.moveZAbsolute(xYZPanel1.getFixedAFDefault()+sas.getFOV().getZ());
+                                System.out.println("Used offset instead of AF");
+                            }
+                        System.out.println("Carried out XY move,   X:"+sas.getFOV().getX()+"   Y:"+sas.getFOV().getY()+"   Z:"+sas.getFOV().getZ());
+                        }
+                        //
+                    } catch (Exception e){
+                        System.out.println(e);
+                    }
+                            
+                    //if (xYZPanel1.getAFInSequence()){
+                    //    xyzmi_.customAutofocus(xYZPanel1.getSampleAFOffset());
+                    //}
                     if(terminate){
                         endOk=1;
                         break;
@@ -1092,6 +1741,173 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         System.out.println(e.getMessage());
                     }
                 }
+                // Special Acquisiton Fred:
+                
+                if(var_.specialAcq){
+                    if(sas.getFOV().getWell().contains("A")){
+                        FilterSetup fsA=fss.get(0);
+                        System.out.println(fsA);
+                        String flabelA   = fsA.getLabel();
+                        String NDfilA    = fsA.getNDFilt();
+                        int intTimeA     = fsA.getIntTime();
+                        ArrayList<Integer> dellA= fsA.getDelays();
+                        try {
+                            core_.setProperty("NDFW", "Label", NDfilA);
+                            core_.setExposure(intTimeA);
+                            sas.getFilters().setDelays(dellA);
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        try {
+                            System.out.println("Label: "+flabelA+"read"+"   ND filter: "+core_.getProperty("NDFW", "Label")+"   intTime: "+core_.getExposure()+"   Delays: "+sas.getFilters().getDelays());
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        System.out.println("Label: "+flabelA+"set"+"   ND filter: "+NDfilA+"   intTime: "+intTimeA+"   Delays: "+dellA);
+                    } else if (sas.getFOV().getWell().contains("B")){
+                        FilterSetup fsB=fss.get(1);
+                        System.out.println(fsB);
+                        String flabelB   = fsB.getLabel();
+                        String NDfilB    = fsB.getNDFilt();
+                        int intTimeB     = fsB.getIntTime();
+                        ArrayList<Integer> dellB= fsB.getDelays();
+                        try {
+                            core_.setProperty("NDFW", "Label", NDfilB);
+                            core_.setExposure(intTimeB);
+                            sas.getFilters().setDelays(dellB);
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        try {
+                            System.out.println("Label: "+flabelB+"read"+"   ND filter: "+core_.getProperty("NDFW", "Label")+"   intTime: "+core_.getExposure()+"   Delays: "+sas.getFilters().getDelays());
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        System.out.println("Label: "+flabelB+"set"+"   ND filter: "+NDfilB+"   intTime: "+intTimeB+"   Delays: "+dellB);
+                    }   else if (sas.getFOV().getWell().contains("C")){
+                        FilterSetup fsC=fss.get(2);
+                        String flabelC   = fsC.getLabel();
+                        String NDfilC    = fsC.getNDFilt();
+                        int intTimeC     = fsC.getIntTime();
+                        ArrayList<Integer> dellC= fsC.getDelays();
+                        try {
+                            core_.setProperty("NDFW", "Label", NDfilC);
+                            core_.setExposure(intTimeC);
+                            sas.getFilters().setDelays(dellC);
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        try {
+                            System.out.println("Label: "+flabelC+"read"+"   ND filter: "+core_.getProperty("NDFW", "Label")+"   intTime: "+core_.getExposure()+"   Delays: "+sas.getFilters().getDelays());
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        System.out.println("Label: "+flabelC+"set"+"   ND filter: "+NDfilC+"   intTime: "+intTimeC+"   Delays: "+dellC);
+                    }   else if (sas.getFOV().getWell().contains("D")){
+                        FilterSetup fsB=fss.get(3);
+                        System.out.println(fsB);
+                        String flabelB   = fsB.getLabel();
+                        String NDfilB    = fsB.getNDFilt();
+                        int intTimeB     = fsB.getIntTime();
+                        ArrayList<Integer> dellB= fsB.getDelays();
+                        try {
+                            core_.setProperty("NDFW", "Label", NDfilB);
+                            core_.setExposure(intTimeB);
+                            sas.getFilters().setDelays(dellB);
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        try {
+                            System.out.println("Label: "+flabelB+"read"+"   ND filter: "+core_.getProperty("NDFW", "Label")+"   intTime: "+core_.getExposure()+"   Delays: "+sas.getFilters().getDelays());
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        System.out.println("Label: "+flabelB+"set"+"   ND filter: "+NDfilB+"   intTime: "+intTimeB+"   Delays: "+dellB);
+                    }   else if (sas.getFOV().getWell().contains("E")){
+                        FilterSetup fsB=fss.get(4);
+                        System.out.println(fsB);
+                        String flabelB   = fsB.getLabel();
+                        String NDfilB    = fsB.getNDFilt();
+                        int intTimeB     = fsB.getIntTime();
+                        ArrayList<Integer> dellB= fsB.getDelays();
+                        try {
+                            core_.setProperty("NDFW", "Label", NDfilB);
+                            core_.setExposure(intTimeB);
+                            sas.getFilters().setDelays(dellB);
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        try {
+                            System.out.println("Label: "+flabelB+"read"+"   ND filter: "+core_.getProperty("NDFW", "Label")+"   intTime: "+core_.getExposure()+"   Delays: "+sas.getFilters().getDelays());
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        System.out.println("Label: "+flabelB+"set"+"   ND filter: "+NDfilB+"   intTime: "+intTimeB+"   Delays: "+dellB);
+                    }   else if (sas.getFOV().getWell().contains("F")){
+                        FilterSetup fsB=fss.get(5);
+                        System.out.println(fsB);
+                        String flabelB   = fsB.getLabel();
+                        String NDfilB    = fsB.getNDFilt();
+                        int intTimeB     = fsB.getIntTime();
+                        ArrayList<Integer> dellB= fsB.getDelays();
+                        try {
+                            core_.setProperty("NDFW", "Label", NDfilB);
+                            core_.setExposure(intTimeB);
+                            sas.getFilters().setDelays(dellB);
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        try {
+                            System.out.println("Label: "+flabelB+"read"+"   ND filter: "+core_.getProperty("NDFW", "Label")+"   intTime: "+core_.getExposure()+"   Delays: "+sas.getFilters().getDelays());
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        System.out.println("Label: "+flabelB+"set"+"   ND filter: "+NDfilB+"   intTime: "+intTimeB+"   Delays: "+dellB);
+                    }   else if (sas.getFOV().getWell().contains("G")){
+                        FilterSetup fsB=fss.get(6);
+                        System.out.println(fsB);
+                        String flabelB   = fsB.getLabel();
+                        String NDfilB    = fsB.getNDFilt();
+                        int intTimeB     = fsB.getIntTime();
+                        ArrayList<Integer> dellB= fsB.getDelays();
+                        try {
+                            core_.setProperty("NDFW", "Label", NDfilB);
+                            core_.setExposure(intTimeB);
+                            sas.getFilters().setDelays(dellB);
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        try {
+                            System.out.println("Label: "+flabelB+"read"+"   ND filter: "+core_.getProperty("NDFW", "Label")+"   intTime: "+core_.getExposure()+"   Delays: "+sas.getFilters().getDelays());
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        System.out.println("Label: "+flabelB+"set"+"   ND filter: "+NDfilB+"   intTime: "+intTimeB+"   Delays: "+dellB);
+                    }   else if (sas.getFOV().getWell().contains("H")){
+                        FilterSetup fsB=fss.get(7);
+                        System.out.println(fsB);
+                        String flabelB   = fsB.getLabel();
+                        String NDfilB    = fsB.getNDFilt();
+                        int intTimeB     = fsB.getIntTime();
+                        ArrayList<Integer> dellB= fsB.getDelays();
+                        try {
+                            core_.setProperty("NDFW", "Label", NDfilB);
+                            core_.setExposure(intTimeB);
+                            sas.getFilters().setDelays(dellB);
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        try {
+                            System.out.println("Label: "+flabelB+"read"+"   ND filter: "+core_.getProperty("NDFW", "Label")+"   intTime: "+core_.getExposure()+"   Delays: "+sas.getFilters().getDelays());
+                        } catch (Exception ex) {
+                            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        System.out.println("Label: "+flabelB+"set"+"   ND filter: "+NDfilB+"   intTime: "+intTimeB+"   Delays: "+dellB);
+                    }   
+                }
+                
+                
+                
                 //Get laser intensity
                 String intensity=Double.toString(arduino_.getLaserIntensity());
                 // do acquisition
@@ -1103,7 +1919,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                             " Well=" + sas.getFOV().getWell() +                        
                             " X=" + sas.getFOV().getX() +
                             " Y=" + sas.getFOV().getY() +
-                            "T=" + sas.getTimePoint().getTimeCell() + 
+                            " T=" + sas.getTimePoint().getTimeCell() + 
                             " Filterset=" + sas.getFilters().getLabel() + 
                             " Z=" + sas.getFOV().getZ() +
                             " ID=" + fovLabel+
@@ -1113,7 +1929,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                             " Well=" + sas.getFOV().getWell() +                        
                             " X=" + sas.getFOV().getX() +
                             " Y=" + sas.getFOV().getY() +
-                            "T=" + sas.getTimePoint().getTimeCell() + 
+                            " T=" + sas.getTimePoint().getTimeCell() + 
                             " Filterset=" + sas.getFilters().getLabel() + 
                             " Z=" + sas.getFOV().getZ() +
                             " ID=" + fovLabel+
@@ -1125,7 +1941,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                         " Well=" + sas.getFOV().getWell() +                        
                         " X=" + sas.getFOV().getX() +
                         " Y=" + sas.getFOV().getY() +
-                        "T=" + sas.getTimePoint().getTimeCell() + 
+                        " T=" + sas.getTimePoint().getTimeCell() + 
                         " Filterset=" + sas.getFilters().getLabel() + 
                         " Z=" + sas.getFOV().getZ() +
                         " ID=" + fovLabel+
@@ -1137,20 +1953,23 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     if(abort==true){
                         break;
                     }
-                    core_.waitForDeviceType(DeviceType.XYStageDevice);
+//                    while (xyzmi_.isStageBusy()){
+//                        System.out.println("Stage moving...");
+//                   }
+                   // core_.waitForDeviceType(DeviceType.XYStageDevice);
+                    /*if(timeCourseSequencing1.startSyringe(sas.getTimePoint(),sas.getFOV().getWell())){
+                        core_.setProperty("SyringePump","Liquid Dispersion?", "Go");
+                        wait(1000);
+                            }*/
                     core_.waitForDeviceType(DeviceType.AutoFocusDevice);
                     arduino_.setDigitalOutHigh();
                     wait(var_.shutterResponse);
-                    //displayImage2_.hideImageInIJ();
                 }
                 catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
                 
-                if (var_.AcquisitionSavingMode.equals("single SWP OME.tiff"))
-                    acq.snapSPWImage(SPWWriter, sas.getFilters().getDelays(), sas, ind, false); // simulate == false
-                else
-                    acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas);
+               acq.snapFLIMImage(path, sas.getFilters().getDelays(), sas, softwareBinningField.getText());
                 
                 // saveSequencingTablesForDebugging(path);
                 
@@ -1160,24 +1979,26 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
                     arduino_.setDigitalOutLow();
                     lightPathControls1.setLaserToggleFalse();
                     lightPathControls1.setLaserToggleText("Turn laser ON");
-                    //displayImage2_.showImageInIJ(path);
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
                 
                 lastTime = sas.getTimePoint().getTimeCell();
                 lastFOV = sas.getFOV();
-                lastZ = sas.getFOV().getZ();
                 lastFiltLabel = sas.getFilters().getLabel();
-                                            
-            // RESET DELAY TO BE CONSISTENT WITH UI
+                System.out.println("Time Point: "+lastTime);
+                System.out.println("Well Measured: "+lastFOV.getWell());
+                
+                
+            // SET DELAY TO BE SAME AS BEFORE ACQUISITION // WAS JUST CONSISTENT WITH UI
             try{
-                core_.setProperty("Delay box", "Delay (ps)", fLIMPanel1.getCurrentDelay());
+                core_.setProperty("Delay box", "Delay (ps)", Initialdelay); // ###WAS core_.setProperty("Delay box", "Delay (ps)", fLIMPanel1.getCurrentDelay());
+                // Update UI to match
+                fLIMPanel1.setCurrentDelay(Initialdelay);
             } catch (Exception  e){
                 System.out.println(e.getMessage());
             }
             //set progress bar one increment further
-    //99        displayImage2_.showImageInIJ();
             progressBar_.stepIncrement(ind, sass.size());
             endOk=0;            
         }
@@ -1189,15 +2010,22 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             progressBar_.setEnd("FLIM sequence");
         }
     
-        if (null != SPWWriter) 
-        {
-            try {SPWWriter.close();} catch (IOException e) {System.err.println("Failed to close file SPWWriter.");}
-        }
-                
+        try {
+            core_.setProperty("Delay box", "Delay (ps)", var_.fastDelaySlider);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }        
         // Send Email after finishing acquisition!
-     /*   if(xYSequencing1.sendEmailBoolean){
-            xYSequencing1.sendEmail();
-        }*/            
+       try {
+           String toEmail=ProSettingsPanel.eMail;
+           String subject="Plate reader acquisition finished!";
+           String text=sass.toString();
+            xYSequencing1.sendEmail(subject, text, toEmail);
+        } catch(Exception  e){
+            System.out.println("Could not send Email!");
+        }
+        //Reset delay, turn on live mode (don't care about reusing the window?)
+        gui_.enableLiveMode(true);
     }
 
     public void setStopButtonFalse(int step, int end, String name) throws InterruptedException{
@@ -1208,24 +2036,31 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         stopSequenceButton.setSelected(false);
     }
     
+    public void prefindButtonPressed(){
+        //Open a thread for prefind
+        progressBar_.setStart("Prefinding...");
+        prefindThread = new Thread(new prefindThread(this));
+        prefindThread.start();
+    }
+    
     private void snapFLIMButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapFLIMButtonActionPerformed
         // is button pressed?
         singleImage=1;
         // open new Thread for snap Image
         progressBar_.setStart("Snap FLIM image");
-        snapFlimImageThread =new Thread(new snapFlimImageThread(this));
+        snapFlimImageThread = new Thread(new snapFlimImageThread(this));
         snapFlimImageThread.start();
     }//GEN-LAST:event_snapFLIMButtonActionPerformed
 
     public void snapFLIMImageButton(){
         boolean jump=false;
         try{
-            boolean abort=arduino_.checkSafety();;
+            boolean abort=arduino_.checkSafety();
             if(abort==true){
                 jump=true;
-            } else{
+            } else {
                 arduino_.setDigitalOutHigh();
-                wait(var_.shutterResponse);
+//                wait(var_.shutterResponse);
             }
             core_.waitForDeviceType(DeviceType.XYStageDevice);
             core_.waitForDeviceType(DeviceType.AutoFocusDevice);
@@ -1236,9 +2071,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             Acquisition acq = new Acquisition();
             String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
             String intensity=Double.toString(arduino_.getLaserIntensity());
-            String fullname = (currentBasePathField.getText()+ "/" + timeStamp + " Laser intensity=" + intensity + "_FLIMSnap.ome.tiff");
-            //        acq.dummyTest();
-            //        acq.doacqModulo();
+            String fullname = (currentBasePathField.getText()+ "/" + timeStamp + " Laser intensity=" + intensity + "_FLIMSnap");
+            System.out.println(fullname);
             int exp = 100;
             try {
                 exp = (int) core_.getExposure();
@@ -1247,12 +2081,18 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             }
             // so that same functions can be used, generate dummy SequencedAcquisitionSetup
             acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
-                    new SeqAcqSetup(currentFOV_, new TimePoint(0.0,0.0,false), new FilterSetup(lightPathControls1, exp, fLIMPanel1)));
+                    new SeqAcqSetup(xyzmi_.getCurrentFOV(), new TimePoint(0.0,false,initLDWells), new FilterSetup(lightPathControls1, exp, fLIMPanel1)), softwareBinningField.getText());
             progressBar_.setEnd("Snap FLIM image");
         }
         arduino_.setDigitalOutLow();
         lightPathControls1.setLaserToggleFalse();
         lightPathControls1.setLaserToggleText("Turn laser ON");
+        
+        try {
+            core_.setProperty("Delay box", "Delay (ps)", var_.fastDelaySlider);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
     }
     
     private void snapBFButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_snapBFButtonActionPerformed
@@ -1297,154 +2137,83 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_FLIMPanelStateChanged
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-      System.out.print(var_.manStageCheck);
-
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jMenu_create_simulated_SPW_OMEtiffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu_create_simulated_SPW_OMEtiffActionPerformed
-        //                               
-        //try {this.initializeSPWWriter(FormatTools.UINT16);}
-        //catch (Exception e) {System.out.println(e.getMessage());}
-        
-        ImageWriter writer = null;
-        try {
-        writer = this.createSPWWriter(FormatTools.UINT16);}
-        catch (Exception e) {System.out.println(e.getMessage());}
-        //
-        // rest of it - trying to mimic acquisition :)        
-        Acquisition acq = new Acquisition();
-        ArrayList<FOV> fovs = new ArrayList<>();
-        ArrayList<TimePoint> tps = new ArrayList<>();
-        ArrayList<FilterSetup> fss = new ArrayList<>();
-        int endOk=0;
-        int ind=0;
-        singleImage=0;
-        
-            // get all sequence parameters and put them together into an 
-            // array list of objects containing all acquisition points...
-            // Note that if a term is absent from the sequence setup, current
-            // values should be used instead...
-            
-            List<SeqAcqSetup> sass = new ArrayList<>();
-            ArrayList<String> order = tableModel_.getData();
-            if (!order.contains("XYZ")){
-                fovs.add(xyzmi_.getCurrentFOV());
-            } else {
-                fovs = xYSequencing1.getFOVTable();
-            }
-            
-            if (!order.contains("Time course")){
-                tps.add(new TimePoint(0.0));
-            } else {
-                tps = timeCourseSequencing1.getTimeTable();
-            }
-            
-            if (!order.contains("Filter change")){
-                int intTime = 100;
-                try {
-                    intTime = (int) core_.getExposure();
-                } catch (Exception e){
-                    System.out.println(e.getMessage());
-                }
-               fss.add(new FilterSetup(lightPathControls1, intTime, fLIMPanel1));
-            } else {
-                fss = spectralSequencing1.getFilterTable();
-            } 
-            
-            List<Comparator<SeqAcqSetup>> comparators = new ArrayList<>();
-            
-            for (FOV fov : fovs){
-                for (TimePoint tp : tps){
-                    for (FilterSetup fs : fss){
-                        sass.add(new SeqAcqSetup(fov, tp, fs));
-                    }
-                }
-            }
-            
-            // use chained comparators to sort by multiple fields SIMULTANEOUSLY,
-            // based on order determined in UI table.
-            for (String str : order){
-                if (str.equals("XYZ")){
-                        comparators.add(new WellComparator());
-                        comparators.add(new ZComparator());
-                }
-                else if (str.equals("Filter change"))
-                    comparators.add(new FComparator());
-                else if (str.equals("Time course"))
-                    comparators.add(new TComparator());
-            }
-            Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
-            int sassSize=sass.size();
-            
-            
-            long start_time = System.currentTimeMillis();
-            // TODO: modify data saving such that time courses, z can be put in a 
-            // single OME.TIFF. DISCUSS WITH IAN!
-            // N.B. z should be relatively easy...
-            // for now, just make a base folder and name files based on 
-            // filterlabel, time point.  
-            String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
-//            for (SeqAcqSetup sas : sass){
-            Double lastTime = 0.0;
-            String lastFiltLabel = "";
-            FOV lastFOV = new FOV(0, 0, 0, pp_);
-            Double lastZ = 0.0;
-
-            for ( ind = 0; ind < sass.size(); ind++){
-            
-                //check for flag (stop button) and abort sequence
-                if(terminate){
-                    endOk=1;
-                break;
-                }
-                
-                // TODO: how much can these steps be parallelised?
-                // set FOV params
-                SeqAcqSetup sas = sass.get(ind);
-                // if time point changed different from last time, wait until 
-                // next time point reached...
-                if ((!sas.getTimePoint().getTimeCell().equals(lastTime)) & (order.contains("Time course"))){
-                    Double next_time = sas.getTimePoint().getTimeCell() * 1000;
-                    while ((System.currentTimeMillis() - start_time) < next_time){
-                        Double timeLeft = next_time - (System.currentTimeMillis() - start_time);
-                        System.out.println("Waiting for " + timeLeft + " until next time point...");
-                        //check for flag (stop button) and abort time course wait
-                        if(terminate){
-                            endOk=1;
-                            break;    
-                        }
-                    }
-                }
-                
-                if ( null != sas.getFilters().getDelays() )
-                //acq.snapSPWImage( sas.getFilters().getDelays(), sas, ind, true ); // simulate == true
-                acq.snapSPWImage(writer, sas.getFilters().getDelays(), sas, ind, true ); // simulate == true
-
-                lastTime = sas.getTimePoint().getTimeCell();
-                lastFOV = sas.getFOV();
-                lastZ = sas.getFOV().getZ();
-                lastFiltLabel = sas.getFilters().getLabel();                                                        
-            }
-            
-        // Set progressbar to 100% if not aborted before
-        try
-        {
-            if(endOk==1){
-                    setStopButtonFalse(ind, sass.size(), "FLIM sequence");
-                } else {
-                progressBar_.setEnd("FLIM sequence");
-            } 
-        }
-        catch(InterruptedException e){};
-            
-        try {writer.close();} catch (IOException e) {System.err.println("Failed to close file writer.");}
-        System.out.println("..jMenu_save_acquisition_as_SPW_OMEtiffActionPerformed - passed successfully..");
-    }//GEN-LAST:event_jMenu_create_simulated_SPW_OMEtiffActionPerformed
-
     private void advancedMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_advancedMenuActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_advancedMenuActionPerformed
+
+    private void softwareBinningFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_softwareBinningFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_softwareBinningFieldActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    String text= "Year it did work!";
+    String subject="Did it work once again?";
+    String toEmail="flimplatereader@gmail.com";
+    xYSequencing1.sendEmail(subject, text, toEmail);
+        
+        /*        boolean jump=false;
+        try{
+            boolean abort=arduino_.checkSafety();;
+            if(abort==true){
+                jump=true;
+            } else{
+                arduino_.setDigitalOutHigh();
+//                wait(var_.shutterResponse);
+            }
+            core_.waitForDeviceType(DeviceType.XYStageDevice);
+            core_.waitForDeviceType(DeviceType.AutoFocusDevice);
+        } catch (Exception ex) {
+            Logger.getLogger(HCAFLIMPluginFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (jump==false){
+            Acquisition acq = new Acquisition();
+            String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
+            String intensity=Double.toString(arduino_.getLaserIntensity());
+            String fullname = (currentBasePathField.getText()+ "/" + timeStamp + " Laser intensity=" + intensity + "_FLIMSnap");
+            System.out.println(fullname);
+            int exp = 100;
+            try {
+                exp = (int) core_.getExposure();
+            } catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+            // so that same functions can be used, generate dummy SequencedAcquisitionSetup
+            acq.snapFLIMImage(fullname, fLIMPanel1.getDelays(), 
+                    new SeqAcqSetup(globalFOVset_, new TimePoint(0.0,false,initLDWells), new FilterSetup(lightPathControls1, exp, fLIMPanel1)), softwareBinningField.getText());
+            progressBar_.setEnd("Snap FLIM image");
+        }
+        arduino_.setDigitalOutLow();
+        lightPathControls1.setLaserToggleFalse();
+        lightPathControls1.setLaserToggleText("Turn laser ON");
+        
+        try {
+            core_.setProperty("Delay box", "Delay (ps)", var_.fastDelaySlider);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        
+       */
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void TestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TestButtonActionPerformed
+        // TODO add your handling code here:
+        ArrayList<FilterSetup> fss = new ArrayList<>();
+        fss = spectralSequencing1.getFilterTable();
+        System.out.println(fss);
+        for (FilterSetup fs : fss){
+                    String flabel   = fs.getLabel();
+                    String NDfil    = fs.getNDFilt();
+                    int intTime     = fs.getIntTime();
+                    ArrayList<Integer> dell= fs.getDelays();
+                    System.out.println("Label: "+flabel+"   ND filter: "+NDfil+"   intTime: "+intTime+"   Delays: "+dell);
+        }
+        FilterSetup testt=fss.get(0);
+        System.out.println(testt);
+        FilterSetup testtt=fss.get(1);
+        System.out.println(testtt);
+        
+    }//GEN-LAST:event_TestButtonActionPerformed
    
     public void changeAbortHCAsequencBoolean(){
     //abortHCAsequencBoolean=abortHCAsequencesButton.isSelected();
@@ -1456,8 +2225,12 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
             wbLoad = new HSSFWorkbook(fileInputStream1);
             xYSequencing1.tableModel_.loadFOVTableModelfromSpreadsheet();
             spectralSequencing1.tableModel_.loadFilterTableModelfromSpreadsheet();
-            timeCourseSequencing1.tableModel_.loadTimeCourseTableModelfromSpreadsheet();
+//            timeCourseSequencing1.tableModel_.loadTimeCourseTableModelfromSpreadsheet();
             fileInputStream1.close();       
+    }
+    
+    public void setAFdefaultheight(double newAFdefaultheight){
+        this.xYZPanel1.setFixedAFDefault(newAFdefaultheight);
     }
     
     public void saveSequencingTablesFunction(){
@@ -1552,6 +2325,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem FLIMHCAHelpMenu;
     private javax.swing.JTabbedPane FLIMPanel;
     private javax.swing.JPanel HCAsequenceProgressBar;
+    private javax.swing.JPanel Prefindpanel;
+    private javax.swing.JButton TestButton;
     private javax.swing.JMenuItem aboutMenu;
     private javax.swing.JFormattedTextField accFramesField;
     private javax.swing.JMenuItem advancedMenu;
@@ -1568,7 +2343,6 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuBar jMenuBar2;
-    private javax.swing.JMenuItem jMenu_create_simulated_SPW_OMEtiff;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1577,6 +2351,7 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem loadPlateMetadataMenu;
     private javax.swing.JMenuItem loadSequencingTablesMenu;
     private javax.swing.JMenuItem loadSoftwareConfig;
+    private com.github.dougkelly88.FLIMPlateReaderGUI.PrefindClasses.GUIComponents.PrefindPanel prefindPanel1;
     private ProSettingsGUI.ProSettingsPanel proSettingsGUI1;
     private javax.swing.JPanel progressBarPanel;
     private javax.swing.JMenuItem quitMenu;
@@ -1588,6 +2363,8 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem setBaseFolderMenu;
     private javax.swing.JButton snapBFButton;
     private javax.swing.JButton snapFLIMButton;
+    private javax.swing.JLabel softwareBinningButton;
+    private javax.swing.JTextField softwareBinningField;
     private com.github.dougkelly88.FLIMPlateReaderGUI.SequencingClasses.GUIComponents.SpectralSequencing spectralSequencing1;
     private javax.swing.JButton startSequenceButton;
     private javax.swing.JLabel statusLabel;
@@ -1617,321 +2394,4 @@ public class HCAFLIMPluginFrame extends javax.swing.JFrame {
         }
         return out;
     }
-    
-
-    // CREATE SPW WRITER
-    public ImageWriter createSPWWriter(int pixelType) throws Exception {
-                        
-        ImageWriter writer = new ImageWriter();
-        
-        ArrayList<FOV> fovs = new ArrayList<FOV>();
-        ArrayList<TimePoint> tps = new ArrayList<TimePoint>();
-        ArrayList<FilterSetup> fss = new ArrayList<FilterSetup>();
-
-        int ind = 0;
-        
-            // get all sequence parameters and put them together into an 
-            // array list of objects containing all acquisition points...
-            // Note that if a term is absent from the sequence setup, current
-            // values should be used instead...
-            
-            List<SeqAcqSetup> sass = new ArrayList<SeqAcqSetup>();
-            ArrayList<String> order = tableModel_.getData();
-            if (!order.contains("XYZ")){
-                fovs.add(xyzmi_.getCurrentFOV());
-            } else {
-                fovs = xYSequencing1.getFOVTable();
-            }
-            
-            if (!order.contains("Time course")){
-                tps.add(new TimePoint(0.0));
-            } else {
-                tps = timeCourseSequencing1.getTimeTable();
-            }
-            
-            if (!order.contains("Filter change")){
-                int intTime = 100;
-                try {
-                    intTime = (int) core_.getExposure();
-                } catch (Exception e){
-                    System.out.println(e.getMessage());
-                }
-               fss.add(new FilterSetup(lightPathControls1, intTime, fLIMPanel1));
-            } else {
-                fss = spectralSequencing1.getFilterTable();
-            } 
-            
-            List<Comparator<SeqAcqSetup>> comparators = new ArrayList<Comparator<SeqAcqSetup>>();
-            
-            for (FOV fov : fovs){
-                for (TimePoint tp : tps){
-                    for (FilterSetup fs : fss){
-                        sass.add(new SeqAcqSetup(fov, tp, fs));                        
-                    }
-                }
-            }
-                      
-            // use chained comparators to sort by multiple fields SIMULTANEOUSLY,
-            // based on order determined in UI table.
-            for (String str : order){
-                if (str.equals("XYZ")){
-                        comparators.add(new WellComparator());
-                        comparators.add(new ZComparator());
-                }
-                else if (str.equals("Filter change"))
-                    comparators.add(new FComparator());
-                else if (str.equals("Time course"))
-                    comparators.add(new TComparator());
-            }
-            Collections.sort(sass, new SeqAcqSetupChainedComparator(comparators));
-                                    
-            String filesep = File.separator;            
-            
-            String timeStamp = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date());
-                              
-        int rows = this.pp_.getPlateRows();
-        int cols = this.pp_.getPlateColumns();
-                              
-        int[][] nFovInWell = new int[rows][cols];
-        for (int row = 0; row < rows; row++) {
-          for (int col = 0; col < cols; col++) {
-            nFovInWell[row][col] = 0;
-          }
-        }
-    
-        ArrayList<Integer> delays = fLIMPanel1.getDelays();
-        int sizet = 1;
-        if (null != delays) sizet = delays.size();
-        
-        //Get laser intensity
-        String intensity = null;                     
-        try
-        { 
-            intensity = Double.toString(arduino_.getLaserIntensity());
-        }
-        catch (Exception e) {intensity = "Unknown";}
-        //
-        int rows_max = 0;
-        int cols_max = 0;
-        int rows_min = 1024;
-        int cols_min = 1024;
-        //
-        
-        // create metadata ini "table"
-        for ( ind = 0; ind < sass.size(); ind++)
-        {                                                                           
-            SeqAcqSetup sas = sass.get(ind);                                                          
-                                
-            String well_string = sas.getFOV().getWell().toString();
-            // column
-            int col = Integer.parseInt(well_string.substring(1));
-            // row
-            char RowChar = well_string.charAt(0);
-            String letters = "ABCDEFGH";
-            int row;
-            for(row=1; row<letters.length(); row++) if(RowChar==letters.charAt(row-1)) break;
-            //                
-            nFovInWell[row-1][col-1]++;
-            
-            if (rows_max < row) rows_max = row;
-            if (cols_max < col) cols_max = col;
-            if (rows_min > row) rows_min = row;
-            if (cols_min > col) cols_min = col;            
-        }
-                                                                    
-        Exception exception = null;
-        try {        
-            // create the OME-XML metadata storage object
-            ServiceFactory factory = new ServiceFactory();
-            OMEXMLService service = factory.getInstance(OMEXMLService.class);
-            OMEXMLMetadata meta = service.createOMEXMLMetadata();
-            //IMetadata meta = service.createOMEXMLMetadata();
-            meta.createRoot();
-
-            int plateIndex = 0;
-            int series = 0;     // count of images
-            int well = 0;
-            // 
-            meta.setPlateID(MetadataTools.createLSID("Plate", 0), 0);
-
-            meta.setPlateRowNamingConvention(NamingConvention.LETTER, 0);
-            meta.setPlateColumnNamingConvention(NamingConvention.NUMBER, 0);
-            
-            meta.setPlateRows(new PositiveInteger(rows_max - rows_min + 1), 0);
-            meta.setPlateColumns(new PositiveInteger(cols_max - cols_min + 1), 0);                        
-            //meta.setPlateRows(new PositiveInteger(rows), 0);
-            //meta.setPlateColumns(new PositiveInteger(cols), 0);
-            
-            meta.setPlateName("First test Plate", 0);
-
-            PositiveInteger pwidth = new PositiveInteger((int)core_.getImageWidth());
-            PositiveInteger pheight = new PositiveInteger((int)core_.getImageHeight());
-            
-            for (int row = 0; row  < rows; row++) {
-              for (int column = 0; column < cols; column++) {
-                  
-                int nFOV = nFovInWell[row][column];                 
-                
-                if (0 != nFOV){                    
-                        // set up well
-                        String wellID = MetadataTools.createLSID("Well:", well);
-                        meta.setWellID(wellID, plateIndex, well);
-                        meta.setWellRow(new NonNegativeInteger(row), plateIndex, well);
-                        meta.setWellColumn(new NonNegativeInteger(column), plateIndex, well); 
-
-                        for(int fov = 0; fov < nFOV ; fov++)  {
-
-                          // Create Image NB numberng in the Name goes from 1->n not 0-> n-1
-                          //String fovLabel = String.format("%05d", series);
-                          //String imageName = rowChar + ":" + Integer.toString(column + 1) + ":FOV:" + Integer.toString(fov + 1) + " ID=" + fovLabel;
-                          //System.out.println(imageName.toString()); 
-                          //  
-                          SeqAcqSetup sas = sass.get(series);
-                          String fovLabel = String.format("%05d", series);
-                          String imageName;
-                          if(var_.check2){
-                              if(sas.getFilters().getLabel().equals("Unknown")){
-                                  imageName =
-                                      " Well=" + sas.getFOV().getWell() + 
-                                      " FOV=" + Integer.toString(fov + 1) +
-                                      " X=" + sas.getFOV().getX() +
-                                      " Y=" + sas.getFOV().getY() +
-                                      "T=" + sas.getTimePoint().getTimeCell() + 
-                                      " Filterset=" + sas.getFilters().getLabel() + 
-                                      " Z=" + sas.getFOV().getZ() +
-                                      " ID=" + fovLabel+
-                                      " Laser intensity="+intensity;
-                              } else{
-                                  imageName =
-                                      " Well=" + sas.getFOV().getWell() +                        
-                                      " FOV=" + Integer.toString(fov + 1) +                                
-                                      " X=" + sas.getFOV().getX() +
-                                      " Y=" + sas.getFOV().getY() +
-                                      "T=" + sas.getTimePoint().getTimeCell() + 
-                                      " Filterset=" + sas.getFilters().getLabel() + 
-                                      " Z=" + sas.getFOV().getZ() +
-                                      " ID=" + fovLabel+
-                                      " Laser intensity="+intensity;
-                              }
-                          }else{                    
-                                  imageName =
-                                  " Well=" + sas.getFOV().getWell() +      
-                                  " FOV=" + Integer.toString(fov + 1) +                                
-                                  " X=" + sas.getFOV().getX() +
-                                  " Y=" + sas.getFOV().getY() +
-                                  "T=" + sas.getTimePoint().getTimeCell() + 
-                                  " Filterset=" + sas.getFilters().getLabel() + 
-                                  " Z=" + sas.getFOV().getZ() +
-                                  " ID=" + fovLabel+
-                                  " Laser intensity="+intensity;}
-                          System.out.println(imageName.toString());
-
-                          String imageID = MetadataTools.createLSID("Image", well, fov);
-                          meta.setImageID(imageID, series);
-                          meta.setImageName(imageName, series);
-
-                          String pixelsID = MetadataTools.createLSID("Pixels",row, well, fov);
-                          meta.setPixelsID(pixelsID, series);
-
-                          // specify that the pixel data is stored in big-endian format
-                          // change 'TRUE' to 'FALSE' to specify little-endian format
-                          meta.setPixelsBinDataBigEndian(Boolean.TRUE,  series, 0);
-
-                          // specify that the image is stored in ZCT order
-                          meta.setPixelsDimensionOrder(DimensionOrder.XYZCT, series);
-
-                          // specify the pixel type of the image
-                          meta.setPixelsType(PixelType.fromString(FormatTools.getPixelTypeString(pixelType)), series);
-
-                          // specify the dimensions of the image
-                          meta.setPixelsSizeX(pwidth, series);
-                          meta.setPixelsSizeY(pheight, series);
-                          meta.setPixelsSizeZ(new PositiveInteger(1), series);
-                          meta.setPixelsSizeC(new PositiveInteger(1), series);
-                          meta.setPixelsSizeT(new PositiveInteger(sizet), series);
-
-                          // define each channel and specify the number of samples in the channel
-                          // the number of samples is 3 for RGB images and 1 otherwise
-                          String channelID = MetadataTools.createLSID("Channel",well, fov);
-                          meta.setChannelID(channelID, series,0 );
-                          meta.setChannelSamplesPerPixel(new PositiveInteger(1), series, 0);
-
-                          // set sample
-                          String wellSampleID = MetadataTools.createLSID("WellSample", well, fov);
-                          meta.setWellSampleID(wellSampleID,0,well,fov);
-                          // NB sampleIndex here == series ie the image No
-                          meta.setWellSampleIndex(new NonNegativeInteger(series), 0, well, fov);
-                          meta.setWellSampleImageRef(imageID, 0, well, fov);
-
-              //            if (exposureTimes != null && exposureTimes.length == sizet)  {
-              //              for (int t = 0; t < sizet; t++)  {
-              //                meta.setPlaneTheT(new NonNegativeInteger(t), series, t);
-              //                meta.setPlaneTheC(new NonNegativeInteger(0), series, t);
-              //                meta.setPlaneTheZ(new NonNegativeInteger(0), series, t);
-              //                meta.setPlaneExposureTime(exposureTimes[t], series, t);
-              //              } 
-              //            }
-
-                            // add FLIM ModuloAlongT annotation if required 
-                            if (delays != null && 1 != sizet)  
-                            {
-                                CoreMetadata modlo = new CoreMetadata();
-                                modlo.moduloT.type = loci.formats.FormatTools.LIFETIME;
-                                modlo.moduloT.unit = "ps";
-                                modlo.moduloT.typeDescription = "Gated";
-                                //
-                                modlo.moduloT.labels = new String[sizet];                                
-                                for (int i = 0; i < sizet; i++) 
-                                {
-                                    //System.out.println(delays.get(i));
-                                    modlo.moduloT.labels[i] = delays.get(i).toString();
-                                }
-                            service.addModuloAlong(meta, modlo, series);                  
-                            } //if (delays != null && 1 != sizet)                              
-                          series++;
-                        }//end of fovs (WellSamples)
-                        well++;
-                    } //if (0 != nFOV){
-                }//end of cols              
-            }//end of rows
-
-          //String dump = meta.dumpXML();
-          //System.out.println("dump = ");
-          //System.out.println(dump);
-
-            loci.common.DebugTools.enableLogging("INFO");
-            java.lang.System.setProperty("javax.xml.transform.TransformerFactory", "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
-                        
-            //
-            String GrandOMEtiffPath = currentBasePathField.getText() + filesep + "Sequenced FLIM acquisition " + timeStamp + ".OME.tiff";
-            try 
-            {                
-                writer.setWriteSequentially(true);
-                writer.setMetadataRetrieve(meta);
-                writer.setCompression("LZW");                
-                ((TiffWriter)writer.getWriter(GrandOMEtiffPath)).setBigTiff(true);                                                  
-                writer.setId(GrandOMEtiffPath);
-            }
-            catch (FormatException e)   {exception = e;}        
-            //catch (IOException e)       {exception = e;}
-            if (exception != null) 
-            {
-              System.err.println("Failed to initialize file writer.");
-              exception.printStackTrace();
-            }
-        }//end of try    
-        catch (DependencyException e)   {exception = e;}
-        catch (ServiceException e)      {exception = e;}
-        catch (EnumerationException e)  {exception = e;}
-
-        if (null != exception)
-        {
-            System.err.println("Failed to populate OME-XML metadata object.");
-            exception.printStackTrace();
-        }                            
-        return writer;
-    }
-    
-    
-    
 }
