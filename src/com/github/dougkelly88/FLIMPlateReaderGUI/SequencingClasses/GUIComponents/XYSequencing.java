@@ -117,6 +117,7 @@ public class XYSequencing extends javax.swing.JPanel {
     }
 
     public void addaFOV(FOV FOVtoadd) {                                               
+        
         tableModel_.addRow(FOVtoadd);
         pmdp_.addSelectedWell(FOVtoadd.getWell());
     }  
